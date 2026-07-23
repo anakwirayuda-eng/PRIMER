@@ -17,6 +17,7 @@ import { Rapor } from './screens/Rapor'
 import { LaporanAkhir } from './screens/LaporanAkhir'
 import { Hud } from './components/Hud'
 import { Toaster } from './components/Toaster'
+import { TooltipInstan } from './components/TooltipInstan'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAudio } from './audio/useAudio'
 import { useBgm } from './audio/bgm'
@@ -25,6 +26,7 @@ import { Pengaturan } from './components/Pengaturan'
 import { Onboarding, sudahOnboarding } from './components/Onboarding'
 import { usePengaturan } from './usePengaturan'
 import { adaKontrolInteraktifDifokus } from './utils/fokus'
+import { useHotkeyNavigasi } from './useHotkeyNavigasi'
 import './App.css'
 
 const LAYAR_DIKENAL = new Set([
@@ -76,6 +78,9 @@ export default function App() {
   }, [])
   useAudio()
   useBgm()
+  // Audit premium 2026-07-23: hotkey angka 1-5 = navigasi tab HUD (gate sama
+  // persis dgn tombolnya via alasanTabNonaktif; mati saat mengetik/modal).
+  useHotkeyNavigasi()
 
   // DeepThink "game juice" (2026-07-04): getar layar singkat saat Kode Hitam —
   // konsekuensi paling berat butuh beban visual sepadan, bukan cuma teks surat.
@@ -159,6 +164,7 @@ export default function App() {
         <Toaster />
         <MuteButton />
         <Pengaturan />
+        <TooltipInstan />
       </div>
     )
   }
@@ -205,6 +211,7 @@ export default function App() {
         </ErrorBoundary>
       </main>
       <Toaster />
+      <TooltipInstan />
       {/* M10.a: mute+gigi kini didok di dalam <Hud /> (bukan melayang) —
           versi melayang hanya utk TitleScreen di atas, yang tanpa HUD. */}
       {onboardingTampil && (

@@ -120,6 +120,43 @@ describe('<DexSkdi /> — aria-current kartu & pencarian entri (koreksi review B
   })
 })
 
+// Audit premium 2026-07-23: ergonomi pencarian — "/" fokus dari mana pun di
+// layar, Esc dua-tahap (bersihkan → lepas fokus), tombol ✕ menghapus query.
+describe('<DexSkdi /> — shortcut & pembersih pencarian (audit premium 2026-07-23)', () => {
+  beforeEach(() => {
+    pasangState()
+  })
+
+  it('tombol "/" memfokuskan kolom pencarian', () => {
+    render(<DexSkdi />)
+    const input = screen.getByLabelText('Cari SKDI')
+    expect(document.activeElement).not.toBe(input)
+    fireEvent.keyDown(window, { key: '/' })
+    expect(document.activeElement).toBe(input)
+  })
+
+  it('Esc pertama membersihkan query; Esc kedua melepas fokus', () => {
+    render(<DexSkdi />)
+    const input = screen.getByLabelText('Cari SKDI') as HTMLInputElement
+    input.focus()
+    fireEvent.change(input, { target: { value: 'malaria' } })
+    fireEvent.keyDown(input, { key: 'Escape' })
+    expect(input.value).toBe('')
+    expect(document.activeElement).toBe(input)
+    fireEvent.keyDown(input, { key: 'Escape' })
+    expect(document.activeElement).not.toBe(input)
+  })
+
+  it('tombol ✕ menghapus query dan mengembalikan fokus ke input', () => {
+    render(<DexSkdi />)
+    const input = screen.getByLabelText('Cari SKDI') as HTMLInputElement
+    fireEvent.change(input, { target: { value: 'demam' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Bersihkan pencarian' }))
+    expect(input.value).toBe('')
+    expect(document.activeElement).toBe(input)
+  })
+})
+
 // CODEX M14 #23 (keputusan Dr. Wirayuda): lapisan debrief M11.5 (mutiaraEbm/
 // catatanRealita/panduanResmi) dipersist ke Buku Saku — kini bisa dibaca ulang
 // per kasus, bukan sekali-baca di modal PanelHasil.

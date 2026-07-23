@@ -52,6 +52,24 @@ describe('<Toaster /> — aria-live per-toast (CODEX audit UI/UX 2026-07-10 #25)
     expect(toast.getAttribute('aria-live')).toBe('assertive')
   })
 
+  it('klik toast menutupnya segera (audit premium 2026-07-23: klik=tutup)', async () => {
+    render(<Toaster />)
+    act(() => {
+      useGame.setState({
+        lastEvents: [{ type: 'DEX_BERTAMBAH', kasusId: 'uji-tutup', bintang: 2 }],
+        eventTick: 3,
+      })
+    })
+    const toast = document.querySelector('.toast')!
+    expect(toast).not.toHaveClass('toast--keluar')
+    act(() => {
+      toast.dispatchEvent(new MouseEvent('click', { bubbles: true }))
+    })
+    // Klik memicu fase mengabur seketika (timer 0 ms) lalu dihapus 450 ms
+    // kemudian — cukup pastikan fase keluar aktif tanpa menunggu timer nyata.
+    await waitFor(() => expect(document.querySelector('.toast--keluar')).not.toBeNull())
+  })
+
   it('memberi tahu pemain setelah renderer pulih otomatis dari crash', async () => {
     window.primer = {
       save: { write: async () => true, read: async () => null, list: async () => [], delete: async () => true },

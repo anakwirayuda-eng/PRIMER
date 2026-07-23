@@ -7,6 +7,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { useGame } from '../store'
 import { useRadioGroup } from '../useRadioGroup'
+import { DialogGame } from '../components/DialogGame'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
 import { verifikasiDossier, type HasilVerifikasi } from '@engine/verifikasi'
@@ -137,6 +138,17 @@ export function TitleScreen() {
   const [namaFileArsip, setNamaFileArsip] = useState<string | null>(null)
   const [namaFileDossier, setNamaFileDossier] = useState<string | null>(null)
   const [namaFileTelemetri, setNamaFileTelemetri] = useState<string | null>(null)
+  // Audit premium 2026-07-23: window.confirm/alert (dialog OS mentah, memutus
+  // imersi & bahasa tombol ikut OS) diganti DialogGame in-game. State satu slot:
+  // konfirmasi menyimpan `aksi` yang baru dieksekusi setelah pemain menyetujui.
+  const [dialog, setDialog] = useState<{
+    judul: string
+    pesan: string
+    labelYa?: string
+    bahaya?: boolean
+    aksi?: () => void
+  } | null>(null)
+  const beriTahu = (judul: string, pesan: string) => setDialog({ judul, pesan })
   const arsipRilisSesuai =
     arsip !== null && arsip.contentRelease === PACK.runtimeManifest.contentRelease
 
@@ -166,6 +178,7 @@ export function TitleScreen() {
   const mulaiStase = (e: FormEvent) => {
     e.preventDefault()
     if (!bolehMulai) return
+    const jalankan = () => mulaiGameBaru(namaBersih, mode, mode === 'ujian' ? nimBersih : undefined)
     // CODEX audit UI/UX 2026-07-10 (#3): dulu langsung menimpa arsip lama
     // tanpa konfirmasi — salah klik atau Enter di input nama (form submit
     // standar HTML) cukup utk menghapus progres tersimpan.
@@ -173,11 +186,29 @@ export function TitleScreen() {
     // — bisa disalahartikan sebagai slot manual ikut tertimpa. Yang sebenarnya
     // diganti hanya Autosave Aktif (lihat store.ts `simpan()`/SLOT_AUTOSAVE);
     // slot 1/2/3 tak pernah disentuh operasi ini.
-    if (arsip !== null && !window.confirm(`Mulai stase baru akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman. Lanjutkan?`)) return
+    if (arsip !== null) {
+      setDialog({
+        judul: 'Mulai Stase Baru?',
+        pesan: `Mulai stase baru akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman.`,
+        labelYa: 'Mulai Stase Baru',
+        bahaya: true,
+        aksi: jalankan,
+      })
+      return
+    }
     // CODEX M14 #6: ada autosave TAPI tak terbaca (rusak/versi lama) — jangan
     // menimpanya diam-diam. Peringatkan sebelum menghapusnya.
-    if (arsip === null && arsipKorup && !window.confirm('Ada autosave yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Mulai stase baru akan menimpanya permanen. Lanjutkan?')) return
-    mulaiGameBaru(namaBersih, mode, mode === 'ujian' ? nimBersih : undefined)
+    if (arsipKorup) {
+      setDialog({
+        judul: 'Autosave Tidak Terbaca',
+        pesan: 'Ada autosave yang tidak bisa dibaca (mungkin rusak atau dari versi lama). Mulai stase baru akan menimpanya permanen.',
+        labelYa: 'Mulai Stase Baru',
+        bahaya: true,
+        aksi: jalankan,
+      })
+      return
+    }
+    jalankan()
   }
 
   return (
@@ -251,7 +282,7 @@ export function TitleScreen() {
                   type="button"
                   className={`tombol ${mode === 'karier' ? 'tombol--utama' : ''}`}
                   {...modeRadio.radioProps('karier')}
-                  title="90 hari penuh — bebas nilai, semua fitur, progres santai."
+                  data-tip="90 hari penuh — bebas nilai, semua fitur, progres santai."
                   onClick={() => setMode('karier')}
                 >
                   Karier · 90 hari
@@ -260,7 +291,7 @@ export function TitleScreen() {
                   type="button"
                   className={`tombol ${mode === 'ujian' ? 'tombol--utama' : ''}`}
                   {...modeRadio.radioProps('ujian')}
-                  title="30 hari — skor terkunci di akhir untuk disetor ke dosen. Paket soal dirotasi otomatis."
+                  data-tip="30 hari — skor terkunci di akhir untuk disetor ke dosen. Paket soal dirotasi otomatis."
                   onClick={() => setMode('ujian')}
                 >
                   Ujian · 30 hari
@@ -276,6 +307,8 @@ export function TitleScreen() {
                   maxLength={24}
                   autoFocus={arsip === null}
                   placeholder="tulis namamu di sini"
+                  spellCheck={false}
+                  autoComplete="off"
                   onChange={(e) => setNama(e.target.value)}
                 />
                 <button
@@ -287,9 +320,12 @@ export function TitleScreen() {
                       ? 'Isi nama doktermu dulu'
                       : mode === 'ujian' && nimBersih.length === 0
                         ? 'Isi NIM-mu dulu (identitas ujian)'
-                        : arsip !== null
-                          ? 'Memulai stase baru akan mengganti Autosave Aktif (slot manual tetap aman)'
-                          : 'Mulai Hari 1 di Puskesmas Sukamaju'
+                        : undefined
+                  }
+                  data-tip={
+                    arsip !== null
+                      ? 'Memulai stase baru akan mengganti Autosave Aktif (slot manual tetap aman)'
+                      : 'Mulai Hari 1 di Puskesmas Sukamaju'
                   }
                 >
                   Mulai Stase
@@ -307,6 +343,8 @@ export function TitleScreen() {
                     value={nim}
                     maxLength={20}
                     placeholder="nomor induk mahasiswa"
+                    spellCheck={false}
+                    autoComplete="off"
                     onChange={(e) => setNim(e.target.value)}
                   />
                 </div>
@@ -335,16 +373,29 @@ export function TitleScreen() {
                       // membedakan slot TUJUAN (yg dimuat, tak tersentuh) dari
                       // Autosave Aktif (yg sebenarnya diganti) — pemain bisa
                       // salah kira slot itu sendiri ikut tertimpa.
-                      if (arsip !== null && !window.confirm(`Memuat ${info.slot.replace('slot', 'Slot ')} akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — isi Slot 1/2/3 tetap aman. Lanjutkan?`)) return
-                      void muatDariSlot(info.slot).then((ok) => {
-                        if (!ok) window.alert('Gagal memuat arsip — file rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
-                      })
+                      const muat = () => {
+                        void muatDariSlot(info.slot).then((ok) => {
+                          if (!ok) beriTahu('Gagal Memuat Arsip', 'File rusak, tidak ditemukan, atau dari versi yang tak dikenal.')
+                        })
+                      }
+                      if (arsip !== null) {
+                        setDialog({
+                          judul: `Muat ${info.slot.replace('slot', 'Slot ')}?`,
+                          pesan: `Memuat ${info.slot.replace('slot', 'Slot ')} akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — isi Slot 1/2/3 tetap aman.`,
+                          labelYa: 'Muat Arsip',
+                          bahaya: true,
+                          aksi: muat,
+                        })
+                        return
+                      }
+                      muat()
                     }}
                     title={
                       info.compatible
-                        ? `Muat arsip ${info.slot}.`
+                        ? undefined
                         : `Arsip ${info.slot} berasal dari rilis ${info.contentRelease} dan hanya dapat dibuka dengan build yang sama.`
                     }
+                    data-tip={`Muat arsip ${info.slot}.`}
                   >
                     📁 {info.slot.replace('slot', 'Slot ')}: dr. {info.namaDokter} · H{info.hari}
                     {info.mode === 'ujian' ? ' · UJIAN' : ''}
@@ -372,33 +423,37 @@ export function TitleScreen() {
                   const f = input.files?.[0]
                   if (!f) return
                   setNamaFileArsip(f.name)
+                  // CODEX M14 #24: reset value SEGERA (File `f` sudah dipegang)
+                  // agar memilih file yang sama lagi tetap memicu change —
+                  // termasuk semua jalur gagal/batal di bawah.
+                  input.value = ''
                   // CODEX M14 #24: tolak berkas raksasa sebelum dibaca ke memori.
                   if (f.size > MAKS_UKURAN_IMPOR) {
-                    window.alert('Berkas terlalu besar — bukan arsip stase yang wajar.')
-                    input.value = ''
+                    beriTahu('Berkas Terlalu Besar', 'Berkas terlalu besar — bukan arsip stase yang wajar.')
                     return
                   }
                   // CODEX audit UI/UX 2026-07-10 (#3): impor JSON menimpa
                   // autosave seketika (imporArsip -> simpan()) tanpa jeda —
                   // salah pilih file cukup utk menghapus progres tersimpan.
-                  if (
-                    arsip !== null &&
-                    !window.confirm(`Mengimpor arsip akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman. Lanjutkan?`)
-                  ) {
-                    input.value = ''
+                  const proses = () => {
+                    void f
+                      .text()
+                      .then((json) => {
+                        if (!imporArsip(json)) beriTahu('Arsip Tidak Valid', 'Arsip tidak valid atau berasal dari rilis konten yang berbeda.')
+                      })
+                      .catch(() => beriTahu('Gagal Membaca', 'Gagal membaca file arsip.'))
+                  }
+                  if (arsip !== null) {
+                    setDialog({
+                      judul: 'Impor Arsip?',
+                      pesan: `Mengimpor arsip akan mengganti Autosave Aktif dr. ${arsip.namaDokter} (Hari ${arsip.hari}) — slot manual (1/2/3) tetap aman.`,
+                      labelYa: 'Impor Arsip',
+                      bahaya: true,
+                      aksi: proses,
+                    })
                     return
                   }
-                  void f
-                    .text()
-                    .then((json) => {
-                      if (!imporArsip(json)) window.alert('Arsip tidak valid atau berasal dari rilis konten yang berbeda.')
-                    })
-                    .catch(() => window.alert('Gagal membaca file arsip.'))
-                    // CODEX M14 #24: reset value SELALU (juga saat gagal) agar
-                    // memilih file yang sama lagi tetap memicu change.
-                    .finally(() => {
-                      input.value = ''
-                    })
+                  proses()
                 }}
               />
             </label>
@@ -422,7 +477,7 @@ export function TitleScreen() {
                   setNamaFileDossier(f.name)
                   e.target.value = ''
                   if (f.size > MAKS_UKURAN_IMPOR) {
-                    window.alert('Berkas dossier terlalu besar — bukan dossier stase yang wajar.')
+                    beriTahu('Berkas Terlalu Besar', 'Berkas dossier terlalu besar — bukan dossier stase yang wajar.')
                     return
                   }
                   // Fix #8: token unik per pemilihan file + bersihkan hasil lama
@@ -442,7 +497,7 @@ export function TitleScreen() {
                     })
                     .catch(() => {
                       if (tokenVerifikasiRef.current !== token) return
-                      window.alert('Gagal membaca file dossier.')
+                      beriTahu('Gagal Membaca', 'Gagal membaca file dossier.')
                     })
                 }}
               />
@@ -469,7 +524,7 @@ export function TitleScreen() {
                   setNamaFileTelemetri(f.name)
                   e.target.value = ''
                   if (f.size > MAKS_UKURAN_IMPOR) {
-                    window.alert('Berkas log telemetri terlalu besar.')
+                    beriTahu('Berkas Terlalu Besar', 'Berkas log telemetri terlalu besar.')
                     return
                   }
                   void f
@@ -478,7 +533,7 @@ export function TitleScreen() {
                       const baris = isi.split('\n').filter((b) => b.trim().length > 0)
                       setPeringatanTelemetri(auditTelemetri(baris))
                     })
-                    .catch(() => window.alert('Gagal membaca file log telemetri.'))
+                    .catch(() => beriTahu('Gagal Membaca', 'Gagal membaca file log telemetri.'))
                 }}
               />
             </label>
@@ -570,6 +625,17 @@ export function TitleScreen() {
           </div>
         )}
       </div>
+
+      {dialog !== null && (
+        <DialogGame
+          judul={dialog.judul}
+          pesan={dialog.pesan}
+          labelYa={dialog.labelYa}
+          bahaya={dialog.bahaya}
+          onYa={dialog.aksi}
+          onTutup={() => setDialog(null)}
+        />
+      )}
 
       <div className="title__kredit mono">
         <p>{METADATA.copyright}</p>

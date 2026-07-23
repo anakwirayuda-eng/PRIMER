@@ -1,6 +1,17 @@
 /**
  * TOASTER — menampilkan GameEvent penting sebagai toast kertas kecil.
  * Membaca lastEvents dari store; tidak menyimpan state game apa pun.
+ *
+ * Audit premium 2026-07-23 — tiga upgrade operasional:
+ * 1. Durasi adaptif: narasi panjang (Kode Hitam, karma) dulu hilang di 3,8 dtk
+ *    sama seperti "Surat baru" 3 kata — kini durasi ikut panjang teks (min
+ *    tetap 3,8 dtk, plafon 9 dtk) supaya sempat terbaca.
+ * 2. Hover = pause: mengarahkan pointer ke toast menahan hitungannya (pola
+ *    standar toast komersial) — pemain yang sedang membaca tak dikejar timer.
+ * 3. Klik = tutup: toast bisa disingkirkan segera tanpa menunggu.
+ * Konsekuensi sadar: .toast kini pointer-events:auto (wrapper tetap none) —
+ * toast di zona atas-kanan yang memang dipilih (M10 §49) karena jauh dari
+ * tombol aksi, jadi risiko menelan klik konten praktis nol.
  */
 
 import { useEffect, useRef, useState } from 'react'
@@ -16,8 +27,15 @@ interface Toast {
   keluar?: boolean
 }
 
-const TOAST_TAHAN = 3800 // ms tampil penuh sebelum mulai mengabur
+const TOAST_TAHAN = 3800 // ms tampil penuh minimum sebelum mulai mengabur
+const TOAST_TAHAN_MAKS = 9000 // plafon utk narasi terpanjang
 const TOAST_MENGABUR = 450 // ms durasi animasi keluar (samakan Toaster.css)
+const TOAST_LANJUT_HOVER = 1600 // ms sisa waktu setelah pointer meninggalkan toast
+
+/** Durasi tampil ∝ panjang teks (≈55 ms/karakter di atas ambang dasar). */
+function durasiToast(teks: string): number {
+  return Math.min(TOAST_TAHAN_MAKS, Math.max(TOAST_TAHAN, 1800 + teks.length * 55))
+}
 
 function eventKeToast(e: GameEvent): Toast | null {
   const id = Math.random()
@@ -57,9 +75,48 @@ export function Toaster() {
   const [toasts, setToasts] = useState<Toast[]>([])
   // M10 §49 (CODEX A.2): dulu SATU timer per-effect di-clearTimeout saat effect
   // re-run (event berikutnya) — jadi penghapusan batch SEBELUMNYA dibatalkan &
-  // toast lama menetap SELAMANYA. Kini tiap batch punya timer sendiri yang
-  // hidup sampai tuntas; ref hanya utk membersihkan sisa timer saat unmount.
-  const timers = useRef<ReturnType<typeof setTimeout>[]>([])
+  // toast lama menetap SELAMANYA. Kini timer dikelola PER-TOAST dalam Map
+  // (audit premium 2026-07-23: perlu granular utk pause-hover & klik-tutup);
+  // tiap toast hidup sampai timernya sendiri tuntas atau pemain menutupnya.
+  const timers = useRef(
+    new Map<number, { fade: ReturnType<typeof setTimeout>; hapus: ReturnType<typeof setTimeout> }>(),
+  )
+
+  const bersihkanTimer = (id: number) => {
+    const t = timers.current.get(id)
+    if (t === undefined) return
+    clearTimeout(t.fade)
+    clearTimeout(t.hapus)
+    timers.current.delete(id)
+  }
+
+  /** Jadwalkan fase mengabur + penghapusan sebuah toast `tahan` ms dari sekarang. */
+  const jadwalkanKeluar = (id: number, tahan: number) => {
+    bersihkanTimer(id)
+    const fade = setTimeout(() => {
+      setToasts((prev) => prev.map((t) => (t.id === id ? { ...t, keluar: true } : t)))
+    }, tahan)
+    const hapus = setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id))
+      timers.current.delete(id)
+    }, tahan + TOAST_MENGABUR)
+    timers.current.set(id, { fade, hapus })
+  }
+
+  /** Klik pemain: langsung masuk fase mengabur tanpa menunggu sisa timer. */
+  const tutupToast = (id: number) => jadwalkanKeluar(id, 0)
+
+  /** Pointer masuk: tahan hitungan (jangan usir pemain yang sedang membaca). */
+  const tahanToast = (t: Toast) => {
+    if (t.keluar) return // sudah mengabur — biarkan selesai
+    bersihkanTimer(t.id)
+  }
+
+  /** Pointer keluar: lanjutkan dengan sisa waktu pendek yang wajar. */
+  const lanjutkanToast = (t: Toast) => {
+    if (t.keluar || timers.current.has(t.id)) return
+    jadwalkanKeluar(t.id, TOAST_LANJUT_HOVER)
+  }
 
   useEffect(() => {
     let aktif = true
@@ -68,47 +125,37 @@ export function Toaster() {
     }
     void window.primer.runtime.consumeRecovery().then((notice) => {
       if (!aktif || !notice) return
-      const id = Math.random()
       const toast: Toast = {
-        id,
+        id: Math.random(),
         teks: 'PRIMERA sempat mengalami gangguan dan memulihkan sesi dari autosave. Progres terakhir tetap tersimpan.',
         nada: 'bahaya',
       }
       setToasts((prev) => [...prev, toast].slice(-4))
-      const tFade = setTimeout(() => {
-        setToasts((prev) => prev.map((item) => item.id === id ? { ...item, keluar: true } : item))
-      }, TOAST_TAHAN)
-      const tHapus = setTimeout(() => {
-        setToasts((prev) => prev.filter((item) => item.id !== id))
-        timers.current = timers.current.filter((item) => item !== tFade && item !== tHapus)
-      }, TOAST_TAHAN + TOAST_MENGABUR)
-      timers.current.push(tFade, tHapus)
+      jadwalkanKeluar(toast.id, durasiToast(toast.teks))
     }).catch((error) => console.error('Gagal membaca status pemulihan runtime:', error))
     return () => {
       aktif = false
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
     const baru = lastEvents.map(eventKeToast).filter((t): t is Toast => t !== null)
     if (baru.length === 0) return
     setToasts((prev) => [...prev, ...baru].slice(-4))
-    const cocok = (t: Toast) => baru.some((b) => b.id === t.id)
-    // Dua fase: (1) tandai `keluar` → animasi mengabur (Toaster.css); (2) hapus
-    // dari daftar setelah animasi tuntas. Tiap batch punya timernya sendiri —
-    // TAK dibatalkan oleh datangnya batch berikutnya (bug lama A.2).
-    const tFade = setTimeout(() => {
-      setToasts((prev) => prev.map((t) => (cocok(t) ? { ...t, keluar: true } : t)))
-    }, TOAST_TAHAN)
-    const tHapus = setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => !cocok(t)))
-      timers.current = timers.current.filter((x) => x !== tFade && x !== tHapus)
-    }, TOAST_TAHAN + TOAST_MENGABUR)
-    timers.current.push(tFade, tHapus)
+    baru.forEach((t) => jadwalkanKeluar(t.id, durasiToast(t.teks)))
   }, [eventTick]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Bersihkan semua timer tertunda HANYA saat unmount (cegah setState-after-unmount).
-  useEffect(() => () => timers.current.forEach(clearTimeout), [])
+  useEffect(
+    () => () => {
+      timers.current.forEach((t) => {
+        clearTimeout(t.fade)
+        clearTimeout(t.hapus)
+      })
+    },
+    [],
+  )
 
   if (toasts.length === 0) return null
 
@@ -131,8 +178,12 @@ export function Toaster() {
           role={t.nada === 'bahaya' ? 'alert' : 'status'}
           aria-live={t.nada === 'bahaya' ? 'assertive' : 'polite'}
           aria-atomic="true"
+          onClick={() => tutupToast(t.id)}
+          onMouseEnter={() => tahanToast(t)}
+          onMouseLeave={() => lanjutkanToast(t)}
         >
           {t.teks}
+          <span className="toast__tutup" aria-hidden="true">✕</span>
         </div>
       ))}
     </div>

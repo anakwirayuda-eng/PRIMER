@@ -1,0 +1,31 @@
+/* TOOLTIP INSTAN GLOBAL — gaya identik .hud__tip (Hud.css): kartu tinta gelap
+   di mode siang, kertas terang di mode malam. position:fixed di koordinat
+   viewport; pointer-events none = tak pernah menelan klik. */
+
+.tip-instan {
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: var(--z-modal);
+  max-width: 320px;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  line-height: var(--baris-rapat);
+  color: var(--kertas-050);
+  background: var(--malam-800);
+  border: 1px solid var(--border-tinta);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-kartu);
+  pointer-events: none;
+  animation: tip-instan-masuk var(--durasi-cepat) var(--ease-keluar) both;
+}
+
+[data-mode='malam'] .tip-instan {
+  color: var(--malam-900);
+  background: var(--kertas-100);
+}
+
+@keyframes tip-instan-masuk {
+  from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}

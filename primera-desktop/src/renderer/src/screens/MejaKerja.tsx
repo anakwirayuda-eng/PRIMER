@@ -6,7 +6,7 @@
  * hitungSkor, hitungIksKeluarga).
  */
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { JenisSurat, LangkahUmpanBalikRujukan, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
@@ -34,6 +34,7 @@ import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { JejakPerawatan } from './JejakPerawatan'
 import { BuktiKlinis } from '../components/BuktiKlinis'
+import { DialogGame } from '../components/DialogGame'
 import { personaAnamnesis } from './klinik/util'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
@@ -126,6 +127,27 @@ export function MejaKerja() {
   const [suratTerbukaId, setSuratTerbukaId] = useState<string | null>(null)
   const [langkahUmpanBalik, setLangkahUmpanBalik] = useState<LangkahUmpanBalikRujukan[]>([])
   const [draftRefleksi, setDraftRefleksi] = useState('')
+  // Audit premium 2026-07-23: window.confirm/alert diganti DialogGame in-game
+  // (pola sama TitleScreen) — dipakai konfirmasi timpa slot arsip manual.
+  const [dialogArsip, setDialogArsip] = useState<{
+    judul: string
+    pesan: string
+    labelYa?: string
+    bahaya?: boolean
+    aksi?: () => void
+  } | null>(null)
+  // Audit premium 2026-07-23: simpan-ke-slot dulu sukses DIAM-DIAM (feedback
+  // hanya bila gagal) — kini status sesaat "menyimpan…/✓ tersimpan" di tombol.
+  const [statusSlot, setStatusSlot] = useState<
+    Partial<Record<'slot1' | 'slot2' | 'slot3', 'menyimpan' | 'tersimpan'>>
+  >({})
+  const timerSlotRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  useEffect(
+    () => () => {
+      if (timerSlotRef.current !== null) clearTimeout(timerSlotRef.current)
+    },
+    [],
+  )
   // Audit CODEX UKM 2026-07-16 #3: TETAPKAN_PROGRAM kini WAJIB membawa rwFokus
   // (engine menolak tanpa RW). Pemilih RW lokal — default RW fokus tersimpan.
   const [rwPilihan, setRwPilihan] = useState<number | undefined>(state.program.rwFokus)
@@ -486,11 +508,11 @@ export function MejaKerja() {
                     dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })
                   }}
                   disabled={!petaTerbuka}
-                  title={
-                    petaTerbuka
-                      ? 'Buka Peta Desa untuk melihat keluarga ini'
-                      : 'Peta Desa terbuka besok'
-                  }
+                  // Pola dual (audit premium 2026-07-23): kontrol disabled tak
+                  // menerima mouse event → title native jadi fallback; saat
+                  // aktif, tooltip instan global membaca data-tip.
+                  title={petaTerbuka ? undefined : 'Peta Desa terbuka besok'}
+                  data-tip="Buka Peta Desa untuk melihat keluarga ini"
                 >
                   Lihat keluarga di Peta Desa →
                 </button>
@@ -694,8 +716,9 @@ export function MejaKerja() {
                               ? 'Tidak ada peserta ber-JKN aktif bulan ini — bantu keluarga mengurus kepesertaan dulu.'
                               : slotTerpakai
                                 ? 'Slot lapangan hari ini sudah terpakai.'
-                                : `Gelar sesi Prolanis (${ringkasan}, ${BIAYA_STAMINA_KEGIATAN} stamina).`
+                                : undefined
                         }
+                        data-tip={`Gelar sesi Prolanis (${ringkasan}, ${BIAYA_STAMINA_KEGIATAN} stamina).`}
                         onClick={() => dispatch({ type: 'MULAI_PROLANIS' })}
                       >
                         🩺 Gelar Sesi Prolanis ({ringkasan}){belumWaktunya ? ` — hari ke-${berikut}` : ''}
@@ -732,8 +755,9 @@ export function MejaKerja() {
                       title={
                         programTerkunci
                           ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.'
-                          : `Arahkan dana program bulan ini ke RW ${r.nomor} — ${r.nama}.`
+                          : undefined
                       }
+                      data-tip={`Arahkan dana program bulan ini ke RW ${r.nomor} — ${r.nama}.`}
                       onClick={() => setRwPilihan(r.nomor)}
                     >
                       RW {r.nomor}
@@ -787,21 +811,21 @@ export function MejaKerja() {
                 <div className="baris mk__program-opsi">
                   <button
                     className="tombol"
-                    title="Burnout −12."
+                    data-tip="Burnout −12."
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'istirahat' })}
                   >
                     😴 Istirahat total
                   </button>
                   <button
                     className="tombol"
-                    title="Burnout −9, besok stamina +1."
+                    data-tip="Burnout −9, besok stamina +1."
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'olahraga' })}
                   >
                     🏃 Olahraga
                   </button>
                   <button
                     className="tombol"
-                    title="Burnout −6, trust seluruh keluarga binaan +1."
+                    data-tip="Burnout −6, trust seluruh keluarga binaan +1."
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'keluarga' })}
                   >
                     ☕ Silaturahmi desa
@@ -830,7 +854,7 @@ export function MejaKerja() {
                 {state.klinik.selesaiHariIni.length > 0 && (
                   <span className="baris mk__debrief-pasien">
                     {state.klinik.selesaiHariIni.map((p, i) => (
-                      <span key={i} className="chip" title={p.kasusId}>
+                      <span key={i} className="chip" data-tip={p.kasusId}>
                         {p.pasienNama} · {p.grade}
                       </span>
                     ))}
@@ -892,8 +916,9 @@ export function MejaKerja() {
                                   ? 'Sedang dalam pengiriman.'
                                   : state.kapitasi < biaya
                                     ? 'Kas tidak cukup.'
-                                    : `Pesan 20 unit — Rp ${biaya.toLocaleString('id-ID')}, tiba 3 hari.`
+                                    : undefined
                               }
+                              data-tip={`Pesan 20 unit — Rp ${biaya.toLocaleString('id-ID')}, tiba 3 hari.`}
                               onClick={() => dispatch({ type: 'PESAN_OBAT', obatId: id, jumlah: 20 })}
                             >
                               {sedangDipesan ? 'dikirim…' : `Pesan 20 (Rp ${Math.round(biaya / 1000)}k)`}
@@ -927,19 +952,48 @@ export function MejaKerja() {
                   <button
                     key={slot}
                     className="tombol"
-                    title={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
+                    data-tip={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
                     onClick={() => {
                       // CODEX audit UI/UX 2026-07-10 (#3): dulu tombol slot
                       // langsung menimpa arsip lama di slot itu tanpa jeda —
                       // title tooltip saja tak mencegah klik.
-                      if (info && !window.confirm(`Timpa ${slot} (dr. ${info.namaDokter} · Hari ${info.hari})? Arsip lama di slot ini akan hilang.`)) return
-                      void simpanKeSlot(slot).then((ok) => {
-                        if (!ok) window.alert('Gagal menyimpan — periksa ruang disk atau izin folder save.')
-                      })
+                      const simpan = () => {
+                        setStatusSlot((s) => ({ ...s, [slot]: 'menyimpan' }))
+                        void simpanKeSlot(slot).then((ok) => {
+                          if (!ok) {
+                            setStatusSlot((s) => ({ ...s, [slot]: undefined }))
+                            setDialogArsip({
+                              judul: 'Gagal Menyimpan',
+                              pesan: 'Gagal menyimpan — periksa ruang disk atau izin folder save.',
+                            })
+                            return
+                          }
+                          setStatusSlot((s) => ({ ...s, [slot]: 'tersimpan' }))
+                          if (timerSlotRef.current !== null) clearTimeout(timerSlotRef.current)
+                          timerSlotRef.current = setTimeout(
+                            () => setStatusSlot((s) => ({ ...s, [slot]: undefined })),
+                            1600,
+                          )
+                        })
+                      }
+                      if (info) {
+                        setDialogArsip({
+                          judul: `Timpa ${slot.replace('slot', 'Slot ')}?`,
+                          pesan: `Timpa ${slot} (dr. ${info.namaDokter} · Hari ${info.hari})? Arsip lama di slot ini akan hilang.`,
+                          labelYa: 'Timpa Slot',
+                          bahaya: true,
+                          aksi: simpan,
+                        })
+                        return
+                      }
+                      simpan()
                     }}
                   >
-                    💾 {slot.replace('slot', 'Slot ')}
-                    {info ? ` (H${info.hari})` : ''}
+                    {statusSlot[slot] === 'menyimpan'
+                      ? `⏳ ${slot.replace('slot', 'Slot ')} — menyimpan…`
+                      : statusSlot[slot] === 'tersimpan'
+                        ? `✓ ${slot.replace('slot', 'Slot ')} — tersimpan`
+                        : `💾 ${slot.replace('slot', 'Slot ')}${info ? ` (H${info.hari})` : ''}`}
                   </button>
                 )
               })}
@@ -953,6 +1007,7 @@ export function MejaKerja() {
               onBlur={simpanRefleksi}
               rows={4}
               placeholder="Apa yang kamu pelajari hari ini? Tulis dengan jujur — catatan ini untukmu sendiri."
+              spellCheck={false}
             />
           </div>
         )}
@@ -1000,7 +1055,7 @@ export function MejaKerja() {
             <button
               className="tombol tombol--senyap mk__cta-sekunder"
               onClick={cta.sekunder.aksi}
-              title={cta.sekunder.keterangan}
+              data-tip={cta.sekunder.keterangan}
             >
               {cta.sekunder.label}
             </button>
@@ -1179,6 +1234,17 @@ export function MejaKerja() {
             </button>
           </div>
         </div>
+      )}
+
+      {dialogArsip !== null && (
+        <DialogGame
+          judul={dialogArsip.judul}
+          pesan={dialogArsip.pesan}
+          labelYa={dialogArsip.labelYa}
+          bahaya={dialogArsip.bahaya}
+          onYa={dialogArsip.aksi}
+          onTutup={() => setDialogArsip(null)}
+        />
       )}
     </div>
   )

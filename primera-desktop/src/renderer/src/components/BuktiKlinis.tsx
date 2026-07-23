@@ -92,7 +92,7 @@ export function BuktiKlinis({
                       target="_blank"
                       rel="noreferrer"
                       aria-label={`${item.label}; buka di browser bawaan`}
-                      title="Buka di browser bawaan"
+                      data-tip="Buka di browser bawaan"
                     >
                       <span>{item.label}</span>
                       <span className="bukti-klinis__eksternal" aria-hidden="true">{`\u2197`}</span>

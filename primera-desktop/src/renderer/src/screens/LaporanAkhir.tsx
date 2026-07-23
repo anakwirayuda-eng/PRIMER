@@ -191,7 +191,7 @@ export function LaporanAkhir() {
                   <div
                     key={b.id}
                     className={`laporan__badge ${raih ? 'laporan__badge--raih' : ''}`}
-                    title={`${b.nama} — ${b.deskripsi}${raih ? '' : ' (belum diraih)'}`}
+                    data-tip={`${b.nama} — ${b.deskripsi}${raih ? '' : ' (belum diraih)'}`}
                   >
                     <span className="laporan__badge-ikon">{b.ikon}</span>
                     <span className="teks-xs">{b.nama}</span>
@@ -241,6 +241,8 @@ export function LaporanAkhir() {
                     onChange={(e) => setNim(e.target.value)}
                     placeholder="NIM (opsional)"
                     aria-label="NIM mahasiswa"
+                    spellCheck={false}
+                    autoComplete="off"
                   />
                 )}
                 <button className="tombol tombol--utama" onClick={() => void eksporDossier()}>

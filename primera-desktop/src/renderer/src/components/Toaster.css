@@ -14,18 +14,43 @@
   gap: var(--sp-2);
   z-index: var(--z-toast);
   max-width: min(380px, 30vw);
-  /* Toast murni informatif (tak pernah py onClick) — pointer-events:none
-     menjamin toast TAK PERNAH mencegat klik yg ditujukan utk elemen di
-     baliknya, apa pun itu (jaring pengaman kedua di samping relokasi). */
+  /* Wrapper tetap pointer-events:none — area kosong di antara toast TAK
+     PERNAH mencegat klik konten di baliknya. Toast-nya sendiri kini interaktif
+     (audit premium 2026-07-23: klik=tutup, hover=pause) — zona atas-kanan
+     memang dipilih (M10 §49) karena jauh dari tombol aksi. */
   pointer-events: none;
 }
 
 .toast {
-  padding: var(--sp-3) var(--sp-4);
+  position: relative;
+  padding: var(--sp-3) calc(var(--sp-4) + 1.1em) var(--sp-3) var(--sp-4);
   font-size: var(--text-sm);
   font-weight: 600;
   border-left: 4px solid var(--tinta-biru);
   animation: toast-masuk var(--durasi-normal) var(--ease-pantul) both;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.toast:hover {
+  box-shadow: var(--shadow-angkat);
+}
+
+/* ✕ tutup — muncul saat hover saja (affordance klik-untuk-menutup tanpa
+   mengotori toast yang sedang lewat); aria-hidden, SR tak membacakannya. */
+.toast__tutup {
+  position: absolute;
+  top: var(--sp-2);
+  right: var(--sp-2);
+  font-size: var(--text-xs);
+  line-height: 1;
+  color: var(--tinta-pudar);
+  opacity: 0;
+  transition: opacity var(--durasi-cepat) var(--ease-keluar);
+}
+
+.toast:hover .toast__tutup {
+  opacity: 1;
 }
 
 .toast--sukses { border-left-color: var(--daun-700); }

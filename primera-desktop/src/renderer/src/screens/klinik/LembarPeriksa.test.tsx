@@ -22,7 +22,8 @@ describe('<LembarPeriksa /> — aria-label tombol coret resep bernama (#15)', ()
 
     const tombol = screen.getByRole('button', { name: `Coret ${contohObat.nama} dari resep` })
     expect(tombol).toBeInTheDocument()
-    expect(tombol).toHaveAttribute('title', `Coret ${contohObat.nama} dari resep`)
+    // Audit premium 2026-07-23: tooltip kini data-tip (tooltip instan global).
+    expect(tombol).toHaveAttribute('data-tip', `Coret ${contohObat.nama} dari resep`)
   })
 })
 

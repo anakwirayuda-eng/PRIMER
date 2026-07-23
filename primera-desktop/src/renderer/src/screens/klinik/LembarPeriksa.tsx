@@ -108,7 +108,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             {p.bonusTrust && (
               <span
                 className="chip chip--daun"
-                title="Dari keluarga yang kamu bina — riwayatnya sudah kamu kenal dari kunjungan rumah."
+                data-tip="Dari keluarga yang kamu bina — riwayatnya sudah kamu kenal dari kunjungan rumah."
               >
                 Keluarga binaanmu
               </span>
@@ -117,7 +117,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
               <span
                 className="chip chip--kunyit"
-                title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+                data-tip="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
               >
                 Prototipe lab
               </span>
@@ -292,7 +292,7 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                 <button
                   className="tombol tombol--senyap klinik-lembar__coret"
                   onClick={() => dispatch({ type: 'HAPUS_OBAT', obatId: id })}
-                  title={`Coret ${o?.nama ?? id} dari resep`}
+                  data-tip={`Coret ${o?.nama ?? id} dari resep`}
                   // CODEX audit UI/UX 2026-07-10 (#15): tombol ini dulu HANYA
                   // berisi simbol "✕" dgn title statis "Coret dari resep" —
                   // nama obat tak disebut sama sekali (bahkan di title), jadi

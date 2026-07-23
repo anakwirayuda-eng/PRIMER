@@ -89,7 +89,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
                   {p.bonusTrust && (
                     <span
                       className="chip chip--daun"
-                      title="Dari keluarga yang kamu bina — mereka lebih terbuka padamu."
+                      data-tip="Dari keluarga yang kamu bina — mereka lebih terbuka padamu."
                     >
                       Keluarga binaanmu
                     </span>
@@ -106,7 +106,8 @@ export function RuangTunggu({ state, dispatch }: Props) {
             className="tombol tombol--utama tombol--besar klinik-tunggu__panggil"
             onClick={() => dispatch({ type: 'PANGGIL_PASIEN' })}
             disabled={!bolehPanggil}
-            title={alasanPanggil}
+            title={bolehPanggil ? undefined : alasanPanggil}
+            data-tip={alasanPanggil}
           >
             Panggil Pasien Berikutnya
             {berikutnya !== undefined ? ` — ${berikutnya.nama}` : ''}
@@ -135,7 +136,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
             <button
               className="tombol tombol--utama tombol--besar"
               onClick={() => dispatch({ type: 'LANJUTKAN' })}
-              title="Lanjutkan ke blok siang."
+              data-tip="Lanjutkan ke blok siang."
             >
               Tutup Poli &mdash; Lanjut ke Siang &rarr;
             </button>

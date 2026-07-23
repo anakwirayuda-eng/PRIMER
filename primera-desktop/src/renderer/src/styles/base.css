@@ -97,7 +97,9 @@ button {
 }
 
 .kartu--klik:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.99);
+  box-shadow: var(--shadow-kertas);
+  transition-duration: 40ms;
 }
 
 /* -- Folder manila (map arsip) ---------------------------------------------- */
@@ -182,7 +184,15 @@ button {
 }
 
 .tombol:hover { border-color: var(--border-tinta); transform: translateY(-1px); }
-.tombol:active { transform: translateY(0); }
+/* Rasa "tekan" fisik (audit premium 2026-07-23): turun 1px + bayangan hilang
+   — dulu :active cuma balik ke 0 dari hover -1px, jadi klik tanpa hover
+   (keyboard/klik cepat) tak terasa apa-apa. Durasi dipercepat supaya respons
+   pencet terasa seketika, bukan mengambang. */
+.tombol:active:not(:disabled):not([aria-disabled='true']) {
+  transform: translateY(1px);
+  box-shadow: none;
+  transition-duration: 40ms;
+}
 .tombol:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
 /* CODEX M14 #19: tombol yang di-gate lewat aria-disabled (bukan disabled native
    — mis. KartuKeluarga, agar tetap focusable/terbaca screen reader) dulu TAMPAK

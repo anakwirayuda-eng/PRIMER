@@ -90,7 +90,7 @@ export function Igd() {
               {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
                 <span
                   className="chip chip--kunyit"
-                  title="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+                  data-tip="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
                 >
                   Prototipe lab
                 </span>

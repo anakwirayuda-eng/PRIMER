@@ -128,7 +128,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                   Dari sinyal komunitas sampai keputusan klinis, umpan balik, dan verifikasi hasil.
                 </p>
               </div>
-              <button className="tombol tombol--senyap mk__jejak-tutup" onClick={() => setBuka(false)} aria-label="Tutup Jejak Perawatan" title="Tutup">
+              <button className="tombol tombol--senyap mk__jejak-tutup" onClick={() => setBuka(false)} aria-label="Tutup Jejak Perawatan" data-tip="Tutup">
                 &times;
               </button>
             </header>
@@ -216,7 +216,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                       aria-valuenow={progress}
                     >
                       {TAHAP_EPISODE.map((label, index) => (
-                        <span key={label} className={index < progress ? 'mk__episode-progres--isi' : ''} title={label}>
+                        <span key={label} className={index < progress ? 'mk__episode-progres--isi' : ''} data-tip={label}>
                           <i aria-hidden="true" />
                           <small>{label}</small>
                         </span>
@@ -262,7 +262,8 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                       <button
                         className="tombol mk__episode-keluarga"
                         disabled={!petaTerbuka}
-                        title={petaTerbuka ? 'Buka keluarga terkait di Peta Desa' : 'Peta Desa belum terbuka'}
+                        title={petaTerbuka ? undefined : 'Peta Desa belum terbuka'}
+                        data-tip="Buka keluarga terkait di Peta Desa"
                         onClick={() => {
                           setBuka(false)
                           onBukaKeluarga(episode.familyId!)

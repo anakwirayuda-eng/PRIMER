@@ -54,7 +54,7 @@ function KartuDimensi({
         <span className="judul-seksi">{judul}</span>
         <span className="rapor-dimensi__nilai mono">
           {belumDinilai ? (
-            <span className="teks-lembut" title="Belum ada aktivitas yang bisa dinilai">
+            <span className="teks-lembut" data-tip="Belum ada aktivitas yang bisa dinilai">
               —<span className="rapor-dimensi__maks">/{maks}</span>
             </span>
           ) : (
@@ -322,7 +322,7 @@ export function Rapor() {
                                   ? `Hari ${hariKe} — sudah lewat`
                                   : `Hari ${hariKe} — mendatang`
                             }
-                            title={hariKe === state.hari ? `Hari ${hariKe} — hari ini` : `Hari ${hariKe}`}
+                            data-tip={hariKe === state.hari ? `Hari ${hariKe} — hari ini` : `Hari ${hariKe}`}
                           />
                         )
                       })}

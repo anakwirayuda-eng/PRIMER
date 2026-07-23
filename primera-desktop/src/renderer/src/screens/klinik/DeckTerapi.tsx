@@ -33,6 +33,7 @@ import {
   type KelompokTindakan,
 } from './util'
 import { OBAT_PERTAMA_TUTORIAL } from './tutorialKlinik'
+import { muatLaci, simpanLaci } from '../../utils/laciPersist'
 
 interface Props {
   enc: EncounterState
@@ -43,12 +44,13 @@ interface Props {
   tutorialAktif?: boolean
 }
 
-/** Status buka/tutup laci diingat selama SESI app (bukan state save). */
-const laciSesi = new Set<KategoriEdukasi>()
+/** Status buka/tutup laci — audit premium 2026-07-23: dipersist ke
+ * localStorage lintas sesi (dulu Set level-modul, hilang tiap restart). */
+const laciSesi = muatLaci<KategoriEdukasi>('primer-laci-edukasi')
 /** Laci tindakan — pola sama, ruang nama terpisah dari laci edukasi. */
-const laciTindakanSesi = new Set<KelompokTindakan>()
+const laciTindakanSesi = muatLaci<KelompokTindakan>('primer-laci-tindakan')
 /** Laci formularium — pola sama (playtest 2026-07-16: dinding 130 obat). */
-const laciObatSesi = new Set<KelompokObat>()
+const laciObatSesi = muatLaci<KelompokObat>('primer-laci-obat')
 
 export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif = false }: Props) {
   const [tab, setTab] = useState<'resep' | 'edukasi' | 'tindakan'>('resep')
@@ -105,6 +107,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   const toggleLaciObat = (kel: KelompokObat) => {
     if (laciObatSesi.has(kel)) laciObatSesi.delete(kel)
     else laciObatSesi.add(kel)
+    simpanLaci('primer-laci-obat', laciObatSesi)
     setLaciTick((n) => n + 1)
   }
   // Tutorial: laci berisi obat target dipaksa terbuka (kepala laci ikut
@@ -144,6 +147,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   const toggleLaciTindakan = (kel: KelompokTindakan) => {
     if (laciTindakanSesi.has(kel)) laciTindakanSesi.delete(kel)
     else laciTindakanSesi.add(kel)
+    simpanLaci('primer-laci-tindakan', laciTindakanSesi)
     setLaciTick((n) => n + 1)
   }
 
@@ -163,6 +167,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   const toggleLaci = (kat: KategoriEdukasi) => {
     if (laciSesi.has(kat)) laciSesi.delete(kat)
     else laciSesi.add(kat)
+    simpanLaci('primer-laci-edukasi', laciSesi)
     setLaciTick((n) => n + 1)
   }
 
@@ -260,7 +265,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                       aria-pressed
                       onClick={() => dispatch({ type: 'HAPUS_OBAT', obatId: id })}
                       disabled={tutorialAktif}
-                      title="Klik untuk mencoret dari resep."
+                      data-tip="Klik untuk mencoret dari resep."
                     >
                       ✓ {o.nama}
                     </button>
@@ -269,15 +274,39 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
               </div>
             )}
 
-            <input
-              ref={cariRef}
-              className="klinik-cari"
-              type="text"
-              value={cari}
-              onChange={(e) => setCari(e.target.value)}
-              placeholder="Cari obat atau kelas terapi&hellip;"
-              aria-label="Cari obat"
-            />
+            <div className="klinik-cari-box">
+              <input
+                ref={cariRef}
+                className="klinik-cari"
+                type="text"
+                value={cari}
+                onChange={(e) => setCari(e.target.value)}
+                onKeyDown={(e) => {
+                  // Esc dua-tahap (audit premium 2026-07-23, pola DexSkdi):
+                  // bersihkan dulu, Esc kedua melepas fokus.
+                  if (e.key !== 'Escape') return
+                  if (cari !== '') setCari('')
+                  else e.currentTarget.blur()
+                }}
+                placeholder="Cari obat atau kelas terapi&hellip;"
+                aria-label="Cari obat"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {cari !== '' && (
+                <button
+                  type="button"
+                  className="klinik-cari__hapus"
+                  aria-label="Bersihkan pencarian obat"
+                  onClick={() => {
+                    setCari('')
+                    cariRef.current?.focus()
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
             {/* Laci golongan — default tertutup; mencari = laci relevan terbuka.
                 Playtest 2026-07-16: dinding 130 "+ Resep" → pola Hukum Hick yang
@@ -359,13 +388,18 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                                 cariRef.current?.focus()
                               }}
                               disabled={diresepkan || habis || dikunci}
+                              // Pola dual (audit premium 2026-07-23): title
+                              // hanya utk keadaan disabled (mouse event
+                              // tersuppress → tooltip instan tak jangkau);
+                              // saat aktif, data-tip instan yang tampil.
                               title={
                                 diresepkan
                                   ? 'Sudah ada di resep.'
                                   : habis
                                     ? 'Stok habis — pesan lewat Gudang Obat (Meja Kerja) atau pilih alternatif.'
-                                    : `Tambahkan ${o.nama} ke resep.`
+                                    : undefined
                               }
+                              data-tip={`Tambahkan ${o.nama} ke resep.`}
                               // CODEX audit UI/UX 2026-07-10 (#15): sama seperti tombol
                               // Pesan lab — accessible name tombol ini sama di SETIAP
                               // baris obat ("+ Resep"/"✓"/"✕"), nama obat cuma di title.
@@ -417,7 +451,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                             dispatch({ type: 'HAPUS_EDUKASI', edukasiId: topik.id })
                             cariEdukRef.current?.focus({ preventScroll: true })
                           }}
-                          title="Coret dari resep edukasi."
+                          data-tip="Coret dari resep edukasi."
                           aria-label={`Hapus ${topik.nama}`}
                         >
                           ✕
@@ -433,15 +467,37 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
               })}
             </div>
 
-            <input
-              ref={cariEdukRef}
-              className="klinik-cari"
-              type="text"
-              value={cariEduk}
-              onChange={(e) => setCariEduk(e.target.value)}
-              placeholder="Cari edukasi&hellip; (cth: inhaler, oralit, garam)"
-              aria-label="Cari topik edukasi"
-            />
+            <div className="klinik-cari-box">
+              <input
+                ref={cariEdukRef}
+                className="klinik-cari"
+                type="text"
+                value={cariEduk}
+                onChange={(e) => setCariEduk(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== 'Escape') return
+                  if (cariEduk !== '') setCariEduk('')
+                  else e.currentTarget.blur()
+                }}
+                placeholder="Cari edukasi&hellip; (cth: inhaler, oralit, garam)"
+                aria-label="Cari topik edukasi"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {cariEduk !== '' && (
+                <button
+                  type="button"
+                  className="klinik-cari__hapus"
+                  aria-label="Bersihkan pencarian edukasi"
+                  onClick={() => {
+                    setCariEduk('')
+                    cariEdukRef.current?.focus()
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
             {/* Laci kategori — default tertutup; mencari = laci relevan terbuka. */}
             {URUTAN_KATEGORI_EDUKASI.map((kat) => {
@@ -490,12 +546,11 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                               cariEdukRef.current?.focus({ preventScroll: true })
                             }}
                             title={
-                              dipilih
-                                ? 'Klik untuk membatalkan.'
-                                : terkunci
-                                  ? `Baki penuh (${KAPASITAS_EDUKASI}) — coret salah satu dulu.`
-                                  : `Sampaikan edukasi: ${t.nama}`
+                              terkunci
+                                ? `Baki penuh (${KAPASITAS_EDUKASI}) — coret salah satu dulu.`
+                                : undefined
                             }
+                            data-tip={dipilih ? 'Klik untuk membatalkan.' : `Sampaikan edukasi: ${t.nama}`}
                           >
                             {dipilih ? '✓ ' : ''}
                             {t.nama}
@@ -540,7 +595,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                         dispatch({ type: 'HAPUS_TINDAKAN', tindakanId: id })
                         cariTindakanRef.current?.focus({ preventScroll: true })
                       }}
-                      title="Klik untuk membatalkan tindakan."
+                      data-tip="Klik untuk membatalkan tindakan."
                     >
                       ✓ {t.nama}
                     </button>
@@ -549,15 +604,37 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
               </div>
             )}
 
-            <input
-              ref={cariTindakanRef}
-              className="klinik-cari"
-              type="text"
-              value={cariTindakan}
-              onChange={(e) => setCariTindakan(e.target.value)}
-              placeholder="Cari tindakan&hellip; (cth: nebulisasi, jahit, tampon)"
-              aria-label="Cari tindakan klinis"
-            />
+            <div className="klinik-cari-box">
+              <input
+                ref={cariTindakanRef}
+                className="klinik-cari"
+                type="text"
+                value={cariTindakan}
+                onChange={(e) => setCariTindakan(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key !== 'Escape') return
+                  if (cariTindakan !== '') setCariTindakan('')
+                  else e.currentTarget.blur()
+                }}
+                placeholder="Cari tindakan&hellip; (cth: nebulisasi, jahit, tampon)"
+                aria-label="Cari tindakan klinis"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {cariTindakan !== '' && (
+                <button
+                  type="button"
+                  className="klinik-cari__hapus"
+                  aria-label="Bersihkan pencarian tindakan"
+                  onClick={() => {
+                    setCariTindakan('')
+                    cariTindakanRef.current?.focus()
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
 
             {/* Laci kelompok — default tertutup; mencari = laci relevan terbuka. */}
             {URUTAN_KELOMPOK_TINDAKAN.map((kel) => {
@@ -604,7 +681,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                               )
                               cariTindakanRef.current?.focus({ preventScroll: true })
                             }}
-                            title={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
+                            data-tip={dipilih ? 'Klik untuk membatalkan tindakan.' : `Lakukan tindakan: ${t.nama}`}
                           >
                             {dipilih ? '✓ ' : ''}
                             {t.nama}

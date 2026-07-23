@@ -137,7 +137,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             {kasus?.activationStatus === 'lab_prototype_unadjudicated' && (
               <span
                 className="chip chip--kunyit"
-                title="Konten pengembangan ini belum melewati adjudikasi klinis final."
+                data-tip="Konten pengembangan ini belum melewati adjudikasi klinis final."
               >
                 Prototipe lab — belum teradjudikasi
               </span>

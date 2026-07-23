@@ -51,7 +51,7 @@ function judulChipIndikator(nilai: NilaiIndikator, penuh: string): string {
 function HatiTrust({ trust }: { trust: number }) {
   const isi = Math.round(trust / 2)
   return (
-    <span className="peta-hati" title={`Kepercayaan keluarga ${trust}/10 — naik dari kualitas percakapanmu, bukan frekuensi kunjungan.`}>
+    <span className="peta-hati" data-tip={`Kepercayaan keluarga ${trust}/10 — naik dari kualitas percakapanmu, bukan frekuensi kunjungan.`}>
       {Array.from({ length: 5 }, (_, i) => (
         <span key={i} className={i < isi ? 'peta-hati__isi' : 'peta-hati__kosong'}>
           ♥
@@ -108,7 +108,7 @@ export function KartuKeluarga({
           {karmaTampak && (
             <span
               className="chip chip--merah peta-chip-karma"
-              title="Kader mendengar kondisinya memburuk — prioritaskan kunjungan ke keluarga ini."
+              data-tip="Kader mendengar kondisinya memburuk — prioritaskan kunjungan ke keluarga ini."
             >
               PERLU PERHATIAN
             </span>
@@ -128,14 +128,14 @@ export function KartuKeluarga({
 
       <div className="peta-keluarga__iks">
         <span className="teks-xs mono teks-lembut">IKS</span>
-        <div className="meter tumbuh" title="Indeks Keluarga Sehat — dihitung HANYA dari indikator yang sudah punya data.">
+        <div className="meter tumbuh" data-tip="Indeks Keluarga Sehat — dihitung HANYA dari indikator yang sudah punya data.">
           <div
             className={`meter__isi ${klasifikasi?.meter ?? ''}`}
             style={{ width: iks === null ? '0%' : `${Math.round(iks * 100)}%` }}
           />
         </div>
         {iks === null ? (
-          <span className="chip" title="Belum ada satu pun indikator ber-data — angka yang belum diperoleh tidak ada.">
+          <span className="chip" data-tip="Belum ada satu pun indikator ber-data — angka yang belum diperoleh tidak ada.">
             ? belum ada data
           </span>
         ) : (
@@ -150,7 +150,7 @@ export function KartuKeluarga({
              layar — desimal koma 0,00 (skala kanonik Permenkes 0-1). */
           <span
             className={`chip ${dataIksLengkap ? (klasifikasi?.chip ?? '') : ''}`}
-            title={
+            data-tip={
               dataIksLengkap
                 ? `IKS dari seluruh ${indikatorRelevan.length} indikator relevan yang sudah ber-data.`
                 : `Klasifikasi masih SEMENTARA: dihitung dari ${indikatorTerdata} dari ${indikatorRelevan.length} indikator relevan. Warna & label bisa berubah saat sisanya terverifikasi.`
@@ -164,7 +164,7 @@ export function KartuKeluarga({
         {iks !== null && !dataIksLengkap && (
           <span
             className="chip"
-            title={`IKS dihitung baru dari ${indikatorTerdata} dari ${indikatorRelevan.length} indikator relevan yang sudah ber-data — angkanya bisa bergeser saat sisanya terverifikasi.`}
+            data-tip={`IKS dihitung baru dari ${indikatorTerdata} dari ${indikatorRelevan.length} indikator relevan yang sudah ber-data — angkanya bisa bergeser saat sisanya terverifikasi.`}
           >
             data {indikatorTerdata}/{indikatorRelevan.length}
           </span>
@@ -178,7 +178,7 @@ export function KartuKeluarga({
           if (nilai.status === 'na') return null // tidak berlaku secara demografis
           const label = LABEL_INDIKATOR[ind]
           return (
-            <span key={ind} className={kelasChipIndikator(nilai)} title={judulChipIndikator(nilai, label.penuh)}>
+            <span key={ind} className={kelasChipIndikator(nilai)} data-tip={judulChipIndikator(nilai, label.penuh)}>
               {SIMBOL_SUMBER[nilai.sumber]} {label.singkat}
             </span>
           )
@@ -187,7 +187,7 @@ export function KartuKeluarga({
 
       <div className="baris baris--antara peta-keluarga__aksi">
         <div className="baris">
-          <span className="chip" title="Progres kunjungan berseri (arc) keluarga ini.">
+          <span className="chip" data-tip="Progres kunjungan berseri (arc) keluarga ini.">
             Kunjungan {Math.min(kel.arcIndex, totalKunjunganArc)}/{totalKunjunganArc}
           </span>
           {kel.arcSelesai === 'berhasil' && <span className="chip chip--daun">ARC BERHASIL</span>}
@@ -204,7 +204,7 @@ export function KartuKeluarga({
             <button
               className="tombol tombol--senyap"
               onClick={onLepas}
-              title="Keluarkan dari roster binaan."
+              data-tip="Keluarkan dari roster binaan."
               aria-label={`Lepas ${content.namaKeluarga} dari roster binaan`}
             >
               Lepas
@@ -219,7 +219,7 @@ export function KartuKeluarga({
                 if (!rosterPenuh) onBinaan()
               }}
               aria-disabled={rosterPenuh}
-              title={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
+              data-tip={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
               aria-label={`Jadikan ${content.namaKeluarga} binaan`}
             >
               Jadikan Binaan
@@ -231,7 +231,7 @@ export function KartuKeluarga({
               if (alasanKunjungan === null) onKunjungi()
             }}
             aria-disabled={alasanKunjungan !== null}
-            title={alasanKunjungan ?? `Berangkat kunjungan rumah — memakai ${biayaStamina} stamina.`}
+            data-tip={alasanKunjungan ?? `Berangkat kunjungan rumah — memakai ${biayaStamina} stamina.`}
             aria-label={`Kunjungi ${content.namaKeluarga}`}
           >
             Kunjungi (siang · {biayaStamina} pip)

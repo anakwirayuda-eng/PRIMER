@@ -193,11 +193,8 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
               // eksplisit. Gerbang literal supaya benar walau kasus tutorial
               // berubah nanti (bukan asumsi implisit yang rapuh).
               disabled={!punyaDiagnosis || (tutorialAktif && kasus.harusDirujuk)}
-              title={
-                punyaDiagnosis
-                  ? 'Pulangkan pasien dengan resep & edukasi.'
-                  : alasanTanpaDiagnosis
-              }
+              title={punyaDiagnosis ? undefined : alasanTanpaDiagnosis}
+              data-tip="Pulangkan pasien dengan resep & edukasi."
             >
               PULANGKAN
             </button>
@@ -209,9 +206,10 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                 tutorialAktif
                   ? 'Kasus latihan ini cukup dipulangkan.'
                   : punyaDiagnosis
-                    ? 'Observasi di Puskesmas dulu sebelum pulang.'
+                    ? undefined
                     : alasanTanpaDiagnosis
               }
+              data-tip="Observasi di Puskesmas dulu sebelum pulang."
             >
               OBSERVASI
             </button>
@@ -223,9 +221,10 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                 tutorialAktif
                   ? 'Kasus latihan ini tidak perlu dirujuk.'
                   : punyaDiagnosis
-                    ? 'Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS).'
+                    ? undefined
                     : alasanTanpaDiagnosis
               }
+              data-tip="Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS)."
             >
               RUJUK &rarr;
             </button>
@@ -288,6 +287,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                   onChange={(e) => setSbar({ ...sbar, [kunci]: e.target.value })}
                   placeholder={placeholder}
                   rows={3}
+                  spellCheck={false}
                 />
               </label>
             ))}
@@ -401,8 +401,9 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                   ? `Isi keempat kolom SBAR dengan cukup detail dulu (minimal ${AMBANG_SBAR_ISI} karakter/kolom).`
                   : rsTerpilih === undefined
                     ? 'Pilih satu RS tujuan.'
-                    : 'Kirim rujukan ke RS terpilih melalui SISRUTE.'
+                    : undefined
               }
+              data-tip="Kirim rujukan ke RS terpilih melalui SISRUTE."
             >
               Kirim Rujukan (SISRUTE)
             </button>

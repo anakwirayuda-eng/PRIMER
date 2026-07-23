@@ -611,6 +611,36 @@
   box-shadow: var(--ring-pilih);
 }
 
+/* Kotak cari + tombol hapus ✕ (audit premium 2026-07-23, pola DexSkdi). */
+.klinik-cari-box {
+  position: relative;
+}
+
+.klinik-cari-box .klinik-cari {
+  padding-right: calc(var(--sp-3) + 1.8em);
+}
+
+.klinik-cari__hapus {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-2);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  line-height: 1;
+  color: var(--tinta-lembut);
+}
+
+.klinik-cari__hapus:hover {
+  background: var(--bg-sunken);
+  color: var(--tinta);
+}
+
 .klinik-obat {
   display: flex;
   flex-direction: column;

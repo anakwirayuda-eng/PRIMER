@@ -162,7 +162,7 @@ export function Kegiatan() {
               <button
                 className="tombol tombol--senyap kegiatan__delegasi"
                 onClick={() => dispatch({ type: 'DELEGASI_KEGIATAN' })}
-                title="Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar 20% keputusan bisa keliru."
+                data-tip="Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar 20% keputusan bisa keliru."
               >
                 Delegasikan sisa meja ke kader (risiko ~20% keliru)
               </button>

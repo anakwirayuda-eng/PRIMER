@@ -70,7 +70,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
                 // seragam "Pilih sebagai diagnosis kerja" (dari title) — SR
                 // tak bisa membedakan opsi diagnosis satu dari lainnya.
                 aria-label={`${namaDiagnosis(kode, kasus)} (${kode})`}
-                title="Pilih sebagai diagnosis kerja"
+                data-tip="Pilih sebagai diagnosis kerja"
               >
                 <span className="klinik-banding__radio" aria-hidden="true" />
                 <span className="tumbuh">
@@ -120,7 +120,8 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
             if (pilihan !== null) dispatch({ type: 'KOMIT_DIAGNOSIS', icd10: pilihan, jenis })
           }}
           disabled={pilihan === null}
-          title={pilihan === null ? 'Pilih satu diagnosis banding dulu.' : 'Stempelkan diagnosis di lembar.'}
+          title={pilihan === null ? 'Pilih satu diagnosis banding dulu.' : undefined}
+          data-tip="Stempelkan diagnosis di lembar."
         >
           Stempelkan Diagnosis
         </button>

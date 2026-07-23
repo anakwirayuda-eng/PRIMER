@@ -111,6 +111,71 @@
   border: 0;
 }
 
+/* Keycap hotkey 1-5 (audit premium 2026-07-23) — hint persisten ala HUD game
+   komersial; subtle agar tak berebut perhatian dgn label. aria-hidden: SR
+   pakai aria-keyshortcuts. Disembunyikan saat teks-besar (ruang reflow). */
+.hud__kbd {
+  font-family: var(--font-mono);
+  font-size: 0.62em;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2em 0.42em;
+  margin-right: var(--sp-1);
+  border: 1px solid var(--border-tegas);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--tinta-pudar);
+  background: var(--bg-card);
+  opacity: 0.75;
+  transform: translateY(-1px);
+}
+
+.hud__tab--aktif .hud__kbd {
+  color: var(--daun-800);
+  border-color: var(--daun-700);
+  opacity: 0.9;
+}
+
+.hud__tab[aria-disabled='true'] .hud__kbd {
+  opacity: 0.5;
+}
+
+.app-frame--teks-besar .hud__kbd {
+  display: none;
+}
+
+/* Tooltip instan HUD (audit premium 2026-07-23) — pengganti `title` native
+   yang delay ~1 dtk & tak muncul utk fokus keyboard. position:fixed: dirender
+   di koordinat viewport dari getBoundingClientRect, jadi TIDAK terpotong
+   .hud yang overflow-x:auto. pointer-events:none = tak pernah menelan klik. */
+.hud__tip {
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: var(--z-modal);
+  max-width: 320px;
+  padding: var(--sp-2) var(--sp-3);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  line-height: var(--baris-rapat);
+  color: var(--kertas-050);
+  background: var(--malam-800);
+  border: 1px solid var(--border-tinta);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-kartu);
+  pointer-events: none;
+  animation: hud-tip-masuk var(--durasi-cepat) var(--ease-keluar) both;
+}
+
+[data-mode='malam'] .hud__tip {
+  color: var(--malam-900);
+  background: var(--kertas-100);
+}
+
+@keyframes hud-tip-masuk {
+  from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
 .hud__badge {
   position: absolute;
   top: 0;

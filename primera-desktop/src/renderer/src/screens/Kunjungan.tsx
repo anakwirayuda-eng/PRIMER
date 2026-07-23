@@ -314,7 +314,7 @@ export function Kunjungan() {
                 i === babakIndex ? 'kunjungan-stepper__langkah--aktif' : ''
               } ${i < babakIndex || kj.fase === 'selesai' ? 'kunjungan-stepper__langkah--lewat' : ''}`}
               aria-current={i === babakIndex ? 'step' : undefined}
-              title={`Metode SAJI (Permenkes 39/2016): ${b.sajiLabel}`}
+              data-tip={`Metode SAJI (Permenkes 39/2016): ${b.sajiLabel}`}
             >
               <span className="kunjungan-stepper__angka mono">{i + 1}</span>
               <span className="kunjungan-stepper__label">{b.label}</span>
@@ -347,7 +347,8 @@ export function Kunjungan() {
                   onFocus={() => setHotspotSorot(h.id)}
                   onBlur={() => setHotspotSorot(null)}
                   disabled={ketemu || kj.fase !== 'observasi'}
-                  title={ketemu ? h.label : 'Ada yang menarik perhatianmu di sini'}
+                  title={ketemu ? h.label : undefined}
+                  data-tip="Ada yang menarik perhatianmu di sini"
                   // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
                   // belum ditemukan berbagi aria-label literal identik — keyboard/
                   // screen-reader tak bisa membedakan 5 titik sama sekali (padahal
@@ -603,7 +604,8 @@ export function Kunjungan() {
               <button
                 className="tombol tombol--utama tombol--besar"
                 disabled={!intervensiPilihan}
-                title={intervensiPilihan ? 'Tutup kunjungan dengan resep sosial ini.' : 'Pilih satu kartu intervensi dulu.'}
+                title={intervensiPilihan ? undefined : 'Pilih satu kartu intervensi dulu.'}
+                data-tip="Tutup kunjungan dengan resep sosial ini."
                 onClick={tulisResep}
               >
                 Tulis Resep Sosial ✎

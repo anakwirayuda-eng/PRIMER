@@ -4,7 +4,7 @@
  * "Peta Desa🔒") dan tab yang disabled saat sesi berjalan bisu tanpa alasan.
  */
 import { describe, expect, it, beforeEach } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { PACK } from '@content/index'
 import { buildInitialState } from '@engine/init'
 import { buatEncounter } from '@engine/clinic'
@@ -30,7 +30,12 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
     expect(peta).toHaveAttribute('aria-disabled', 'true')
     expect(peta).not.toBeDisabled()
     expect(peta).toHaveAccessibleDescription('Terbuka besok')
-    expect(peta).toHaveAttribute('title', 'Terbuka besok')
+    // Audit premium 2026-07-23: `title` native (delay ~1 dtk, tak muncul utk
+    // keyboard) diganti tooltip instan .hud__tip — tampil saat hover DAN fokus.
+    fireEvent.focus(peta)
+    expect(document.querySelector('.hud__tip')).toHaveTextContent('Terbuka besok')
+    fireEvent.blur(peta)
+    expect(document.querySelector('.hud__tip')).toBeNull()
   })
 
   it('saat encounter klinik aktif, tab lain disabled DENGAN tooltip alasan', () => {
@@ -49,6 +54,12 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
     expect(meja).toHaveAccessibleDescription('Sedang memeriksa pasien — selesaikan dulu konsultasinya.')
     meja.click()
     expect(useGame.getState().state?.layar).toBe('klinik')
-    expect(meja).toHaveAttribute('title', 'Sedang memeriksa pasien — selesaikan dulu konsultasinya.')
+    // Tooltip instan tampil saat pointer masuk (pengganti `title` native).
+    fireEvent.mouseEnter(meja)
+    expect(document.querySelector('.hud__tip')).toHaveTextContent(
+      'Sedang memeriksa pasien — selesaikan dulu konsultasinya.',
+    )
+    fireEvent.mouseLeave(meja)
+    expect(document.querySelector('.hud__tip')).toBeNull()
   })
 })

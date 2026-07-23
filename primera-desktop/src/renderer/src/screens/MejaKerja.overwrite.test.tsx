@@ -2,6 +2,8 @@
  * TEST KOMPONEN — konfirmasi sebelum menimpa slot arsip manual (CODEX audit
  * UI/UX 2026-07-10, #3). Sebelum fix: tombol slot langsung `simpanKeSlot`
  * tanpa jeda apa pun — title tooltip saja tak mencegah klik menimpa arsip lama.
+ * Audit premium 2026-07-23: window.confirm diganti DialogGame in-game —
+ * kontrak sama, medianya dialog kertas dgn tombol Batal/Timpa Slot eksplisit.
  */
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
@@ -69,14 +71,20 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
       arsip: null,
       sedangMemuat: false,
     })
-    vi.spyOn(window, 'confirm').mockReturnValue(false)
     render(<MejaKerja />)
     const user = userEvent.setup()
 
-    const tombolSlot = screen.getByTitle(/Timpa slot1/)
+    // Audit premium 2026-07-23: tooltip slot kini data-tip (tooltip instan
+    // global), bukan title native — cari via nama tombol + assert tip-nya.
+    const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
+    expect(tombolSlot).toHaveAttribute('data-tip', expect.stringContaining('Timpa slot1'))
     await user.click(tombolSlot)
 
-    expect(window.confirm).toHaveBeenCalled()
+    // Dialog in-game muncul; batalkan — write TIDAK boleh terjadi.
+    expect(screen.getByRole('dialog', { name: 'Timpa Slot 1?' })).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Batal' }))
+
+    expect(screen.queryByRole('dialog', { name: 'Timpa Slot 1?' })).not.toBeInTheDocument()
     expect(ditulis).toBe(false)
   })
 
@@ -95,14 +103,15 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
       arsip: null,
       sedangMemuat: false,
     })
-    vi.spyOn(window, 'confirm').mockReturnValue(true)
     render(<MejaKerja />)
     const user = userEvent.setup()
 
-    const tombolSlot = screen.getByTitle(/Timpa slot1/)
+    const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
     await user.click(tombolSlot)
 
-    expect(window.confirm).toHaveBeenCalled()
+    // Setujui lewat tombol aksi dialog — write terjadi.
+    await user.click(screen.getByRole('button', { name: 'Timpa Slot' }))
+
     expect(ditulis).toBe(true)
   })
 
@@ -115,14 +124,14 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     }
     const s = soreHariIni()
     useGame.setState({ state: s, slots: [], meta: null, arsip: null, sedangMemuat: false })
-    const confirmSpy = vi.spyOn(window, 'confirm')
     render(<MejaKerja />)
     const user = userEvent.setup()
 
-    const tombolSlot = screen.getByTitle(/Simpan ke slot1/)
+    const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
+    expect(tombolSlot).toHaveAttribute('data-tip', expect.stringContaining('Simpan ke slot1'))
     await user.click(tombolSlot)
 
-    expect(confirmSpy).not.toHaveBeenCalled()
+    expect(screen.queryByRole('dialog', { name: /Timpa/ })).not.toBeInTheDocument()
     expect(ditulis).toBe(true)
   })
 })

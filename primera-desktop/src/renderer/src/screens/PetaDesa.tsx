@@ -178,7 +178,7 @@ export function PetaDesa() {
             <span className="peta-legenda__swatch" style={{ background: 'var(--tinta-merah)' }} /> tidak sehat
           </span>
           <span className="peta-legenda__pisah" />
-          <span className="mono" title="Provenance data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
+          <span className="mono" data-tip="Provenance data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
             ✓ dokter · ~ kader · ? belum ada data · ⧗ dijanjikan warga — menunggu verifikasi hasil
           </span>
         </div>
@@ -203,7 +203,7 @@ export function PetaDesa() {
                     key={id}
                     className={`peta-roster-item ${rwTerpilih === content.rw ? 'peta-roster-item--aktif' : ''}`}
                     onClick={() => setRwTerpilih(content.rw)}
-                    title={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
+                    data-tip={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
                   >
                     {karmaTerlihat(kel, state.hari) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
@@ -254,7 +254,7 @@ export function PetaDesa() {
               {clusterRwAktif.length > 0 && (
                 <div className="baris teks-xs peta-detail__cluster">
                   {clusterRwAktif.map((c) => (
-                    <span key={c.kasusId} className="chip chip--merah" title="Kluster surveilans: beberapa kasus penyakit sama dari RW ini tercatat di poli dalam 14 hari — kunjungi wilayahnya.">
+                    <span key={c.kasusId} className="chip chip--merah" data-tip="Kluster surveilans: beberapa kasus penyakit sama dari RW ini tercatat di poli dalam 14 hari — kunjungi wilayahnya.">
                       ⚠ KLUSTER {(PACK.kasus[c.kasusId]?.nama ?? c.kasusId).toUpperCase()} — {c.jumlah} kasus/14 hr
                     </span>
                   ))}
@@ -268,7 +268,8 @@ export function PetaDesa() {
                 <button
                   className="tombol tombol--kunyit"
                   disabled={alasanKegiatanPosyandu(rwAktif.nomor) !== null}
-                  title={alasanKegiatanPosyandu(rwAktif.nomor) ?? 'Gelar Posyandu bulanan di RW ini (blok siang, 2 stamina).'}
+                  title={alasanKegiatanPosyandu(rwAktif.nomor) ?? undefined}
+                  data-tip="Gelar Posyandu bulanan di RW ini (blok siang, 2 stamina)."
                   onClick={() => dispatch({ type: 'MULAI_POSYANDU', rw: rwAktif.nomor })}
                 >
                   🍼 Gelar Posyandu
@@ -280,7 +281,8 @@ export function PetaDesa() {
                     key={c.kasusId}
                     className="tombol tombol--bahaya"
                     disabled={alasanKegiatanKlb() !== null}
-                    title={alasanKegiatanKlb() ?? 'Turun ke lapangan menyelidiki & mengendalikan kluster ini.'}
+                    title={alasanKegiatanKlb() ?? undefined}
+                    data-tip="Turun ke lapangan menyelidiki & mengendalikan kluster ini."
                     onClick={() => dispatch({ type: 'MULAI_KLB', rw: rwAktif.nomor, kasusId: c.kasusId })}
                   >
                     {/* Audit CODEX UKM 2026-07-16 #13: sinyal kluster BELUM tentu KLB —

@@ -6,12 +6,13 @@
  * sopan-klinis arsip Puskesmas.
  */
 
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import { normalisasiNamaObat } from './klinik/util'
 import { DuelDiagnosis } from './klinik/RefleksiKlinis'
 import { TeksTerbaca } from '../components/TeksTerbaca'
+import { sedangMengetik } from '../utils/navigasiHud'
 import './DexSkdi.css'
 
 // CODEX audit 2026-07-04: dulu memakai SKDI144 mentah (bukan PACK.skdi144),
@@ -51,6 +52,26 @@ export function DexSkdi() {
   // tuntaskan" — chip progres di header kini merangkap filter klik.
   const [filter, setFilter] = useState<FilterDex>('semua')
   const toggleFilter = (f: FilterDex) => setFilter((cur) => (cur === f ? 'semua' : f))
+
+  // Audit premium 2026-07-23: "/" atau Ctrl+F memfokuskan pencarian dari mana
+  // pun di layar ini (standar aplikasi katalog — 144 entri, pencarian adalah
+  // alat navigasi utama). Tak membajak ketikan: diabaikan bila fokus sedang
+  // di kontrol ketik lain.
+  const cariRef = useRef<HTMLInputElement>(null)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const keF = e.key.toLowerCase() === 'f' && e.ctrlKey && !e.altKey && !e.metaKey
+      const keGaris = e.key === '/' && !e.ctrlKey && !e.altKey && !e.metaKey
+      if (!keF && !keGaris) return
+      if (document.activeElement === cariRef.current) return
+      if (keGaris && sedangMengetik(document.activeElement)) return
+      e.preventDefault()
+      cariRef.current?.focus()
+      cariRef.current?.select()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   // Fix CODEX-25 #2/Q7 (jalur kritis DeepThink 2026-07-12): dulu HANYA satu
   // metrik "dikenali" = entri dex ADA = pernah di-encounter — mahasiswa yg
@@ -128,7 +149,7 @@ export function DexSkdi() {
               className={`chip mono dexskdi__filter${filter === 'belum' ? ' dexskdi__filter--aktif' : ''}`}
               aria-pressed={filter === 'belum'}
               onClick={() => toggleFilter('belum')}
-              title="Belum kamu jumpai — klik untuk menyaring hanya yang belum"
+              data-tip="Belum kamu jumpai — klik untuk menyaring hanya yang belum"
             >
               {jumlahBelum} belum
             </button>
@@ -137,7 +158,7 @@ export function DexSkdi() {
               className={`chip chip--kunyit mono dexskdi__filter${filter === 'dijumpai' ? ' dexskdi__filter--aktif' : ''}`}
               aria-pressed={filter === 'dijumpai'}
               onClick={() => toggleFilter('dijumpai')}
-              title="Pernah kamu temui di klinik (benar atau salah) — klik untuk menyaring"
+              data-tip="Pernah kamu temui di klinik (benar atau salah) — klik untuk menyaring"
             >
               {jumlahDijumpai} dijumpai
             </button>
@@ -146,7 +167,7 @@ export function DexSkdi() {
               className={`chip chip--daun mono dexskdi__filter${filter === 'tersertifikasi' ? ' dexskdi__filter--aktif' : ''}`}
               aria-pressed={filter === 'tersertifikasi'}
               onClick={() => toggleFilter('tersertifikasi')}
-              title="Diagnosis DAN disposisi benar minimal sekali — klik untuk menyaring"
+              data-tip="Diagnosis DAN disposisi benar minimal sekali — klik untuk menyaring"
             >
               {jumlahTersertifikasi}/{TOTAL_ENTRI} tersertifikasi
             </button>
@@ -155,7 +176,7 @@ export function DexSkdi() {
               className={`chip chip--biru mono dexskdi__filter${filter === 'dikuasai' ? ' dexskdi__filter--aktif' : ''}`}
               aria-pressed={filter === 'dikuasai'}
               onClick={() => toggleFilter('dikuasai')}
-              title="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih) — klik untuk menyaring"
+              data-tip="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih) — klik untuk menyaring"
             >
               {jumlahDikuasai} dikuasai ★
             </button>
@@ -178,14 +199,42 @@ export function DexSkdi() {
         {/* ---- Grid 144 kartu (panel yang scroll) --------------------------- */}
         <div className="dexskdi__grid-wrap">
           <div className="dexskdi__cari-wrap">
-            <input
-              type="text"
-              className="dexskdi__cari"
-              value={cari}
-              onChange={(e) => setCari(e.target.value)}
-              placeholder="Cari penyakit atau kode ICD-10…"
-              aria-label="Cari SKDI"
-            />
+            <div className="dexskdi__cari-box">
+              <input
+                ref={cariRef}
+                type="text"
+                className="dexskdi__cari"
+                value={cari}
+                onChange={(e) => setCari(e.target.value)}
+                onKeyDown={(e) => {
+                  // Esc: bersihkan dulu; Esc kedua melepas fokus — ergonomi
+                  // standar kolom pencarian (audit premium 2026-07-23).
+                  if (e.key !== 'Escape') return
+                  if (cari !== '') setCari('')
+                  else e.currentTarget.blur()
+                }}
+                placeholder="Cari penyakit atau kode ICD-10…"
+                aria-label="Cari SKDI"
+                aria-keyshortcuts="/"
+                spellCheck={false}
+                autoComplete="off"
+              />
+              {cari === '' ? (
+                <kbd className="dexskdi__cari-kbd" aria-hidden="true">/</kbd>
+              ) : (
+                <button
+                  type="button"
+                  className="dexskdi__cari-hapus"
+                  aria-label="Bersihkan pencarian"
+                  onClick={() => {
+                    setCari('')
+                    cariRef.current?.focus()
+                  }}
+                >
+                  ✕
+                </button>
+              )}
+            </div>
             <p className="teks-xs teks-lembut mono dexskdi__hasil-hitung" aria-live="polite">
               {daftarSkdi.length} dari {TOTAL_ENTRI} entri
             </p>
@@ -240,13 +289,13 @@ export function DexSkdi() {
                     <span className="dexskdi-kartu__nama">{entri.nama}</span>
                     <span className="dexskdi-kartu__meta">
                       {belumTersertifikasi ? (
-                        <span className="dexskdi-kartu__dijumpai-tag mono" title="Dijumpai — belum tersertifikasi">
+                        <span className="dexskdi-kartu__dijumpai-tag mono" data-tip="Dijumpai — belum tersertifikasi">
                           dijumpai
                         </span>
                       ) : (
                         <Bintang jumlah={dex.bintang} />
                       )}
-                      <span className="dexskdi-kartu__hari mono" title="Terakhir kali ditangani">
+                      <span className="dexskdi-kartu__hari mono" data-tip="Terakhir kali ditangani">
                         H{dex.terakhirHari}
                       </span>
                     </span>
@@ -266,7 +315,7 @@ export function DexSkdi() {
                 <button
                   className="tombol tombol--senyap teks-xs"
                   onClick={() => setPilihanId(null)}
-                  title="Tutup catatan"
+                  data-tip="Tutup catatan"
                 >
                   Tutup ✕
                 </button>

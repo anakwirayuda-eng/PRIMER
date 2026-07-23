@@ -5,13 +5,15 @@
  * berlaku live. Tombol "Tentang" membuka modal kredit/HKI (butir 35).
  */
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { setPengaturan, PENGATURAN_DEFAULT, type ModeMalam } from '../settings'
 import { usePengaturan } from '../usePengaturan'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
 import { resetOnboarding } from './Onboarding'
 import { TentangModal } from './TentangModal'
+import { PintasanModal } from './PintasanModal'
+import { sedangMengetik } from '../utils/navigasiHud'
 import './Pengaturan.css'
 
 const MODE_URUT: ModeMalam[] = ['auto', 'siang', 'malam']
@@ -28,12 +30,27 @@ const MODE_LABEL: Record<ModeMalam, string> = {
 export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
   const [buka, setBuka] = useState(false)
   const [tentang, setTentang] = useState(false)
+  // Audit premium 2026-07-23: modal daftar pintasan keyboard — dibuka dari
+  // tombol di modal ini ATAU hotkey "?" global (di luar ketikan/dialog).
+  const [pintasan, setPintasan] = useState(false)
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== '?' || e.ctrlKey || e.altKey || e.metaKey) return
+      if (sedangMengetik(document.activeElement)) return
+      if (document.querySelector('[role="dialog"]') !== null) return
+      e.preventDefault()
+      setPintasan(true)
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
   const p = usePengaturan()
   const persen = (n: number) => `${Math.round(n * 100)}%`
   // CODEX M10.a ronde-4 (dossier §44): trap NONAKTIF saat `tentang` terbuka —
   // TentangModal (di atasnya, DOM-order sama z-modal) yang wajib pegang fokus
   // saat itu; dua trap aktif bersamaan akan rebutan ke mana Tab dibungkus.
-  const ref = useFocusTrap<HTMLDivElement>(buka && !tentang, () => setBuka(false))
+  // Pintasan mengikuti aturan yang sama (modal di atas modal Pengaturan).
+  const ref = useFocusTrap<HTMLDivElement>(buka && !tentang && !pintasan, () => setBuka(false))
   // M10 §49: radiogroup mode tampilan — role=radio + aria-checked + panah.
   const modeRadio = useRadioGroup<ModeMalam>(MODE_URUT, p.modeMalam, (m) => setPengaturan({ modeMalam: m }))
 
@@ -44,7 +61,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
         className={`set-gigi${dok ? ' set-gigi--dok' : ''}`}
         onClick={() => setBuka(true)}
         aria-label="Buka Pengaturan"
-        title="Pengaturan"
+        data-tip="Pengaturan"
       >
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
           <circle cx="12" cy="12" r="3" />
@@ -120,6 +137,9 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
                 >
                   Tampilkan panduan lagi
                 </button>
+                <button className="tombol" onClick={() => setPintasan(true)}>
+                  Pintasan Keyboard
+                </button>
                 <button className="tombol" onClick={() => setTentang(true)}>Tentang &amp; Kredit</button>
               </div>
             </div>
@@ -128,6 +148,7 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
       )}
 
       {tentang && <TentangModal onTutup={() => setTentang(false)} />}
+      {pintasan && <PintasanModal onTutup={() => setPintasan(false)} />}
     </>
   )
 }

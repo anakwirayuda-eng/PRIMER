@@ -59,7 +59,8 @@ describe('<MejaKerja /> - provenance hasil IGD', () => {
     const gina = screen.getByRole('link', { name: /GINA Global Strategy for Asthma 2026/ })
     expect(gina).toHaveAttribute('href', SUMBER_URL_GINA)
     expect(gina).toHaveAttribute('target', '_blank')
-    expect(gina).toHaveAttribute('title', 'Buka di browser bawaan')
+    // Audit premium 2026-07-23: tooltip kini data-tip (tooltip instan global).
+    expect(gina).toHaveAttribute('data-tip', 'Buka di browser bawaan')
     expect(screen.getByRole('list', { name: /Sumber klinis Serangan Asma Berat/ })).toBeVisible()
   })
 

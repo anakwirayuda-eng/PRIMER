@@ -1,0 +1,29 @@
+/* DIALOG GAME — pengganti window.confirm/alert (audit premium 2026-07-23).
+   Menumpang .modal (max-height + overflow dari base.css — kontrak lapisan) &
+   .kertas; di sini hanya ukuran dan ritme internal. */
+
+.dialog-game {
+  width: min(460px, 92vw);
+  padding: var(--sp-5);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+  align-items: flex-start;
+}
+
+.dialog-game__judul {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  line-height: var(--baris-rapat);
+}
+
+.dialog-game__pesan {
+  font-size: var(--text-sm);
+  line-height: var(--baris-normal);
+  color: var(--tinta-lembut);
+}
+
+.dialog-game__aksi {
+  width: 100%;
+  margin-top: var(--sp-2);
+}

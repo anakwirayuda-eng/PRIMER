@@ -27,7 +27,7 @@ export function MuteButton({ dok = false }: { dok?: boolean } = {}) {
       onClick={klik}
       aria-pressed={bisu}
       aria-label={bisu ? 'Nyalakan suara' : 'Matikan suara'}
-      title={bisu ? 'Suara mati — klik untuk menyalakan' : 'Suara hidup — klik untuk membisukan'}
+      data-tip={bisu ? 'Suara mati — klik untuk menyalakan' : 'Suara hidup — klik untuk membisukan'}
     >
       <svg
         className="mute-ikon"

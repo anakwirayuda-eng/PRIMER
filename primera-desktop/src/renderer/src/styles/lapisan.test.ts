@@ -108,7 +108,7 @@ describe('invarian lapisan UI (M10.a)', () => {
   // sama sekali, 4 lainnya py role="dialog" tapi TANPA aria-modal. Keduanya
   // WAJIB hadir berdampingan (pola dialog modal WAI-ARIA) di SEMUA 7 titik —
   // pagar generik spy titik ke-8 di masa depan tak lolos dgn pola lama.
-  it('semua 7 titik modal/overlay: role="dialog" + aria-modal="true" berdampingan', () => {
+  it('semua 9 titik modal/overlay: role="dialog" + aria-modal="true" berdampingan', () => {
     // Penanda = literal `ref={...}` yang dipasang sendiri saat fix (unik per
     // titik, tak bentrok dgn teks/komentar lain — beda dari string judul yg
     // ternyata muncul lagi duluan di komentar/prosa sebelum JSX modalnya).
@@ -116,6 +116,10 @@ describe('invarian lapisan UI (M10.a)', () => {
       { file: '../components/Onboarding.tsx', tanda: 'ref={ref}' },
       { file: '../components/Pengaturan.tsx', tanda: 'ref={ref}' },
       { file: '../components/TentangModal.tsx', tanda: 'ref={ref}' },
+      // Audit premium 2026-07-23: DialogGame (pengganti window.confirm/alert)
+      // dan PintasanModal (daftar shortcut) = titik ke-8 & ke-9.
+      { file: '../components/DialogGame.tsx', tanda: 'ref={ref}' },
+      { file: '../components/PintasanModal.tsx', tanda: 'ref={ref}' },
       { file: '../screens/klinik/PanelHasil.tsx', tanda: 'ref={ref}' },
       { file: '../screens/MejaKerja.tsx', tanda: 'ref={refRekap}' },
       { file: '../screens/MejaKerja.tsx', tanda: 'ref={refLokmin}' },

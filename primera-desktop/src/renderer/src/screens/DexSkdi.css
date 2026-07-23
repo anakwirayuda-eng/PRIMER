@@ -125,9 +125,58 @@
   padding-bottom: var(--sp-2);
 }
 
+/* Kotak pencarian dgn hint keycap "/" & tombol hapus (audit premium 2026-07-23). */
+.dexskdi__cari-box {
+  position: relative;
+}
+
+.dexskdi__cari-kbd {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-3);
+  transform: translateY(-50%);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-weight: 700;
+  line-height: 1;
+  padding: 0.2em 0.5em;
+  border: 1px solid var(--border-tegas);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--tinta-pudar);
+  background: var(--bg-sunken);
+  pointer-events: none;
+}
+
+/* Saat mengetik, hint "/" tak relevan — sembunyikan begitu input terfokus. */
+.dexskdi__cari-box:focus-within .dexskdi__cari-kbd {
+  display: none;
+}
+
+.dexskdi__cari-hapus {
+  position: absolute;
+  top: 50%;
+  right: var(--sp-2);
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.6em;
+  height: 1.6em;
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  line-height: 1;
+  color: var(--tinta-lembut);
+}
+
+.dexskdi__cari-hapus:hover {
+  background: var(--bg-sunken);
+  color: var(--tinta);
+}
+
 .dexskdi__cari {
   width: 100%;
-  padding: var(--sp-2) var(--sp-3);
+  padding: var(--sp-2) calc(var(--sp-3) + 1.8em) var(--sp-2) var(--sp-3);
   font: inherit;
   font-size: var(--text-sm);
   color: var(--tinta);

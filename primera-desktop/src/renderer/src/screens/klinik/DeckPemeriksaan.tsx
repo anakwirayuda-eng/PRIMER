@@ -19,10 +19,12 @@ import {
   type KelompokLab,
 } from './util'
 import { REGION_PERTAMA_TUTORIAL } from './tutorialKlinik'
+import { muatLaci, simpanLaci } from '../../utils/laciPersist'
 
 /** Kelompok lab yang DIBUKA pemain — default tertutup agar ±40 pilihan tidak
- * membanjiri layar. Pencarian dan kelompok berisi pesanan tetap terbuka. */
-const labBukaSesi = new Set<KelompokLab>()
+ * membanjiri layar. Pencarian dan kelompok berisi pesanan tetap terbuka.
+ * Audit premium 2026-07-23: dipersist ke localStorage lintas sesi. */
+const labBukaSesi = muatLaci<KelompokLab>('primer-laci-lab')
 
 interface Props {
   enc: EncounterState
@@ -55,6 +57,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
   const toggleKelompokLab = (kel: KelompokLab) => {
     if (labBukaSesi.has(kel)) labBukaSesi.delete(kel)
     else labBukaSesi.add(kel)
+    simpanLaci('primer-laci-lab', labBukaSesi)
     setLabTick((n) => n + 1)
   }
   const adaHasilLab = URUTAN_KELOMPOK_LAB.some((kel) =>
@@ -71,11 +74,8 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
             className={`tombol ${enc.vitalDiukur ? '' : 'tombol--utama'}${sorotVital ? ' klinik-sorot-tutorial' : ''}`}
             onClick={() => dispatch({ type: 'UKUR_VITAL' })}
             disabled={enc.vitalDiukur}
-            title={
-              enc.vitalDiukur
-                ? 'Tanda vital sudah terukur — lihat kolom O di lembar.'
-                : 'Ukur TD, nadi, RR, suhu, SpO₂ — angka baru muncul setelah diukur.'
-            }
+            title={enc.vitalDiukur ? 'Tanda vital sudah terukur — lihat kolom O di lembar.' : undefined}
+            data-tip="Ukur TD, nadi, RR, suhu, SpO₂ — angka baru muncul setelah diukur."
           >
             {enc.vitalDiukur ? '✓ Tanda Vital Terukur' : 'Ukur Tanda Vital'}
           </button>
@@ -109,7 +109,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
                     className={`chip klinik-regio__chip${sudah ? ' klinik-regio__chip--sudah' : ''}${disorot ? ' klinik-sorot-tutorial' : ''}`}
                     onClick={() => dispatch({ type: 'PERIKSA', region: r })}
                     disabled={dikunci}
-                    title={sudah ? 'Sudah diperiksa — temuan tercatat di lembar.' : `Periksa ${LABEL_REGION[r]}`}
+                    data-tip={sudah ? 'Sudah diperiksa — temuan tercatat di lembar.' : `Periksa ${LABEL_REGION[r]}`}
                   >
                     {sudah ? '✓ ' : ''}
                     {LABEL_REGION[r]}
@@ -126,15 +126,38 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
         {/* Laboratorium */}
         <div className="klinik-deck__grup">
           <div className="judul-seksi">Permintaan Laboratorium</div>
-          <input
-            ref={cariLabRef}
-            className="klinik-cari"
-            type="text"
-            value={cariLab}
-            onChange={(e) => setCariLab(e.target.value)}
-            placeholder="Cari pemeriksaan lab&hellip;"
-            aria-label="Cari lab"
-          />
+          <div className="klinik-cari-box">
+            <input
+              ref={cariLabRef}
+              className="klinik-cari"
+              type="text"
+              value={cariLab}
+              onChange={(e) => setCariLab(e.target.value)}
+              onKeyDown={(e) => {
+                // Esc dua-tahap (audit premium 2026-07-23, pola DexSkdi).
+                if (e.key !== 'Escape') return
+                if (cariLab !== '') setCariLab('')
+                else e.currentTarget.blur()
+              }}
+              placeholder="Cari pemeriksaan lab&hellip;"
+              aria-label="Cari lab"
+              spellCheck={false}
+              autoComplete="off"
+            />
+            {cariLab !== '' && (
+              <button
+                type="button"
+                className="klinik-cari__hapus"
+                aria-label="Bersihkan pencarian lab"
+                onClick={() => {
+                  setCariLab('')
+                  cariLabRef.current?.focus()
+                }}
+              >
+                ✕
+              </button>
+            )}
+          </div>
           {!adaHasilLab && (
             <div className="klinik-lembar__kosong">Tidak ada pemeriksaan lab yang cocok.</div>
           )}
@@ -193,8 +216,9 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
                                 ? 'Sudah dipesan.'
                                 : tutorialAktif
                                   ? 'Kasus latihan ini tak butuh lab — lanjutkan tanpa memesan.'
-                                  : `Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`
+                                  : undefined
                             }
+                            data-tip={`Pesan ${item.nama} — biaya ${formatRupiah(item.biaya)} membebani kapitasi.`}
                             // CODEX audit UI/UX 2026-07-10 (#15): teks visible tombol ini
                             // ("Pesan"/"✓") sama di SETIAP baris lab — nama lab hanya ada
                             // di title (hover) & teks node saudara, bukan di accessible
