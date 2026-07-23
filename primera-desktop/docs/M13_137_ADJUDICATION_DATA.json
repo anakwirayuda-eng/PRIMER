@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-23T10:20:08.859Z",
-  "sourceCommit": "fe375328eead174c85bbb07084cc3a720ddb3723+dirty",
-  "artifactFingerprint": "d3105947ccd792cc1081822f1dc336bdbd62f60f0353b836e1917e7d1109be1e",
-  "packFingerprint": "f75c9e12",
+  "generatedAt": "2026-07-23T11:06:41.965Z",
+  "sourceCommit": "3b6d68c7f5a01cbc72c58b3ccfb528041017bddf+dirty",
+  "artifactFingerprint": "3bf44a2e1bc066b8a13116c59a2e1412a93e5ccd97562c67c14f2b561cc1a604",
+  "packFingerprint": "f558cc74",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -48,7 +48,7 @@
     "ppkDirect": 93,
     "ppkRelated": 15,
     "ppkAbsent": 29,
-    "pnpkDirect": 27,
+    "pnpkDirect": 28,
     "ebmDirect": 66,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
@@ -1585,7 +1585,7 @@
       },
       "currentEditorial": {
         "clue": "Duh uretra purulen akut setelah pajanan seksual sangat mendukung gonore. WHO 2024 merekomendasikan ceftriaxone 1 g IM dosis tunggal; tambahkan doxycycline 100 mg dua kali sehari selama tujuh hari bila klamidia belum disingkirkan. Tawarkan tes HIV/sifilis dan pemeriksaan lokasi ekstragenital sesuai pajanan. Hindari hubungan selama tujuh hari setelah terapi dosis tunggal dan sampai regimen tujuh hari selesai, gejala hilang, serta pasangan ditangani; jadwalkan retest sekitar tiga bulan karena reinfeksi sering terjadi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Permenkes 23/2022 menjadi floor program IMS, termasuk jejaring, surveilans resistensi, penanganan kasus, dan pencegahan stigma. WHO STI 2024 menjadi sumber dosis gonore terkini dan partner services yang sukarela serta rahasia.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis program IMS, termasuk jejaring, surveilans resistensi, penanganan kasus, dan pencegahan stigma. WHO STI 2024 menjadi sumber dosis gonore terkini dan partner services yang sukarela serta rahasia.",
         "realityNote": "Kode A54.9 dipertahankan agar konkordan dengan katalog SKDI-144, sedangkan fenotipenya uretritis gonokokus tanpa komplikasi. Sukamaju dapat memberi ceftriaxone IM dan doxycycline, tetapi kultur/NAAT serta uji resistensi berjalan melalui jejaring bila gagal terapi. Ambang klaster gameplay hanya memicu telaah agregat dan kewaspadaan program tanpa membuka identitas atau membuktikan wabah secara otomatis."
       },
       "evidence": {
@@ -1622,12 +1622,12 @@
             {
               "sourceId": "kemenkes-hiv-ims-2022",
               "relation": "direct",
-              "title": "Peraturan Menteri Kesehatan Nomor 23 Tahun 2022 tentang Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
+              "title": "Lampiran Permenkes Nomor 23 Tahun 2022 tentang Pedoman Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2022,
               "officialUrl": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022permenkes023.pdf",
               "population": "People seeking or receiving HIV, AIDS, and sexually transmitted infection services in Indonesia",
-              "facilityScope": "National testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care framework across service levels.",
+              "facilityScope": "Technical testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care guidance retained by Article 99 of Permenkes 3/2026; the parent regulation is not presented as wholly active.",
               "locator": "National IMS programme floor: gonorrhoea care sits within case management, resistance surveillance, partner and prevention services, referral, recording, and anti-stigma safeguards."
             },
             {
@@ -2050,14 +2050,14 @@
     {
       "ordinal": 11,
       "id": "lab_hiv_tanpa_komplikasi",
-      "name": "HIV Tanpa Komplikasi - Inisiasi Program",
+      "name": "Infeksi HIV Asimtomatik - Inisiasi ART",
       "icd10": "Z21",
       "skdi": "4A",
       "category": "infeksi",
       "mustRefer": false,
       "fktp144": true,
       "demographics": "18-55 tahun, semua gender",
-      "openingComplaint": "Saya datang mengambil hasil tes HIV dan ingin segera mulai pengobatan.",
+      "openingComplaint": "Tes HIV awal saya reaktif. Saya diminta kembali hari ini untuk memastikan hasil dan membahas pengobatan.",
       "currentManagement": {
         "requiredDrugs": [
           {
@@ -2149,27 +2149,38 @@
             "id": "pencegahan_hiv_berpusat_pasien",
             "name": "[HIV] Pilih pencegahan, dukungan pasangan, dan layanan reproduksi tanpa membuka status secara paksa",
             "critical": false
+          },
+          {
+            "id": "tpt_hiv_setelah_skrining_tb",
+            "name": "[HIV-TB] Setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program",
+            "critical": false
           }
         ],
         "relevantLabs": [
           {
             "id": "tes_hiv_serial",
             "name": "Tes Cepat HIV Serial Sesuai Algoritma Nasional",
-            "result": "Tiga tes cepat serial reaktif sesuai algoritma nasional."
+            "result": "Tiga tes cepat serial reaktif sesuai algoritma nasional; diagnosis HIV terkonfirmasi."
+          },
+          {
+            "id": "panel_awal_hiv_jejaring",
+            "name": "Panel Awal HIV Jejaring (CD4, eGFR/Kreatinin, HBsAg)",
+            "result": "CD4 428 sel/mm3, eGFR 92 mL/menit/1,73 m2, dan HBsAg nonreaktif."
           }
         ],
         "differentialIcd10": [
           "Z21",
-          "B20",
-          "F43.2"
+          "R75",
+          "B20"
         ],
         "confirmationRequired": "tes_hiv_serial",
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Setelah diagnosis terkonfirmasi dengan algoritma nasional, nilai TB/infeksi oportunistik, obat-interaksi, risiko ginjal, kehamilan, serta kesiapan tanpa memaksa. Tawarkan ARV cepat, termasuk hari yang sama bila pasien siap dan tidak ada alasan klinis menunda. Pemeriksaan dasar dan viral load tetap dijadwalkan melalui program, tetapi hasil darah rutin atau kreatinin yang belum tersedia tidak otomatis menjadi penghalang pada pasien yang secara klinis sesuai. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Permenkes 23/2022 menjadi floor program HIV/IMS nasional. WHO 2025 mempertahankan regimen berbasis dolutegravir dan WHO service-delivery guidance mendukung rapid/same-day ART, retensi, penelusuran putus layanan yang menjaga kerahasiaan, serta pemantauan viral load.",
-        "realityNote": "Sukamaju dinyatakan sebagai layanan ARV yang ditunjuk: TLD dapat dimulai setelah asesmen klinis dan persetujuan pasien, sedangkan kreatinin serta viral load dijadwalkan lewat jejaring. Kunjungan yang terlewat memicu tawaran re-engagement rahasia, bukan penghentian atau hukuman layanan."
+        "clue": "Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, fungsi ginjal memadai, dan tidak hamil, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO 2025 mempertahankan regimen berbasis dolutegravir dan pencegahan TB, sedangkan WHO service-delivery 2026 menekankan layanan terintegrasi, berpusat pada pasien, retensi, dan re-engagement.",
+        "realityNote": "Sukamaju ditetapkan sebagai layanan ARV; TLD, konselor, dan jejaring laboratorium siap. Bila hasil darah masih ditunggu tetapi pasien layak, rapid ART tetap berjalan dan ditinjau satu minggu; kasus dengan hasil aman ini kontrol satu bulan. Viral load melalui jejaring. Notifikasi pasangan ditawarkan sukarela, rahasia, aman, dan tanpa paksaan; kunjungan terlewat memicu re-engagement rahasia, bukan penghentian layanan.",
+        "ebmPearl": "Tampak sehat tidak menyingkirkan advanced HIV disease: CD4 baseline tetap penting untuk menemukan imunosupresi berat dan menentukan paket profilaksis, tetapi bukan syarat untuk menahan ART. HBsAg juga bermakna karena tenofovir-lamivudin aktif terhadap hepatitis B dan penghentian sembarangan dapat memicu flare. Pada kasus ini CD4 428 sel/mm3, HBsAg nonreaktif, dan tidak ada stadium klinis 3/4, sehingga kotrimoksazol bukan resep otomatis."
       },
       "evidence": {
         "ppk": {
@@ -2195,23 +2206,56 @@
           ]
         },
         "pnpk": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
+          "status": "cocok",
+          "sources": [
+            {
+              "slug": "hiv-2019",
+              "relation": "direct",
+              "title": "PNPK Tata Laksana HIV",
+              "documentNumber": "HK.01.07/MENKES/90/2019",
+              "officialUrl": "https://keslan.kemkes.go.id/unduhan/fileunduhan_1610423733_374785.pdf",
+              "population": "Adults, adolescents, children, and pregnant people with confirmed HIV in Indonesia",
+              "facilityScope": "Clinical staging, baseline CD4 and comorbidity assessment, treat-all and rapid ART, opportunistic-infection prophylaxis, viral-load monitoring, and referral across service levels.",
+              "excerpts": [],
+              "limitation": "Dokumen resmi diverifikasi, tetapi belum ada ekstrak lokal ber-locator dalam corpus ini."
+            }
+          ]
         },
         "ebm": {
           "status": "cocok",
           "sources": [
             {
+              "sourceId": "kemenkes-disease-control-2026",
+              "relation": "direct",
+              "title": "Peraturan Menteri Kesehatan Nomor 3 Tahun 2026 tentang Penanggulangan Penyakit",
+              "authority": "Kementerian Kesehatan Republik Indonesia",
+              "year": 2026,
+              "officialUrl": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-3-tahun-2026",
+              "population": "People and populations covered by communicable and noncommunicable disease-control programmes in Indonesia",
+              "facilityScope": "Current national disease-control framework; predecessor provisions remain only where Article 99 explicitly retains them.",
+              "locator": "Article 99 is the current legal transition: most of Permenkes 23/2022 is revoked, while Article 41 and its technical annex remain in force rather than the predecessor regulation being cited as wholly active."
+            },
+            {
               "sourceId": "kemenkes-hiv-ims-2022",
               "relation": "direct",
-              "title": "Peraturan Menteri Kesehatan Nomor 23 Tahun 2022 tentang Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
+              "title": "Lampiran Permenkes Nomor 23 Tahun 2022 tentang Pedoman Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2022,
               "officialUrl": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022permenkes023.pdf",
               "population": "People seeking or receiving HIV, AIDS, and sexually transmitted infection services in Indonesia",
-              "facilityScope": "National testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care framework across service levels.",
-              "locator": "National HIV/IMS programme floor: confirmed diagnosis links to treatment, confidentiality, partner and prevention services, recording, referral, and continuity rather than an isolated prescription."
+              "facilityScope": "Technical testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care guidance retained by Article 99 of Permenkes 3/2026; the parent regulation is not presented as wholly active.",
+              "locator": "The retained technical annex links confirmed diagnosis to clinical staging, opportunistic-infection and TB assessment, mental-health screening, voluntary partner services, rapid ART, monitoring, confidentiality, and continuity."
+            },
+            {
+              "sourceId": "kemenkes-puskesmas-hiv-2024",
+              "relation": "direct",
+              "title": "Pedoman Kerja Puskesmas Klaster 3: Tatalaksana HIV",
+              "authority": "Kementerian Kesehatan Republik Indonesia",
+              "year": 2024,
+              "officialUrl": "https://renbut.kemkes.go.id/regulasi/Pedoman%20Puskesmas%20Klaster%203.pdf",
+              "population": "Adults and older people receiving integrated primary care, including people living with HIV",
+              "facilityScope": "Puskesmas testing, baseline assessment, TDF/3TC/DTG initiation, early review, viral-load monitoring, adherence support, and referral.",
+              "locator": "Pages 169-172: assess CD4, kidney function and viral load; offer TDF/3TC/DTG to adults, initiate ART the same day or by day seven when no opportunistic infection is present, and review at one week when tests are pending or one month otherwise."
             },
             {
               "sourceId": "who-hiv-clinical-2025",
@@ -2219,21 +2263,21 @@
               "title": "WHO updated recommendations on HIV clinical management",
               "authority": "World Health Organization",
               "year": 2025,
-              "officialUrl": "https://www.who.int/publications/b/82237",
+              "officialUrl": "https://www.who.int/publications/i/item/9789240119468",
               "population": "Adults, adolescents, children, and pregnant or breastfeeding people living with HIV",
               "facilityScope": "Optimized antiretroviral regimens, vertical-transmission prevention, and tuberculosis prevention within public-health HIV programmes.",
-              "locator": "Updated clinical-management recommendations: use optimized dolutegravir-based ART and integrate TB prevention and reproductive considerations within longitudinal HIV care."
+              "locator": "Updated clinical-management recommendations retain optimized dolutegravir-based ART and integrate tuberculosis prevention and reproductive considerations within longitudinal HIV care."
             },
             {
-              "sourceId": "who-hiv-service-2021",
+              "sourceId": "who-hiv-service-2026",
               "relation": "direct",
-              "title": "Updated recommendations on service delivery for the treatment and care of people living with HIV",
+              "title": "Consolidated HIV guidelines: service delivery",
               "authority": "World Health Organization",
-              "year": 2021,
-              "officialUrl": "https://www.who.int/publications/i/item/9789240023581",
+              "year": 2026,
+              "officialUrl": "https://www.who.int/publications/i/item/9789240124233",
               "population": "People living with HIV starting or continuing antiretroviral therapy",
-              "facilityScope": "Same-day ART, differentiated follow-up, adherence measurement, tracing and re-engagement, psychosocial support, and integrated services.",
-              "locator": "Same-day ART may be offered after confirmed diagnosis, clinical assessment, willingness and readiness; programmes should monitor viral load and support confidential tracing and re-engagement after disengagement."
+              "facilityScope": "People-centred integrated HIV service delivery, access, continuity, adherence and retention support, differentiated follow-up, and re-engagement.",
+              "locator": "The consolidated service-delivery guideline emphasizes people-centred integrated care, timely access, continuity, adherence and retention support, and equitable confidential re-engagement."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -2250,6 +2294,14 @@
             {
               "id": "tes_hiv_serial",
               "name": "Tes Cepat HIV Serial Sesuai Algoritma Nasional",
+              "kind": "laboratory",
+              "tier": "A",
+              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
+              "grounding": "baseline"
+            },
+            {
+              "id": "panel_awal_hiv_jejaring",
+              "name": "Panel Awal HIV Jejaring (CD4, eGFR/Kreatinin, HBsAg)",
               "kind": "laboratory",
               "tier": "A",
               "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
@@ -2763,7 +2815,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri pelvis dengan cervical motion/adnexal tenderness dan risiko IMS memenuhi ambang klinis rendah untuk PID setelah kehamilan ektopik serta penyebab bedah dinilai. Pasien stabil, tidak hamil, dapat minum, dan tanpa abses atau sepsis dapat menerima ceftriaxone IM sekali ditambah doxycycline serta metronidazole selama 14 hari. Perbaikan harus tampak dalam kurang dari 72 jam; bila tidak, rawat inap dan evaluasi diagnosis/regimen diperlukan. Tawarkan tes gonore/klamidia, HIV, dan sifilis, tata pasangan, serta retest sekitar tiga bulan bila gonore/klamidia terdiagnosis.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK tidak mempunyai bab PID langsung. Permenkes 23/2022 menjadi floor jejaring IMS, sedangkan CDC STI guidance memberi kriteria rawat inap, regimen rawat jalan, evaluasi kurang dari 72 jam, retesting, dan partner management.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK tidak mempunyai bab PID langsung. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis jejaring IMS, sedangkan CDC STI guidance memberi kriteria rawat inap, regimen rawat jalan, evaluasi kurang dari 72 jam, retesting, dan partner management.",
         "realityNote": "Kode N70 dipertahankan agar konkordan dengan katalog SKDI-144; kasus ini memodelkan PID ringan. Katalog menampilkan vial ceftriaxone 1 g, tetapi dosis IM aktual mengikuti protokol PID/IMS dan pemilihan vial tidak berarti seluruh isi selalu diberikan. NAAT dan ultrasonografi tidak diasumsikan tersedia di Sukamaju dan tidak boleh menunda terapi klinis atau rujukan bila memburuk."
       },
       "evidence": {
@@ -2807,12 +2859,12 @@
             {
               "sourceId": "kemenkes-hiv-ims-2022",
               "relation": "direct",
-              "title": "Peraturan Menteri Kesehatan Nomor 23 Tahun 2022 tentang Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
+              "title": "Lampiran Permenkes Nomor 23 Tahun 2022 tentang Pedoman Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2022,
               "officialUrl": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022permenkes023.pdf",
               "population": "People seeking or receiving HIV, AIDS, and sexually transmitted infection services in Indonesia",
-              "facilityScope": "National testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care framework across service levels.",
+              "facilityScope": "Technical testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care guidance retained by Article 99 of Permenkes 3/2026; the parent regulation is not presented as wholly active.",
               "locator": "National IMS programme identifies untreated gonorrhoea and chlamydia as causes of PID, ectopic pregnancy, and infertility and requires linked case, partner, prevention, and referral services."
             },
             {
@@ -3242,7 +3294,7 @@
       },
       "currentEditorial": {
         "clue": "Sekret mukopurulen endoserviks dan contact bleeding tanpa nyeri pelvis mendukung servisitis, bukan vaginitis atau PID. Pada pasien berisiko dengan pasangan baru, NAAT tidak tersedia, dan tindak lanjut belum pasti, terapi presumtif klamidia serta gonore masuk akal: doxycycline 100 mg dua kali sehari tujuh hari dan ceftriaxone IM sesuai pedoman gonore terkini. Tawarkan tes HIV/sifilis, nilai resolusi gejala, retest sekitar tiga bulan bila gonore/klamidia terdiagnosis, dan eskalasi segera bila muncul nyeri pelvis atau demam.",
-        "officialGuidance": "PPK KMK 1186/2022 tidak mempunyai bab servisitis langsung; bab fluor albus hanya sumber terkait. Permenkes 23/2022, WHO STI 2024, dan CDC cervicitis guidance melengkapi keputusan risiko, terapi presumtif, follow-up, dan layanan pasangan.",
+        "officialGuidance": "PPK KMK 1186/2022 tidak mempunyai bab servisitis langsung; bab fluor albus hanya sumber terkait. Lampiran Permenkes 23/2022 yang dipertahankan oleh Permenkes 3/2026, WHO STI 2024, dan CDC cervicitis guidance melengkapi keputusan risiko, terapi presumtif, follow-up, dan layanan pasangan.",
         "realityNote": "Kode N89 dipertahankan agar konkordan dengan baris katalog SKDI-144, sedangkan fenotipe kasusnya adalah servisitis mukopurulen. NAAT gonore/klamidia tidak diasumsikan tersedia langsung di Sukamaju; spesimen dapat dirujuk tanpa menunda terapi sindromik pada pasien berisiko. Sinyal klaster memakai hitungan agregat terde-identifikasi dan harus ditelaah program sebelum intervensi wilayah."
       },
       "evidence": {
@@ -3280,12 +3332,12 @@
             {
               "sourceId": "kemenkes-hiv-ims-2022",
               "relation": "direct",
-              "title": "Peraturan Menteri Kesehatan Nomor 23 Tahun 2022 tentang Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
+              "title": "Lampiran Permenkes Nomor 23 Tahun 2022 tentang Pedoman Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2022,
               "officialUrl": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022permenkes023.pdf",
               "population": "People seeking or receiving HIV, AIDS, and sexually transmitted infection services in Indonesia",
-              "facilityScope": "National testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care framework across service levels.",
+              "facilityScope": "Technical testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care guidance retained by Article 99 of Permenkes 3/2026; the parent regulation is not presented as wholly active.",
               "locator": "National IMS programme recognizes gonorrhoea and chlamydia as causes of cervicitis and connects individual case care to prevention, surveillance, networks, and referral."
             },
             {
@@ -10085,7 +10137,7 @@
               "year": 2026,
               "officialUrl": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-3-tahun-2026",
               "population": "People and populations covered by communicable and noncommunicable disease-control programmes in Indonesia",
-              "facilityScope": "Current national disease-control framework; it revokes most of Permenkes 94/2014 on filariasis except provisions explicitly retained by the legal record.",
+              "facilityScope": "Current national disease-control framework; predecessor provisions remain only where Article 99 explicitly retains them.",
               "locator": "Current Indonesian disease-control umbrella governs programme notification and response; most of the 2014 filariasis regulation is revoked except provisions explicitly retained in the legal record."
             },
             {
@@ -12003,7 +12055,7 @@
       },
       "currentEditorial": {
         "clue": "Chancre tunggal tidak nyeri dan serologi treponemal plus RPR reaktif mendukung sifilis primer. Beri benzathine penicillin G 2,4 juta unit IM dosis tunggal, dokumentasikan titer awal, dan jadwalkan RPR kuantitatif untuk menilai respons. Nilai gejala neurologis, okular, dan otik; status kehamilan wajib diketahui karena penicillin adalah terapi yang terbukti mencegah sifilis kongenital dan alergi pada kehamilan memerlukan jalur desensitisasi spesialis. Jelaskan Jarisch-Herxheimer, ulang tes HIV sesuai window period/risiko, dan hindari hubungan sampai sedikitnya tujuh hari setelah terapi serta pasangan telah ditangani.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 23/2022 menjadi floor layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.",
         "realityNote": "Benzathine penicillin tercantum dalam formularium, tetapi pemberian tetap memerlukan skrining alergi dan kesiapan menangani reaksi segera. Pasangan ditawari evaluasi dan terapi berdasarkan tahap serta waktu pajanan; tidak ada pengungkapan diagnosis atau pelacakan koersif."
       },
       "evidence": {
@@ -12040,12 +12092,12 @@
             {
               "sourceId": "kemenkes-hiv-ims-2022",
               "relation": "direct",
-              "title": "Peraturan Menteri Kesehatan Nomor 23 Tahun 2022 tentang Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
+              "title": "Lampiran Permenkes Nomor 23 Tahun 2022 tentang Pedoman Penanggulangan HIV, AIDS, dan Infeksi Menular Seksual",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2022,
               "officialUrl": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022permenkes023.pdf",
               "population": "People seeking or receiving HIV, AIDS, and sexually transmitted infection services in Indonesia",
-              "facilityScope": "National testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care framework across service levels.",
+              "facilityScope": "Technical testing, treatment, partner, surveillance, referral, confidentiality, and continuity-of-care guidance retained by Article 99 of Permenkes 3/2026; the parent regulation is not presented as wholly active.",
               "locator": "National IMS programme floor: integrate testing, treatment, partner services, prevention, confidentiality, recording, and follow-up."
             },
             {
@@ -18781,7 +18833,7 @@
               "year": 2026,
               "officialUrl": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-3-tahun-2026",
               "population": "People and populations covered by communicable and noncommunicable disease-control programmes in Indonesia",
-              "facilityScope": "Current national disease-control framework; it revokes most of Permenkes 94/2014 on filariasis except provisions explicitly retained by the legal record.",
+              "facilityScope": "Current national disease-control framework; predecessor provisions remain only where Article 99 explicitly retains them.",
               "locator": "Current Indonesian disease-control umbrella replaces the revoked 2017 cacingan regulation; current programme actions must be attributed to the 2026 framework rather than the superseded instrument."
             },
             {

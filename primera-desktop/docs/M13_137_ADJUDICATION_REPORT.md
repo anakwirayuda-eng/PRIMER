@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-23
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `fe375328eead174c85bbb07084cc3a720ddb3723+dirty`, artefak `d3105947ccd792cc1081822f1dc336bdbd62f60f0353b836e1917e7d1109be1e`, pack `f75c9e12`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `3b6d68c7f5a01cbc72c58b3ccfb528041017bddf+dirty`, artefak `3bf44a2e1bc066b8a13116c59a2e1412a93e5ccd97562c67c14f2b561cc1a604`, pack `f558cc74`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -14,7 +14,7 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK langsung | 93 |
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
-| Memiliki PNPK langsung | 27 |
+| Memiliki PNPK langsung | 28 |
 | Memiliki pedoman EBM langsung tambahan | 66 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
@@ -124,7 +124,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_gonore_uretritis_pria` - Gonore Uretra Tanpa Komplikasi: tidak ada red flag provenance otomatis
 - `lab_hepatitis_a_akut` - Hepatitis A Akut Tanpa Gagal Hati: tidak ada red flag provenance otomatis
 - `lab_hepatitis_b_kronik` - Hepatitis B Kronik Tanpa Gejala: tidak ada red flag provenance otomatis
-- `lab_hiv_tanpa_komplikasi` - HIV Tanpa Komplikasi - Inisiasi Program: tidak ada red flag provenance otomatis
+- `lab_hiv_tanpa_komplikasi` - Infeksi HIV Asimtomatik - Inisiasi ART: tidak ada red flag provenance otomatis
 - `lab_limfadenitis_servikal_akut` - Limfadenitis Servikal Akut Bakterial: tidak ada red flag provenance otomatis
 - `lab_parotitis_mumps` - Parotitis Epidemika (Mumps): tidak ada red flag provenance otomatis
 - `lab_salpingitis_pid_ringan` - Penyakit Radang Panggul Ringan - Rawat Jalan: tidak ada red flag provenance otomatis

@@ -62,7 +62,7 @@ describe('M13-137 adjudication artifact', () => {
       expect(links.length, caseId).toBeGreaterThan(0)
       expect(links.every((link) => link.relation === 'direct' || link.relation === 'related'), caseId).toBe(true)
     }
-    expect(DATA.summary.pnpkDirect).toBe(27)
+    expect(DATA.summary.pnpkDirect).toBe(28)
   })
 
   it('registry EBM terpisah dari PNPK, primer, dan tidak mempunyai caseId/sumber yatim', () => {

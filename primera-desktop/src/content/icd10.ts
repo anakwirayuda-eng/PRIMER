@@ -47,6 +47,7 @@ export const NAMA_ICD: Record<string, string> = {
   'F44.5': 'Kejang Disosiatif',
   'T65.1': 'Efek Toksik Striknin dan Garamnya',
   B20: 'Penyakit HIV dengan Manifestasi Infeksi',
+  R75: 'Bukti Laboratorium HIV yang Belum Konklusif',
   'S05.0': 'Cedera Konjungtiva dan Abrasi Kornea',
   'H16.0': 'Ulkus Kornea',
   'H15.0': 'Skleritis',

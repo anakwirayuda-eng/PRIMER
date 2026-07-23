@@ -180,6 +180,12 @@ export const LAB_LAB_EXPANSION: Record<string, ItemLab> = {
     biaya: 0,
     nilaiNormal: 'Nonreaktif',
   },
+  panel_awal_hiv_jejaring: {
+    id: 'panel_awal_hiv_jejaring',
+    nama: 'Panel Awal HIV Jejaring (CD4, eGFR/Kreatinin, HBsAg)',
+    biaya: 0,
+    nilaiNormal: 'CD4 >=200 sel/mm3; eGFR >=60 mL/menit/1,73 m2; HBsAg nonreaktif',
+  },
   tcm_spesimen_lesi: {
     id: 'tcm_spesimen_lesi',
     nama: 'TCM MTB/RIF Spesimen Lesi',
@@ -216,6 +222,7 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   kepatuhan_arv: { id: 'kepatuhan_arv', nama: '[HIV] Minum ARV konsisten; U=U berlaku setelah supresi viral terverifikasi dan dipertahankan', kategori: 'kepatuhan', sinonim: ['ARV', 'HIV', 'undetectable', 'U=U'] },
   retensi_hiv_viral_load: { id: 'retensi_hiv_viral_load', nama: '[HIV] Jadwalkan viral load dan tawarkan re-engagement rahasia bila kunjungan terlewat', kategori: 'kepatuhan', sinonim: ['viral load', 'retensi', 'lost to follow-up', 're-engagement'] },
   pencegahan_hiv_berpusat_pasien: { id: 'pencegahan_hiv_berpusat_pasien', nama: '[HIV] Pilih pencegahan, dukungan pasangan, dan layanan reproduksi tanpa membuka status secara paksa', kategori: 'higiene', sinonim: ['kondom', 'pasangan', 'kerahasiaan', 'reproduksi'] },
+  tpt_hiv_setelah_skrining_tb: { id: 'tpt_hiv_setelah_skrining_tb', nama: '[HIV-TB] Setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program', kategori: 'tindakan', sinonim: ['TPT', 'terapi pencegahan tuberkulosis', 'HIV TB', '3HP', 'isoniazid'] },
   perawatan_terjadwal_somatik: { id: 'perawatan_terjadwal_somatik', nama: '[Keluhan fungsional] Validasi gejala dan gunakan kontrol terjadwal', kategori: 'kepatuhan', sinonim: ['somatoform', 'functional symptoms'] },
   higiene_kelopak_mata: { id: 'higiene_kelopak_mata', nama: '[Mata] Kompres hangat dan bersihkan tepi kelopak dengan lembut', kategori: 'higiene', sinonim: ['blefaritis', 'lid hygiene'] },
   perlindungan_mata: { id: 'perlindungan_mata', nama: '[Mata] Hindari mengucek dan gunakan pelindung saat bekerja', kategori: 'tindakan', sinonim: ['benda asing mata', 'eye protection'] },

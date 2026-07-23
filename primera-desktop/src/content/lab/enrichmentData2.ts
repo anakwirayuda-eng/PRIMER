@@ -58,7 +58,7 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_transfusi', kategori: 'rpd', tanya: 'Apakah Anda pernah menerima transfusi darah atau berbagi jarum suntik?', jawab: 'Tidak pernah dua-duanya, Dok.' },
     ],
     obatSalahUmum: [
-      { id: 'cotrimoxazole_480', alasan: 'Kotrimoksazol bukan obat otomatis untuk setiap diagnosis HIV; indikasinya mengikuti stadium klinis, CD4, beban infeksi setempat, dan protokol nasional. Kasus ini tidak menunjukkan penyakit lanjut, sehingga pemberian tanpa menilai kelayakan bukan substitusi ARV.', bahaya: 'nonPrimer' },
+      { id: 'cotrimoxazole_480', alasan: 'Kotrimoksazol bukan obat otomatis untuk setiap diagnosis HIV. Pada kasus ini CD4 428 sel/mm3, tidak ada stadium klinis 3/4 atau TB aktif, sehingga profilaksis tidak terindikasi; nilai ulang bila CD4, stadium, atau status TB berbeda.', bahaya: 'nonPrimer' },
       { id: 'vitamin_b_kompleks', alasan: 'Multivitamin sebagai penambah daya tahan tidak menekan replikasi virus dan mengaburkan bahwa ARV adalah terapi yang menentukan.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
@@ -67,9 +67,9 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       kondisiKembali: 'Masih tanpa gejala berat tetapi belum memulai ARV, viral load belum pernah diperiksa, dan nomor kontak program tidak pernah dikonfirmasi untuk re-engagement rahasia.',
     },
     variasiPembuka: {
-      cemas: 'Pasangan saya HIV dan hasil tes saya keluar — saya takut sekali, apa saya masih bisa hidup normal, Dok?',
-      polos: 'Saya mau ambil hasil tes HIV dan pengen langsung mulai obat, Dok.',
-      lansia: 'Saya datang mengambil hasil tes HIV dan ingin segera memulai pengobatan, Dok.',
+      cemas: 'Tes HIV awal saya reaktif dan saya diminta kembali — saya takut sekali, apa saya masih bisa hidup normal, Dok?',
+      polos: 'Tes HIV awal saya reaktif, Dok. Saya disuruh balik buat memastikan hasil dan bahas obat.',
+      lansia: 'Tes HIV awal saya reaktif. Saya diminta kembali untuk memastikan hasil dan membahas pengobatan, Dok.',
     },
   },
   lab_gangguan_somatoform: {

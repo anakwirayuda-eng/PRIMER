@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import { buildAdjudicationDataset } from '../../../scripts/m13-adjudication/build-data'
-import { EBM_GUIDELINE_CROSSWALK } from '../../../scripts/m13-adjudication/config'
+import {
+  EBM_GUIDELINE_CROSSWALK,
+  PNPK_CROSSWALK,
+} from '../../../scripts/m13-adjudication/config'
 import { PACK } from '..'
 
 const IDS = [
@@ -29,17 +32,63 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
 
   it('membuat rapid ART tetap berbasis asesmen tanpa gate laboratorium palsu', () => {
     const kasus = PACK.kasus.lab_hiv_tanpa_komplikasi!
-    expect(kasus.lab.map((item) => item.id)).toEqual(['tes_hiv_serial'])
+    expect(kasus.nama).toBe('Infeksi HIV Asimtomatik - Inisiasi ART')
+    expect(kasus.keluhanUtama).toMatch(/tes HIV awal.*reaktif.*memastikan hasil/is)
+    expect(kasus.lab.map((item) => item.id)).toEqual([
+      'tes_hiv_serial',
+      'panel_awal_hiv_jejaring',
+    ])
+    expect(kasus.konfirmasiWajib).toBe('tes_hiv_serial')
+    expect(kasus.lab.find((item) => item.id === 'panel_awal_hiv_jejaring')?.hasil).toMatch(
+      /CD4 428.*eGFR 92.*HBsAg nonreaktif/is,
+    )
+    expect(kasus.diagnosisBanding).toEqual(['Z21', 'R75', 'B20'])
     expect(kasus.anamnesis).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'q_oi', esensial: true }),
       expect.objectContaining({ id: 'q_ginjal', esensial: true }),
       expect.objectContaining({ id: 'q_hamil', esensial: true, hanyaUntuk: 'P' }),
-      expect.objectContaining({ id: 'q_kesiapan', esensial: true }),
+      expect.objectContaining({
+        id: 'q_kesiapan',
+        esensial: true,
+        tanya: expect.stringMatching(/menyakiti diri.*dukungan aman/is),
+      }),
     ]))
-    expect(kasus.clue).toMatch(/hari yang sama.*pasien siap/is)
-    expect(kasus.clue).toMatch(/U=U.*supresi viral terverifikasi/is)
-    expect(kasus.catatanRealita).toMatch(/re-engagement rahasia/i)
+    expect(kasus.tatalaksana.obatBenar).toEqual(['arv_tld'])
+    expect(kasus.tatalaksana.edukasi).toContain('tpt_hiv_setelah_skrining_tb')
     expect(kasus.tatalaksana.edukasiKritis).toEqual(['kepatuhan_arv', 'retensi_hiv_viral_load'])
+    expect(kasus.clue).toMatch(/TDF\/3TC\/DTG.*hari yang sama/is)
+    expect(kasus.clue).toMatch(/TB aktif disingkirkan.*kelayakan TPT/is)
+    expect(kasus.clue).toMatch(/Kotrimoksazol tidak otomatis/is)
+    expect(kasus.clue).toMatch(/U=U.*supresi viral terverifikasi/is)
+    expect(kasus.catatanRealita).toMatch(/satu minggu.*satu bulan/is)
+    expect(kasus.catatanRealita).toMatch(/sukarela, rahasia, aman, dan tanpa paksaan/i)
+    expect(kasus.mutiaraEbm).toMatch(/CD4 baseline.*bukan syarat.*menahan ART/is)
+    expect(kasus.mutiaraEbm).toMatch(/HBsAg.*flare/is)
+  })
+
+  it('mengikat HIV ke provenance Indonesia dan EBM terbaru yang tepat', () => {
+    const kasus = PACK.kasus.lab_hiv_tanpa_komplikasi!
+    expect(PNPK_CROSSWALK.lab_hiv_tanpa_komplikasi).toEqual([
+      { slug: 'hiv-2019', relation: 'direct' },
+    ])
+    expect(record('lab_hiv_tanpa_komplikasi').evidence.pnpk.status).toBe('cocok')
+    expect(EBM_GUIDELINE_CROSSWALK.lab_hiv_tanpa_komplikasi?.map((item) => item.sourceId)).toEqual([
+      'kemenkes-disease-control-2026',
+      'kemenkes-hiv-ims-2022',
+      'kemenkes-puskesmas-hiv-2024',
+      'who-hiv-clinical-2025',
+      'who-hiv-service-2026',
+    ])
+    expect(kasus.sumber?.map((item) => item.id)).toEqual([
+      'ppk_fktp_2022',
+      'pnpk_hiv_2019',
+      'permenkes_penyakit_2026',
+      'lampiran_hiv_ims_2022',
+      'pedoman_puskesmas_klaster3_2024',
+      'who_hiv_clinical_2025',
+      'who_hiv_service_2026',
+    ])
+    expect(kasus.panduanResmi).toMatch(/mencabut sebagian besar.*Pasal 41 dan Lampirannya tetap berlaku/is)
   })
 
   it('menjadikan kusta PB diagnosis klinis dengan MDT tiga obat dan pencegahan disabilitas', () => {
@@ -91,6 +140,11 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
     }).join(' ')
 
     expect(text).not.toMatch(/darah rutin.*kreatinin.*harus.*sebelum ARV/i)
+    expect(text).not.toMatch(/ambil hasil HIV/i)
+    expect(text).not.toMatch(/F43\.2/i)
+    expect(text).not.toMatch(/kotrimoksazol otomatis diberikan/i)
+    expect(text).not.toMatch(/Permenkes 23\/2022 menjadi floor/i)
+    expect(text).not.toMatch(/Permenkes 23\/2022 (?:adalah|tetap|masih) (?:regulasi )?aktif utuh/i)
     expect(text).not.toMatch(/dua lesi, BTA negatif.*mendukung PB/i)
     expect(text).not.toMatch(/kusta tak diobati merusak saraf dan menular/i)
     expect(text).not.toMatch(/pasangan perlu diobati\.$/i)
