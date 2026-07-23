@@ -854,7 +854,11 @@ export function MejaKerja() {
                 {state.klinik.selesaiHariIni.length > 0 && (
                   <span className="baris mk__debrief-pasien">
                     {state.klinik.selesaiHariIni.map((p, i) => (
-                      <span key={i} className="chip" data-tip={p.kasusId}>
+                      // Audit Q6 (2026-07-23): tooltip dulu menampilkan kasusId
+                      // internal mentah ("lab_anafilaksis_makanan") — ganti nama
+                      // kasus manusiawi. Aman anti-bocor: encounter sudah
+                      // SELESAI, diagnosis sudah terbuka di PanelHasil.
+                      <span key={i} className="chip" data-tip={PACK.kasus[p.kasusId]?.nama ?? p.kasusId}>
                         {p.pasienNama} · {p.grade}
                       </span>
                     ))}
@@ -969,11 +973,13 @@ export function MejaKerja() {
                             return
                           }
                           setStatusSlot((s) => ({ ...s, [slot]: 'tersimpan' }))
+                          // Audit Q6 (2026-07-23): timer tunggal + clear per-slot
+                          // dulu bocor — simpan slot1 lalu slot2 cepat membatalkan
+                          // timer slot1, badge "✓ tersimpan" slot1 nyangkut
+                          // permanen. Timeout kini mereset SELURUH status (badge
+                          // transient, reset total 1,6 dtk setelah simpan terakhir).
                           if (timerSlotRef.current !== null) clearTimeout(timerSlotRef.current)
-                          timerSlotRef.current = setTimeout(
-                            () => setStatusSlot((s) => ({ ...s, [slot]: undefined })),
-                            1600,
-                          )
+                          timerSlotRef.current = setTimeout(() => setStatusSlot({}), 1600)
                         })
                       }
                       if (info) {
@@ -1157,20 +1163,30 @@ export function MejaKerja() {
               </span>
             </div>
 
-            {/* Ghost rival dr. Ratih — tekanan sosial tanpa multiplayer (data statis). */}
-            <div className="kartu mk__lokmin-rival">
-              <div className="baris baris--antara">
-                <span className="teks-kecil">
-                  <strong>dr. Ratih</strong> · Puskesmas tetangga
-                </span>
-                <span className="mono teks-kecil">{state.hari >= 61 ? '78' : '71'} / 100</span>
-              </div>
-              <p className="teks-xs teks-lembut">
-                {skorLokmin.total >= (state.hari >= 61 ? 78 : 71)
-                  ? 'Kamu unggul dari rekan seangkatanmu bulan ini. Jaga momentum — bulan depan lebih berat.'
-                  : 'dr. Ratih sedikit di depanmu bulan ini. Lihat dimensi mana yang tertinggal, dan kejar.'}
-              </p>
-            </div>
+            {/* Ghost rival dr. Ratih — tekanan sosial tanpa multiplayer (data statis).
+                Audit Q6 (2026-07-23): ambang dulu literal `hari >= 61` (asumsi
+                siklus karier 30) — di mode Ujian (siklus 10, lokmin hari 11/21)
+                tak pernah true, jadi lokmin ke-2 tetap menampilkan 71. Skala per
+                mode via siklusLokmin (pola sama M10.5 #15). Murni display. */}
+            {(() => {
+              const lokminKedua = state.hari >= siklusLokmin * 2 + 1
+              const skorRatih = lokminKedua ? 78 : 71
+              return (
+                <div className="kartu mk__lokmin-rival">
+                  <div className="baris baris--antara">
+                    <span className="teks-kecil">
+                      <strong>dr. Ratih</strong> · Puskesmas tetangga
+                    </span>
+                    <span className="mono teks-kecil">{skorRatih} / 100</span>
+                  </div>
+                  <p className="teks-xs teks-lembut">
+                    {skorLokmin.total >= skorRatih
+                      ? 'Kamu unggul dari rekan seangkatanmu bulan ini. Jaga momentum — bulan depan lebih berat.'
+                      : 'dr. Ratih sedikit di depanmu bulan ini. Lihat dimensi mana yang tertinggal, dan kejar.'}
+                  </p>
+                </div>
+              )
+            })()}
 
             {/* Triase Anggaran (M2.10, DeepThink Q4): ongkos oportunitas EKSPLISIT —
                 kluster aktif yang tak tersentuh fokus program bulan lalu. */}

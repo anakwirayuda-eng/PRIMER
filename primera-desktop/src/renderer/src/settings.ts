@@ -24,7 +24,11 @@ const KUNCI = 'primer.pengaturan'
 
 export const PENGATURAN_DEFAULT: Pengaturan = {
   volumeMusik: 0.6,
-  volumeSfx: 0.8,
+  // Q4 (keputusan dr. Wirayuda + DeepThink, 2026-07-23): default SFX SANGAT
+  // RENDAH — 50 mahasiswa satu lab tanpa jaminan headphone = polusi kognitif
+  // bila tiap klik berbunyi 80%. Menaikkan volume = opt-in via Pengaturan.
+  // (Pengguna lama tak terdampak: nilai tersimpan localStorage menang.)
+  volumeSfx: 0.2,
   ukuranTeks: 1,
   modeMalam: 'auto',
   kurangiGerak: false,
