@@ -150,6 +150,12 @@ export function Kunjungan() {
   const lanjutRef = useRef<HTMLButtonElement>(null)
   useEffect(() => {
     if (responsAktif !== null) lanjutRef.current?.focus()
+    // Audit Q6-lanjutan (2026-07-23): saat "Lanjut →" ditekan (respons ditutup)
+    // tombolnya ikut unmount → fokus keyboard jatuh ke <body> dan Tab mulai
+    // dari nol (HUD). Kembalikan ke root layar — pola sama efek ganti-babak
+    // di bawah (M14 #14c); pada mount awal efek fase juga fokus ke root,
+    // duplikatnya tak berefek.
+    else rootRef.current?.focus({ preventScroll: true })
   }, [responsAktif])
   // CODEX M14 #14c: pergantian BABAK (observasi→wawancara→diagnosis→resep) meng-
   // unmount set tombol babak sebelumnya → fokus jatuh ke <body>. Pindahkan ke
