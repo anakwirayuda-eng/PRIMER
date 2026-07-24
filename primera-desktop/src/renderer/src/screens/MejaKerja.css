@@ -861,6 +861,14 @@
   color: var(--tinta);
 }
 
+/* Agenda Besok (2026-07-23) — daftar ringkas di debrief sore. */
+.mk__agenda-daftar {
+  margin: 0;
+  padding-left: 1.2em;
+  display: grid;
+  gap: var(--sp-1);
+}
+
 /* Serat meja mode malam: struktur sama dgn mode terang (.mk), tint dibalik. */
 [data-mode='malam'] .mk {
   background:

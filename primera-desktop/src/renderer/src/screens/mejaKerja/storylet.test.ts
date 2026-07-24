@@ -58,6 +58,13 @@ describe('storyletHariIni', () => {
     expect(kandidat.some((teks) => /Prolanis/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Kabar binaan/i.test(teks))).toBe(false)
     expect(kandidat.some((teks) => /Jejak perawatan/i.test(teks))).toBe(false)
+    // 2026-07-23: kelelahan dokter tidak boleh dinarasikan saat burnout normal.
+    expect(kandidat.some((teks) => /Ruang jaga/i.test(teks))).toBe(false)
+  })
+
+  it('storylet "Ruang jaga" hanya terbuka saat burnoutTinggi (2026-07-23)', () => {
+    const kandidat = kandidatStorylet({ burnoutTinggi: true })
+    expect(kandidat.filter((teks) => /Ruang jaga/i.test(teks))).toHaveLength(4)
   })
 
   it('kabar rujukan membedakan rangkaian masih terbuka dari rangkaian tuntas', () => {

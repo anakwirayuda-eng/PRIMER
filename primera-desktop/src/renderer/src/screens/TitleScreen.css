@@ -375,3 +375,35 @@
   flex-direction: column;
   gap: var(--sp-1);
 }
+
+/* Verifikasi Massal (2026-07-23) — tabel rekap satu kelas. Digulir sendiri
+   (x dan y) supaya 50 baris tak memanjangkan panel judul. */
+.title__massal-gulir {
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.title__massal-tabel {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-xs);
+}
+
+.title__massal-tabel th {
+  text-align: left;
+  font-family: var(--font-mono);
+  letter-spacing: var(--lacak-label);
+  text-transform: uppercase;
+  color: var(--tinta-lembut);
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+}
+
+.title__massal-tabel th,
+.title__massal-tabel td {
+  padding: var(--sp-1) var(--sp-2);
+  border-bottom: 1px solid var(--border-halus);
+  white-space: nowrap;
+}

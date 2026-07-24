@@ -14,6 +14,7 @@ import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
 import { storyletHariIniDetail } from './mejaKerja/storylet'
 import { profilVisualStorylet } from './mejaKerja/storyletVisualProfiles'
+import { agendaBesok } from './mejaKerja/agendaBesok'
 import { hitungIksKeluarga } from '@engine/pispk'
 import {
   HARI_BUKA_PETA,
@@ -383,6 +384,10 @@ export function MejaKerja() {
     pernahProlanis: state.tally.prolanisSesi > 0,
     episodeAktif,
     episodeTerverifikasi,
+    // Usulan Claude 2026-07-23 (disetujui): dimensi Resiliensi kini TERASA
+    // secara naratif — storylet "Ruang jaga" hanya muncul saat burnout tinggi
+    // nyata (ambang 70/100, zona bahaya meter). Display-only.
+    burnoutTinggi: state.burnout >= 70,
   })
   const visualStorylet = profilVisualStorylet(storyletDebrief.temaVisual)
   // Modal rekap dikendalikan flag engine — TUTUP_REKAP mem-false-kan permanen.
@@ -886,6 +891,30 @@ export function MejaKerja() {
               />
               <p className="teks-xs teks-lembut">{storyletDebrief.teks}</p>
             </aside>
+
+            {/* Agenda Besok (usulan Claude 2026-07-23, disetujui) — loop
+                perencanaan: tidur jadi keputusan berbekal gambaran hari esok,
+                bukan sekadar tombol. Derivasi read-only dari state; antrian
+                poli besok SENGAJA tak diramal (baru di-draw Director pagi). */}
+            {!state.tamat && (() => {
+              const agenda = agendaBesok(state)
+              return (
+                <div className="kartu mk__program mk__agenda">
+                  <h3 className="judul-seksi">Agenda Besok — Hari {state.hari + 1}</h3>
+                  {agenda.length === 0 ? (
+                    <p className="teks-xs teks-lembut">
+                      Belum ada agenda khusus — besok dimulai dari antrian pagi seperti biasa.
+                    </p>
+                  ) : (
+                    <ul className="mk__agenda-daftar">
+                      {agenda.map((a) => (
+                        <li key={a.id} className="teks-kecil">{a.teks}</li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )
+            })()}
 
             {/* M4.18 — Gudang Obat: stok menipis + pengadaan (admin sore hari). */}
             {(() => {

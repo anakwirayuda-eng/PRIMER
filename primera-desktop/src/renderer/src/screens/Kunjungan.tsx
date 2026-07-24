@@ -18,6 +18,7 @@ import { hashSeed, Rng } from '@engine/core/rng'
 import { arcKunjunganAktif, hariTindakLanjutKunjungan, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { RumahIlustrasi } from './kunjungan/RumahIlustrasi'
+import { rekonstruksiTranskrip } from './kunjungan/transkrip'
 import {
   posisiHotspotVisual,
   profilPembicara,
@@ -134,8 +135,17 @@ export function Kunjungan() {
   const skenarioDasar = kj && kelContent ? kelContent.arc.kunjungan.find((sk) => sk.id === kj.skenarioId) : undefined
   const skenario = skenarioDasar ? skenarioEfektif(skenarioDasar, kj?.varianId) : undefined
 
-  /** Catatan percakapan lokal (untuk rekap babak 3) + respons yang sedang tampil. */
-  const [riwayat, setRiwayat] = useState<Ucapan[]>([])
+  /** Catatan percakapan lokal (untuk rekap babak 3) + respons yang sedang tampil.
+      Tahan-restart (2026-07-23): initializer merekonstruksi transkrip dari
+      state tersimpan (pilihanDiambil + trust) — app yang ditutup/crash di
+      tengah kunjungan tak lagi kehilangan rekap "TERDENGAR" babak 3. Kontrak
+      kesetaraan dgn engine dipagari transkrip.test.ts. Mount kunjungan baru:
+      pilihanDiambil kosong → hasilnya [] persis perilaku lama. */
+  const [riwayat, setRiwayat] = useState<Ucapan[]>(() => {
+    if (!kj || !skenario || !Array.isArray(kj.pilihanDiambil)) return []
+    const trustKeluarga = state.desa.keluarga[kj.keluargaId]?.trust ?? 0
+    return rekonstruksiTranskrip(skenario, kj.pilihanDiambil, trustKeluarga, kj.trustDelta ?? 0)
+  })
   const [responsAktif, setResponsAktif] = useState<string | null>(null)
   const [dokterTerakhir, setDokterTerakhir] = useState<string | null>(null)
   // Audit CODEX UKM 2026-07-16 #6: gaya pilihan diungkap SETELAH memilih (di

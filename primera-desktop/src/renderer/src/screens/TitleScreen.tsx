@@ -100,6 +100,26 @@ function SiluetPuskesmas() {
  *  raksasa dibaca utuh ke memori tanpa guna & bisa jadi vektor DoS. */
 const MAKS_UKURAN_IMPOR = 8_000_000
 
+/** Satu baris hasil verifikasi massal; hasil null = berkas gagal dibaca. */
+interface BarisVerifMassal {
+  file: string
+  hasil: HasilVerifikasi | null
+  catatan?: string
+}
+
+const LABEL_STATUS_VERIF: Record<HasilVerifikasi['status'], string> = {
+  sah: 'SAH',
+  tidak_sah: 'TIDAK SAH',
+  tidak_dapat_diverifikasi: 'TAK DAPAT',
+}
+
+/** Nilai sel CSV: kutip ganda + netralkan awalan formula (injeksi spreadsheet). */
+function selCsv(nilai: unknown): string {
+  let s = String(nilai ?? '')
+  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`
+  return `"${s.replaceAll('"', '""')}"`
+}
+
 export function TitleScreen() {
   // Autosave dimuat ke `arsip` TANPA masuk game — layar judul yang memutuskan.
   const arsip = useGame((s) => s.arsip)
@@ -138,6 +158,13 @@ export function TitleScreen() {
   const [namaFileArsip, setNamaFileArsip] = useState<string | null>(null)
   const [namaFileDossier, setNamaFileDossier] = useState<string | null>(null)
   const [namaFileTelemetri, setNamaFileTelemetri] = useState<string | null>(null)
+  // Verifikasi massal (usulan Claude 2026-07-23, disetujui): dosen memeriksa
+  // satu KELAS (±50 dossier) sekali pilih — bukan 50 kali pilih-berkas. Baris
+  // diproses berurutan (hemat memori), race dijaga token (pola fix #8).
+  const [hasilMassal, setHasilMassal] = useState<BarisVerifMassal[] | null>(null)
+  const [progresMassal, setProgresMassal] = useState<{ selesai: number; total: number } | null>(null)
+  const [namaFileMassal, setNamaFileMassal] = useState<string | null>(null)
+  const tokenMassalRef = useRef(0)
   // Audit premium 2026-07-23: window.confirm/alert (dialog OS mentah, memutus
   // imersi & bahasa tombol ikut OS) diganti DialogGame in-game. State satu slot:
   // konfirmasi menyimpan `aksi` yang baru dieksekusi setelah pemain menyetujui.
@@ -560,6 +587,147 @@ export function TitleScreen() {
                 )}
               </div>
             )}
+            <hr className="title__impor-pisah" />
+
+            {/* Verifikasi Massal (2026-07-23) — satu kelas sekali pilih. */}
+            <label className="teks-xs teks-lembut title__impor">
+              Verifikasi Massal — pilih banyak dossier sekaligus (satu kelas):{' '}
+              <span className="title__file-tampil">{namaFileMassal ?? 'Belum ada berkas dipilih'}</span>
+              <input
+                type="file"
+                multiple
+                className="title__file-input-tersembunyi"
+                accept="application/json"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files ?? [])
+                  e.target.value = ''
+                  if (files.length === 0) return
+                  setNamaFileMassal(`${files.length} berkas dipilih`)
+                  const token = ++tokenMassalRef.current
+                  setHasilMassal(null)
+                  setProgresMassal({ selesai: 0, total: files.length })
+                  void (async () => {
+                    const versiApp = await window.primer.appVersion()
+                    const urut = [...files].sort((a, b) => a.name.localeCompare(b.name, 'id'))
+                    const baris: BarisVerifMassal[] = []
+                    for (const f of urut) {
+                      if (tokenMassalRef.current !== token) return
+                      if (f.size > MAKS_UKURAN_IMPOR) {
+                        baris.push({ file: f.name, hasil: null, catatan: 'berkas terlalu besar' })
+                      } else {
+                        try {
+                          const json = await f.text()
+                          baris.push({ file: f.name, hasil: await verifikasiDossier(json, PACK, versiApp) })
+                        } catch {
+                          baris.push({ file: f.name, hasil: null, catatan: 'gagal dibaca' })
+                        }
+                      }
+                      if (tokenMassalRef.current !== token) return
+                      setHasilMassal([...baris])
+                      setProgresMassal({ selesai: baris.length, total: urut.length })
+                    }
+                    if (tokenMassalRef.current === token) setProgresMassal(null)
+                  })()
+                }}
+              />
+            </label>
+            {progresMassal !== null && (
+              <p className="teks-xs teks-lembut mono" role="status">
+                Memverifikasi {progresMassal.selesai}/{progresMassal.total}&hellip;
+              </p>
+            )}
+            {hasilMassal !== null && hasilMassal.length > 0 && (() => {
+              const hitung = (status: HasilVerifikasi['status']) =>
+                hasilMassal.filter((b) => b.hasil?.status === status).length
+              const gagal = hasilMassal.filter((b) => b.hasil === null).length
+              const eksporCsv = () => {
+                const header = ['berkas', 'status', 'nama', 'nim', 'mode', 'paket', 'hari', 'tamat', 'skor_klaim', 'grade_klaim', 'skor_replay', 'grade_replay', 'alasan']
+                const rows = hasilMassal.map((b) => {
+                  const r = b.hasil?.ringkasan
+                  return [
+                    b.file,
+                    b.hasil ? LABEL_STATUS_VERIF[b.hasil.status] : `GAGAL (${b.catatan ?? ''})`,
+                    r?.namaDokter ?? '', r?.nim ?? '', r?.mode ?? '', r?.paketUjian ?? '',
+                    r?.hari ?? '', r === undefined ? '' : r.tamat ? 'ya' : 'belum',
+                    r?.skorKlaim.total ?? '', r?.skorKlaim.grade ?? '',
+                    r?.skorReplay?.total ?? '', r?.skorReplay?.grade ?? '',
+                    b.hasil?.alasan.join(' | ') ?? (b.catatan ?? ''),
+                  ]
+                })
+                // Pemisah ';' + BOM: Excel locale Indonesia membuka langsung
+                // dgn kolom benar tanpa wizard impor.
+                const csv = [header, ...rows].map((r) => r.map(selCsv).join(';')).join('\r\n')
+                const blob = new Blob(['\ufeff', csv], { type: 'text/csv;charset=utf-8' })
+                const url = URL.createObjectURL(blob)
+                const tautan = document.createElement('a')
+                tautan.href = url
+                tautan.download = 'primer_verifikasi_massal.csv'
+                tautan.click()
+                URL.revokeObjectURL(url)
+              }
+              return (
+                <div className="kartu title__verifikasi">
+                  <div className="baris baris--antara">
+                    <span className="teks-xs mono">
+                      {hitung('sah')} sah · {hitung('tidak_sah')} tidak sah · {hitung('tidak_dapat_diverifikasi')} tak dapat diverifikasi
+                      {gagal > 0 ? ` · ${gagal} gagal dibaca` : ''}
+                    </span>
+                    <div className="baris">
+                      <button type="button" className="tombol teks-xs" onClick={eksporCsv}>
+                        Unduh CSV
+                      </button>
+                      <button type="button" className="tombol tombol--senyap teks-xs" onClick={() => setHasilMassal(null)}>
+                        Tutup
+                      </button>
+                    </div>
+                  </div>
+                  <div className="title__massal-gulir">
+                    <table className="title__massal-tabel" aria-label="Hasil verifikasi massal dossier">
+                      <thead>
+                        <tr>
+                          <th>Berkas</th><th>Dokter</th><th>NIM</th><th>Hari</th><th>Status</th><th>Klaim</th><th>Replay</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {hasilMassal.map((b) => {
+                          const r = b.hasil?.ringkasan
+                          return (
+                            <tr key={b.file}>
+                              <td className="mono">{b.file}</td>
+                              <td>{r ? `dr. ${r.namaDokter}` : '—'}</td>
+                              <td className="mono">{r?.nim ?? '—'}</td>
+                              <td className="mono">{r?.hari ?? '—'}</td>
+                              <td>
+                                <span
+                                  className={`stempel stempel--kecil ${
+                                    b.hasil === null
+                                      ? 'stempel--kunyit'
+                                      : b.hasil.status === 'sah'
+                                        ? 'stempel--hijau'
+                                        : b.hasil.status === 'tidak_sah'
+                                          ? 'stempel--merah'
+                                          : 'stempel--kunyit'
+                                  }`}
+                                >
+                                  {b.hasil ? LABEL_STATUS_VERIF[b.hasil.status] : 'GAGAL'}
+                                </span>
+                              </td>
+                              <td className="mono">
+                                {r ? `${r.skorKlaim.total} (${r.skorKlaim.grade})` : (b.catatan ?? '—')}
+                              </td>
+                              <td className="mono">
+                                {r?.skorReplay ? `${r.skorReplay.total} (${r.skorReplay.grade})` : '—'}
+                              </td>
+                            </tr>
+                          )
+                        })}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )
+            })()}
+
             {hasilVerifikasi !== null && (
               <div className="kartu title__verifikasi" role="status">
                 <div className="baris baris--antara">

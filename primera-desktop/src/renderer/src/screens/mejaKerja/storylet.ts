@@ -12,6 +12,8 @@ export interface KonteksStorylet {
   pernahProlanis?: boolean
   episodeAktif?: boolean
   episodeTerverifikasi?: boolean
+  /** Burnout dokter di zona bahaya (≥70/100) — Resiliensi terasa naratif. */
+  burnoutTinggi?: boolean
 }
 
 interface Storylet {
@@ -84,6 +86,14 @@ const bersyarat: readonly Storylet[] = [
   { id: 'episode-verif-belajar', teks: 'Jejak perawatan: rangkaian yang tuntas dibaca ulang dalam Lokmin. Tim mencari hal yang membuat tindak lanjut berhasil agar dapat diulang dengan bijak.', boleh: (k) => k.episodeTerverifikasi === true },
   { id: 'episode-verif-ukm-ukp', teks: 'Jejak perawatan: masalah yang ditemukan di rumah berakhir dengan tindak lanjut klinik dan verifikasi keluarga. UKM dan UKP bertemu di hasil.', boleh: (k) => k.episodeTerverifikasi === true },
   { id: 'episode-verif-tidak-magis', teks: 'Jejak perawatan: outcome membaik melalui beberapa langkah kecil lintas hari. Tidak ada satu tombol ajaib, hanya kontinuitas yang bekerja.', boleh: (k) => k.episodeTerverifikasi === true },
+
+  // Burnout tinggi (usulan Claude 2026-07-23, disetujui dr. Wirayuda):
+  // dimensi Resiliensi hadir secara naratif — tim MELIHAT dokternya lelah.
+  // Nada: hangat-sistemik, bukan menghukum; muncul hanya saat burnout ≥70.
+  { id: 'burnout-teh', teks: 'Ruang jaga: seseorang meletakkan teh hangat di mejamu tanpa berkata apa-apa. Tim membaca kelelahan dokternya lebih cepat daripada dokter itu sendiri.', boleh: (k) => k.burnoutTinggi === true },
+  { id: 'burnout-jadwal', teks: 'Ruang jaga: perawat senior diam-diam menggeser satu tugas dari daftarmu ke daftarnya. Sistem yang sehat menjaga orang-orangnya, bukan hanya pasiennya.', boleh: (k) => k.burnoutTinggi === true },
+  { id: 'burnout-cermin', teks: 'Ruang jaga: di cermin kamar kecil Puskesmas, kamu melihat wajah yang lebih lelah daripada yang mau kamu akui. Dokter juga manusia yang punya batas.', boleh: (k) => k.burnoutTinggi === true },
+  { id: 'burnout-kapus', teks: 'Ruang jaga: dr. Harsono menutup map di mejanya lebih awal dan menyuruhmu pulang. "Desa ini butuh dokternya utuh, bukan sisa-sisanya."', boleh: (k) => k.burnoutTinggi === true },
 ]
 
 const semua = [...umum, ...bersyarat]
