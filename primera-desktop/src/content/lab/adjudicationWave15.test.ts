@@ -25,7 +25,7 @@ describe('M13-137 adjudication wave 15: klaster pangan, banjir, dan program fila
       expect(EBM_GUIDELINE_CROSSWALK[id]?.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(66)
+    expect(DATA.summary.ebmDirect).toBe(67)
   })
 
   it('mengubah hepatitis A menjadi episode klinik-klaster pangan yang tertutup', () => {

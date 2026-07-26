@@ -25,7 +25,7 @@ describe('M13-137 adjudication wave 14: episode IMS klinik-pasangan-wilayah', ()
       expect(EBM_GUIDELINE_CROSSWALK[id]?.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(66)
+    expect(DATA.summary.ebmDirect).toBe(67)
   })
 
   it('menjaga kode katalog sambil memperjelas fenotipe klinis', () => {

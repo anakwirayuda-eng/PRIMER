@@ -62,7 +62,7 @@ describe('M13-137 adjudication artifact', () => {
       expect(links.length, caseId).toBeGreaterThan(0)
       expect(links.every((link) => link.relation === 'direct' || link.relation === 'related'), caseId).toBe(true)
     }
-    expect(DATA.summary.pnpkDirect).toBe(28)
+    expect(DATA.summary.pnpkDirect).toBe(27)
   })
 
   it('registry EBM terpisah dari PNPK, primer, dan tidak mempunyai caseId/sumber yatim', () => {
@@ -78,7 +78,7 @@ describe('M13-137 adjudication artifact', () => {
         expect(link.locator.trim().length, link.sourceId).toBeGreaterThan(20)
       }
     }
-    expect(DATA.summary.ebmDirect).toBe(66)
+    expect(DATA.summary.ebmDirect).toBe(67)
   })
 
   it('snapshot KFA exact mencakup 68 obat dan tidak mengarang query yang gagal', () => {

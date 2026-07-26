@@ -1,8 +1,8 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-07-23
+**Tanggal kompilasi:** 2026-07-26
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `3b6d68c7f5a01cbc72c58b3ccfb528041017bddf+dirty`, artefak `3bf44a2e1bc066b8a13116c59a2e1412a93e5ccd97562c67c14f2b561cc1a604`, pack `f558cc74`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `61ff0497ed310c51b0b65ea2011680b49d7d3b6f+dirty`, artefak `2952e98e664f6774aed715fac1ac701e0ec2b6a1d53e24f8fd6f060abd3c0508`, pack `2785a555`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -14,8 +14,8 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK langsung | 93 |
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
-| Memiliki PNPK langsung | 28 |
-| Memiliki pedoman EBM langsung tambahan | 66 |
+| Memiliki PNPK langsung | 27 |
+| Memiliki pedoman EBM langsung tambahan | 67 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |
@@ -68,7 +68,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-23.
+- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-26.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
@@ -135,7 +135,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_vaginitis_kandida` - Vaginitis Kandidiasis: tidak ada red flag provenance otomatis
 - `lab_vaginosis_bakterialis` - Vaginosis Bakterialis: tidak ada red flag provenance otomatis
 - `lab_vulvitis_iritan` - Vulvitis Iritan: tidak ada red flag provenance otomatis
-- `lab_gangguan_somatoform` - Gangguan Somatoform: tidak ada red flag provenance otomatis
+- `lab_gangguan_somatoform` - Gangguan Somatoform - Keluhan Fisik Persisten: tidak ada red flag provenance otomatis
 - `lab_edema_paru_akut_hipertensif` - Edema Paru Akut Hipertensif: tidak ada red flag provenance otomatis
 - `lab_gagal_jantung_dekompensasi` - Gagal Jantung Dekompensasi Akut: tidak ada red flag provenance otomatis
 - `lab_abortus_spontan_komplit` - Abortus Spontan Komplit - Stabil: tidak ada red flag provenance otomatis

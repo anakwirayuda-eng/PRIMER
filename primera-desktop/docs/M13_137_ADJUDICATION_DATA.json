@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-23T11:06:41.965Z",
-  "sourceCommit": "3b6d68c7f5a01cbc72c58b3ccfb528041017bddf+dirty",
-  "artifactFingerprint": "3bf44a2e1bc066b8a13116c59a2e1412a93e5ccd97562c67c14f2b561cc1a604",
-  "packFingerprint": "f558cc74",
+  "generatedAt": "2026-07-26T02:15:41.161Z",
+  "sourceCommit": "61ff0497ed310c51b0b65ea2011680b49d7d3b6f+dirty",
+  "artifactFingerprint": "2952e98e664f6774aed715fac1ac701e0ec2b6a1d53e24f8fd6f060abd3c0508",
+  "packFingerprint": "2785a555",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -48,8 +48,8 @@
     "ppkDirect": 93,
     "ppkRelated": 15,
     "ppkAbsent": 29,
-    "pnpkDirect": 28,
-    "ebmDirect": 66,
+    "pnpkDirect": 27,
+    "ebmDirect": 67,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -4349,14 +4349,14 @@
     {
       "ordinal": 22,
       "id": "lab_gangguan_somatoform",
-      "name": "Gangguan Somatoform",
+      "name": "Gangguan Somatoform - Keluhan Fisik Persisten",
       "icd10": "F45",
       "skdi": "4A",
       "category": "jiwa",
       "mustRefer": false,
       "fktp144": true,
       "demographics": "20-55 tahun, semua gender",
-      "openingComplaint": "Dada sering berdebar dan badan terasa sakit berpindah-pindah, tapi pemeriksaan sebelumnya normal.",
+      "openingComplaint": "Dada saya sering berdebar dan badan terasa sakit berpindah-pindah. Saya khawatir ada penyakit yang terlewat.",
       "currentManagement": {
         "requiredDrugs": [],
         "alternativeDrugs": [],
@@ -4364,18 +4364,18 @@
         "procedures": [],
         "education": [
           {
+            "id": "validasi_penjelasan_somatik",
+            "name": "[Keluhan fisik persisten] Validasi gejala dan bangun penjelasan tubuh-emosi bersama pasien",
+            "critical": true
+          },
+          {
             "id": "perawatan_terjadwal_somatik",
-            "name": "[Keluhan fungsional] Validasi gejala dan gunakan kontrol terjadwal",
-            "critical": false
+            "name": "[Keluhan fisik persisten] Satu klinisi, kontrol terjadwal, dan sasaran fungsi",
+            "critical": true
           },
           {
-            "id": "manajemen_stres",
-            "name": "[Stres] Relaksasi & manajemen stres",
-            "critical": false
-          },
-          {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
+            "id": "aktivitas_redflag_somatik",
+            "name": "[Keluhan fisik persisten] Kembali bertahap beraktivitas; evaluasi ulang bila pola berubah",
             "critical": false
           }
         ],
@@ -4383,13 +4383,15 @@
         "differentialIcd10": [
           "F45",
           "F41.1",
-          "E03.9"
+          "E05.9"
         ],
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Keluhan fisik persisten, distress nyata, pemeriksaan wajar, pola terkait stres, dan penggunaan layanan berulang mendukung gangguan somatoform setelah red flag disaring. Validasi pengalaman pasien, sepakati satu dokter dan kontrol terjadwal, fokus fungsi, serta hindari investigasi dan obat berulang tanpa indikasi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Diagnosis tidak boleh menjadi jalan pintas sebelum evaluasi klinis memadai dan asesmen risiko psikologis."
+        "clue": "Enam bulan keluhan fisik yang menimbulkan distress, perhatian kesehatan menetap, kunjungan berulang, dan gangguan fungsi mendukung F45 setelah riwayat, pemeriksaan, serta red flag dinilai secara proporsional. Ini diagnosis berbasis fitur positif, bukan kesimpulan bahwa hasil normal berarti keluhan psikologis. Tinjau hasil lama dan ulangi pemeriksaan hanya bila ada indikasi baru. Validasi bahwa gejala nyata; bahas hubungan tubuh, emosi, dan stres sebagai hipotesis bersama; sepakati satu klinisi, kontrol terjadwal, sasaran fungsi, serta aktivitas bertahap. Jangan memberi benzodiazepin atau antidepresan otomatis tanpa diagnosis komorbid yang jelas.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Gangguan Somatoform menjadi floor diagnosis-spesifik: singkirkan penyebab organik dan gangguan jiwa lain secara proporsional, hindari pemeriksaan atau rujukan yang tidak perlu, bangun kemitraan, dan jadwalkan tindak lanjut singkat berkala. Pedoman Penyelenggaraan Kesehatan Jiwa di FKTP Kemenkes 2020 memberi konteks layanan primer, tetapi bukan bab diagnosis-spesifik. PNPK Kedokteran Jiwa 2015 tidak memiliki bab somatoform tersendiri dan tidak dipakai sebagai sumber langsung kasus ini.",
+        "realityNote": "Asesmen, penjelasan kolaboratif, skrining keselamatan, sasaran fungsi, dan kontrol terjadwal dapat dimulai di FKTP tanpa alat khusus. Sukamaju tidak mengasumsikan psikolog selalu tersedia; psikoterapi atau konsultasi SpKJ memakai jejaring bila fungsi terganggu berat, diagnosis meragukan, ada komorbid/risiko keselamatan, atau respons buruk. Gejala baru maupun pola yang berubah tetap membuka evaluasi medis ulang.",
+        "ebmPearl": "ICD-11 mengganti logika lama \"tidak terjelaskan secara medis\" dengan bodily distress disorder: gejala dapat hidup bersama penyakit fisik, sedangkan perhatian berlebihan, distress, persistensi, dan dampak fungsi menjadi pusat diagnosis. Kode F45 tetap dipakai di game karena katalog SKDI dan PPK Indonesia. Intervensi berbasis prinsip CBT dapat dipertimbangkan, tetapi rekomendasi WHO bersifat kondisional dengan mutu bukti sangat rendah; systematic review komunikasi primer juga belum menemukan satu skrip yang pasti unggul. Karena itu tujuan encounter adalah kemitraan, penjelasan yang dapat diterima, kontinuitas, dan pemulihan fungsi, bukan memaksakan reatribusi."
       },
       "evidence": {
         "ppk": {
@@ -4410,36 +4412,83 @@
           ]
         },
         "pnpk": {
+          "status": "tak-ada-sumber",
+          "sources": [],
+          "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
+        },
+        "ebm": {
           "status": "cocok",
           "sources": [
             {
-              "slug": "kedokteran-jiwa-2015",
+              "sourceId": "kemenkes-keswa-fktp-2020",
+              "relation": "related",
+              "title": "Pedoman Penyelenggaraan Kesehatan Jiwa di Fasilitas Kesehatan Tingkat Pertama",
+              "authority": "Direktorat Pencegahan dan Pengendalian Masalah Kesehatan Jiwa dan Napza, Kementerian Kesehatan Republik Indonesia",
+              "year": 2020,
+              "officialUrl": "https://ayosehat.kemkes.go.id/buku-pedoman-penyelenggaraan-kesehatan-jiwa-di-fasilitas-kesehatan-tingkat-pertama",
+              "population": "People seeking mental-health assessment or care through Indonesian primary-care services",
+              "facilityScope": "Organization of mental-health detection, basic management, continuity, community involvement, and timely referral at Puskesmas; not a diagnosis-specific somatoform chapter.",
+              "locator": "Sections 1.2 and 1.3 establish Puskesmas responsibility for early detection, basic mental-health management, continuity, community participation, and referral when needed; the booklet does not provide a diagnosis-specific somatoform algorithm.",
+              "limitation": "Service-organization context only; PPK 1186/2022 remains the direct Indonesian diagnosis-specific floor."
+            },
+            {
+              "sourceId": "who-icd11-cddr-2024",
               "relation": "direct",
-              "title": "PNPK 2015 - Kedokteran Jiwa (Pedoman Nasional Pelayanan Kedokteran Ilmu Kedokteran Jiwa/Psikiatri)",
-              "documentNumber": "KEPMENKES RI Nomor HK.02.02/MENKES/73/2015 tentang Pedoman Nasional Pelayanan Kedokteran Jiwa",
-              "officialUrl": "https://kemkes.go.id/app_asset/file_content_download/170312443765839dd5be6791.97275276.pdf",
-              "localFulltext": "docs/references/pnpk/kedokteran-jiwa-2015/fulltext.txt",
-              "facilityScope": "Lintas tingkat fasilitas; lihat cuplikan dan dokumen penuh.",
-              "excerpts": [
-                {
-                  "label": "Konteks diagnosis",
-                  "text": "Jiwa merupakan acuan bagi dokter pembuat keputusan klinis dalam pelayanan dan perawatan pasien dengan gangguan jiwa, institusi pendidikan dan kelompok profesi terkait untuk menyusun",
-                  "locator": "docs/references/pnpk/kedokteran-jiwa-2015/fulltext.txt:baris 101"
-                },
-                {
-                  "label": "Konteks FKTP/rujukan",
-                  "text": "b. Memantau dan evaluasi tanda-tanda vital c. Mengatasi penyulit sesuai dengan kondisi klinis d. Bila intoksikasi berat rujuk ke ICU Penyulit AIDS dan berbagai infeksi oportunistik dapat menyertainya, misalnya hepatitis, koma, kejang, edema paru, pneumania aspirasi,",
-                  "locator": "docs/references/pnpk/kedokteran-jiwa-2015/fulltext.txt:baris 838"
-                }
-              ],
-              "limitation": "Cuplikan literal adalah orientasi; adjudikasi tetap membaca konteks dokumen penuh."
+              "title": "Clinical descriptions and diagnostic requirements for ICD-11 mental, behavioural and neurodevelopmental disorders",
+              "authority": "World Health Organization",
+              "year": 2024,
+              "officialUrl": "https://www.who.int/publications/i/item/9789240077263",
+              "population": "Adults and children assessed for mental, behavioural, and neurodevelopmental disorders",
+              "facilityScope": "Diagnostic requirements for bodily distress disorder, including positive features, persistence, distress, excessive attention, and functional impact without requiring absence of physical disease.",
+              "locator": "Bodily distress disorder (6C20) uses persistent distressing bodily symptoms plus excessive attention, worry, and functional impact as positive diagnostic requirements; symptoms may coexist with a physical health condition."
+            },
+            {
+              "sourceId": "who-mhgap-ig2-2016",
+              "relation": "direct",
+              "title": "mhGAP Intervention Guide, version 2.0",
+              "authority": "World Health Organization",
+              "year": 2016,
+              "officialUrl": "https://www.who.int/publications/i/item/9789241549790",
+              "population": "People with mental, neurological, substance-use, emotional, or bodily-distress complaints in non-specialist settings",
+              "facilityScope": "Proportionate medical assessment, acknowledgement that symptoms are real, collaborative explanation, avoidance of unnecessary investigations and ineffective medicines, graded return to activity, social support, and follow-up.",
+              "locator": "OTH 2 management: acknowledge symptoms as real, ask the person explanation and concerns, discuss possible body-emotion links, avoid investigations without clear medical indication, encourage gradual return to activity, strengthen support, and follow up."
+            },
+            {
+              "sourceId": "who-bodily-distress-cbt-2012",
+              "relation": "direct",
+              "title": "Psychological treatment based on cognitive-behavioural therapy principles for managing bodily distress complaints",
+              "authority": "World Health Organization mhGAP Evidence Resource Centre",
+              "year": 2012,
+              "officialUrl": "https://www.who.int/teams/mental-health-and-substance-use/treatment-care/mental-health-gap-action-programme/evidence-centre/other-significant-emotional-and-medical-unexplained-somatic-complaints/psychological-treatment-based-on-cognitive-behavioural-therapy-principles-for-managing-medically-unexplained-somatic-complaints",
+              "population": "Adult repeat help seekers with bodily-distress complaints and substantial distress",
+              "facilityScope": "CBT-principle interventions such as graded activity may be considered, but the recommendation is conditional and the evidence quality is very low.",
+              "locator": "Recommendation page: CBT-principle approaches such as reattribution or graded activities may be considered for repeat adult help seekers in substantial distress; strength is conditional and evidence quality very low."
+            },
+            {
+              "sourceId": "german-s3-functional-somatic-2019",
+              "relation": "direct",
+              "title": "Functional Somatic Symptoms: S3 Guideline and Update",
+              "authority": "German guideline group of 32 medical and psychological societies and two patient associations",
+              "year": 2019,
+              "officialUrl": "https://pubmed.ncbi.nlm.nih.gov/31554544/",
+              "population": "Adults with non-specific, functional, or somatoform bodily complaints across primary and specialist care",
+              "facilityScope": "Stepped simultaneous diagnostic and therapeutic care, empathic alliance, positive non-stigmatizing explanation, cautious testing, self-efficacy, functional goals, and graded escalation.",
+              "locator": "Guideline results and recommendations: use severity-stepped care, build an empathic alliance, provide a non-stigmatizing positive explanation, avoid redundant diagnostics, strengthen self-efficacy, and prioritize function."
+            },
+            {
+              "sourceId": "plos-mus-communication-2022",
+              "relation": "related",
+              "title": "Communication interventions for medically unexplained symptom conditions in general practice: a systematic review and meta-analysis",
+              "authority": "PLOS One",
+              "year": 2022,
+              "officialUrl": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0277538",
+              "population": "Adults with persistent bodily symptoms and primary-care clinicians in nine randomized trials",
+              "facilityScope": "Communication interventions in general practice; heterogeneity, poor reporting, and risk of bias prevent endorsement of one reliably effective communication script.",
+              "locator": "Systematic review of nine randomized trials found heterogeneous communication interventions with considerable risk of bias and insufficient evidence to identify one reliably effective script.",
+              "limitation": "Used to prevent overclaiming a single communication technique, not as a diagnostic standard."
             }
-          ]
-        },
-        "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
+          ],
+          "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
         },
         "fornas": {
           "status": "cocok",

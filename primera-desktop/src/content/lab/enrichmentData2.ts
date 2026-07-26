@@ -73,18 +73,15 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
     },
   },
   lab_gangguan_somatoform: {
-    distraktor: [
-      { id: 'q_dist_kerokan', kategori: 'sosial', tanya: 'Apakah keluhan ini mereda kalau Anda dikerok atau dipijat?', jawab: 'Sudah sering dikerok dan dipijat, Dok, tapi tidak ada bedanya.' },
-    ],
     konsekuensi: {
-      narasi: 'Investigasi dan obat berulang tanpa indikasi memperkuat perilaku sakit; tanpa kontrol terjadwal dan fokus fungsi, keluhan berpindah terus.',
-      kembaliHariMin: 7, kembaliHariMax: 14,
-      kondisiKembali: 'Datang lagi dengan keluhan fisik baru di lokasi berbeda dan minta rujukan spesialis lain.',
+      narasi: 'Bila hasil pemeriksaan tidak dijelaskan dan layanan tetap terfragmentasi, ketidakpastian, risiko iatrogenik, serta gangguan fungsi dapat berlanjut. Kontinuitas memberi ruang untuk menilai perubahan nyata tanpa mengulang seluruh investigasi secara otomatis.',
+      kembaliHariMin: 21, kembaliHariMax: 35,
+      kondisiKembali: 'Kembali dengan rasa tegang di leher dan kekhawatiran baru; membawa hasil lama tetapi belum memiliki rencana kontrol maupun sasaran fungsi yang disepakati.',
     },
     variasiPembuka: {
-      cemas: 'Dada berdebar dan badan sakit pindah-pindah padahal pemeriksaan katanya normal — pasti ada yang belum ketemu, Dok!',
-      polos: 'Dada sering deg-degan, badan sakit pindah-pindah, Dok, tapi diperiksa katanya normal.',
-      lansia: 'Sudah berbulan-bulan badan saya nyeri berpindah dan dada berdebar, tapi katanya normal, Dok.',
+      cemas: 'Dada saya berdebar dan badan sakit berpindah-pindah. Saya masih takut ada penyakit yang terlewat, Dok.',
+      polos: 'Dada sering berdebar dan badan sakit pindah-pindah sudah berbulan-bulan, Dok.',
+      lansia: 'Sudah berbulan-bulan badan saya nyeri berpindah dan dada berdebar. Saya ingin memahami apa yang terjadi, Dok.',
     },
   },
   lab_benda_asing_konjungtiva: {
