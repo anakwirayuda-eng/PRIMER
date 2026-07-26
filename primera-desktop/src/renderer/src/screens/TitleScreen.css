@@ -104,8 +104,18 @@
 .title__kicker {
   font-size: var(--text-xs);
   font-weight: 700;
-  letter-spacing: 0.28em;
+  /* 0.28→0.2em (2026-07-26): nama fakultas 37 karakter harus muat satu baris
+     di panel 540px — hindari patah kata janggal ("...IKM" sendirian). */
+  letter-spacing: 0.2em;
   color: var(--tinta-pudar);
+  text-wrap: balance;
+}
+
+.title__kicker-sub {
+  display: block;
+  margin-top: var(--sp-05);
+  font-size: 0.85em;
+  opacity: 0.8;
 }
 
 .title__judul {

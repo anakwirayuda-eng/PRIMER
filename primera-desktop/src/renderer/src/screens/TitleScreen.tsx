@@ -266,7 +266,14 @@ export function TitleScreen() {
       <SiluetPuskesmas />
 
       <div className="title__panel kertas">
-        <p className="title__kicker mono">KEMENTERIAN KESEHATAN · SIMULASI STASE IKM</p>
+        {/* Koreksi kelembagaan (2026-07-26, dr. Wirayuda): kop lama
+            "KEMENTERIAN KESEHATAN" keliru DAN berisiko terbaca sbg produk
+            resmi Kemenkes — ini simulasi edukasi milik fakultas (konsisten
+            METADATA.organisasi ITS). */}
+        <p className="title__kicker mono">
+          FAKULTAS KEDOKTERAN DAN KESEHATAN ITS
+          <span className="title__kicker-sub">SIMULASI STASE IKM</span>
+        </p>
         <h1 className="title__judul">PRIMERA</h1>
         {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
             instalasi lain; hapus label ini saat porting ke rilis produksi. */}
