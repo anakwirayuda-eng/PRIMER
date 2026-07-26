@@ -25,7 +25,7 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
       expect(record(id).evidence.ebm.sources.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(67)
+    expect(DATA.summary.ebmDirect).toBe(68)
   })
 
   it('menjaga status floor PPK tetap jujur', () => {

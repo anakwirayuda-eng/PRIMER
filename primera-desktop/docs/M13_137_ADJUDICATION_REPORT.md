@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-26
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `61ff0497ed310c51b0b65ea2011680b49d7d3b6f+dirty`, artefak `2952e98e664f6774aed715fac1ac701e0ec2b6a1d53e24f8fd6f060abd3c0508`, pack `2785a555`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `1a4b63cd46ddd76cc4c40f9a9b39a5c22d979952+dirty`, artefak `b2e730a4d6027e9c2bf1e2ab0c6484222784a329cae22fd7c9e3d4ae0fb773c9`, pack `91b0b14e`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -15,7 +15,7 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
 | Memiliki PNPK langsung | 27 |
-| Memiliki pedoman EBM langsung tambahan | 67 |
+| Memiliki pedoman EBM langsung tambahan | 68 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |

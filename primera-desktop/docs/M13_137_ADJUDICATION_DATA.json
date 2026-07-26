@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-26T02:15:41.161Z",
-  "sourceCommit": "61ff0497ed310c51b0b65ea2011680b49d7d3b6f+dirty",
-  "artifactFingerprint": "2952e98e664f6774aed715fac1ac701e0ec2b6a1d53e24f8fd6f060abd3c0508",
-  "packFingerprint": "2785a555",
+  "generatedAt": "2026-07-26T08:10:51.264Z",
+  "sourceCommit": "1a4b63cd46ddd76cc4c40f9a9b39a5c22d979952+dirty",
+  "artifactFingerprint": "b2e730a4d6027e9c2bf1e2ab0c6484222784a329cae22fd7c9e3d4ae0fb773c9",
+  "packFingerprint": "91b0b14e",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -49,7 +49,7 @@
     "ppkRelated": 15,
     "ppkAbsent": 29,
     "pnpkDirect": 27,
-    "ebmDirect": 67,
+    "ebmDirect": 68,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -13692,13 +13692,13 @@
             "fornas": {
               "status": "cocok",
               "queries": [
-                "kloramfenikol"
+                "5 kloramfenikol"
               ],
               "excerpts": [
                 {
-                  "label": "kloramfenikol",
-                  "text": "1. kaps 250 mg   4 kaps/hari selama  2. kaps 500 mg   5 hari.  6.2.2.2 Kloramfenikol 1 kloramfenikol 1. kaps 250 mg   - 4 kaps/hari ",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 2722"
+                  "label": "5 kloramfenikol",
+                  "text": "2. tts mata 0,3%    3. tts mata 1%  5 kloramfenikol 1. salep mata 1%   ",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 16611"
                 }
               ],
               "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
@@ -13725,10 +13725,15 @@
         "procedures": [
           {
             "id": "ekstraksi_benda_asing_konjungtiva",
-            "name": "Irigasi dan ekstraksi superfisial benda asing konjungtiva"
+            "name": "Irigasi atau ekstraksi lembut benda asing konjungtiva yang tampak superfisial"
           }
         ],
         "education": [
+          {
+            "id": "perawatan_pasca_benda_asing_mata",
+            "name": "[Cedera mata] Jangan membawa pulang anestetik tetes; kontrol 24-48 jam setelah benda organik diangkat",
+            "critical": true
+          },
           {
             "id": "perlindungan_mata",
             "name": "[Mata] Hindari mengucek dan gunakan pelindung saat bekerja",
@@ -13737,7 +13742,7 @@
           {
             "id": "tanda_bahaya",
             "name": "Tanda bahaya — kapan harus segera kembali",
-            "critical": false
+            "critical": true
           }
         ],
         "relevantLabs": [],
@@ -13749,9 +13754,10 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Benda asing superfisial dengan visus normal dan tanpa tanda penetrasi dapat diirigasi lalu diekstraksi secara visual. Eversi kelopak dan periksa abrasi; jangan melakukan probing bila benda tertanam, mekanisme berkecepatan tinggi, pupil tidak normal, atau Seidel positif.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Penurunan visus, benda tertanam, penetrasi, atau kegagalan ekstraksi adalah alasan rujuk mata.",
-        "realityNote": "Pada encounter ini pencahayaan fokus, anestetik topikal, irigasi, cotton bud steril, fluorescein, dan operator terlatih dinyatakan ready. Ekstraksi dibatasi pada benda superfisial yang tampak; resistensi, benda tertanam, penurunan visus, atau kecurigaan penetrasi menghentikan upaya dan memicu rujuk."
+        "clue": "Sekam berkecepatan rendah yang tampak longgar di konjungtiva tarsal, dengan visus utuh, pupil normal, tanpa defek kornea, dan tanpa tanda penetrasi, dapat ditangani di FKTP. Catat visus sebelum anestetik, eversi kelopak, gunakan irigasi atau cotton bud steril lembap untuk benda yang jelas superfisial, lalu ulangi fluorescein setelah pengangkatan untuk memastikan tidak ada sisa, defek baru, atau kebocoran. Jangan melakukan probing atau upaya berulang bila benda tertanam, berada di kornea/sumbu visual, melawan saat disentuh, atau mekanismenya mencurigakan. Kloramfenikol topikal boleh dipertimbangkan bila terdapat defek epitel atau risiko infeksi yang bermakna, tetapi bukan pengganti ekstraksi lengkap dan tindak lanjut.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.",
+        "realityNote": "Profil sukamaju_middle_v1 menyatakan lampu fokus, saline steril, anestetik topikal sekali pakai, fluorescein dengan cahaya biru, cotton bud steril, dan operator siap; slit lamp tidak diasumsikan. Hanya sekam longgar yang tampak di konjungtiva tarsal yang diangkat. Benda korneal/tertanam, resistensi, hasil tidak lengkap, atau red flag menghentikan upaya dan memicu rujuk.",
+        "ebmPearl": "Material tumbuhan meningkatkan kewaspadaan terhadap infeksi, tetapi tidak otomatis mengubah setiap benda konjungtiva superfisial menjadi kasus rumah sakit. Penentu utamanya adalah mekanisme, lokasi, kedalaman, visus, defek kornea, tanda penetrasi, kemampuan ekstraksi lengkap, dan tindak lanjut. Panduan praktik masih kerap menganjurkan antibiotik topikal, sedangkan pembaruan Cochrane 2025 menilai kepastian bukti profilaksis pada abrasi kornea sangat rendah dan tidak mendukung satu regimen tertentu. Karena vignette ini tidak memiliki defek kornea, kloramfenikol diperlakukan sebagai opsi klinis, bukan syarat nilai. Anestetik topikal hanya dipakai saat pemeriksaan/tindakan dan tidak dibawa pulang."
       },
       "evidence": {
         "ppk": {
@@ -13782,9 +13788,44 @@
           "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
         },
         "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
+          "status": "cocok",
+          "sources": [
+            {
+              "sourceId": "racgp-ophthalmic-trauma-2026",
+              "relation": "direct",
+              "title": "Ophthalmic trauma: First-line management in primary care",
+              "authority": "Royal Australian College of General Practitioners",
+              "year": 2026,
+              "officialUrl": "https://www1.racgp.org.au/getattachment/0445a2c2-26d7-482d-a7d6-ffbb58f659c0/Ophthalmic-trauma.aspx",
+              "population": "Adults and children presenting to primary care with common ocular trauma",
+              "facilityScope": "Visual-acuity assessment, lid eversion, fluorescein examination, safe superficial foreign-body removal, post-removal reassessment, follow-up, and ophthalmology referral thresholds.",
+              "locator": "Table 1 and corneal foreign-body section: document visual acuity, evert the lid, use fluorescein before and after removal, confirm no leak, remove only a superficial foreign body with suitable light/magnification, review within 24-48 hours, and refer for penetration, deep/central location, incomplete removal, visual loss, or infection."
+            },
+            {
+              "sourceId": "college-optometrists-ocular-fb-2025",
+              "relation": "direct",
+              "title": "Corneal or other superficial ocular foreign body: Clinical Management Guideline",
+              "authority": "The College of Optometrists",
+              "year": 2025,
+              "officialUrl": "https://www.college-optometrists.org/clinical-guidance/clinical-management-guidelines/corneal_orothersuperficialocular_foreignbody",
+              "population": "People with corneal, conjunctival, or other superficial ocular foreign bodies",
+              "facilityScope": "Mechanism-aware assessment, safe removal of superficial ocular foreign bodies, selective antimicrobial treatment when infection risk is present, monitoring, and referral.",
+              "locator": "Version 18, published 9 December 2025: history should identify material and mechanism; management distinguishes safe superficial conjunctival/corneal removal from penetration or scarring risk and uses antimicrobial treatment selectively when infection is likely."
+            },
+            {
+              "sourceId": "cochrane-corneal-antibiotic-2025",
+              "relation": "related",
+              "title": "Antibiotic prophylaxis for corneal abrasion",
+              "authority": "Cochrane Eyes and Vision",
+              "year": 2025,
+              "officialUrl": "https://pubmed.ncbi.nlm.nih.gov/41017778/",
+              "population": "Children and adults with traumatic corneal abrasion",
+              "facilityScope": "Benefits and harms of topical antibiotic prophylaxis after corneal abrasion; certainty is very low and no specific regimen can be supported.",
+              "locator": "Updated review searched through March 2025 and rated all antibiotic-prophylaxis outcomes very low certainty; it could not support a specific regimen or establish prevention of infection or faster healing.",
+              "limitation": "The review addresses traumatic corneal abrasion rather than an isolated conjunctival foreign body; it calibrates the post-removal antibiotic claim but does not replace diagnosis-specific guidance."
+            }
+          ],
+          "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
         },
         "fornas": {
           "status": "cocok",
@@ -13797,7 +13838,7 @@
           "resources": [
             {
               "id": "ekstraksi_benda_asing_konjungtiva",
-              "name": "Irigasi dan ekstraksi superfisial benda asing konjungtiva",
+              "name": "Irigasi atau ekstraksi lembut benda asing konjungtiva yang tampak superfisial",
               "kind": "procedure",
               "tier": "C",
               "note": "Instrumen, anestetik topikal, dan kompetensi operator perlu dinyatakan.",

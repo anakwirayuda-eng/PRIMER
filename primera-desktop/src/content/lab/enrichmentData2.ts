@@ -85,19 +85,16 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
     },
   },
   lab_benda_asing_konjungtiva: {
-    distraktor: [
-      { id: 'q_dist_alergi_debu', kategori: 'rpd', tanya: 'Apakah mata Anda memang sering gatal dan merah karena alergi debu atau serbuk tanaman?', jawab: 'Tidak, mata saya biasa saja. Baru kali ini setelah kemasukan sekam.' },
-    ],
     obatSalahUmum: [
       { id: 'betametason_krim', alasan: 'Steroid tidak dipakai pada mata dengan benda asing/potensi abrasi kornea; berisiko memperberat dan menghambat penyembuhan.', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
-      narasi: 'Bila benda asing tidak diangkat dan tanda penetrasi terlewat, dapat terjadi abrasi/ulkus kornea.',
-      kembaliHariMin: 1, kembaliHariMax: 3,
-      kondisiKembali: 'Mata makin nyeri, merah, dan silau; penglihatan mulai kabur.',
+      narasi: 'Bila fragmen organik tertinggal atau defek epitel pascatindakan tidak dikenali, inflamasi dan keratitis dapat berkembang. Kontrol dini membedakan iritasi yang pulih dari komplikasi yang perlu rujukan.',
+      kembaliHariMin: 1, kembaliHariMax: 2,
+      kondisiKembali: 'Mata tetap mengganjal dan kini lebih merah serta silau; visus harus diukur ulang, kelopak dieversi kembali, dan kornea dinilai dengan fluorescein untuk mencari fragmen, defek, atau infiltrat.',
     },
     variasiPembuka: {
-      cemas: 'Mata kanan mengganjal setelah sekam masuk — apa bola mata saya tergores dan bisa buta, Dok?',
+      cemas: 'Mata kanan mengganjal setelah sekam masuk. Apa mata saya tergores parah, Dok?',
       polos: 'Ada sekam masuk mata kanan pas berkebun, sekarang ngeganjel, Dok.',
       lansia: 'Sekam tertiup ke mata kanan saya tadi pagi, sekarang terasa mengganjal, Dok.',
     },

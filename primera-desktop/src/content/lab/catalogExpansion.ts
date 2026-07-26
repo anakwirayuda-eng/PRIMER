@@ -228,6 +228,7 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   aktivitas_redflag_somatik: { id: 'aktivitas_redflag_somatik', nama: '[Keluhan fisik persisten] Kembali bertahap beraktivitas; evaluasi ulang bila pola berubah', kategori: 'tindakan', sinonim: ['graded activity', 'safety net', 'red flag', 'keluhan baru'] },
   higiene_kelopak_mata: { id: 'higiene_kelopak_mata', nama: '[Mata] Kompres hangat dan bersihkan tepi kelopak dengan lembut', kategori: 'higiene', sinonim: ['blefaritis', 'lid hygiene'] },
   perlindungan_mata: { id: 'perlindungan_mata', nama: '[Mata] Hindari mengucek dan gunakan pelindung saat bekerja', kategori: 'tindakan', sinonim: ['benda asing mata', 'eye protection'] },
+  perawatan_pasca_benda_asing_mata: { id: 'perawatan_pasca_benda_asing_mata', nama: '[Cedera mata] Jangan membawa pulang anestetik tetes; kontrol 24-48 jam setelah benda organik diangkat', kategori: 'kepatuhan', sinonim: ['benda asing mata', 'topical anaesthetic', 'kontrol mata', 'sekam'] },
   adaptasi_kacamata: { id: 'adaptasi_kacamata', nama: '[Refraksi] Gunakan koreksi optik sesuai hasil refraksi dan kontrol bila berubah', kategori: 'tindakan', sinonim: ['kacamata', 'miopia', 'presbiopia'] },
   perawatan_tali_pusat_kering: { id: 'perawatan_tali_pusat_kering', nama: '[Neonatus] Jaga tali pusat bersih-kering dan kenali kemerahan yang meluas', kategori: 'kia', sinonim: ['umbilikus', 'omfalitis'] },
   cegah_ims_pasangan: { id: 'cegah_ims_pasangan', nama: '[IMS] Obati pasangan, gunakan kondom, dan tunda hubungan sampai terapi selesai', kategori: 'higiene', sinonim: ['gonore', 'sifilis', 'partner treatment'] },
@@ -277,7 +278,7 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
 }
 
 export const TINDAKAN_LAB_EXPANSION: Record<string, Tindakan> = {
-  ekstraksi_benda_asing_konjungtiva: { id: 'ekstraksi_benda_asing_konjungtiva', nama: 'Irigasi dan ekstraksi superfisial benda asing konjungtiva', icd9: '98.21', biaya: 35000 },
+  ekstraksi_benda_asing_konjungtiva: { id: 'ekstraksi_benda_asing_konjungtiva', nama: 'Irigasi atau ekstraksi lembut benda asing konjungtiva yang tampak superfisial', icd9: '98.21', biaya: 35000 },
   epilasi_trikiasis: { id: 'epilasi_trikiasis', nama: 'Epilasi bulu mata penyebab trikiasis', icd9: '08.91', biaya: 25000 },
   uji_visus_refraksi: { id: 'uji_visus_refraksi', nama: 'Uji visus, pinhole, dan refraksi sederhana', icd9: '95.09', biaya: 20000 },
   perawatan_tali_pusat: { id: 'perawatan_tali_pusat', nama: 'Perawatan tali pusat bersih dan kering', icd9: '99.84', biaya: 15000 },
