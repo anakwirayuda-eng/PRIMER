@@ -7,6 +7,7 @@
 import { useRef, useState, type FormEvent } from 'react'
 import { useGame } from '../store'
 import { useRadioGroup } from '../useRadioGroup'
+import { useMotionDikurangi } from '../useMotionDikurangi'
 import { DialogGame } from '../components/DialogGame'
 import { METADATA } from '@content/metadata'
 import type { ModeStase } from '@engine/state'
@@ -178,6 +179,8 @@ export function TitleScreen() {
   const beriTahu = (judul: string, pesan: string) => setDialog({ judul, pesan })
   const arsipRilisSesuai =
     arsip !== null && arsip.contentRelease === PACK.runtimeManifest.contentRelease
+  // Parallax dekoratif dimatikan bagi pengguna kurangi-gerak (premiere 2026-07-26).
+  const kurangiGerak = useMotionDikurangi()
 
   // Audit UI/UX 2026-07-23: seluruh UI memanggil pemain "dr. {nama}" — pemain
   // yang sudah mengetik gelarnya sendiri ("dr. Budi"/"Dr Budi") dulu jadi
@@ -239,7 +242,18 @@ export function TitleScreen() {
   }
 
   return (
-    <div className="title">
+    <div
+      className="title"
+      // Parallax halus matahari (premiere 2026-07-26): murni dekoratif,
+      // mati saat kurangi-gerak. Nilai -0.5..0.5 → CSS var → translate kecil.
+      onMouseMove={(e) => {
+        if (kurangiGerak) return
+        const t = e.currentTarget
+        t.style.setProperty('--par-x', String(e.clientX / t.clientWidth - 0.5))
+        t.style.setProperty('--par-y', String(e.clientY / t.clientHeight - 0.5))
+      }}
+    >
+      <span className="title__beta mono" aria-hidden="true">TEST-BETA</span>
       {/* Matahari pagi — naik perlahan, cahaya lembut */}
       <div className="title__matahari" aria-hidden="true">
         <svg viewBox="0 0 300 300">
@@ -256,7 +270,9 @@ export function TitleScreen() {
         <h1 className="title__judul">PRIMERA</h1>
         {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
             instalasi lain; hapus label ini saat porting ke rilis produksi. */}
-        <p className="title__sub mono">— PUSKESMAS PAGI · TEST-BETA —</p>
+        {/* Premiere (2026-07-26): label build pindah ke chip pojok — subtitle
+            murni identitas. Hapus chip saat porting ke rilis produksi. */}
+        <p className="title__sub mono">— PUSKESMAS PAGI —</p>
         {/* M10 Batch-2 (CODEX A.6): tagline mengikuti mode terpilih — dulu
             hardcoded "Sembilan puluh hari" walau Ujian·30 hari dipilih. */}
         <p className="title__tagline">
