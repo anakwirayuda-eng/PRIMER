@@ -299,9 +299,17 @@ export function TitleScreen() {
               </p>
             )}
 
+            {/* Hirarki premiere (2026-07-26): pemain KEMBALI melihat satu aksi
+                pahlawan (Lanjutkan); form stase-baru terlipat — terbuka penuh
+                hanya utk pemain baru. jsdom tak menyembunyikan isi <details>,
+                kontrak test lama (placeholder/tombol) tetap terjangkau. */}
+            <details className="title__lipat" open={arsip === null}>
+              <summary className="judul-seksi title__lipat-judul">
+                {arsip !== null ? 'Atau mulai stase baru' : 'Mulai stase barumu'}
+              </summary>
             <form className="title__form" onSubmit={mulaiStase}>
               <label className="title__label judul-seksi" htmlFor="title-nama">
-                {arsip !== null ? 'Atau mulai stase baru' : 'Nama doktermu'}
+                Nama doktermu
               </label>
               {/* M4.5 — pemilih mode stase */}
               <div className="title__form-baris" {...modeRadio.groupProps} aria-label="Mode stase">
@@ -382,8 +390,14 @@ export function TitleScreen() {
                 </p>
               )}
             </form>
+            </details>
 
-            {/* M5.25 — slot manual + impor arsip; M5.24 — jejak lintas-playthrough. */}
+            {/* M5.25 — slot manual + impor arsip; M5.24 — jejak lintas-playthrough.
+                Premiere (2026-07-26): dilipat — arsip adalah alat, bukan hero. */}
+            <details className="title__lipat">
+              <summary className="judul-seksi title__lipat-judul">
+                Arsip &amp; Impor{slots.length > 0 ? ` (${slots.length} slot terisi)` : ''}
+              </summary>
             {(slots.length > 0 || meta !== null) && (
               <div className="title__arsip">
                 {slots.map((info) => (
@@ -484,6 +498,7 @@ export function TitleScreen() {
                 }}
               />
             </label>
+            </details>
 
             {/* Batch-7: alat dosen dilipat — default tertutup, mahasiswa tak
                 perlu melihatnya; jsdom tidak menyembunyikan isi <details>,
@@ -819,12 +834,17 @@ export function TitleScreen() {
 
       <div className="title__kredit mono">
         <p>{METADATA.copyright}</p>
+        {/* Premiere (2026-07-26): blok legal panjang dilipat — satu baris
+            copyright selalu terlihat, rincian HAKI dibuka sesuai kebutuhan. */}
+        <details className="title__kredit-lipat">
+        <summary>Hak cipta terdaftar &amp; ketentuan</summary>
         <p className="title__kredit-haki">
           Hak Cipta terdaftar Kemenkumham RI — Surat Pencatatan Ciptaan No.{' '}
           {METADATA.haki.nomorRegistrasi} ({METADATA.haki.tanggalRegistrasi}), Nomor Pencatatan{' '}
           {METADATA.haki.nomorPencatatan} · {METADATA.haki.dasarHukum} · {METADATA.organisasi}
         </p>
         <p className="title__kredit-disklaimer">{METADATA.disklaimerMedis}</p>
+        </details>
       </div>
     </div>
   )

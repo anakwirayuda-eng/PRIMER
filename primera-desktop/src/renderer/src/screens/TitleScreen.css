@@ -276,7 +276,60 @@
   border-top: 1px dashed var(--border-halus);
 }
 
-.title__slot { text-align: left; font-size: var(--text-sm); }
+.title__slot { text-align: left; font-size: var(--text-sm); padding: var(--sp-1) var(--sp-3); }
+
+/* -- Lipatan premiere (2026-07-26): satu aksi pahlawan, sisanya dilipat ------- */
+.title__lipat {
+  text-align: left;
+  border-top: 1px dashed var(--border-halus);
+  padding-top: var(--sp-3);
+}
+
+.title__lipat-judul {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  justify-content: center;
+  padding: var(--sp-1) 0;
+}
+
+.title__lipat-judul::-webkit-details-marker { display: none; }
+
+.title__lipat-judul::before {
+  content: '▸';
+  transition: transform var(--durasi-cepat) var(--ease-keluar);
+}
+
+.title__lipat[open] > .title__lipat-judul::before {
+  transform: rotate(90deg);
+}
+
+.title__lipat-judul:hover { color: var(--tinta); }
+.title__lipat-judul::after { display: none; } /* garis judul-seksi tak perlu di tengah */
+
+.title__lipat > *:not(summary) { margin-top: var(--sp-3); }
+
+/* Kredit legal dilipat — satu baris copyright selalu tampil. */
+.title__kredit-lipat summary {
+  cursor: pointer;
+  list-style: none;
+  opacity: 0.75;
+}
+.title__kredit-lipat summary::-webkit-details-marker { display: none; }
+.title__kredit-lipat summary::before { content: '▸ '; }
+.title__kredit-lipat[open] summary::before { content: '▾ '; }
+
+/* Entrance berlapis (tunduk kurangi-gerak via gerbang global base.css). */
+.title__kicker, .title__judul, .title__sub, .title__tagline, .title__aksi {
+  animation: title-panel-masuk 600ms var(--ease-keluar) both;
+}
+.title__kicker { animation-delay: 350ms; }
+.title__judul { animation-delay: 420ms; }
+.title__sub { animation-delay: 500ms; }
+.title__tagline { animation-delay: 580ms; }
+.title__aksi { animation-delay: 660ms; }
 
 .title__impor { display: block; margin-top: var(--sp-3); cursor: pointer; }
 .title__impor input { font-size: var(--text-xs); }
