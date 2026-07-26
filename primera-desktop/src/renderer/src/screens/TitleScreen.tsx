@@ -272,7 +272,9 @@ export function TitleScreen() {
             METADATA.organisasi ITS). */}
         <p className="title__kicker mono">
           FAKULTAS KEDOKTERAN DAN KESEHATAN ITS
-          <span className="title__kicker-sub">SIMULASI STASE IKM</span>
+          {/* Deskriptor terpilih dr. Wirayuda (2026-07-26, opsi 1): kedua
+              pilar ko-primer dinyatakan eksplisit & setara — DNA produk. */}
+          <span className="title__kicker-sub">SIMULASI LAYANAN PRIMER &amp; KEDOKTERAN KOMUNITAS</span>
         </p>
         <h1 className="title__judul">PRIMERA</h1>
         {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
