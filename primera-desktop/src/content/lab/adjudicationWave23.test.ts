@@ -30,7 +30,7 @@ describe('M13-137 adjudication wave 23: benda asing konjungtiva superfisial', ()
       ['cochrane-corneal-antibiotic-2025', 'related'],
     ])
     expect(DATA.summary.ppkDirect).toBe(93)
-    expect(DATA.summary.ebmDirect).toBe(68)
+    expect(DATA.summary.ebmDirect).toBe(69)
   })
 
   it('mempertahankan identitas kasus FKTP dan menyaring trauma mata berisiko', () => {

@@ -76,8 +76,8 @@ describe('M13-137 adjudication wave 18: Fornas dan grounding resource yang jujur
   })
 
   it('merekonsiliasi seluruh kasus resource tanpa menyembunyikan backlog', () => {
-    expect(DATA.summary.resourceTierCOrD).toBe(46)
-    expect(DATA.summary.resourceGrounded).toBe(46)
+    expect(DATA.summary.resourceTierCOrD).toBe(45)
+    expect(DATA.summary.resourceGrounded).toBe(45)
     expect(DATA.summary.resourceUnresolved).toBe(0)
     expect(DATA.summary.resourceGrounded + DATA.summary.resourceUnresolved)
       .toBe(DATA.summary.resourceTierCOrD)

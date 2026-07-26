@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-26T08:10:51.264Z",
-  "sourceCommit": "1a4b63cd46ddd76cc4c40f9a9b39a5c22d979952+dirty",
-  "artifactFingerprint": "b2e730a4d6027e9c2bf1e2ab0c6484222784a329cae22fd7c9e3d4ae0fb773c9",
-  "packFingerprint": "91b0b14e",
+  "generatedAt": "2026-07-26T23:24:53.072Z",
+  "sourceCommit": "bd100abb0e333561583ceeaa710e9d18927b8470+dirty",
+  "artifactFingerprint": "93a2313bb67ea736af178ca5c2263c407e1800750855decaf5a3e23d9977e127",
+  "packFingerprint": "725c127b",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -49,7 +49,7 @@
     "ppkRelated": 15,
     "ppkAbsent": 29,
     "pnpkDirect": 27,
-    "ebmDirect": 68,
+    "ebmDirect": 69,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -61,8 +61,8 @@
       "triamcinolone_orabase",
       "zinc_oxide_krim"
     ],
-    "resourceTierCOrD": 46,
-    "resourceGrounded": 46,
+    "resourceTierCOrD": 45,
+    "resourceGrounded": 45,
     "resourceUnresolved": 0,
     "kfaUnresolvedQueries": 0
   },
@@ -752,16 +752,16 @@
         "optionalDrugs": [],
         "procedures": [
           {
-            "id": "pasang_infus",
-            "name": "Pemasangan infus + rehidrasi"
-          },
-          {
-            "id": "resusitasi_cairan_kristaloid",
-            "name": "Resusitasi Cairan Kristaloid"
+            "id": "resusitasi_restriktif_trauma",
+            "name": "Trauma Berdarah: Akses IV Besar + Kristaloid Hangat 250 mL, Nilai Ulang; Target SBP 80-90 bila Tanpa Cedera Otak/Spinal"
           },
           {
             "id": "oksigen",
             "name": "Terapi oksigen sesuai target saturasi"
+          },
+          {
+            "id": "cegah_hipotermia_trauma",
+            "name": "Cegah Hipotermia Trauma: Tutup, Selimuti, Hangatkan Cairan, dan Pantau Suhu"
           },
           {
             "id": "pemantauan_ketat_vital",
@@ -785,39 +785,24 @@
             "critical": false
           }
         ],
-        "relevantLabs": [
-          {
-            "id": "usg_abdomen",
-            "name": "USG Abdomen",
-            "result": "Pemeriksaan terfokus (FAST): tampak CAIRAN BEBAS di ruang splenorenal dan kantong Douglas; perikardium bebas. Konsisten dengan hemoperitoneum."
-          },
-          {
-            "id": "hb",
-            "name": "Hemoglobin (Hb)",
-            "result": "9,8 g/dL — sudah turun pada jam pertama."
-          },
-          {
-            "id": "golongan_darah",
-            "name": "Golongan Darah ABO + Rhesus",
-            "result": "O rhesus positif — hasil dikirim bersama pasien untuk persiapan transfusi di RS rujukan."
-          }
-        ],
+        "relevantLabs": [],
         "differentialIcd10": [
           "S36.9",
           "S30.1",
           "S36.0"
         ],
         "stabilizationRequired": [
-          "pasang_infus",
-          "resusitasi_cairan_kristaloid",
-          "oksigen"
+          "resusitasi_restriktif_trauma",
+          "oksigen",
+          "cegah_hipotermia_trauma",
+          "pemantauan_ketat_vital"
         ]
       },
       "currentEditorial": {
-        "clue": "Jejas setang di perut kiri atas, nyeri dengan defans, dan tanda syok setelah kecelakaan mengarah ke trauma abdomen tumpul dengan perdarahan internal. Nyeri bahu kiri tanpa cedera bahu adalah tanda Kehr yang mendukung iritasi diafragma akibat darah, sering pada cedera limpa. Ikuti ABC: amankan jalan napas, beri oksigen, pasang dua akses IV besar, dan mulai kristaloid hangat dengan penilaian ulang. Puasakan pasien, pantau tanda vital, dan rujuk bedah segera. Asam traneksamat dapat diberikan sesuai protokol bila perdarahan trauma terjadi dalam tiga jam; catat waktu kejadian dan pemberian. FAST membantu bila siap, tetapi tidak boleh menunda transport untuk kendali sumber di rumah sakit.",
-        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan bedah yang mampu mengendalikan sumber. FAST adalah pemeriksaan tambahan bila alat dan operator siap; hasilnya tidak boleh menjadi syarat yang menunda rujuk. Imobilisasi servikal ditambahkan bila mekanisme atau temuan mengarah ke cedera tulang belakang.",
-        "realityNote": "Skenario memberi FAST yang langsung terbaca dan asam traneksamat yang siap pakai — dua hal yang tidak dapat diandalkan ada di Puskesmas nyata. Keduanya juga BUKAN prasyarat: keputusan merujuk pasien ini sudah ditegakkan oleh mekanisme cedera, jejas setang, dan tanda syok — tanpa satu pun pemeriksaan penunjang.",
-        "ebmPearl": "Dua angka paling sering menenangkan secara keliru pada trauma abdomen tumpul. Pertama TEKANAN DARAH: dewasa muda dapat mempertahankan tekanan darah NORMAL sampai kehilangan sekitar 30% volume darahnya, karena vasokonstriksi kompensatoris. Takikardia, gelisah, haus, kulit dingin, dan capillary refill memanjang muncul jauh lebih dulu — saat tekanan darah akhirnya turun (seperti pasien ini), cadangan sudah hampir habis dan penurunannya bisa mendadak. Kedua HEMOGLOBIN: pada jam-jam pertama Hb masih bisa NORMAL meski perdarahan deras, sebab yang hilang adalah darah utuh dan hemodilusi belum sempat terjadi — Hb normal TIDAK menyingkirkan perdarahan aktif, dan Hb yang sudah turun seperti pasien ini justru menandakan perdarahan yang banyak dan cepat. Jebakan ketiga: perut yang lunak dan tidak nyeri pun tidak menyingkirkan cedera organ padat, terutama pada pasien dengan penurunan kesadaran, mabuk, atau cedera pengalih perhatian yang lebih nyeri."
+        "clue": "Jejas setang, defans, nyeri bahu kiri tanpa cedera bahu, takikardia, hipotensi, dan perfusi buruk menunjukkan trauma abdomen tumpul dengan perdarahan internal. Jalankan <C>ABCDE sambil mengaktifkan rujukan. Beri oksigen terkontrol karena ada syok meski SpO2 awal 97%. Pasang satu akses IV besar; tambah akses kedua hanya bila tidak menunda keberangkatan. Beri kristaloid hangat 250 mL lalu nilai ulang. Tanpa bukti cedera otak atau spinal, jangan mengejar normotensi; sasaran sementara SBP sekitar 80-90 mmHg. Berikan asam traneksamat 1 g IV selama 10 menit, yaitu dua ampul 500 mg, secepatnya dan dalam tiga jam; dosis lanjutan diteruskan jejaring. Puasakan, cegah hipotermia, pantau serial, pra-notifikasi, dan transfer segera. FAST, Hb serial, dan golongan darah boleh dikerjakan paralel bila siap, tetapi tidak mendapat skor dan tidak boleh menjadi prasyarat atau menahan ambulans.",
+        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detail menjadi kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal, TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, serta pencegahan hipotermia. NICE NG39 menegaskan imaging minimum pada pasien tidak stabil dan TXA dini tanpa menunda transfer.",
+        "realityNote": "Profil Sukamaju menyediakan oksigen, oksimeter nadi, akses IV, kristaloid hangat, TXA 1 g (dua ampul 500 mg), selimut, termometer, dan ambulans. FAST dengan operator, Hb cepat, golongan darah ABO, produk darah, dan kendali sumber tidak diasumsikan tersedia; semuanya BUKAN prasyarat transfer. Karena skema belum mengenal pemeriksaan opsional, FAST/Hb/ABO tidak menjadi tombol bernilai atau alasan menahan transport.",
+        "ebmPearl": "Nilai perdarahan trauma dari gabungan fisiologi, pola cedera, mekanisme, dan respons terhadap tindakan, bukan satu kelas syok atau satu angka. Shock index pasien ini sekitar 1,33 dan mendukung risiko tinggi, tetapi bukan pengganti penilaian klinis. Hb awal dapat tetap normal pada perdarahan bermakna, sedangkan satu Hb rendah dipengaruhi nilai dasar, perpindahan cairan, dan resusitasi; ia tidak mengukur volume atau kecepatan perdarahan sendirian. FAST berspesifisitas tinggi tetapi sensitivitasnya terbatas: hasil negatif tidak menyingkirkan cedera atau hemoperitoneum. Pada pasien tidak stabil, pemeriksaan hanya bernilai bila berjalan paralel dan langsung membantu kendali perdarahan tanpa menunda transfer."
       },
       "evidence": {
         "ppk": {
@@ -855,9 +840,44 @@
           ]
         },
         "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
+          "status": "cocok",
+          "sources": [
+            {
+              "sourceId": "european-trauma-bleeding-2023",
+              "relation": "direct",
+              "title": "The European guideline on management of major bleeding and coagulopathy following trauma: sixth edition",
+              "authority": "Task Force for Advanced Bleeding Care in Trauma",
+              "year": 2023,
+              "officialUrl": "https://link.springer.com/article/10.1186/s13054-023-04327-7",
+              "population": "Adults with major traumatic bleeding or risk of significant traumatic bleeding",
+              "facilityScope": "Rapid transfer and bleeding control, physiologic assessment, restrictive crystalloid resuscitation, TXA, temperature management, imaging, and limits of a single haemoglobin value.",
+              "locator": "Recommendations 1, 5, 8, 9, 13, 15, 18, and 23: minimise time to haemorrhage control; integrate physiology, anatomy, mechanism, and response; do not let ultrasound delay transport; use serial rather than isolated Hb; apply restrictive warmed crystalloid, prevent hypothermia, and give TXA within three hours."
+            },
+            {
+              "sourceId": "nice-major-trauma-ng39",
+              "relation": "direct",
+              "title": "Major trauma: assessment and initial management (NG39)",
+              "authority": "National Institute for Health and Care Excellence",
+              "year": 2016,
+              "officialUrl": "https://www.nice.org.uk/guidance/ng39/chapter/Recommendations",
+              "population": "Children, young people, and adults with major trauma",
+              "facilityScope": "Pre-hospital and emergency assessment, TXA, haemorrhage control, restrictive imaging in instability, transfer, and definitive care.",
+              "locator": "Recommendations on haemorrhage protocols, early TXA for active or suspected active bleeding, minimum imaging in haemodynamic instability, and immediate transfer to a major-trauma service."
+            },
+            {
+              "sourceId": "anzcor-oxygen-emergencies-2026",
+              "relation": "related",
+              "title": "Guideline 9.2.10 - The Use of Oxygen in Emergencies",
+              "authority": "Australian and New Zealand Committee on Resuscitation",
+              "year": 2026,
+              "officialUrl": "https://www.anzcor.org/home/first-aid/guideline-9-2-10-the-use-of-oxygen-in-emergencies",
+              "population": "People requiring emergency oxygen, including shock from major injury",
+              "facilityScope": "Pulse-oximetry-guided oxygen with an explicit exception for shock due to major injury regardless of the initial saturation reading.",
+              "locator": "Section 3.1: shock from major injury is an exception in which oxygen is given irrespective of the initial pulse-oximetry value, with ongoing assessment.",
+              "limitation": "Calibrates the oxygen action in this shock vignette; it is not a diagnosis-specific abdominal-trauma guideline."
+            }
+          ],
+          "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
         },
         "fornas": {
           "status": "cocok",
@@ -866,22 +886,14 @@
         "aspak": {
           "status": "cocok",
           "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
-          "highestTier": "D",
+          "highestTier": "B",
           "resources": [
             {
-              "id": "pasang_infus",
-              "name": "Pemasangan infus + rehidrasi",
+              "id": "resusitasi_restriktif_trauma",
+              "name": "Trauma Berdarah: Akses IV Besar + Kristaloid Hangat 250 mL, Nilai Ulang; Target SBP 80-90 bila Tanpa Cedera Otak/Spinal",
               "kind": "procedure",
               "tier": "B",
-              "note": "Akses IV dan cairan lazim, tetapi readiness consumable tetap perlu.",
-              "grounding": "baseline"
-            },
-            {
-              "id": "resusitasi_cairan_kristaloid",
-              "name": "Resusitasi Cairan Kristaloid",
-              "kind": "procedure",
-              "tier": "B",
-              "note": "Cairan, akses IV, dan pemantauan harus ready.",
+              "note": "Akses IV besar, kristaloid hangat, dan pemantauan serial harus ready; volume kecil dinilai ulang dan bukan infus agresif untuk mengejar normotensi.",
               "grounding": "baseline"
             },
             {
@@ -893,40 +905,24 @@
               "grounding": "baseline"
             },
             {
+              "id": "cegah_hipotermia_trauma",
+              "name": "Cegah Hipotermia Trauma: Tutup, Selimuti, Hangatkan Cairan, dan Pantau Suhu",
+              "kind": "procedure",
+              "tier": "A",
+              "note": "Selimut, lingkungan hangat, cairan hangat bila diberikan, dan pemantauan suhu adalah kesiapan inti trauma.",
+              "grounding": "baseline"
+            },
+            {
               "id": "pemantauan_ketat_vital",
               "name": "Pemantauan Ketat Tanda Vital Pra-Rujuk",
               "kind": "procedure",
               "tier": "B",
               "note": "Tensimeter, pulse oximeter, jam observasi, dan petugas harus ready selama stabilisasi pra-rujuk.",
               "grounding": "baseline"
-            },
-            {
-              "id": "usg_abdomen",
-              "name": "USG Abdomen",
-              "kind": "laboratory",
-              "tier": "D",
-              "note": "USG/operator tidak diasumsikan tersedia rutin.",
-              "grounding": "declared"
-            },
-            {
-              "id": "hb",
-              "name": "Hemoglobin (Hb)",
-              "kind": "laboratory",
-              "tier": "A",
-              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
-              "grounding": "baseline"
-            },
-            {
-              "id": "golongan_darah",
-              "name": "Golongan Darah ABO + Rhesus",
-              "kind": "laboratory",
-              "tier": "A",
-              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
-              "grounding": "baseline"
             }
           ],
           "unresolvedResourceIds": [],
-          "limitation": "Resource Tier C/D telah dinyatakan eksplisit pada catatan realita kasus; ini tetap narasi authoring, bukan bukti readiness real-time."
+          "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
         },
         "kfa": {
           "status": "cocok",

@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-26
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `1a4b63cd46ddd76cc4c40f9a9b39a5c22d979952+dirty`, artefak `b2e730a4d6027e9c2bf1e2ab0c6484222784a329cae22fd7c9e3d4ae0fb773c9`, pack `91b0b14e`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `bd100abb0e333561583ceeaa710e9d18927b8470+dirty`, artefak `93a2313bb67ea736af178ca5c2263c407e1800750855decaf5a3e23d9977e127`, pack `725c127b`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -15,11 +15,11 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
 | Memiliki PNPK langsung | 27 |
-| Memiliki pedoman EBM langsung tambahan | 68 |
+| Memiliki pedoman EBM langsung tambahan | 69 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |
-| Kasus dengan resource Tier C/D | 46 |
+| Kasus dengan resource Tier C/D | 45 |
 | Obat unik non-Fornas menurut katalog | 9 |
 | Query KFA aktif-substance tak terpetakan | 0 |
 

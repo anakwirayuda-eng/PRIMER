@@ -38,8 +38,8 @@ function record(id: string) {
 
 describe('M13-137 adjudication wave 21: closure resource dan provenance', () => {
   it('menutup seluruh backlog resource tanpa mengaktifkan prototipe', () => {
-    expect(DATA.summary.resourceTierCOrD).toBe(46)
-    expect(DATA.summary.resourceGrounded).toBe(46)
+    expect(DATA.summary.resourceTierCOrD).toBe(45)
+    expect(DATA.summary.resourceGrounded).toBe(45)
     expect(DATA.summary.resourceUnresolved).toBe(0)
 
     for (const item of DATA.cases) {

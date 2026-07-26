@@ -24,7 +24,7 @@ describe('M13-137 adjudication wave 10: preservasi penglihatan di FKTP', () => {
       expect(record(id).evidence.ebm.sources.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(68)
+    expect(DATA.summary.ebmDirect).toBe(69)
   })
 
   it('mengoreksi tiga label ICD agar sesuai dengan penyakit yang diajarkan', () => {

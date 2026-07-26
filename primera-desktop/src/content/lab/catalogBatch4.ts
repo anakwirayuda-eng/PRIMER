@@ -325,6 +325,18 @@ export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
     icd9: '99.18',
     biaya: 40000,
   },
+  resusitasi_restriktif_trauma: {
+    id: 'resusitasi_restriktif_trauma',
+    nama: 'Trauma Berdarah: Akses IV Besar + Kristaloid Hangat 250 mL, Nilai Ulang; Target SBP 80-90 bila Tanpa Cedera Otak/Spinal',
+    icd9: '99.18',
+    biaya: 40000,
+  },
+  cegah_hipotermia_trauma: {
+    id: 'cegah_hipotermia_trauma',
+    nama: 'Cegah Hipotermia Trauma: Tutup, Selimuti, Hangatkan Cairan, dan Pantau Suhu',
+    icd9: '93.35',
+    biaya: 0,
+  },
   pemantauan_ketat_vital: {
     id: 'pemantauan_ketat_vital',
     nama: 'Pemantauan Ketat Tanda Vital Pra-Rujuk',

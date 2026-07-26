@@ -78,7 +78,7 @@ describe('M13-137 adjudication artifact', () => {
         expect(link.locator.trim().length, link.sourceId).toBeGreaterThan(20)
       }
     }
-    expect(DATA.summary.ebmDirect).toBe(68)
+    expect(DATA.summary.ebmDirect).toBe(69)
   })
 
   it('snapshot KFA exact mencakup 68 obat dan tidak mengarang query yang gagal', () => {

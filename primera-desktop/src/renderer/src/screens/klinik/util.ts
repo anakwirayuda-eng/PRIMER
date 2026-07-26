@@ -284,6 +284,8 @@ export const KELOMPOK_TINDAKAN_BY_ID: Record<string, KelompokTindakan> = {
   tiamin_hiperemesis: 'cairan_metabolik',
   rehidrasi_gizi_buruk_non_syok: 'cairan_metabolik',
   jaga_hangat_gizi_buruk_anak: 'cairan_metabolik',
+  resusitasi_restriktif_trauma: 'cairan_metabolik',
+  cegah_hipotermia_trauma: 'cairan_metabolik',
 
   perawatan_luka: 'luka',
   hecting_luka: 'luka',

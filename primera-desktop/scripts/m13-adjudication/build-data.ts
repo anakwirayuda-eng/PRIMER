@@ -257,6 +257,8 @@ const RESOURCE_TIERS: Record<string, Pick<ResourceItem, 'tier' | 'note'>> = {
   profilaksis_tetanus: { tier: 'B', note: 'Produk vaksin/serum mengikuti indikasi dan stok aktual.' },
   reduksi_parafimosis: { tier: 'C', note: 'Analgesia, operator, dan jalur rujuk bila gagal harus dinyatakan.' },
   resusitasi_cairan_kristaloid: { tier: 'B', note: 'Cairan, akses IV, dan pemantauan harus ready.' },
+  resusitasi_restriktif_trauma: { tier: 'B', note: 'Akses IV besar, kristaloid hangat, dan pemantauan serial harus ready; volume kecil dinilai ulang dan bukan infus agresif untuk mengejar normotensi.' },
+  cegah_hipotermia_trauma: { tier: 'A', note: 'Selimut, lingkungan hangat, cairan hangat bila diberikan, dan pemantauan suhu adalah kesiapan inti trauma.' },
   tiamin_hiperemesis: { tier: 'C', note: 'Rute oral/parenteral mengikuti toleransi dan stok; jangan menunda transfer atau memberi dekstrosa tanpa proteksi tiamin.' },
   uji_visus_refraksi: { tier: 'B', note: 'Snellen/pinhole lazim; refraksi lengkap tidak diasumsikan.' },
   darah_rutin: { tier: 'C', note: 'Laboratorium dasar tidak seragam; jadwal/reagen/operator perlu dinyatakan.' },
@@ -296,7 +298,6 @@ const DEFAULT_RESOURCE: Pick<ResourceItem, 'tier' | 'note'> = {
  * sebagai kesalahan yang belum ditangani.
  */
 const RESOURCE_GROUNDING_BY_CASE: Record<string, readonly string[]> = {
-  lab_trauma_abdomen_tumpul: ['usg_abdomen'],
   lab_hepatitis_a_akut: ['sgot_sgpt', 'anti_hav_igm'],
   lab_hepatitis_b_kronik: ['sgot_sgpt'],
   lab_gagal_jantung_dekompensasi: ['ekg'],

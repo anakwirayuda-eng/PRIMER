@@ -32,7 +32,7 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
       expect(EBM_GUIDELINE_CROSSWALK[id]?.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(68)
+    expect(DATA.summary.ebmDirect).toBe(69)
     expect(DATA.summary.bySuggestion['tak-ada-sumber']).toBe(0)
   })
 

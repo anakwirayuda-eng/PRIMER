@@ -730,6 +730,30 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with anorectal abscess or fistula-in-ano',
     facilityScope: 'Clinical evaluation, selective imaging, prompt drainage, selective antibiotics, and criteria for concomitant fistulotomy.',
   },
+  'european-trauma-bleeding-2023': {
+    title: 'The European guideline on management of major bleeding and coagulopathy following trauma: sixth edition',
+    authority: 'Task Force for Advanced Bleeding Care in Trauma',
+    year: 2023,
+    officialUrl: 'https://link.springer.com/article/10.1186/s13054-023-04327-7',
+    population: 'Adults with major traumatic bleeding or risk of significant traumatic bleeding',
+    facilityScope: 'Rapid transfer and bleeding control, physiologic assessment, restrictive crystalloid resuscitation, TXA, temperature management, imaging, and limits of a single haemoglobin value.',
+  },
+  'nice-major-trauma-ng39': {
+    title: 'Major trauma: assessment and initial management (NG39)',
+    authority: 'National Institute for Health and Care Excellence',
+    year: 2016,
+    officialUrl: 'https://www.nice.org.uk/guidance/ng39/chapter/Recommendations',
+    population: 'Children, young people, and adults with major trauma',
+    facilityScope: 'Pre-hospital and emergency assessment, TXA, haemorrhage control, restrictive imaging in instability, transfer, and definitive care.',
+  },
+  'anzcor-oxygen-emergencies-2026': {
+    title: 'Guideline 9.2.10 - The Use of Oxygen in Emergencies',
+    authority: 'Australian and New Zealand Committee on Resuscitation',
+    year: 2026,
+    officialUrl: 'https://www.anzcor.org/home/first-aid/guideline-9-2-10-the-use-of-oxygen-in-emergencies',
+    population: 'People requiring emergency oxygen, including shock from major injury',
+    facilityScope: 'Pulse-oximetry-guided oxygen with an explicit exception for shock due to major injury regardless of the initial saturation reading.',
+  },
   'nice-sore-throat-ng84': {
     title: 'Sore throat (acute): antimicrobial prescribing (NG84)',
     authority: 'National Institute for Health and Care Excellence',
@@ -1404,6 +1428,20 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'ascrs-anorectal-abscess-2022',
     relation: 'direct',
     locator: 'Recommendations 2-5: imaging is selective, acute abscess requires prompt drainage, antibiotics are reserved for cellulitis/systemic illness/immunosuppression, and concomitant fistulotomy is selective for simple fistulas.',
+  }],
+  lab_trauma_abdomen_tumpul: [{
+    sourceId: 'european-trauma-bleeding-2023',
+    relation: 'direct',
+    locator: 'Recommendations 1, 5, 8, 9, 13, 15, 18, and 23: minimise time to haemorrhage control; integrate physiology, anatomy, mechanism, and response; do not let ultrasound delay transport; use serial rather than isolated Hb; apply restrictive warmed crystalloid, prevent hypothermia, and give TXA within three hours.',
+  }, {
+    sourceId: 'nice-major-trauma-ng39',
+    relation: 'direct',
+    locator: 'Recommendations on haemorrhage protocols, early TXA for active or suspected active bleeding, minimum imaging in haemodynamic instability, and immediate transfer to a major-trauma service.',
+  }, {
+    sourceId: 'anzcor-oxygen-emergencies-2026',
+    relation: 'related',
+    locator: 'Section 3.1: shock from major injury is an exception in which oxygen is given irrespective of the initial pulse-oximetry value, with ongoing assessment.',
+    rationale: 'Calibrates the oxygen action in this shock vignette; it is not a diagnosis-specific abdominal-trauma guideline.',
   }],
   lab_abses_peritonsil: [{
     sourceId: 'nice-sore-throat-ng84',

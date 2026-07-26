@@ -27,7 +27,7 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
       expect(record(id).evidence.ebm.status, id).toBe('cocok')
       expect(EBM_GUIDELINE_CROSSWALK[id]?.some((source) => source.relation === 'direct'), id).toBe(true)
     }
-    expect(DATA.summary.ebmDirect).toBe(68)
+    expect(DATA.summary.ebmDirect).toBe(69)
   })
 
   it('membuat rapid ART tetap berbasis asesmen tanpa gate laboratorium palsu', () => {

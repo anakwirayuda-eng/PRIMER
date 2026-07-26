@@ -614,8 +614,8 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
 
   /* ========================================================================
    * 9. Trauma Abdomen Tumpul (S36.9, 3B, gawat, rujuk bedah)
-   * Poin ajar: TD normal & Hb normal MENIPU pada dewasa muda. ABC + 2 jalur
-   *   besar + oksigen + puasa + pemantauan + transport cepat.
+   * Poin ajar: fisiologi dan respons serial mengalahkan satu Hb/kelas syok.
+   *   <C>ABCDE + resusitasi restriktif + TXA dini + transport cepat.
    * ==================================================================== */
   buatKasusLab({
     id: 'lab_trauma_abdomen_tumpul',
@@ -642,7 +642,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       { id: 'q_lemas', kategori: 'rps', tanya: 'Sejak kejadian, apakah terasa makin lemas, haus, atau pandangan gelap saat berdiri?', jawab: 'Iya, Dok, makin lemas, haus sekali, dan tadi mau berdiri pandangan langsung gelap.', esensial: true, oldcarts: ['penyerta', 'keparahan'] },
       { id: 'q_kencing', kategori: 'rps', tanya: 'Sudah kencing setelah kejadian? Warnanya bagaimana?', jawab: 'Belum kencing sama sekali sejak tadi, Dok.', esensial: true },
       { id: 'q_makan', kategori: 'rps', tanya: 'Sudah makan atau minum sesudah kejadian?', jawab: 'Belum, Dok. Tadi ditawari teh manis sama orang di jalan, tapi belum sempat saya minum.' },
-      { id: 'q_obat', kategori: 'rpd', tanya: 'Sedang minum obat pengencer darah, atau punya penyakit tertentu?', jawab: 'Tidak ada, Dok, saya sehat-sehat saja selama ini.' },
+      { id: 'q_obat', kategori: 'rpd', tanya: 'Sedang minum aspirin, obat antiplatelet atau antikoagulan, dan apakah ada alergi obat atau penyakit tertentu?', jawab: 'Tidak ada, Dok. Saya tidak minum obat rutin, tidak punya alergi obat yang diketahui, dan selama ini sehat.', esensial: true },
       { id: 'q_muntah', kategori: 'rps', tanya: 'Ada mual atau muntah setelah kejadian?', jawab: 'Mual, Dok, tapi belum muntah.', oldcarts: ['penyerta'] },
       { id: 'q_asuransi', kategori: 'sosial', tanya: 'Apakah Bapak punya BPJS, dan sudah lapor polisi soal kecelakaannya?', jawab: 'Punya BPJS, Dok. Polisi belum, tadi cuma dibantu orang-orang di jalan.', distraktor: true },
       { id: 'q_merokok', kategori: 'sosial', tanya: 'Bapak merokok?', jawab: 'Iya, Dok, sehari sebungkus.', distraktor: true },
@@ -650,15 +650,11 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
     pemeriksaanFisik: [
       { region: 'umum', temuan: 'Sadar penuh tetapi gelisah dan haus; kulit pucat, dingin, berkeringat; capillary refill 3-4 detik. Airway bebas, bicara jelas dalam kalimat penuh.', relevan: true },
       { region: 'abdomen', temuan: 'Jejas setang berupa memar melintang di perut kiri atas hingga tengah. Nyeri tekan hebat kuadran kiri atas dengan defans lokal; perut mulai distensi; bising usus menurun.', relevan: true },
-      { region: 'jantung', temuan: 'Takikardia 122×/menit, nadi teraba lemah dan cepat, tekanan darah 92/60 — pola syok hipovolemik kelas II.', relevan: true },
+      { region: 'jantung', temuan: 'Takikardia 122×/menit, nadi lemah dan cepat, serta tekanan darah 92/60; bersama perfusi perifer buruk, temuan ini konsisten dengan syok hemoragik. Kelas syok kaku tidak dipakai untuk menunda tindakan.', relevan: true },
       { region: 'toraks_paru', temuan: 'Gerak dada simetris, vesikuler +/+, tidak ada jejas dinding dada maupun nyeri tekan iga kiri bawah.', relevan: true },
       { region: 'neurologis', temuan: 'GCS 15, pupil isokor reaktif, tidak ada defisit fokal, tidak ada nyeri pada palpasi tulang belakang.', relevan: false },
     ],
-    lab: [
-      { id: 'usg_abdomen', hasil: 'Pemeriksaan terfokus (FAST): tampak CAIRAN BEBAS di ruang splenorenal dan kantong Douglas; perikardium bebas. Konsisten dengan hemoperitoneum.', flag: 'abnormal', relevan: true },
-      { id: 'hb', hasil: '9,8 g/dL — sudah turun pada jam pertama.', flag: 'rendah', relevan: true },
-      { id: 'golongan_darah', hasil: 'O rhesus positif — hasil dikirim bersama pasien untuk persiapan transfusi di RS rujukan.', flag: 'normal', relevan: true },
-    ],
+    lab: [],
     diagnosisBanding: ['S36.9', 'S30.1', 'S36.0'],
     tatalaksana: {
       obatBenar: ['asam_traneksamat_500_inj'],
@@ -668,26 +664,56 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
         { id: 'furosemid_40', alasan: 'Belum berkemih sejak kejadian pada pasien ini adalah tanda GINJAL YANG KEKURANGAN DARAH, bukan gagal ginjal. Memberi diuretik memperdalam syok dengan memaksa keluar cairan yang justru harus diganti. Yang menaikkan produksi urine di sini adalah cairan dan darah, bukan furosemid.', bahaya: 'kontraindikasi' },
         { id: 'hyoscine_butilbromida_20_inj', alasan: 'Nyeri di sini bukan kolik melainkan darah yang mengiritasi rongga perut; tidak ada spasme otot polos yang disasar. Antispasmodik hanya menumpulkan salah satu tanda yang sedang dipakai untuk memantau perburukan.', bahaya: 'nonPrimer' },
       ],
-      prosedur: ['pasang_infus', 'resusitasi_cairan_kristaloid', 'oksigen', 'pemantauan_ketat_vital'],
+      prosedur: ['resusitasi_restriktif_trauma', 'oksigen', 'cegah_hipotermia_trauma', 'pemantauan_ketat_vital'],
       tindakanSalahUmum: [
-        { id: 'bilas_lambung', alasan: 'Bilas lambung tidak punya tempat pada trauma abdomen tumpul. Ia tidak menghasilkan informasi yang mengubah keputusan (yang menentukan adalah cairan bebas pada FAST dan keadaan hemodinamik), memicu muntah dan risiko aspirasi pada pasien syok, serta membuang menit-menit yang seharusnya dipakai untuk resusitasi dan transport. Bila lambung perlu dikosongkan menjelang transfer, yang dipasang adalah NGT untuk DEKOMPRESI — dialirkan, bukan dibilas.', bahaya: 'berbahaya' },
-        { id: 'transfusi_darah_fktp', alasan: 'Puskesmas tidak memiliki bank darah, uji silang, maupun kemampuan mengelola reaksi transfusi. Mencoba mentransfusi di FKTP menahan pasien di tempat yang tidak dapat menghentikan perdarahannya — dan pada cedera organ padat, satu-satunya terapi definitif adalah kendali sumber di kamar operasi. Kirim golongan darah bersama pasien; jangan menahan pasien sambil menunggu darah.', bahaya: 'berbahaya' },
+        { id: 'bilas_lambung', alasan: 'Bilas lambung tidak mempunyai peran pada trauma abdomen tumpul. Tindakan ini dapat memicu muntah dan aspirasi pada pasien syok serta membuang waktu yang dibutuhkan untuk stabilisasi singkat dan transport. Keputusan transfer sudah ditentukan oleh mekanisme, temuan abdomen, dan hipoperfusi; tidak bergantung pada isi lambung atau FAST.', bahaya: 'berbahaya' },
+        { id: 'transfusi_darah_fktp', alasan: 'Sukamaju tidak memiliki program darah pra-rumah-sakit, bank darah, uji kecocokan, atau sistem penanganan reaksi transfusi. Hasil golongan ABO bila tersedia tidak menggantikan type-and-screen atau crossmatch. Jangan menahan pasien untuk transfusi improvisasi; transfer ke rumah sakit yang mampu memberi produk darah dan mengendalikan perdarahan secara operatif atau intervensional sesuai temuannya.', bahaya: 'berbahaya' },
       ],
       edukasi: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif', 'tanda_bahaya'],
       edukasiKritis: ['puasa_sambil_rujuk'],
-      terapiKritis: ['resusitasi_cairan_kristaloid'],
+      terapiKritis: ['asam_traneksamat_500_inj', 'resusitasi_restriktif_trauma'],
     },
-    stabilisasiWajib: ['pasang_infus', 'resusitasi_cairan_kristaloid', 'oksigen'],
-    clue: 'Jejas setang di perut kiri atas, nyeri dengan defans, dan tanda syok setelah kecelakaan mengarah ke trauma abdomen tumpul dengan perdarahan internal. Nyeri bahu kiri tanpa cedera bahu adalah tanda Kehr yang mendukung iritasi diafragma akibat darah, sering pada cedera limpa. Ikuti ABC: amankan jalan napas, beri oksigen, pasang dua akses IV besar, dan mulai kristaloid hangat dengan penilaian ulang. Puasakan pasien, pantau tanda vital, dan rujuk bedah segera. Asam traneksamat dapat diberikan sesuai protokol bila perdarahan trauma terjadi dalam tiga jam; catat waktu kejadian dan pemberian. FAST membantu bila siap, tetapi tidak boleh menunda transport untuk kendali sumber di rumah sakit.',
-    panduanResmi: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan bedah yang mampu mengendalikan sumber. FAST adalah pemeriksaan tambahan bila alat dan operator siap; hasilnya tidak boleh menjadi syarat yang menunda rujuk. Imobilisasi servikal ditambahkan bila mekanisme atau temuan mengarah ke cedera tulang belakang.',
-    catatanRealita: 'Skenario memberi FAST yang langsung terbaca dan asam traneksamat yang siap pakai — dua hal yang tidak dapat diandalkan ada di Puskesmas nyata. Keduanya juga BUKAN prasyarat: keputusan merujuk pasien ini sudah ditegakkan oleh mekanisme cedera, jejas setang, dan tanda syok — tanpa satu pun pemeriksaan penunjang.',
-    mutiaraEbm: 'Dua angka paling sering menenangkan secara keliru pada trauma abdomen tumpul. Pertama TEKANAN DARAH: dewasa muda dapat mempertahankan tekanan darah NORMAL sampai kehilangan sekitar 30% volume darahnya, karena vasokonstriksi kompensatoris. Takikardia, gelisah, haus, kulit dingin, dan capillary refill memanjang muncul jauh lebih dulu — saat tekanan darah akhirnya turun (seperti pasien ini), cadangan sudah hampir habis dan penurunannya bisa mendadak. Kedua HEMOGLOBIN: pada jam-jam pertama Hb masih bisa NORMAL meski perdarahan deras, sebab yang hilang adalah darah utuh dan hemodilusi belum sempat terjadi — Hb normal TIDAK menyingkirkan perdarahan aktif, dan Hb yang sudah turun seperti pasien ini justru menandakan perdarahan yang banyak dan cepat. Jebakan ketiga: perut yang lunak dan tidak nyeri pun tidak menyingkirkan cedera organ padat, terutama pada pasien dengan penurunan kesadaran, mabuk, atau cedera pengalih perhatian yang lebih nyeri.',
+    stabilisasiWajib: ['resusitasi_restriktif_trauma', 'oksigen', 'cegah_hipotermia_trauma', 'pemantauan_ketat_vital'],
+    clue: 'Jejas setang, defans, nyeri bahu kiri tanpa cedera bahu, takikardia, hipotensi, dan perfusi buruk menunjukkan trauma abdomen tumpul dengan perdarahan internal. Jalankan <C>ABCDE sambil mengaktifkan rujukan. Beri oksigen terkontrol karena ada syok meski SpO2 awal 97%. Pasang satu akses IV besar; tambah akses kedua hanya bila tidak menunda keberangkatan. Beri kristaloid hangat 250 mL lalu nilai ulang. Tanpa bukti cedera otak atau spinal, jangan mengejar normotensi; sasaran sementara SBP sekitar 80-90 mmHg. Berikan asam traneksamat 1 g IV selama 10 menit, yaitu dua ampul 500 mg, secepatnya dan dalam tiga jam; dosis lanjutan diteruskan jejaring. Puasakan, cegah hipotermia, pantau serial, pra-notifikasi, dan transfer segera. FAST, Hb serial, dan golongan darah boleh dikerjakan paralel bila siap, tetapi tidak mendapat skor dan tidak boleh menjadi prasyarat atau menahan ambulans.',
+    panduanResmi: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detail menjadi kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal, TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, serta pencegahan hipotermia. NICE NG39 menegaskan imaging minimum pada pasien tidak stabil dan TXA dini tanpa menunda transfer.',
+    catatanRealita: 'Profil Sukamaju menyediakan oksigen, oksimeter nadi, akses IV, kristaloid hangat, TXA 1 g (dua ampul 500 mg), selimut, termometer, dan ambulans. FAST dengan operator, Hb cepat, golongan darah ABO, produk darah, dan kendali sumber tidak diasumsikan tersedia; semuanya BUKAN prasyarat transfer. Karena skema belum mengenal pemeriksaan opsional, FAST/Hb/ABO tidak menjadi tombol bernilai atau alasan menahan transport.',
+    mutiaraEbm: 'Nilai perdarahan trauma dari gabungan fisiologi, pola cedera, mekanisme, dan respons terhadap tindakan, bukan satu kelas syok atau satu angka. Shock index pasien ini sekitar 1,33 dan mendukung risiko tinggi, tetapi bukan pengganti penilaian klinis. Hb awal dapat tetap normal pada perdarahan bermakna, sedangkan satu Hb rendah dipengaruhi nilai dasar, perpindahan cairan, dan resusitasi; ia tidak mengukur volume atau kecepatan perdarahan sendirian. FAST berspesifisitas tinggi tetapi sensitivitasnya terbatas: hasil negatif tidak menyingkirkan cedera atau hemoperitoneum. Pada pasien tidak stabil, pemeriksaan hanya bernilai bila berjalan paralel dan langsung membantu kendali perdarahan tanpa menunda transfer.',
+    sumber: [
+      {
+        id: 'pnpk_trauma_2017',
+        label: 'KMK 132/2017 - PNPK Tata Laksana Trauma',
+        url: 'https://kemkes.go.id/app_asset/file_content_download/17012291786566b27adad479.88983894.pdf',
+        tahun: 2017,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'european_trauma_bleeding_2023',
+        label: 'European Trauma Bleeding Guideline - Sixth Edition',
+        url: 'https://link.springer.com/article/10.1186/s13054-023-04327-7',
+        tahun: 2023,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'nice_major_trauma_ng39',
+        label: 'NICE NG39 - Major Trauma: Assessment and Initial Management',
+        url: 'https://www.nice.org.uk/guidance/ng39/chapter/Recommendations',
+        tahun: 2016,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'anzcor_oxygen_2026',
+        label: 'ANZCOR 2026 - Oxygen in Emergencies',
+        url: 'https://www.anzcor.org/home/first-aid/guideline-9-2-10-the-use-of-oxygen-in-emergencies',
+        tahun: 2026,
+        jenis: 'evidence_internasional',
+      },
+    ],
     konsekuensi: {
-      narasi: 'Cedera limpa yang terus berdarah menghabiskan volume sirkulasi; syok berkembang menjadi tak terkompensasi dengan trias mematikan asidosis, hipotermia, dan koagulopati. Penundaan transport demi pemeriksaan tambahan, pemberian makan/minum yang menunda anestesi, atau upaya transfusi di FKTP semuanya memindahkan pasien menjauh dari satu-satunya yang menyelamatkan: kendali sumber di kamar operasi.',
+      narasi: 'Cedera organ padat yang terus berdarah menghabiskan volume sirkulasi; syok berkembang dengan asidosis, hipotermia, dan koagulopati yang saling memperburuk. Penundaan untuk pemeriksaan non-esensial, pemberian makan/minum, atau transfusi improvisasi di FKTP menjauhkan pasien dari terapi definitif: produk darah serta kendali perdarahan operatif atau intervensional di rumah sakit yang mampu.',
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Pasien memburuk dalam perjalanan atau kembali dalam syok berat: kesadaran menurun, nadi tak teraba di radialis, tekanan darah tak terukur, perut makin distensi — perdarahan intraabdomen masif yang tak terkendali.',
-      guideline: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017: survei primer ABCDE, resusitasi, dan transfer berjenjang tanpa menunda kendali sumber. Asam traneksamat dini pada trauma yang berdarah: CRASH-2 (manfaat bila <3 jam, merugikan bila lebih).',
+      guideline: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017: survei primer ABCDE, resusitasi, dan transfer tanpa menunda kendali sumber. European guideline 2023: resusitasi restriktif, normotermia, dan TXA secepatnya dalam tiga jam; NICE NG39 tidak menganjurkan TXA setelah tiga jam kecuali terdapat bukti hiperfibrinolisis.',
     },
   }),
 ]
