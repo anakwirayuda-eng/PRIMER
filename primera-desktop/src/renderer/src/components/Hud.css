@@ -230,6 +230,17 @@
   background: var(--daun-600);
 }
 
+/* Pip ke-7 (audit logika 2026-07-23): tenaga ekstra hasil olahraga akhir
+   pekan (stamina SENGAJA bisa 7/6 — m4ekonomi.test:291). Emas kunyit agar
+   terbaca "bonus", bukan pip biasa. */
+.hud__pip--bonus {
+  border-color: var(--kunyit-700);
+}
+
+.hud__pip--bonus.hud__pip--isi {
+  background: var(--kunyit-600);
+}
+
 .hud__dana {
   font-size: var(--text-sm);
   font-weight: 600;

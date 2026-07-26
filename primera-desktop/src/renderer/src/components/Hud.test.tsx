@@ -90,6 +90,24 @@ describe('<Hud />', () => {
     expect(screen.getByRole('button', { name: /Buku Saku/ })).toHaveAttribute('aria-disabled', 'true')
   })
 
+  it('stamina 7 (bonus olahraga) merender pip ke-7 bergaya bonus — bukan disembunyikan (audit logika 2026-07-23)', () => {
+    const state = pasangState()
+    useGame.setState({ state: { ...state, stamina: 7 } })
+    render(<Hud />)
+    // Engine SENGAJA mengizinkan 7/6 (m4ekonomi.test:291) — HUD dulu hardcode
+    // 6 pip sehingga bonus tak pernah terlihat pemain.
+    expect(document.querySelectorAll('.hud__pip')).toHaveLength(7)
+    expect(document.querySelectorAll('.hud__pip--isi')).toHaveLength(7)
+    expect(document.querySelectorAll('.hud__pip--bonus')).toHaveLength(1)
+  })
+
+  it('stamina normal tetap 6 pip tanpa pip bonus', () => {
+    pasangState()
+    render(<Hud />)
+    expect(document.querySelectorAll('.hud__pip')).toHaveLength(6)
+    expect(document.querySelectorAll('.hud__pip--bonus')).toHaveLength(0)
+  })
+
   it('indikator "Gagal menyimpan" tampil saat statusSimpan === "gagal" (CODEX audit UI/UX 2026-07-10, #2)', () => {
     pasangState()
     useGame.setState({ statusSimpan: 'gagal' })

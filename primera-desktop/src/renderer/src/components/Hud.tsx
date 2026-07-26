@@ -6,7 +6,7 @@
 import { useState } from 'react'
 import { useGame } from '../store'
 import { musimDariHari, type LayarGame } from '@engine/state'
-import { HARI_BUKA_PETA } from '@engine/reducer'
+import { HARI_BUKA_PETA, STAMINA_MAKS } from '@engine/reducer'
 import { HARI_STASE } from '@engine/paketUjian'
 import { MuteButton } from '../audio/MuteButton'
 import { Pengaturan } from './Pengaturan'
@@ -143,17 +143,27 @@ export function Hud() {
       </nav>
 
       <div className="hud__kanan">
+        {/* Audit logika 2026-07-23: bonus olahraga SENGAJA menembus maks
+            (stamina 7 dikunci m4ekonomi.test:291 — satu pasien ekstra), tapi
+            HUD dulu hardcode 6 pip: pip ke-7 tak pernah terlihat & label
+            "7/6" membingungkan. Kini pip bonus dirender beda gaya. */}
         <div
           className="hud__stamina"
           role="img"
-          aria-label={`Stamina ${state.stamina} dari 6`}
+          aria-label={`Stamina ${state.stamina} dari ${STAMINA_MAKS}${state.stamina > STAMINA_MAKS ? ' (bonus olahraga)' : ''}`}
           onMouseEnter={(e) =>
-            tampilkanTip(e.currentTarget, `Stamina ${state.stamina}/6 — setiap pasien/kunjungan memakai stamina`)
+            tampilkanTip(
+              e.currentTarget,
+              `Stamina ${state.stamina}/${STAMINA_MAKS}${state.stamina > STAMINA_MAKS ? ' — pip emas = tenaga ekstra hasil olahraga kemarin' : ' — setiap pasien/kunjungan memakai stamina'}`,
+            )
           }
           onMouseLeave={sembunyikanTip}
         >
-          {Array.from({ length: 6 }, (_, i) => (
-            <span key={i} className={`hud__pip ${i < state.stamina ? 'hud__pip--isi' : ''}`} />
+          {Array.from({ length: Math.max(STAMINA_MAKS, state.stamina) }, (_, i) => (
+            <span
+              key={i}
+              className={`hud__pip ${i < state.stamina ? 'hud__pip--isi' : ''}${i >= STAMINA_MAKS ? ' hud__pip--bonus' : ''}`}
+            />
           ))}
         </div>
         <div

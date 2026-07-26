@@ -80,7 +80,7 @@ export function DexSkdi() {
   // reducer/skor/save, jangkau save lama live):
   //   DIJUMPAI      = pernah bertemu (dex ada, siluet terbuka)  — `ditangani≥1`
   //   TERSERTIFIKASI = diagnosis+disposisi benar minimal 1×      — `benar≥1`
-  //   DIKUASAI      = ★3 (Leitner, bisa meluntur)               — `bintang≥3`
+  //   DIKUASAI      = ★3 (Leitner; ★3 beku permanen, ★1-2 luntur) — `bintang≥3`
   const entriDex = PACK.skdi144
     .map((e) => (e.kasusId !== undefined ? state.dex[e.kasusId] : undefined))
     .filter((d): d is NonNullable<typeof d> => d !== undefined)
@@ -138,8 +138,9 @@ export function DexSkdi() {
         <div className="dexskdi__header-kiri">
           <h1 className="dexskdi__judul">Buku Saku — 144 Penyakit FKTP</h1>
           <p className="dexskdi__leitner teks-kecil teks-lembut">
-            Bintang penguasaan meluntur bila lama tidak dilatih — kasus yang lemah akan
-            dikirim ulang ke antrian klinikmu sampai benar-benar tuntas.
+            Bintang ★1-★2 meluntur bila lama tidak dilatih — kasus yang lemah akan
+            dikirim ulang ke antrian klinikmu sampai benar-benar tuntas. Penguasaan
+            penuh ★3 tidak luntur.
           </p>
         </div>
         <div className="dexskdi__progres">
@@ -176,7 +177,10 @@ export function DexSkdi() {
               className={`chip chip--biru mono dexskdi__filter${filter === 'dikuasai' ? ' dexskdi__filter--aktif' : ''}`}
               aria-pressed={filter === 'dikuasai'}
               onClick={() => toggleFilter('dikuasai')}
-              data-tip="Penguasaan penuh ★3 (bisa meluntur bila lama tak dilatih) — klik untuk menyaring"
+              // Audit logika 2026-07-23: teks lama mengklaim ★3 "bisa meluntur"
+              // — KELIRU; engine membekukan ★3 permanen (reducer, blok Dex
+              // luntur: hanya bintang<3 yang meluntur). Ancaman palsu dihapus.
+              data-tip="Penguasaan penuh ★3 — sekali benar-benar dikuasai, tidak luntur; klik untuk menyaring"
             >
               {jumlahDikuasai} dikuasai ★
             </button>
