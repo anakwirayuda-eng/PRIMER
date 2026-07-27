@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-26
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `bd100abb0e333561583ceeaa710e9d18927b8470+dirty`, artefak `93a2313bb67ea736af178ca5c2263c407e1800750855decaf5a3e23d9977e127`, pack `725c127b`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `3805745e6110b9762af2238c1a041a97684dc716+dirty`, artefak `061568e633d3d1e866fb55cb63d3b24b61a6c29c581274d2a4586674591c8802`, pack `919f2916`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -15,7 +15,7 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
 | Memiliki PNPK langsung | 27 |
-| Memiliki pedoman EBM langsung tambahan | 69 |
+| Memiliki pedoman EBM langsung tambahan | 70 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |
@@ -114,12 +114,12 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 
 ### Cocok secara provenance awal
 
+- `lab_trauma_tumpul_kepala_ringan` - Cedera Superfisial Kulit Kepala setelah Benturan Risiko Rendah: tidak ada red flag provenance otomatis
 - `lab_luka_bakar_derajat2_dangkal` - Luka Bakar Derajat II Dangkal Terbatas: tidak ada red flag provenance otomatis
 - `lab_parafimosis_reduksibel` - Parafimosis Akut: tidak ada red flag provenance otomatis
 - `lab_anafilaksis_makanan` - Reaksi Anafilaktik setelah Makanan: tidak ada red flag provenance otomatis
 - `lab_trauma_abdomen_tumpul` - Trauma Abdomen Tumpul dengan Curiga Cedera Organ Padat: tidak ada red flag provenance otomatis
 - `lab_trauma_tajam_kulit_kepala` - Trauma Tajam Kulit Kepala Sederhana: tidak ada red flag provenance otomatis
-- `lab_trauma_tumpul_kepala_ringan` - Trauma Tumpul Kepala Risiko Rendah: tidak ada red flag provenance otomatis
 - `lab_vulnus_laseratum_lengan` - Vulnus Laseratum Sederhana: tidak ada red flag provenance otomatis
 - `lab_gonore_uretritis_pria` - Gonore Uretra Tanpa Komplikasi: tidak ada red flag provenance otomatis
 - `lab_hepatitis_a_akut` - Hepatitis A Akut Tanpa Gagal Hati: tidak ada red flag provenance otomatis

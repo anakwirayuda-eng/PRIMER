@@ -27,7 +27,7 @@ describe('M13-137 adjudication wave 24: trauma abdomen tumpul dengan syok hemora
       ['anzcor-oxygen-emergencies-2026', 'related'],
     ])
     expect(record().evidence.ebm.status).toBe('cocok')
-    expect(DATA.summary.ebmDirect).toBe(69)
+    expect(DATA.summary.ebmDirect).toBe(70)
   })
 
   it('mempertahankan identitas dan disposisi trauma bedah 3B', () => {

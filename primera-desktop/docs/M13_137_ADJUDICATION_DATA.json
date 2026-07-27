@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-26T23:24:53.072Z",
-  "sourceCommit": "bd100abb0e333561583ceeaa710e9d18927b8470+dirty",
-  "artifactFingerprint": "93a2313bb67ea736af178ca5c2263c407e1800750855decaf5a3e23d9977e127",
-  "packFingerprint": "725c127b",
+  "generatedAt": "2026-07-26T23:56:46.431Z",
+  "sourceCommit": "3805745e6110b9762af2238c1a041a97684dc716+dirty",
+  "artifactFingerprint": "061568e633d3d1e866fb55cb63d3b24b61a6c29c581274d2a4586674591c8802",
+  "packFingerprint": "919f2916",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -49,7 +49,7 @@
     "ppkRelated": 15,
     "ppkAbsent": 29,
     "pnpkDirect": 27,
-    "ebmDirect": 69,
+    "ebmDirect": 70,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -69,6 +69,182 @@
   "cases": [
     {
       "ordinal": 1,
+      "id": "lab_trauma_tumpul_kepala_ringan",
+      "name": "Cedera Superfisial Kulit Kepala setelah Benturan Risiko Rendah",
+      "icd10": "S00.0",
+      "skdi": "4A",
+      "category": "gawat",
+      "mustRefer": false,
+      "fktp144": true,
+      "demographics": "16-59 tahun, semua gender",
+      "openingComplaint": "Kepala terbentur lemari dua jam lalu; hanya benjol kecil yang nyeri bila ditekan.",
+      "currentManagement": {
+        "requiredDrugs": [],
+        "alternativeDrugs": [],
+        "optionalDrugs": [
+          {
+            "id": "paracetamol_500",
+            "name": "Parasetamol 500 mg",
+            "dosageForm": "Tablet 500 mg",
+            "role": "optional",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "parasetamol"
+              ],
+              "excerpts": [
+                {
+                  "label": "parasetamol",
+                  "text": "Hanya untuk nyeri akut pascaoperasi. 7 parasetamol 1. tab 500 mg   180 tab/bulan.  2. sir 120 mg/5 mL   2 btl/kasus.  3. drops 100 mg/mL   1 btl/kasus. ",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1184"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Paracetamol",
+                  "matches": [
+                    {
+                      "code": "91000101",
+                      "name": "Paracetamol",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
+          }
+        ],
+        "procedures": [
+          {
+            "id": "observasi_neurologis",
+            "name": "Observasi serial komponen GCS (E/V/M), pupil, gejala, dan defisit neurologis"
+          }
+        ],
+        "education": [
+          {
+            "id": "tanda_bahaya_cedera_kepala",
+            "name": "[Cedera kepala] Ke IGD segera bila makin mengantuk, bingung, kejang, muntah, nyeri memburuk, lemah, atau perilaku berubah",
+            "critical": true
+          },
+          {
+            "id": "pengawasan_24_jam_cedera_kepala",
+            "name": "[Cedera kepala] Pulang hanya dengan pendamping dewasa yang mengawasi 24 jam dan mengetahui jalur kembali",
+            "critical": true
+          },
+          {
+            "id": "pemulihan_bertahap_cedera_kepala",
+            "name": "[Cedera kepala] Hindari aktivitas berisiko hari ini; bila gejala konkusi muncul, istirahat relatif 1-2 hari lalu kembali bertahap",
+            "critical": false
+          }
+        ],
+        "relevantLabs": [],
+        "differentialIcd10": [
+          "S00.0",
+          "S06.0",
+          "S06.5",
+          "S02.9"
+        ],
+        "stabilizationRequired": []
+      },
+      "currentEditorial": {
+        "clue": "Benturan energi rendah dengan hematoma kecil, nyeri hanya saat ditekan, GCS E4 V5 M6, dan tanpa gejala neurologis mendukung cedera superfisial kulit kepala, bukan otomatis konkusi. Ulangi GCS per komponen, pupil, gejala, dan defisit sebelum pulang. Parasetamol boleh diberikan bila perlu, tetapi bukan syarat kelulusan. Jangan lakukan foto polos kepala atau CT rutin pada pasien yang benar-benar berisiko rendah. Rujuk untuk evaluasi CT bila GCS menurun, muncul muntah, kejang, defisit, tanda fraktur, sakit kepala menetap atau dominan, amnesia atau pingsan, koagulopati, antikoagulan/antiplatelet bermakna, intoksikasi, mekanisme berbahaya, atau observasi dan akses kembali tidak aman.",
+        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala. PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. NICE NG232 lebih konservatif di layanan komunitas: sakit kepala persisten, setiap muntah, pingsan/amnesia, antikoagulan atau antiplatelet tertentu, dan ketidakamanan pengawasan memicu evaluasi rumah sakit. Kasus dewasa ini sengaja tidak memiliki satu pun fitur tersebut; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.",
+        "realityNote": "Sukamaju mampu melakukan observasi serial neurologis tetapi tidak memiliki CT. Pasien tanpa indikasi imaging dapat pulang setelah kondisi stabil dan pengawasan rumah dipastikan. Bila satu red flag muncul, observasi berkepanjangan di FKTP bukan pengganti CT atau evaluasi rumah sakit.",
+        "ebmPearl": "GCS 15 tidak sendirian membuktikan aman; keputusan lahir dari mekanisme, gejala, obat, komorbid, pemeriksaan serial, dan keamanan pulang. Sebaliknya, benturan kepala tidak otomatis berarti konkusi atau membutuhkan CT. Pasien tanpa gejala konkusi tidak memerlukan bed rest berkepanjangan, tetapi sebaiknya menghindari berkendara dan aktivitas berisiko benturan ulang pada hari kejadian. Bila gejala konkusi muncul, gunakan istirahat relatif singkat selama satu sampai dua hari lalu naikkan aktivitas secara bertahap sesuai toleransi."
+      },
+      "evidence": {
+        "ppk": {
+          "status": "tak-ada-sumber",
+          "sourceIcd10": [],
+          "excerpts": [],
+          "limitation": "Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022."
+        },
+        "pnpk": {
+          "status": "cocok",
+          "sources": [
+            {
+              "slug": "cedera-otak-traumatik-2022",
+              "relation": "direct",
+              "title": "PNPK Tata Laksana Cedera Otak Traumatik",
+              "documentNumber": "HK.01.07/MENKES/1600/2022",
+              "officialUrl": "https://www.kemkes.go.id/app_asset/file_content_download/1700096211655568d31f7cd8.56572518.pdf",
+              "population": "Anak dan dewasa dengan cedera otak traumatik",
+              "facilityScope": "Lintas tingkat fasilitas; kriteria CT dan kebutuhan rujuk diterapkan sesuai kapasitas jejaring.",
+              "excerpts": [],
+              "limitation": "Dokumen resmi diverifikasi, tetapi belum ada ekstrak lokal ber-locator dalam corpus ini."
+            }
+          ]
+        },
+        "ebm": {
+          "status": "cocok",
+          "sources": [
+            {
+              "sourceId": "nice-head-injury-ng232",
+              "relation": "direct",
+              "title": "Head injury: assessment and early management (NG232)",
+              "authority": "National Institute for Health and Care Excellence",
+              "year": 2023,
+              "officialUrl": "https://www.nice.org.uk/guidance/NG232/chapter/recommendations",
+              "population": "Babies, children, young people, and adults with head injury",
+              "facilityScope": "Community referral thresholds, adult CT criteria, serial neurological assessment, safe discharge, 24-hour supervision, written advice, and return to activity.",
+              "locator": "Recommendations 1.2.4, 1.5.8-1.5.13, and 1.10.1-1.10.11: community referral and CT thresholds, anticoagulant/antiplatelet nuance, serial assessment, competent home supervision for 24 hours, written danger signs, and return-to-activity advice."
+            },
+            {
+              "sourceId": "cdc-mild-tbi-2025",
+              "relation": "related",
+              "title": "Mild TBI Management Guideline",
+              "authority": "US Centers for Disease Control and Prevention",
+              "year": 2025,
+              "officialUrl": "https://www.cdc.gov/traumatic-brain-injury/hcp/data-research/index.html",
+              "population": "Adults with mild traumatic brain injury or concussion",
+              "facilityScope": "Patient discharge instructions, danger signs, brief relative rest, symptom-limited return to activity, and follow-up.",
+              "locator": "Adult mild-TBI checklist and discharge materials: do not image routinely, give danger signs and follow-up instructions, use brief relative rest, and resume activity gradually according to symptoms.",
+              "limitation": "Supports conditional recovery advice if concussion symptoms emerge; the vignette itself is a superficial scalp injury without current mTBI symptoms."
+            }
+          ],
+          "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
+        },
+        "fornas": {
+          "status": "cocok",
+          "limitation": "Fornas menentukan listing/restriksi JKN, bukan stok pada hari permainan. Locator perlu dibaca bersama kolom FPKTP/FPKTL dan restriksi."
+        },
+        "aspak": {
+          "status": "cocok",
+          "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
+          "highestTier": "A",
+          "resources": [
+            {
+              "id": "observasi_neurologis",
+              "name": "Observasi serial komponen GCS (E/V/M), pupil, gejala, dan defisit neurologis",
+              "kind": "procedure",
+              "tier": "A",
+              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
+              "grounding": "baseline"
+            }
+          ],
+          "unresolvedResourceIds": [],
+          "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
+        },
+        "kfa": {
+          "status": "cocok",
+          "limitation": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas."
+        }
+      },
+      "compiler": {
+        "suggestion": "cocok",
+        "reasons": [],
+        "sourceAttributionWarning": false
+      }
+    },
+    {
+      "ordinal": 2,
       "id": "lab_luka_bakar_derajat2_dangkal",
       "name": "Luka Bakar Derajat II Dangkal Terbatas",
       "icd10": "T30",
@@ -252,7 +428,7 @@
       }
     },
     {
-      "ordinal": 2,
+      "ordinal": 3,
       "id": "lab_parafimosis_reduksibel",
       "name": "Parafimosis Akut",
       "icd10": "N47.2",
@@ -402,7 +578,7 @@
       }
     },
     {
-      "ordinal": 3,
+      "ordinal": 4,
       "id": "lab_anafilaksis_makanan",
       "name": "Reaksi Anafilaktik setelah Makanan",
       "icd10": "T78.2",
@@ -588,7 +764,7 @@
       }
     },
     {
-      "ordinal": 4,
+      "ordinal": 5,
       "id": "lab_trauma_abdomen_tumpul",
       "name": "Trauma Abdomen Tumpul dengan Curiga Cedera Organ Padat",
       "icd10": "S36.9",
@@ -936,7 +1112,7 @@
       }
     },
     {
-      "ordinal": 5,
+      "ordinal": 6,
       "id": "lab_trauma_tajam_kulit_kepala",
       "name": "Trauma Tajam Kulit Kepala Sederhana",
       "icd10": "S00-S09",
@@ -1098,150 +1274,6 @@
               "kind": "procedure",
               "tier": "B",
               "note": "Produk vaksin/serum mengikuti indikasi dan stok aktual.",
-              "grounding": "baseline"
-            }
-          ],
-          "unresolvedResourceIds": [],
-          "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
-        },
-        "kfa": {
-          "status": "cocok",
-          "limitation": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas."
-        }
-      },
-      "compiler": {
-        "suggestion": "cocok",
-        "reasons": [],
-        "sourceAttributionWarning": false
-      }
-    },
-    {
-      "ordinal": 6,
-      "id": "lab_trauma_tumpul_kepala_ringan",
-      "name": "Trauma Tumpul Kepala Risiko Rendah",
-      "icd10": "S00-S09",
-      "skdi": "4A",
-      "category": "gawat",
-      "mustRefer": false,
-      "fktp144": true,
-      "demographics": "15-59 tahun, semua gender",
-      "openingComplaint": "Kepala terbentur lemari, tetapi saya tidak pingsan.",
-      "currentManagement": {
-        "requiredDrugs": [
-          {
-            "id": "paracetamol_500",
-            "name": "Parasetamol 500 mg",
-            "dosageForm": "Tablet 500 mg",
-            "role": "required",
-            "catalogFornas": true,
-            "fornas": {
-              "status": "cocok",
-              "queries": [
-                "parasetamol"
-              ],
-              "excerpts": [
-                {
-                  "label": "parasetamol",
-                  "text": "Hanya untuk nyeri akut pascaoperasi. 7 parasetamol 1. tab 500 mg   180 tab/bulan.  2. sir 120 mg/5 mL   2 btl/kasus.  3. drops 100 mg/mL   1 btl/kasus. ",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1184"
-                }
-              ],
-              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-              "caseAvailabilityGrounded": false
-            },
-            "kfa": {
-              "status": "cocok",
-              "components": [
-                {
-                  "query": "Paracetamol",
-                  "matches": [
-                    {
-                      "code": "91000101",
-                      "name": "Paracetamol",
-                      "unit": "mg"
-                    }
-                  ]
-                }
-              ],
-              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
-            }
-          }
-        ],
-        "alternativeDrugs": [],
-        "optionalDrugs": [],
-        "procedures": [
-          {
-            "id": "observasi_neurologis",
-            "name": "Observasi serial GCS, pupil, dan defisit neurologis"
-          }
-        ],
-        "education": [
-          {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
-            "critical": true
-          },
-          {
-            "id": "kontrol_rutin",
-            "name": "Kontrol rutin sesuai jadwal & cegah komplikasi",
-            "critical": false
-          }
-        ],
-        "relevantLabs": [],
-        "differentialIcd10": [
-          "S00-S09",
-          "S06.0",
-          "S06.5"
-        ],
-        "stabilizationRequired": []
-      },
-      "currentEditorial": {
-        "clue": "Trauma kepala ringan GCS 15 tanpa red flag dapat diobservasi serial dan dipulangkan dengan pendamping serta instruksi kembali yang jelas. GCS <15 yang belum pulih, usia di atas 60 tahun, muntah lebih dari dua kali, defisit, tanda fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, antikoagulan, intoksikasi, atau mekanisme berbahaya mengubah alur menjadi CT/rujuk.",
-        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala. Kasus ini sengaja dibatasi pada usia 15-59 tahun, GCS tetap 15, mekanisme energi rendah, pemeriksaan neurologis normal, dan tanpa kriteria CT PNPK. Pulang hanya aman setelah observasi serial stabil, ada pendamping, serta instruksi kembali; bila observasi aman atau akses evaluasi lanjutan tidak dapat dijamin, rujuk."
-      },
-      "evidence": {
-        "ppk": {
-          "status": "tak-ada-sumber",
-          "sourceIcd10": [],
-          "excerpts": [],
-          "limitation": "Tidak ditemukan bab diagnosis langsung maupun crosswalk terkait di 167 entri PPK 1186/2022."
-        },
-        "pnpk": {
-          "status": "cocok",
-          "sources": [
-            {
-              "slug": "cedera-otak-traumatik-2022",
-              "relation": "direct",
-              "title": "PNPK Tata Laksana Cedera Otak Traumatik",
-              "documentNumber": "HK.01.07/MENKES/1600/2022",
-              "officialUrl": "https://www.kemkes.go.id/app_asset/file_content_download/1700096211655568d31f7cd8.56572518.pdf",
-              "population": "Anak dan dewasa dengan cedera otak traumatik",
-              "facilityScope": "Lintas tingkat fasilitas; kriteria CT dan kebutuhan rujuk diterapkan sesuai kapasitas jejaring.",
-              "excerpts": [],
-              "limitation": "Dokumen resmi diverifikasi, tetapi belum ada ekstrak lokal ber-locator dalam corpus ini."
-            }
-          ]
-        },
-        "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
-        },
-        "fornas": {
-          "status": "cocok",
-          "limitation": "Fornas menentukan listing/restriksi JKN, bukan stok pada hari permainan. Locator perlu dibaca bersama kolom FPKTP/FPKTL dan restriksi."
-        },
-        "aspak": {
-          "status": "cocok",
-          "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
-          "highestTier": "A",
-          "resources": [
-            {
-              "id": "observasi_neurologis",
-              "name": "Observasi serial GCS, pupil, dan defisit neurologis",
-              "kind": "procedure",
-              "tier": "A",
-              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
               "grounding": "baseline"
             }
           ],

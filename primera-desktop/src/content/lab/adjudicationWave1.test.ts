@@ -19,13 +19,14 @@ describe('M13-137 - cicilan grounding trauma gelombang 1', () => {
     }
   })
 
-  it('skenario trauma kepala risiko rendah tidak merandom pasien yang memenuhi red flag usia PNPK', () => {
+  it('skenario trauma kepala risiko rendah memakai populasi dewasa tanpa red flag usia PNPK', () => {
     const kasus = PACK.kasus.lab_trauma_tumpul_kepala_ringan
     expect(kasus).toBeDefined()
     if (!kasus) throw new Error('Kasus trauma kepala ringan hilang dari PACK')
+    expect(kasus.demografi.usiaMin).toBeGreaterThanOrEqual(16)
     expect(kasus.demografi.usiaMax).toBeLessThanOrEqual(59)
     expect(kasus.panduanResmi).toContain('HK.01.07/MENKES/1600/2022')
-    expect(kasus.clue).toMatch(/usia di atas 60 tahun/i)
+    expect(kasus.panduanResmi).toMatch(/usia di atas 60 tahun/i)
   })
 
   it('trauma kepala terbuka sederhana dan trauma abdomen memakai floor trauma yang tepat', () => {

@@ -694,18 +694,18 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_pusing_berputar', kategori: 'rps', tanya: 'Apakah belakangan ini Anda sering pusing berputar sampai kehilangan keseimbangan?', jawab: 'Tidak pernah; saya cuma tidak lihat pintu lemarinya sedang terbuka.' },
     ],
     obatSalahUmum: [
-      { id: 'diazepam_2', alasan: 'Sedatif untuk "menenangkan" pasien menumpulkan kesadaran, justru saat observasi serial kesadaran dan pupil menjadi tumpuan deteksi perdarahan lambat.', bahaya: 'kontraindikasi' },
-      { id: 'tramadol_50', alasan: 'Opioid menimbulkan kantuk, mual, dan mengecilkan pupil sehingga mengaburkan tanda bahaya neurologis; nyeri ringan cukup dengan parasetamol.', bahaya: 'kontraindikasi' },
+      { id: 'diazepam_2', alasan: 'Tidak ada agitasi, kejang, atau indikasi benzodiazepin. Sedasi yang tidak perlu dapat mengaburkan perubahan kesadaran saat observasi serial; gunakan penjelasan dan lingkungan tenang.', bahaya: 'nonPrimer' },
+      { id: 'tramadol_50', alasan: 'Nyeri hanya ringan dan lokal saat benjolan ditekan. Tramadol bukan lini pertama dan dapat menimbulkan kantuk, mual, atau muntah yang menyulitkan penilaian ulang; parasetamol opsional sudah memadai.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa observasi dan edukasi tanda bahaya, perdarahan intrakranial lambat bisa terlewat.',
+      narasi: 'Risiko komplikasi intrakranial pada profil ini rendah, tetapi tanpa penilaian serial, pendamping, dan safety-net, perburukan yang jarang dapat terlambat dikenali.',
       kembaliHariMin: 1, kembaliHariMax: 2,
       kondisiKembali: 'Muncul sakit kepala hebat, muntah berulang, dan makin mengantuk.',
     },
     variasiPembuka: {
-      cemas: 'Kepala saya terbentur lemari tapi tidak pingsan — apa ada pendarahan di otak, Dok?',
-      polos: 'Kepala saya kejedot lemari, Dok, tapi nggak sampai pingsan.',
-      lansia: 'Kepala saya terbentur lemari, tetapi saya tidak sampai pingsan, Dok.',
+      cemas: 'Kepala saya terbentur lemari dua jam lalu. Saya tidak pingsan, tetapi khawatir ada perdarahan di otak, Dok.',
+      polos: 'Kepala saya kejedot lemari dua jam lalu, Dok. Cuma benjol kecil dan nyeri kalau ditekan.',
+      lansia: 'Kepala saya terbentur lemari dua jam lalu, Dok. Saya tetap sadar dan ingat seluruh kejadiannya.',
     },
   },
   lab_trauma_tajam_kulit_kepala: {

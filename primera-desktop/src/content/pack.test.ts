@@ -68,6 +68,9 @@ describe('PACK — validasi silang id konten', () => {
       'normal_pregnancy', // Z34 vs kasus kia_anc_kehamilan_normal Z34.0 (trimester)
       'malaria_vivax', // B54 (unspesifik) vs kasus kia_malaria_falsiparum B50.9 (spesies)
       'uti', // N39.0 vs kasus kia_isk_kehamilan O23.4 (ISK DALAM kehamilan, penyakit sama)
+      // M13-137-15 (2026-07-27) — katalog SKDI merangkum seluruh cedera kepala,
+      // sedangkan vignette risiko rendah ini sengaja memakai diagnosis yang presisi.
+      'blunt_trauma', // S00-S09 (rentang katalog) vs kasus S00.0 (cedera superfisial kulit kepala)
       // M9.2 (2026-07-04) — tertaut manual setelah verifikasi thd dokumen
       // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
       // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.

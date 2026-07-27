@@ -730,6 +730,22 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with anorectal abscess or fistula-in-ano',
     facilityScope: 'Clinical evaluation, selective imaging, prompt drainage, selective antibiotics, and criteria for concomitant fistulotomy.',
   },
+  'nice-head-injury-ng232': {
+    title: 'Head injury: assessment and early management (NG232)',
+    authority: 'National Institute for Health and Care Excellence',
+    year: 2023,
+    officialUrl: 'https://www.nice.org.uk/guidance/NG232/chapter/recommendations',
+    population: 'Babies, children, young people, and adults with head injury',
+    facilityScope: 'Community referral thresholds, adult CT criteria, serial neurological assessment, safe discharge, 24-hour supervision, written advice, and return to activity.',
+  },
+  'cdc-mild-tbi-2025': {
+    title: 'Mild TBI Management Guideline',
+    authority: 'US Centers for Disease Control and Prevention',
+    year: 2025,
+    officialUrl: 'https://www.cdc.gov/traumatic-brain-injury/hcp/data-research/index.html',
+    population: 'Adults with mild traumatic brain injury or concussion',
+    facilityScope: 'Patient discharge instructions, danger signs, brief relative rest, symptom-limited return to activity, and follow-up.',
+  },
   'european-trauma-bleeding-2023': {
     title: 'The European guideline on management of major bleeding and coagulopathy following trauma: sixth edition',
     authority: 'Task Force for Advanced Bleeding Care in Trauma',
@@ -1442,6 +1458,16 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     relation: 'related',
     locator: 'Section 3.1: shock from major injury is an exception in which oxygen is given irrespective of the initial pulse-oximetry value, with ongoing assessment.',
     rationale: 'Calibrates the oxygen action in this shock vignette; it is not a diagnosis-specific abdominal-trauma guideline.',
+  }],
+  lab_trauma_tumpul_kepala_ringan: [{
+    sourceId: 'nice-head-injury-ng232',
+    relation: 'direct',
+    locator: 'Recommendations 1.2.4, 1.5.8-1.5.13, and 1.10.1-1.10.11: community referral and CT thresholds, anticoagulant/antiplatelet nuance, serial assessment, competent home supervision for 24 hours, written danger signs, and return-to-activity advice.',
+  }, {
+    sourceId: 'cdc-mild-tbi-2025',
+    relation: 'related',
+    locator: 'Adult mild-TBI checklist and discharge materials: do not image routinely, give danger signs and follow-up instructions, use brief relative rest, and resume activity gradually according to symptoms.',
+    rationale: 'Supports conditional recovery advice if concussion symptoms emerge; the vignette itself is a superficial scalp injury without current mTBI symptoms.',
   }],
   lab_abses_peritonsil: [{
     sourceId: 'nice-sore-throat-ng84',

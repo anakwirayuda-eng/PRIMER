@@ -32,7 +32,7 @@ describe('M13-137 adjudication wave 22: keluhan fisik persisten', () => {
       'plos-mus-communication-2022',
     ])
     expect(DATA.summary.pnpkDirect).toBe(27)
-    expect(DATA.summary.ebmDirect).toBe(69)
+    expect(DATA.summary.ebmDirect).toBe(70)
   })
 
   it('menegakkan F45 dari fitur positif dan banding organik yang koheren', () => {

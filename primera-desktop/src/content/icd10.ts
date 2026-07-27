@@ -102,6 +102,8 @@ export const NAMA_ICD: Record<string, string> = {
   'S51.8': 'Luka Terbuka Lain pada Lengan Bawah',
   'S56.9': 'Cedera Otot atau Tendon Lengan Bawah, Tidak Spesifik',
   'T31.0': 'Luka Bakar Kurang dari 10 Persen Luas Tubuh',
+  'S00.0': 'Cedera Superfisial Kulit Kepala',
+  'S02.9': 'Fraktur Tengkorak atau Tulang Wajah, Tidak Spesifik',
   'S06.0': 'Konkusi Otak',
   'S06.5': 'Perdarahan Subdural Traumatik',
   'S61.4': 'Luka Terbuka Tangan',
