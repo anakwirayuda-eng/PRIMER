@@ -253,7 +253,14 @@ export const PNPK_CROSSWALK: Record<string, PnpkCrosswalkEntry[]> = {
   lab_kusta_pausibasiler: [{ slug: 'kusta', relation: 'direct' }],
   lab_dermatitis_seboroik_dewasa: [{ slug: 'dermatitis-seboroik', relation: 'direct' }],
   lab_vulnus_laseratum_lengan: [{ slug: 'trauma', relation: 'direct' }],
-  lab_luka_bakar_derajat2_dangkal: [{ slug: 'trauma', relation: 'direct' }],
+  lab_luka_bakar_derajat2_dangkal: [
+    { slug: 'luka-bakar-2019', relation: 'direct' },
+    {
+      slug: 'trauma',
+      relation: 'related',
+      rationale: 'PNPK Trauma membahas resusitasi syok luka bakar kritis, bukan tata laksana rawat jalan luka scald superficial partial-thickness seluas 2% TBSA.',
+    },
+  ],
   lab_trauma_tumpul_kepala_ringan: [{ slug: 'cedera-otak-traumatik-2022', relation: 'direct' }],
   lab_trauma_tajam_kulit_kepala: [{ slug: 'trauma', relation: 'direct' }],
   lab_hernia_inguinalis_inkarserata: [{ slug: 'infeksi-intraabdominal', relation: 'related' }],
@@ -745,6 +752,30 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.cdc.gov/traumatic-brain-injury/hcp/data-research/index.html',
     population: 'Adults with mild traumatic brain injury or concussion',
     facilityScope: 'Patient discharge instructions, danger signs, brief relative rest, symptom-limited return to activity, and follow-up.',
+  },
+  'aci-burn-management-2026': {
+    title: 'Burn Patient Management - Clinical Practice Guide, 5th Edition',
+    authority: 'NSW Agency for Clinical Innovation, Statewide Burn Injury Service',
+    year: 2026,
+    officialUrl: 'https://aci.health.nsw.gov.au/__data/assets/pdf_file/0009/250020/ACI-Burn-Patient-Management-Clinical-Practice-Guide.pdf',
+    population: 'Adults and children with minor or severe burn injuries',
+    facilityScope: 'First aid, TBSA and depth assessment, minor-burn outpatient care, analgesia, wound care, dressing, referral, and follow-up.',
+  },
+  'aba-burn-referral-2025': {
+    title: 'Guidelines for Burn Patient Referral',
+    authority: 'American Burn Association',
+    year: 2025,
+    officialUrl: 'https://www.ameriburn.org/burn-care-team/resources/guidelines-for-burn-patient-referral',
+    population: 'Adults and children with burn injuries considered for consultation or transfer',
+    facilityScope: 'Burn-depth recognition, palmar TBSA estimation, specialist consultation, and transfer criteria.',
+  },
+  'cdc-tetanus-wound-2025': {
+    title: 'Clinical Guidance for Wound Management to Prevent Tetanus',
+    authority: 'US Centers for Disease Control and Prevention',
+    year: 2025,
+    officialUrl: 'https://www.cdc.gov/tetanus/hcp/clinical-guidance/index.html',
+    population: 'People with acute wounds, including burns, requiring tetanus-risk assessment',
+    facilityScope: 'Wound classification, vaccine timing, TIG indications, and avoidance of antibiotic prophylaxis for tetanus.',
   },
   'european-trauma-bleeding-2023': {
     title: 'The European guideline on management of major bleeding and coagulopathy following trauma: sixth edition',
@@ -1459,6 +1490,20 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Section 3.1: shock from major injury is an exception in which oxygen is given irrespective of the initial pulse-oximetry value, with ongoing assessment.',
     rationale: 'Calibrates the oxygen action in this shock vignette; it is not a diagnosis-specific abdominal-trauma guideline.',
   }],
+  lab_luka_bakar_derajat2_dangkal: [{
+    sourceId: 'aci-burn-management-2026',
+    relation: 'direct',
+    locator: 'Pages 6, 11, 13, 16, 19-21, and 23-28: cool running water for 20 minutes; the patient hand including fingers approximates 1% TBSA; superficial dermal burns are red or pink, blistered and briskly blanching; minor burns can be managed locally; prophylactic antibiotics are not routine; use gentle cleansing, non/low-adherent dressings, and review delayed healing.',
+  }, {
+    sourceId: 'aba-burn-referral-2025',
+    relation: 'direct',
+    locator: 'Thermal-burn referral table and severity section: superficial partial-thickness burns are moist, red, blanching, blistered and painful; burns below 10% TBSA generally trigger consultation rather than automatic transfer, while depth, special sites, comorbidity, inhalation, and pain alter urgency.',
+  }, {
+    sourceId: 'cdc-tetanus-wound-2025',
+    relation: 'related',
+    locator: 'Wound and vaccination sections: burns are wounds containing devitalized tissue; after a complete primary series, vaccination is not needed when the last tetanus dose was less than five years ago, while TIG depends on immune status and wound category.',
+    rationale: 'Supports the tetanus branch only; it is not a burn wound-care guideline.',
+  }],
   lab_trauma_tumpul_kepala_ringan: [{
     sourceId: 'nice-head-injury-ng232',
     relation: 'direct',
@@ -1981,6 +2026,13 @@ export const EXTERNAL_PNPK_SOURCES: Record<string, {
     officialUrl: 'https://www.kemkes.go.id/app_asset/file_content_download/1700096211655568d31f7cd8.56572518.pdf',
     population: 'Anak dan dewasa dengan cedera otak traumatik',
     facilityScope: 'Lintas tingkat fasilitas; kriteria CT dan kebutuhan rujuk diterapkan sesuai kapasitas jejaring.',
+  },
+  'luka-bakar-2019': {
+    title: 'PNPK Tata Laksana Luka Bakar',
+    documentNumber: 'HK.01.07/MENKES/555/2019',
+    officialUrl: 'https://keslan.kemkes.go.id/unduhan/fileunduhan_1610415947_843237.pdf',
+    population: 'Anak dan dewasa dengan luka bakar',
+    facilityScope: 'Lintas tingkat fasilitas; mencakup penilaian luas-kedalaman, tata laksana awal, tetanus, luka, balutan, antibiotik, serta kriteria rujukan.',
   },
   'pneumonia-dewasa-2023': {
     title: 'PNPK Tata Laksana Pneumonia pada Dewasa',

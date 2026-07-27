@@ -33,7 +33,7 @@ describe('M13-137 adjudication wave 11: metabolik-hematologi rujuk', () => {
     expect(record('lab_penyakit_ginjal_kronik_st3b').evidence.aspak.resources).toContainEqual(
       expect.objectContaining({ id: 'fungsi_ginjal', tier: 'C', grounding: 'declared' }),
     )
-    expect(DATA.summary.ebmDirect).toBe(70)
+    expect(DATA.summary.ebmDirect).toBe(71)
   })
 
   it('PGK membuktikan kronisitas dan tidak menyamakan G3b dengan persiapan dialisis', () => {

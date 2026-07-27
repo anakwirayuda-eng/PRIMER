@@ -1,8 +1,8 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-07-26
+**Tanggal kompilasi:** 2026-07-27
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `3805745e6110b9762af2238c1a041a97684dc716+dirty`, artefak `061568e633d3d1e866fb55cb63d3b24b61a6c29c581274d2a4586674591c8802`, pack `919f2916`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `d3834bce184306ec58dfebd3cf6c29a3eb45cf2e+dirty`, artefak `713b537471f1c58d5ca1ff6da4ad56134f632776ab6e09ccf1fe4b3ae47ec253`, pack `9b53fa33`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
 
 ## Ringkasan eksekutif
 
@@ -15,7 +15,7 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |
 | Memiliki PNPK langsung | 27 |
-| Memiliki pedoman EBM langsung tambahan | 70 |
+| Memiliki pedoman EBM langsung tambahan | 71 |
 | Saran kompilator “cocok” | 137 |
 | Saran kompilator “perlu-koreksi” | 0 |
 | Saran kompilator “tak-ada-sumber” | 0 |
@@ -68,7 +68,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-26.
+- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-27.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
@@ -115,7 +115,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 ### Cocok secara provenance awal
 
 - `lab_trauma_tumpul_kepala_ringan` - Cedera Superfisial Kulit Kepala setelah Benturan Risiko Rendah: tidak ada red flag provenance otomatis
-- `lab_luka_bakar_derajat2_dangkal` - Luka Bakar Derajat II Dangkal Terbatas: tidak ada red flag provenance otomatis
+- `lab_luka_bakar_derajat2_dangkal` - Luka Bakar Superficial Partial-Thickness Lengan Bawah, 2% TBSA: tidak ada red flag provenance otomatis
 - `lab_parafimosis_reduksibel` - Parafimosis Akut: tidak ada red flag provenance otomatis
 - `lab_anafilaksis_makanan` - Reaksi Anafilaktik setelah Makanan: tidak ada red flag provenance otomatis
 - `lab_trauma_abdomen_tumpul` - Trauma Abdomen Tumpul dengan Curiga Cedera Organ Padat: tidak ada red flag provenance otomatis

@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-26T23:56:46.431Z",
-  "sourceCommit": "3805745e6110b9762af2238c1a041a97684dc716+dirty",
-  "artifactFingerprint": "061568e633d3d1e866fb55cb63d3b24b61a6c29c581274d2a4586674591c8802",
-  "packFingerprint": "919f2916",
+  "generatedAt": "2026-07-27T01:58:18.108Z",
+  "sourceCommit": "d3834bce184306ec58dfebd3cf6c29a3eb45cf2e+dirty",
+  "artifactFingerprint": "713b537471f1c58d5ca1ff6da4ad56134f632776ab6e09ccf1fe4b3ae47ec253",
+  "packFingerprint": "9b53fa33",
   "contentRelease": "igd-adjudication-2026-07-22",
   "engineRevision": 58,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -49,7 +49,7 @@
     "ppkRelated": 15,
     "ppkAbsent": 29,
     "pnpkDirect": 27,
-    "ebmDirect": 70,
+    "ebmDirect": 71,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -246,14 +246,14 @@
     {
       "ordinal": 2,
       "id": "lab_luka_bakar_derajat2_dangkal",
-      "name": "Luka Bakar Derajat II Dangkal Terbatas",
-      "icd10": "T30",
+      "name": "Luka Bakar Superficial Partial-Thickness Lengan Bawah, 2% TBSA",
+      "icd10": "T22.2",
       "skdi": "4A",
       "category": "gawat",
       "mustRefer": false,
       "fktp144": true,
       "demographics": "18-65 tahun, semua gender",
-      "openingComplaint": "Lengan terkena air panas dua puluh menit lalu.",
+      "openingComplaint": "Lengan bawah saya tersiram air panas dua puluh menit lalu; petugas triase sedang mengalirkan air sejuk.",
       "currentManagement": {
         "requiredDrugs": [
           {
@@ -300,11 +300,11 @@
         "procedures": [
           {
             "id": "pendinginan_luka_bakar",
-            "name": "Aliri luka bakar dengan air mengalir selama 20 menit"
+            "name": "Lanjutkan air mengalir sejuk hingga total 20 menit; jaga bagian tubuh lain tetap hangat"
           },
           {
             "id": "balut_luka_bakar",
-            "name": "Tutup luka bakar dengan balutan bersih nonadheren"
+            "name": "Bersihkan lembut lalu tutup dengan balutan non/low-adherent tanpa melingkar ketat"
           }
         ],
         "education": [
@@ -314,22 +314,29 @@
             "critical": true
           },
           {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
+            "id": "perawatan_balutan_luka_bakar",
+            "name": "[Luka bakar] Jaga balutan bersih; jangan pecahkan blister kecil atau membalut lengan terlalu ketat",
             "critical": false
+          },
+          {
+            "id": "kontrol_luka_bakar",
+            "name": "[Luka bakar] Kontrol 24-72 jam; kembali segera bila nyeri/kemerahan memburuk, demam, baal, jari dingin, atau balutan kotor-tembus",
+            "critical": true
           }
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "T30",
-          "T31.0",
-          "T14.1"
+          "T22.2",
+          "T22.1",
+          "T22.3"
         ],
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Luka merah-lembap, blister, nyeri dan blanching adalah partial-thickness dangkal. Aliri air mengalir sejuk hingga total 20 menit secepatnya, lepas perhiasan, tutup nonadheren, analgesia, dan evaluasi tetanus; jangan gunakan es/pasta/minyak atau memecahkan blister rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "clue": "Dasar merah muda-merah, lembap, sangat nyeri, sensasi utuh, blister kecil, dan blanching cepat mendukung superficial partial-thickness. Lanjutkan air mengalir sejuk hingga total 20 menit sambil menghangatkan bagian tubuh lain, beri parasetamol, bersihkan lembut, lalu pasang balutan non/low-adherent tanpa melingkar ketat. Blister kecil tidak tegang dibiarkan utuh. Seri tetanus lengkap dengan booster tiga tahun lalu tidak memerlukan vaksin atau TIG tambahan. Jangan gunakan es, pasta, minyak, antibiotik sistemik profilaksis, silver sulfadiazine rutin, atau cairan formula Parkland pada luka stabil 2% ini.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 dan PNPK Tata Laksana Luka Bakar KMK 555/2019 menjadi floor Indonesia untuk diagnosis, penilaian luas-kedalaman, status tetanus, pembersihan lembut, balutan, dan batas rujukan. ACI Burn Patient Management edisi 2026 memperbarui detail first aid menjadi air mengalir sejuk selama 20 menit, penilaian palmar pasien untuk luka kecil, rawat jalan pada luka minor tanpa hambatan fisik-sosial, serta evaluasi ulang karena kedalaman dapat berubah. Luka ini tidak memenuhi kriteria transfer otomatis, tetapi kapasitas lokal dan akses follow-up tetap menentukan.",
+        "realityNote": "Sukamaju mampu mendinginkan dengan air mengalir, memberi analgesia oral, membersihkan lembut, dan memasang balutan non/low-adherent. Dressing khusus dan burn service tidak diasumsikan selalu tersedia. Gunakan balutan lembap aman sesuai stok; rujuk bila kedalaman meragukan, nyeri tak terkendali, perawatan melampaui kemampuan, atau kontrol tak terjamin. Jangan mengganti keterbatasan dengan antibiotik empiris.",
+        "ebmPearl": "Luas luka bukan satu-satunya penentu berat. Kedalaman, lokasi khusus, inhalasi, luka sirkumferensial, komorbid, nyeri, fungsi, dan kondisi sosial dapat mengubah disposisi. Luka bakar juga dinamis dan dapat tampak lebih dalam dalam beberapa hari pertama; karena itu pasien kembali 24-72 jam. Rujuk bila luka memburuk, muncul gangguan fungsi atau neurovaskular, infeksi sistemik, kedalaman tidak pasti, atau penyembuhan belum nyata dalam 10-12 hari."
       },
       "evidence": {
         "ppk": {
@@ -358,8 +365,19 @@
           "status": "cocok",
           "sources": [
             {
-              "slug": "trauma",
+              "slug": "luka-bakar-2019",
               "relation": "direct",
+              "title": "PNPK Tata Laksana Luka Bakar",
+              "documentNumber": "HK.01.07/MENKES/555/2019",
+              "officialUrl": "https://keslan.kemkes.go.id/unduhan/fileunduhan_1610415947_843237.pdf",
+              "population": "Anak dan dewasa dengan luka bakar",
+              "facilityScope": "Lintas tingkat fasilitas; mencakup penilaian luas-kedalaman, tata laksana awal, tetanus, luka, balutan, antibiotik, serta kriteria rujukan.",
+              "excerpts": [],
+              "limitation": "Dokumen resmi diverifikasi, tetapi belum ada ekstrak lokal ber-locator dalam corpus ini."
+            },
+            {
+              "slug": "trauma",
+              "relation": "related",
               "title": "Pedoman Nasional Pelayanan Kedokteran (PNPK) Tata Laksana Trauma",
               "documentNumber": "HK.01.07/MENKES/132/2017",
               "officialUrl": "https://kemkes.go.id/app_asset/file_content_download/17012291786566b27adad479.88983894.pdf",
@@ -378,14 +396,49 @@
                   "locator": "docs/references/pnpk/trauma/fulltext.txt:baris 336"
                 }
               ],
-              "limitation": "Cuplikan literal adalah orientasi; adjudikasi tetap membaca konteks dokumen penuh."
+              "limitation": "PNPK Trauma membahas resusitasi syok luka bakar kritis, bukan tata laksana rawat jalan luka scald superficial partial-thickness seluas 2% TBSA."
             }
           ]
         },
         "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
+          "status": "cocok",
+          "sources": [
+            {
+              "sourceId": "aci-burn-management-2026",
+              "relation": "direct",
+              "title": "Burn Patient Management - Clinical Practice Guide, 5th Edition",
+              "authority": "NSW Agency for Clinical Innovation, Statewide Burn Injury Service",
+              "year": 2026,
+              "officialUrl": "https://aci.health.nsw.gov.au/__data/assets/pdf_file/0009/250020/ACI-Burn-Patient-Management-Clinical-Practice-Guide.pdf",
+              "population": "Adults and children with minor or severe burn injuries",
+              "facilityScope": "First aid, TBSA and depth assessment, minor-burn outpatient care, analgesia, wound care, dressing, referral, and follow-up.",
+              "locator": "Pages 6, 11, 13, 16, 19-21, and 23-28: cool running water for 20 minutes; the patient hand including fingers approximates 1% TBSA; superficial dermal burns are red or pink, blistered and briskly blanching; minor burns can be managed locally; prophylactic antibiotics are not routine; use gentle cleansing, non/low-adherent dressings, and review delayed healing."
+            },
+            {
+              "sourceId": "aba-burn-referral-2025",
+              "relation": "direct",
+              "title": "Guidelines for Burn Patient Referral",
+              "authority": "American Burn Association",
+              "year": 2025,
+              "officialUrl": "https://www.ameriburn.org/burn-care-team/resources/guidelines-for-burn-patient-referral",
+              "population": "Adults and children with burn injuries considered for consultation or transfer",
+              "facilityScope": "Burn-depth recognition, palmar TBSA estimation, specialist consultation, and transfer criteria.",
+              "locator": "Thermal-burn referral table and severity section: superficial partial-thickness burns are moist, red, blanching, blistered and painful; burns below 10% TBSA generally trigger consultation rather than automatic transfer, while depth, special sites, comorbidity, inhalation, and pain alter urgency."
+            },
+            {
+              "sourceId": "cdc-tetanus-wound-2025",
+              "relation": "related",
+              "title": "Clinical Guidance for Wound Management to Prevent Tetanus",
+              "authority": "US Centers for Disease Control and Prevention",
+              "year": 2025,
+              "officialUrl": "https://www.cdc.gov/tetanus/hcp/clinical-guidance/index.html",
+              "population": "People with acute wounds, including burns, requiring tetanus-risk assessment",
+              "facilityScope": "Wound classification, vaccine timing, TIG indications, and avoidance of antibiotic prophylaxis for tetanus.",
+              "locator": "Wound and vaccination sections: burns are wounds containing devitalized tissue; after a complete primary series, vaccination is not needed when the last tetanus dose was less than five years ago, while TIG depends on immune status and wound category.",
+              "limitation": "Supports the tetanus branch only; it is not a burn wound-care guideline."
+            }
+          ],
+          "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
         },
         "fornas": {
           "status": "cocok",
@@ -398,7 +451,7 @@
           "resources": [
             {
               "id": "pendinginan_luka_bakar",
-              "name": "Aliri luka bakar dengan air mengalir selama 20 menit",
+              "name": "Lanjutkan air mengalir sejuk hingga total 20 menit; jaga bagian tubuh lain tetap hangat",
               "kind": "procedure",
               "tier": "A",
               "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
@@ -406,7 +459,7 @@
             },
             {
               "id": "balut_luka_bakar",
-              "name": "Tutup luka bakar dengan balutan bersih nonadheren",
+              "name": "Bersihkan lembut lalu tutup dengan balutan non/low-adherent tanpa melingkar ketat",
               "kind": "procedure",
               "tier": "A",
               "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",

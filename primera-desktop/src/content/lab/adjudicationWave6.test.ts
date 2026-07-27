@@ -25,7 +25,7 @@ describe('M13-137 adjudication wave 6: stabilisasi time-critical', () => {
       expect(record(id).evidence.ebm.sources.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(70)
+    expect(DATA.summary.ebmDirect).toBe(71)
   })
 
   it('anafilaksis mengunci epinefrin IM dewasa, pengulangan, monitoring, dan batas IV', () => {

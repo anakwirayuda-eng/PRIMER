@@ -71,6 +71,9 @@ describe('PACK — validasi silang id konten', () => {
       // M13-137-15 (2026-07-27) — katalog SKDI merangkum seluruh cedera kepala,
       // sedangkan vignette risiko rendah ini sengaja memakai diagnosis yang presisi.
       'blunt_trauma', // S00-S09 (rentang katalog) vs kasus S00.0 (cedera superfisial kulit kepala)
+      // M13-137-16 (2026-07-27) - katalog memakai T30 generik untuk luka bakar
+      // derajat 1-2, sedangkan encounter ini diketahui mengenai lengan bawah.
+      'burn_grade12', // T30 (lokasi tidak spesifik) vs kasus T22.2 (derajat dua lengan bawah)
       // M9.2 (2026-07-04) — tertaut manual setelah verifikasi thd dokumen
       // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
       // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.

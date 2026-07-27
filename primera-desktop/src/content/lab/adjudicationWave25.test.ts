@@ -27,7 +27,7 @@ describe('M13-137 adjudication wave 25: cedera superfisial kepala risiko rendah'
       ['cdc-mild-tbi-2025', 'related'],
     ])
     expect(record().evidence.ebm.status).toBe('cocok')
-    expect(DATA.summary.ebmDirect).toBe(70)
+    expect(DATA.summary.ebmDirect).toBe(71)
   })
 
   it('mengunci diagnosis superfisial dan algoritme dewasa tanpa rujuk otomatis', () => {

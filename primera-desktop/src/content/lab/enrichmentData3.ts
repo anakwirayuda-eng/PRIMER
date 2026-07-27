@@ -673,20 +673,20 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
   },
   lab_luka_bakar_derajat2_dangkal: {
     distraktor: [
-      { id: 'q_dist_penyebab_tersiram', kategori: 'rpd', tanya: 'Apakah saat itu Anda kejang, pingsan, atau limbung sehingga tersiram air panas?', jawab: 'Tidak, tangan saya cuma terpeleset waktu menuang air.' },
+      { id: 'q_dist_penyebab_tersiram', kategori: 'rpd', tanya: 'Apakah sebelum tersiram Anda sempat kejang, pingsan, atau kehilangan keseimbangan?', jawab: 'Tidak. Tangan saya hanya terpeleset saat menuang air panas.' },
     ],
     obatSalahUmum: [
       { id: 'amoxicillin_500', alasan: 'Luka bakar dangkal terbatas tak rutin butuh antibiotik sistemik; utamakan pendinginan, balut bersih, dan analgesia.', bahaya: 'nonPrimer' },
     ],
     konsekuensi: {
-      narasi: 'Tanpa pendinginan tepat dan perawatan luka bersih, risiko infeksi dan penyembuhan buruk meningkat.',
-      kembaliHariMin: 2, kembaliHariMax: 5,
-      kondisiKembali: 'Luka bakar melepuh lebih luas, nyeri, dan mulai bernanah.',
+      narasi: 'Luka bakar dapat berubah kedalaman dalam beberapa hari pertama. Tanpa perawatan dan kontrol yang jelas, nyeri yang meningkat, balutan kotor atau tembus, serta tanda infeksi dapat terlambat dikenali.',
+      kembaliHariMin: 1, kembaliHariMax: 3,
+      kondisiKembali: 'Nyeri meningkat, sebagian dasar luka tampak lebih pucat, dan balutan basah-kotor; perlu penilaian ulang kedalaman serta tanda infeksi.',
     },
     variasiPembuka: {
-      cemas: 'Lengan terkena air panas dua puluh menit lalu — apa akan melepuh parah dan berbekas, Dok?',
-      polos: 'Lengan saya kena air panas tadi, sekitar dua puluh menit lalu, Dok.',
-      lansia: 'Lengan saya terkena air panas sekitar dua puluh menit yang lalu, Dok.',
+      cemas: 'Lengan saya tersiram air panas dua puluh menit lalu. Petugas sedang mendinginkannya, tetapi saya takut lukanya makin dalam dan berbekas, Dok.',
+      polos: 'Lengan saya kena air panas dua puluh menit lalu, Dok. Sekarang sedang dialiri air sama petugas.',
+      lansia: 'Lengan bawah saya tersiram air panas sekitar dua puluh menit lalu, Dok. Petugas langsung mulai mengalirkan air sejuk saat saya tiba.',
     },
   },
   lab_trauma_tumpul_kepala_ringan: {

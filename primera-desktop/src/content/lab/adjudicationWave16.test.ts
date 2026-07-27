@@ -26,7 +26,7 @@ describe('M13-137 adjudication wave 16: helminth klinik-WASH-One Health-program'
       expect(EBM_GUIDELINE_CROSSWALK[id]?.some((source) => source.relation === 'direct'), id).toBe(true)
       expect(record(id).compiler.sourceAttributionWarning, id).toBe(false)
     }
-    expect(DATA.summary.ebmDirect).toBe(70)
+    expect(DATA.summary.ebmDirect).toBe(71)
   })
 
   it('menghubungkan cacing tambang ke terapi anemia, WASH, dan batas POPM', () => {

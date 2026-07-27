@@ -27,7 +27,7 @@ describe('M13-137 adjudication wave 12: TB-program dan hepatitis B keluarga', ()
     expect(PNPK_CROSSWALK.lab_skrofuloderma_suspek).toEqual([
       expect.objectContaining({ slug: 'tuberkulosis', relation: 'related' }),
     ])
-    expect(DATA.summary.ebmDirect).toBe(70)
+    expect(DATA.summary.ebmDirect).toBe(71)
   })
 
   it('membedakan RR-TB dari MDR dan memakai TCM dahak melalui jejaring', () => {
