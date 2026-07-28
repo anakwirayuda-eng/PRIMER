@@ -658,7 +658,11 @@ function fnv1a(teks: string): string {
 // keluarga hanya boleh memakai anggota dengan kondisi yang cocok, sedangkan
 // ledger episode mempertahankan 120 episode aktif paling mendesak secara
 // deterministik. Ketiganya dapat mengubah skor/state replay.
-export const REVISI_ENGINE = 60
+// 61 (2026-07-28 - provenance klinis lengkap): seluruh sumber poli 210/210
+// menjadi bagian fingerprint, setara dengan provenance IGD. Perubahan label,
+// URL, tahun, jenis, cakupan, atau batas interpretasi kini tidak dapat lolos
+// sebagai build identik meski aturan skor tidak berubah.
+export const REVISI_ENGINE = 61
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -740,6 +744,17 @@ export function sidikJariPack(pack: ContentPack): string {
         skdi: k.skdi,
         konsekuensi: k.konsekuensi ?? null,
         spesialis: k.spesialisRujukan ?? null,
+        sumber: [...(k.sumber ?? [])]
+          .sort((a, b) => a.id.localeCompare(b.id))
+          .map((s) => ({
+            id: s.id,
+            label: s.label,
+            url: s.url,
+            tahun: s.tahun,
+            jenis: s.jenis,
+            cakupan: s.cakupan ?? null,
+            catatan: s.catatan ?? null,
+          })),
         // M11 #4 (2026-07-16): keberadaan+urutan id varian menentukan konsumsi
         // RNG `buatPasienDariKasus` (`rng.pick(['_dasar', ...ids])` menggeser
         // stream flavor → usia/gender → denominator skorAnamnesis hanyaUntuk)

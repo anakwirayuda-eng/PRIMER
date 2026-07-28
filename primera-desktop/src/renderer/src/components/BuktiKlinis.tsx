@@ -1,6 +1,9 @@
 import type { DebriefIgd, SumberKlinis } from '@content/types'
 import { TeksTerbaca } from './TeksTerbaca'
+import { urlSumberAman } from './TautanSumber'
 import './BuktiKlinis.css'
+
+export { urlSumberAman } from './TautanSumber'
 
 interface Props {
   judul?: string
@@ -11,16 +14,6 @@ interface Props {
   defaultOpen?: boolean
   tampilkanRingkasan?: boolean
   className?: string
-}
-
-/** Pertahanan kedua setelah validasi pack: renderer tidak membuat link non-HTTPS. */
-export function urlSumberAman(url: string): boolean {
-  try {
-    const parsed = new URL(url)
-    return parsed.protocol === 'https:' && Boolean(parsed.hostname) && !parsed.username && !parsed.password
-  } catch {
-    return false
-  }
 }
 
 export function BuktiKlinis({
@@ -84,11 +77,24 @@ export function BuktiKlinis({
           <ul className="bukti-klinis__daftar" aria-label={`Sumber klinis ${namaKasus}`}>
             {sumber.map((item) => {
               const aman = urlSumberAman(item.url)
+              const cakupan =
+                item.cakupan === 'langsung'
+                  ? 'LANGSUNG'
+                  : item.cakupan === 'terkait'
+                    ? 'TERKAIT'
+                    : item.cakupan === 'floor_umum'
+                      ? 'FLOOR UMUM'
+                      : null
               return (
                 <li key={item.id}>
                   <span className="bukti-klinis__meta mono">
-                    {item.jenis === 'pedoman_indonesia' ? 'INDONESIA' : 'EBM'} <span aria-hidden="true">·</span>{' '}
-                    {item.tahun}
+                    {item.jenis === 'pedoman_indonesia' ? 'INDONESIA' : 'EBM'}
+                    {cakupan ? (
+                      <>
+                        {' '}<span aria-hidden="true">·</span>{' '}{cakupan}
+                      </>
+                    ) : null}
+                    {' '}<span aria-hidden="true">·</span>{' '}{item.tahun}
                   </span>
                   {aman ? (
                     <a
@@ -106,6 +112,9 @@ export function BuktiKlinis({
                       {item.label} <small>Tautan tidak aman diblokir</small>
                     </span>
                   )}
+                  {item.catatan ? (
+                    <span className="bukti-klinis__batas">{item.catatan}</span>
+                  ) : null}
                 </li>
               )
             })}
@@ -113,7 +122,8 @@ export function BuktiKlinis({
         </div>
 
         <p className="bukti-klinis__catatan">
-          Ringkasan adalah parafrasa pembelajaran. Tautan membuka dokumen asli di browser bawaan.
+          Ringkasan adalah parafrasa pembelajaran. Label cakupan membedakan sumber
+          langsung, terkait, dan floor umum. Tautan membuka dokumen asli di browser bawaan.
         </p>
       </div>
     </details>

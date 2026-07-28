@@ -50,6 +50,12 @@ function samaStruktural(a: unknown, b: unknown): boolean {
   return JSON.stringify(a) === JSON.stringify(b)
 }
 
+function tanpaProvenance(kasus: KasusKlinis | undefined): Omit<KasusKlinis, 'sumber'> | undefined {
+  if (!kasus) return undefined
+  const { sumber: _sumber, ...isiKlinis } = kasus
+  return isiKlinis
+}
+
 /**
  * M11 #4 (2026-07-16): PACK memasang lapisan varian Tingkat-A
  * (varianTingkatA.ts) di atas kasus manifest bila terdaftar di
@@ -162,7 +168,15 @@ export function validasiM13AuthoringManifest(
   }
 
   for (const kasus of manifest.clinicCases) {
-    tambah(activated ? !samaStruktural(activePack.kasus[kasus.id], denganVarianTingkatA(kasus)) : Boolean(activePack.kasus[kasus.id]), activated ? `clinic aktif '${kasus.id}' drift dari manifest` : `clinic draft '${kasus.id}' sudah aktif di PACK`)
+    tambah(
+      activated
+        ? !samaStruktural(
+            tanpaProvenance(activePack.kasus[kasus.id]),
+            tanpaProvenance(denganVarianTingkatA(kasus)),
+          )
+        : Boolean(activePack.kasus[kasus.id]),
+      activated ? `clinic aktif '${kasus.id}' drift dari manifest` : `clinic draft '${kasus.id}' sudah aktif di PACK`,
+    )
     const spec = specs.get(kasus.id)
     if (!spec) continue
     const [min, max] = budget[spec.authoringTier]

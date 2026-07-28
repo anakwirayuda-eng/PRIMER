@@ -8,7 +8,13 @@ import { describe, expect, it } from 'vitest'
 import { PACK } from './index'
 import type { ContentPack } from './pack'
 import { sidikJariPack } from '@engine/verifikasi'
-import { panduanSkenarioUkm, sitasiIntervensiUkm, sumberKegiatanUkm } from './ukmCitations'
+import {
+  panduanSkenarioUkm,
+  sitasiIntervensiUkm,
+  sumberKegiatanUkm,
+  tautanKegiatanUkm,
+  tautanPanduanSkenarioUkm,
+} from './ukmCitations'
 import { EVIDENCE_INTERVENSI_UKM, evidenceIntervensiUkm, kartuIntervensiBenar } from './ukmEvidence'
 
 const semuaSkenario = Object.values(PACK.keluarga).flatMap((keluarga) => keluarga.arc.kunjungan)
@@ -28,6 +34,10 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
       expect(panduan, skenario.id).toBeTruthy()
       expect(panduan, skenario.id).not.toMatch(placeholder)
       expect(panduan, skenario.id).toMatch(dokumenTerlacak)
+      const tautan = tautanPanduanSkenarioUkm(skenario)
+      expect(tautan, skenario.id).toHaveLength(4)
+      expect(new Set(tautan.map((item) => item.id)).size, skenario.id).toBe(tautan.length)
+      expect(tautan.every((item) => item.url.startsWith('https://')), skenario.id).toBe(true)
     }
   })
 
@@ -41,6 +51,8 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
         expect(sitasi.pinkesga, kartu.id).toMatch(/^Pinkesga /)
         expect(sitasi.tingkatDukungan, kartu.id).toBe('konteks_domain')
         expect(sitasi.labelDukungan, kartu.id).toMatch(/bukan kunci jawaban/i)
+        expect(sitasi.tautan, kartu.id).toHaveLength(2)
+        expect(sitasi.tautan.every((item) => item.url.startsWith('https://')), kartu.id).toBe(true)
       }
     }
   })
@@ -57,6 +69,8 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
       const pasca = sitasiIntervensiUkm(skenario, benar[0]!, 'pasca_penilaian')
       expect(pasca.tingkatDukungan, skenario.id).not.toBe('konteks_domain')
       expect(pasca.sumber, skenario.id).toMatch(dokumenTerlacak)
+      expect(pasca.tautan, skenario.id).toHaveLength(1)
+      expect(pasca.tautan[0]?.url, skenario.id).toBe(evidence?.sumber.url)
     }
   })
 
@@ -109,6 +123,10 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
     expect(sumberKlb).toMatch(/Permenkes RI No\. 1 Tahun 2026/i)
     expect(sumberKlb).toMatch(/Permenkes RI No\. 19 Tahun 2024/i)
     expect(sumberKegiatanUkm({ id: 'kartu_lain' })).toBeUndefined()
+    expect(tautanKegiatanUkm({ id: 'posy_timbang' }, 'posyandu')).toHaveLength(3)
+    expect(tautanKegiatanUkm({ id: 'prol_peserta_uji' }, 'prolanis')).toHaveLength(2)
+    expect(tautanKegiatanUkm({ id: 'klb_5w1h' }, 'klb')).toHaveLength(3)
+    expect(tautanKegiatanUkm({ id: 'kartu_lain' })).toHaveLength(0)
   })
 
   it('menjaga lapisan ILP terhubung ke bukti implementasi SAJI terkini', () => {

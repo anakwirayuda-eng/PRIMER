@@ -450,6 +450,10 @@ export interface SumberKlinis {
   url: string
   tahun: number
   jenis: 'pedoman_indonesia' | 'evidence_internasional'
+  /** Seberapa langsung dokumen ini menopang keputusan pada encounter. */
+  cakupan?: 'langsung' | 'terkait' | 'floor_umum'
+  /** Batas interpretasi yang perlu terlihat agar sumber tidak di-overclaim. */
+  catatan?: string
 }
 
 /**

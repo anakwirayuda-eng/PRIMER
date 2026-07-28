@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CURRICULUM_BLUEPRINT, PACK } from '../index'
 import {
   CONTENT_RELEASE,
-  P1_OBSERVATION_CONTENT_RELEASE,
+  CLINICAL_PROVENANCE_CONTENT_RELEASE,
   encounterArchetypeAktif,
   validasiPack,
 } from '../pack'
@@ -25,7 +25,8 @@ describe('M13 lab full-fledge - batch 1', () => {
       // enrichment.ts) DAN lapisan varian Tingkat-A (M11 #4, varianTingkatA.ts)
       // bila kasusnya terdaftar di VARIAN_TINGKAT_A. Bandingkan ke bentuk
       // terenrich+tervarian, bukan kasus dasar.
-      expect(PACK.kasus[kasus.id], kasus.id).toEqual({
+      const { sumber: _sumber, ...kasusAktif } = PACK.kasus[kasus.id]!
+      expect(kasusAktif, kasus.id).toEqual({
         ...applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]),
         ...(PHYSICIAN_APPROVED_LAB_CASE_IDS.has(kasus.id)
           ? { reviewStatus: 'physician_approved' }
@@ -46,7 +47,7 @@ describe('M13 lab full-fledge - batch 1', () => {
   })
 
   it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
-    expect(CONTENT_RELEASE).toBe(P1_OBSERVATION_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(CLINICAL_PROVENANCE_CONTENT_RELEASE)
     for (const kasus of LAB_BATCH_1_CASES) {
       expect(
         encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),

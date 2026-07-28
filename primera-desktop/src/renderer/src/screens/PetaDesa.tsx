@@ -21,7 +21,13 @@ import { arcKunjunganAktif } from '@engine/kunjungan'
 import type { HasilKunjungan, KeluargaState } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
 import { PACK } from '@content/index'
-import { panduanSkenarioUkm } from '@content/ukmCitations'
+import {
+  panduanSkenarioUkm,
+  sitasiIntervensiUkm,
+  tautanPanduanSkenarioUkm,
+} from '@content/ukmCitations'
+import { kartuIntervensiBenar } from '@content/ukmEvidence'
+import { TautanSumber } from '../components/TautanSumber'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
 import { formatIks, karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
@@ -152,6 +158,13 @@ export function PetaDesa() {
     : undefined
   const tampilanHasil = hasilKunjungan ? tampilanHasilKunjungan(hasilKunjungan) : undefined
   const panduanHasil = skenarioHasil ? panduanSkenarioUkm(skenarioHasil) : undefined
+  const tautanPanduanHasil = skenarioHasil ? tautanPanduanSkenarioUkm(skenarioHasil) : []
+  const intervensiBenarHasil = skenarioHasil?.intervensi.find((kartu) =>
+    kartuIntervensiBenar(skenarioHasil, kartu),
+  )
+  const buktiIntervensiHasil = skenarioHasil && intervensiBenarHasil
+    ? sitasiIntervensiUkm(skenarioHasil, intervensiBenarHasil, 'pasca_penilaian')
+    : undefined
 
   return (
     <div className="peta-root">
@@ -349,6 +362,15 @@ export function PetaDesa() {
               <aside className="peta-hasil__panduan">
                 <b className="mono">LANDASAN RESMI</b>
                 <p>{panduanHasil}</p>
+                <TautanSumber sumber={tautanPanduanHasil} />
+                {buktiIntervensiHasil && (
+                  <details className="peta-hasil__bukti-intervensi">
+                    <summary>Bukti resep sosial</summary>
+                    <p>{buktiIntervensiHasil.sumber}</p>
+                    <p className="peta-hasil__batas-evidence">{buktiIntervensiHasil.batasan}</p>
+                    <TautanSumber sumber={buktiIntervensiHasil.tautan} />
+                  </details>
+                )}
               </aside>
             )}
             <div className="baris baris--tengah">

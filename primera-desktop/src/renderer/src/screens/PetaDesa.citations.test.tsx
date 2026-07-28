@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
-import { panduanSkenarioUkm } from '@content/ukmCitations'
+import { panduanSkenarioUkm, tautanPanduanSkenarioUkm } from '@content/ukmCitations'
 import type { HasilKunjungan } from '@engine/state'
 import { useGame } from '../store'
 import { PetaDesa } from './PetaDesa'
@@ -30,6 +30,10 @@ describe('<PetaDesa /> - debrief sitasi kunjungan C2', () => {
     render(<PetaDesa />)
 
     expect(await screen.findByText(panduanSkenarioUkm(skenario))).toBeInTheDocument()
+    const tautan = tautanPanduanSkenarioUkm(skenario)
+    for (const sumber of tautan) {
+      expect(screen.getByRole('link', { name: new RegExp(sumber.label) })).toHaveAttribute('href', sumber.url)
+    }
   })
 
   it('target dari surat membuka RW dan menandai keluarga yang tepat', async () => {

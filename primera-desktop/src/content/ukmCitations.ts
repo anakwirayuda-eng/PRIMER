@@ -5,7 +5,12 @@
  * dipisah dari engine agar sumber dapat diaudit tanpa mengubah replay/skor.
  */
 import type { IndikatorPisPk, KartuIntervensi, SkenarioKunjungan } from './types'
-import { evidenceIntervensiUkm, kartuIntervensiBenar, type TingkatDukunganUkm } from './ukmEvidence'
+import {
+  evidenceIntervensiUkm,
+  kartuIntervensiBenar,
+  type SumberUkm,
+  type TingkatDukunganUkm,
+} from './ukmEvidence'
 
 const SUMBER_SAJI =
   'Permenkes RI No. 39 Tahun 2016, Lampiran I Bab IV: kunjungan rumah memakai SAJI dan Pinkesga sesuai masalah keluarga; implementasi ILP Kemenkes RI 15 April 2025 menegaskan kader tetap memakai SAJI dan KIE pada kunjungan rumah.'
@@ -27,6 +32,78 @@ const SUMBER_KLB =
 
 const SUMBER_JKN =
   'Permenkes RI No. 39 Tahun 2016, Lampiran I: kepesertaan JKN adalah indikator keluarga sehat; pada langkah Jelaskan dan Bantu, JKN dicontohkan untuk mengatasi hambatan biaya layanan.'
+
+export interface TautanSumberUkm {
+  id: string
+  label: string
+  url: string
+}
+
+const TAUTAN_PIS_PK: TautanSumberUkm = {
+  id: 'kemenkes:permenkes-39-2016-pis-pk',
+  label: 'Permenkes 39/2016 · PIS-PK',
+  url: 'https://www.peraturan.go.id/id/permenkes-no-39-tahun-2016',
+}
+
+const TAUTAN_ILP: TautanSumberUkm = {
+  id: 'kemenkes:kmk-2015-2023-ilp',
+  label: 'Kemenkes · Juknis ILP 2023',
+  url: 'https://kesprimkom.kemkes.go.id/konten/146/176/0/nomor-hk-01-07-menkes-2015-2023',
+}
+
+const TAUTAN_SAJI_TERKINI: TautanSumberUkm = {
+  id: 'kemenkes:implementasi-ilp-saji-2025',
+  label: 'Kemenkes · Implementasi SAJI',
+  url: 'https://kemkes.go.id/eng/puskesmas-fokus-wujudkan-masyarakat-hidup-sehat',
+}
+
+const TAUTAN_PENANGGULANGAN_PENYAKIT: TautanSumberUkm = {
+  id: 'kemenkes:permenkes-3-2026',
+  label: 'Permenkes 3/2026 · Penanggulangan Penyakit',
+  url: 'https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-3-tahun-2026',
+}
+
+const TAUTAN_POSYANDU: TautanSumberUkm = {
+  id: 'kemenkes:panduan-posyandu-2023',
+  label: 'Kemenkes · Panduan Posyandu 2023',
+  url: 'https://ayosehat.kemkes.go.id/download/jsf/3ceac4c33f422939ca2e1ce9dfe66595.pdf',
+}
+
+const TAUTAN_KADER_POSYANDU: TautanSumberUkm = {
+  id: 'kemenkes:kurikulum-kader-posyandu-2024',
+  label: 'Kemenkes · 25 Keterampilan Kader',
+  url: 'https://ayosehat.kemkes.go.id/media-kampanye-organisasi/buku---kurikulum-pelatihan-bagi-pelatih-keterampilan-dasar-bagi-kader-posyandu',
+}
+
+const TAUTAN_PROLANIS: TautanSumberUkm = {
+  id: 'bpjs:panduan-praktis-prolanis',
+  label: 'BPJS · Panduan Praktis PROLANIS',
+  url: 'https://www.bpjs-kesehatan.go.id/bpjs/arsip/detail/39',
+}
+
+const TAUTAN_KLB: TautanSumberUkm = {
+  id: 'kemenkes:permenkes-1-2026',
+  label: 'Permenkes 1/2026 · KLB & Wabah',
+  url: 'https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-1-tahun-2026',
+}
+
+const TAUTAN_PUSKESMAS: TautanSumberUkm = {
+  id: 'kemenkes:permenkes-19-2024',
+  label: 'Permenkes 19/2024 · Puskesmas',
+  url: 'https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-19-tahun-2024',
+}
+
+function tautanDariEvidence(sumber: SumberUkm): TautanSumberUkm {
+  return {
+    id: sumber.id,
+    label: sumber.labelRingkas,
+    url: sumber.url,
+  }
+}
+
+function tautanUnik(tautan: readonly TautanSumberUkm[]): TautanSumberUkm[] {
+  return [...new Map(tautan.map((item) => [item.id, item])).values()]
+}
 
 interface LandasanIndikator {
   ringkas: string
@@ -96,8 +173,20 @@ export function panduanSkenarioUkm(skenario: SkenarioKunjungan): string {
   return `${SUMBER_SAJI} Untuk skenario ini, ${gabungLandasan(skenario.target)}. ${SUMBER_ILP} ${SUMBER_PENANGGULANGAN_PENYAKIT}`
 }
 
+export function tautanPanduanSkenarioUkm(
+  _skenario: Pick<SkenarioKunjungan, 'id'>,
+): readonly TautanSumberUkm[] {
+  return [
+    TAUTAN_PIS_PK,
+    TAUTAN_SAJI_TERKINI,
+    TAUTAN_ILP,
+    TAUTAN_PENANGGULANGAN_PENYAKIT,
+  ]
+}
+
 export interface SitasiIntervensiUkm {
   sumber: string
+  tautan: readonly TautanSumberUkm[]
   pinkesga: string
   tingkatDukungan: TingkatDukunganUkm
   labelDukungan: string
@@ -114,6 +203,7 @@ export function sitasiIntervensiUkm(
   if (fase === 'pra_penilaian') {
     return {
       sumber: `${konteks} Sumber ini memberi konteks masalah keluarga, bukan mengesahkan kartu yang sedang dipilih atau membocorkan jawaban.`,
+      tautan: [TAUTAN_PIS_PK, TAUTAN_SAJI_TERKINI],
       pinkesga,
       tingkatDukungan: 'konteks_domain',
       labelDukungan: 'Konteks domain, bukan kunci jawaban',
@@ -126,6 +216,7 @@ export function sitasiIntervensiUkm(
   if (benar && evidence) {
     return {
       sumber: `${evidence.sumber.sitasi}. ${evidence.klaimDidukung}`,
+      tautan: [tautanDariEvidence(evidence.sumber)],
       pinkesga,
       tingkatDukungan: evidence.tingkat,
       labelDukungan:
@@ -136,6 +227,7 @@ export function sitasiIntervensiUkm(
 
   return {
     sumber: kartu.sumber?.trim() ?? konteks,
+    tautan: [TAUTAN_PIS_PK, TAUTAN_SAJI_TERKINI],
     pinkesga,
     tingkatDukungan: 'konteks_domain',
     labelDukungan: 'Konteks domain saja',
@@ -163,4 +255,20 @@ export function sumberKegiatanUkm(
   if (jenis === 'prolanis' || kartu.id.startsWith('prol_')) return SUMBER_PROLANIS
   if (jenis === 'klb' || kartu.id.startsWith('klb_')) return SUMBER_KLB
   return undefined
+}
+
+export function tautanKegiatanUkm(
+  kartu: KartuKegiatanBersumber,
+  jenis?: 'posyandu' | 'prolanis' | 'klb',
+): readonly TautanSumberUkm[] {
+  if (jenis === 'posyandu' || kartu.id.startsWith('posy_')) {
+    return tautanUnik([TAUTAN_POSYANDU, TAUTAN_KADER_POSYANDU, TAUTAN_ILP])
+  }
+  if (jenis === 'prolanis' || kartu.id.startsWith('prol_')) {
+    return tautanUnik([TAUTAN_PROLANIS, TAUTAN_ILP])
+  }
+  if (jenis === 'klb' || kartu.id.startsWith('klb_')) {
+    return tautanUnik([TAUTAN_KLB, TAUTAN_PUSKESMAS, TAUTAN_ILP])
+  }
+  return []
 }

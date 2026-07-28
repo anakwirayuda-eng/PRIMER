@@ -2,9 +2,10 @@ import type { IndikatorPisPk, KartuIntervensi, SkenarioKunjungan } from './types
 
 export type TingkatDukunganUkm = 'mekanisme_spesifik' | 'adaptasi_beralasan' | 'konteks_domain'
 
-interface SumberUkm {
+export interface SumberUkm {
   id: string
   sitasi: string
+  labelRingkas: string
   url: string
 }
 
@@ -22,66 +23,79 @@ const SUMBER = {
   ilp: {
     id: 'kemenkes:kmk-2015-2023-ilp',
     sitasi: 'KMK RI HK.01.07/MENKES/2015/2023, Petunjuk Teknis Integrasi Pelayanan Kesehatan Primer',
-    url: 'https://jdih.kemkes.go.id/common/dokumen/KMK%20No.%20HK.01.07-MENKES-2015-2023%20ttg%20Juknis%20Integrasi%20Pelayanan%20Kesehatan%20Primer-signed.pdf',
+    labelRingkas: 'Kemenkes · Juknis ILP 2023',
+    url: 'https://kesprimkom.kemkes.go.id/konten/146/176/0/nomor-hk-01-07-menkes-2015-2023',
   },
   hearts: {
     id: 'who:hearts-team-care-2018',
     sitasi: 'WHO HEARTS Technical Package: Team-based Care, 2018',
+    labelRingkas: 'WHO · HEARTS Team-based Care',
     url: 'https://www.who.int/publications/i/item/WHO-NMH-NVI-18-4',
   },
   hipertensi: {
     id: 'pnpk:hipertensi-dewasa-303-2026',
     sitasi: 'KMK RI HK.01.07/MENKES/303/2026, PNPK Tata Laksana Hipertensi pada Dewasa',
+    labelRingkas: 'Kemenkes · PNPK Hipertensi 2026',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan1780387327_362636.pdf',
   },
   tb: {
     id: 'who:tb-module4-2025',
     sitasi: 'WHO Consolidated Guidelines on Tuberculosis, Module 4: Treatment and Care, 2025',
+    labelRingkas: 'WHO · TB Treatment & Care 2025',
     url: 'https://www.who.int/publications/i/item/9789240107243',
   },
   imunisasi: {
     id: 'who:besd-vaccination-2022',
     sitasi: 'WHO Behavioural and Social Drivers of Vaccination: Tools and Practical Guidance, 2022',
+    labelRingkas: 'WHO · BeSD Vaccination',
     url: 'https://www.who.int/publications/i/item/9789240049680',
   },
   kb: {
     id: 'who:family-planning-handbook-2022',
     sitasi: 'WHO and Johns Hopkins, Family Planning: A Global Handbook for Providers, 4th ed., 2022',
+    labelRingkas: 'WHO · Family Planning Handbook',
     url: 'https://www.who.int/publications/m/item/family-planning--a-global-handbook-for-providers--4th-ed',
   },
   jiwa: {
     id: 'who:mhgap-guideline-2023',
     sitasi: 'WHO mhGAP Guideline for Mental, Neurological and Substance Use Disorders, 3rd ed., 2023',
+    labelRingkas: 'WHO · mhGAP 2023',
     url: 'https://www.who.int/publications/i/item/9789240084278',
   },
   maternal: {
     id: 'who:maternal-recommendations-2025',
     sitasi: 'WHO Recommendations on Maternal Health, 2nd ed., 2025',
+    labelRingkas: 'WHO · Maternal Health 2025',
     url: 'https://www.who.int/publications/b/59332',
   },
   menyusui: {
     id: 'who:complementary-feeding-2023',
     sitasi: 'WHO Guideline for Complementary Feeding of Infants and Young Children 6-23 Months, 2023',
+    labelRingkas: 'WHO · Complementary Feeding',
     url: 'https://www.who.int/publications/i/item/9789240081864',
   },
   sanitasi: {
     id: 'who:sanitation-health-2018',
     sitasi: 'WHO Guidelines on Sanitation and Health, 2018; dibaca bersama Permenkes RI No. 3 Tahun 2026',
+    labelRingkas: 'WHO · Sanitation & Health',
     url: 'https://www.who.int/publications/i/item/9789241514705',
   },
   air: {
     id: 'who:drinking-water-quality-2022',
     sitasi: 'WHO Guidelines for Drinking-water Quality, 4th ed. with addenda, 2022; dibaca bersama Permenkes RI No. 3 Tahun 2026',
+    labelRingkas: 'WHO · Drinking-water Quality',
     url: 'https://www.who.int/publications/i/item/9789240045064',
   },
   rokok: {
     id: 'who:tobacco-cessation-2024',
     sitasi: 'WHO Clinical Treatment Guideline for Tobacco Cessation in Adults, 2024',
+    labelRingkas: 'WHO · Tobacco Cessation 2024',
     url: 'https://www.who.int/publications/b/74755',
   },
   kader: {
     id: 'who:chw-programmes-2018',
     sitasi: 'WHO Guideline on Health Policy and System Support to Optimize Community Health Worker Programmes, 2018',
+    labelRingkas: 'WHO · Community Health Workers',
     url: 'https://www.who.int/publications/i/item/9789241550369',
   },
 } satisfies Record<string, SumberUkm>

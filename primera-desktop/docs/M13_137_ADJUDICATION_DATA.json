@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-28T02:35:56.274Z",
-  "sourceCommit": "0c29b69b3b282ad40516234560ac931c2e6d9fe5+dirty",
-  "artifactFingerprint": "6adf90936814aaecf19e4b4b618701d8c7ae2b6226ddbe05817babb93c575e42",
-  "packFingerprint": "21ba1da0",
-  "contentRelease": "p1-observation-governance-2026-07-28",
-  "engineRevision": 60,
+  "generatedAt": "2026-07-28T08:55:58.188Z",
+  "sourceCommit": "a61301d62a676df461e22185912a48a38627700e+dirty",
+  "artifactFingerprint": "aeef67707e680414e1dbf3020f95ba5078ee09486c762b4320ecbc29647b6f2c",
+  "packFingerprint": "541d47bf",
+  "contentRelease": "clinical-provenance-2026-07-28",
+  "engineRevision": 61,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -3803,7 +3803,7 @@
               "title": "Peraturan Menteri Kesehatan Nomor 28 Tahun 2021 tentang Pedoman Penggunaan Antibiotik",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2021,
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/2021permenkes028.pdf",
+              "officialUrl": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-28-tahun-2021",
               "population": "Patients receiving antimicrobial therapy in Indonesian health facilities",
               "facilityScope": "National antimicrobial-use floor, including adult oral doxycycline dosing and duration for mild leptospirosis.",
               "locator": "National antimicrobial-use table: mild adult leptospirosis receives doxycycline 100 mg orally every 12 hours for 10 days as the Indonesian floor."
@@ -12405,7 +12405,7 @@
               "title": "Petunjuk Teknis Integrasi Pelayanan Kesehatan Primer",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2023,
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/KMK%20No.%20HK.01.07-MENKES-2015-2023%20ttg%20Juknis%20Integrasi%20Pelayanan%20Kesehatan%20Primer-signed.pdf",
+              "officialUrl": "https://kesprimkom.kemkes.go.id/konten/146/176/0/nomor-hk-01-07-menkes-2015-2023",
               "population": "Masyarakat dalam wilayah kerja Puskesmas, termasuk kasus indeks TB dan kontak serumah/erat",
               "facilityScope": "Skrining terintegrasi, investigasi kontak oleh Puskesmas/kader, pencatatan, rujukan, dan tindak lanjut wilayah.",
               "locator": "Investigasi kontak is a Puskesmas and community-program action attached to the TB episode, including active screening and onward diagnostic or preventive pathways."
@@ -16406,7 +16406,7 @@
               "title": "Petunjuk Teknis Pemberian Makanan Tambahan Berbahan Pangan Lokal bagi Ibu Hamil dan Balita",
               "authority": "Direktorat Jenderal Kesehatan Primer dan Komunitas, Kementerian Kesehatan Republik Indonesia",
               "year": 2025,
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/2025Kepdirjenkesprimkom576.pdf",
+              "officialUrl": "https://kesprimkom.kemkes.go.id/konten/178/178/0/nomor-hk-02-02-b-576-2025-tentang-petunjuk-teknis-pemberian-makanan-tambahan-berbahan-pangan-lokal-bagi-ibu-hamil-dan-balita-bermasalah-gizi",
               "population": "Ibu hamil dan balita sasaran PMT berbahan pangan lokal, termasuk balita gizi kurang",
               "facilityScope": "Penetapan sasaran, pemberian harian, pendampingan keluarga-kader, pemantauan konsumsi dan pertumbuhan, serta koordinasi Puskesmas-Posyandu.",
               "locator": "Balita gizi kurang: PMT lokal diberikan setiap hari selama 56 hari, kaya protein hewani, sebagai tambahan makanan utama, dengan pemantauan kader dan tenaga kesehatan."
@@ -17834,7 +17834,7 @@
               "title": "Clinical Practice Guidelines for the Management of Anorectal Abscess, Fistula-in-Ano, and Rectovaginal Fistula",
               "authority": "American Society of Colon and Rectal Surgeons",
               "year": 2022,
-              "officialUrl": "https://fascrs.org/getattachment/Healthcare-Providers/Education/Clinical-Practice-Guidelines/2022-AnorectalAbscess_FistulainAno_RectovaginalFistula-CPG.pdf",
+              "officialUrl": "https://doi.org/10.1097/DCR.0000000000002473",
               "population": "Adults with anorectal abscess or fistula-in-ano",
               "facilityScope": "Clinical evaluation, selective imaging, prompt drainage, selective antibiotics, and criteria for concomitant fistulotomy.",
               "locator": "Recommendations 2-5: imaging is selective, acute abscess requires prompt drainage, antibiotics are reserved for cellulitis/systemic illness/immunosuppression, and concomitant fistulotomy is selective for simple fistulas."
@@ -22968,7 +22968,7 @@
               "relation": "direct",
               "title": "PNPK Tata Laksana Pneumonia pada Dewasa",
               "documentNumber": "HK.01.07/MENKES/2147/2023",
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/KMK%20No.%20HK.01.07-MENKES-2147-2023%20ttg%20Pedoman%20Nasional%20Pelayanan%20Kedokteran%20Tata%20Laksana%20Pneumonia%20Pada%20Dewasa-signed.pdf",
+              "officialUrl": "https://kemkes.go.id/id/pnpk-2023---tata-laksana-pneumonia-pada-dewasa",
               "population": "Dewasa dengan pneumonia",
               "facilityScope": "Lintas tingkat fasilitas; relevansi rawat jalan/FKTP harus dibaca per bagian.",
               "excerpts": [],
@@ -23733,7 +23733,7 @@
               "title": "Petunjuk Teknis Integrasi Pelayanan Kesehatan Primer",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2023,
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/KMK%20No.%20HK.01.07-MENKES-2015-2023%20ttg%20Juknis%20Integrasi%20Pelayanan%20Kesehatan%20Primer-signed.pdf",
+              "officialUrl": "https://kesprimkom.kemkes.go.id/konten/146/176/0/nomor-hk-01-07-menkes-2015-2023",
               "population": "Masyarakat dalam wilayah kerja Puskesmas, termasuk kasus indeks TB dan kontak serumah/erat",
               "facilityScope": "Skrining terintegrasi, investigasi kontak oleh Puskesmas/kader, pencatatan, rujukan, dan tindak lanjut wilayah.",
               "locator": "Lampiran investigasi kontak TBC: every bacteriologically confirmed DS- or DR-TB index case triggers systematic screening of household and close contacts through Puskesmas and community cadres."
@@ -24175,7 +24175,7 @@
               "title": "Peraturan Menteri Kesehatan Nomor 28 Tahun 2021 tentang Pedoman Penggunaan Antibiotik",
               "authority": "Kementerian Kesehatan Republik Indonesia",
               "year": 2021,
-              "officialUrl": "https://jdih.kemkes.go.id/common/dokumen/2021permenkes028.pdf",
+              "officialUrl": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-28-tahun-2021",
               "population": "Patients receiving antimicrobial therapy in Indonesian health facilities",
               "facilityScope": "National antimicrobial-use floor, including adult oral doxycycline dosing and duration for mild leptospirosis.",
               "locator": "Regimen meningitis bakterial dewasa lists ceftriaxone 2 g IV every 12 hours; the game assesses only the scenario-specific first pre-referral dose."

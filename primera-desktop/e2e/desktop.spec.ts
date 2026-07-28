@@ -186,6 +186,68 @@ test('debrief IGD menampilkan sumber ringkas tanpa overflow pada mode gelap dan 
   await page.screenshot({ path: test.info().outputPath('04-debrief-igd-gelap-200.png'), fullPage: true })
 })
 
+test('provenance UKM dapat dibuka tanpa overflow pada mode gelap dan teks 200%', async () => {
+  await mulaiStase()
+  await aturGelap200Persen()
+  await tungguAutosave()
+
+  const tersimpan = await page.evaluate(async () => {
+    const primer = (window as typeof window & {
+      primer: { save: { read(slot: string): Promise<string | null>; write(slot: string, json: string): Promise<boolean> } }
+    }).primer
+    const json = await primer.save.read('autosave')
+    if (!json) return false
+    const amplop = JSON.parse(json) as { state?: Record<string, unknown> }
+    if (!amplop.state) return false
+    amplop.state.layar = 'kunjungan'
+    amplop.state.kunjungan = {
+      keluargaId: 'keluarga_wulan',
+      skenarioId: 'wulan_k1',
+      fase: 'resep_sosial',
+      hotspotDitemukan: [],
+      dialogIndex: 0,
+      pilihanDiambil: [],
+      trustDelta: 0,
+      konfrontasiBeruntun: 0,
+      diusir: false,
+    }
+    return primer.save.write('autosave', JSON.stringify(amplop))
+  })
+  expect(tersimpan).toBe(true)
+
+  await page.reload()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E.*Hari 1/ }).click()
+  await expect(page.locator('.kunjungan-root')).toBeVisible()
+
+  const kartu = page.locator('.kunjungan-intervensi').first()
+  await kartu.scrollIntoViewIfNeeded()
+  await kartu.click()
+  const panel = page.getByLabel(/Konteks ilmiah kartu terpilih/i)
+  await expect(panel).toBeVisible()
+  const links = panel.getByRole('link', { name: /buka di browser bawaan/i })
+  await expect(links).toHaveCount(2)
+
+  await app.evaluate(({ shell }) => {
+    const root = globalThis as typeof globalThis & { __primerExternalUrls?: string[] }
+    root.__primerExternalUrls = []
+    shell.openExternal = async (url: string) => {
+      root.__primerExternalUrls?.push(url)
+    }
+  })
+  await links.first().click()
+  const urlDibuka = await app.evaluate(() => {
+    const root = globalThis as typeof globalThis & { __primerExternalUrls?: string[] }
+    return root.__primerExternalUrls ?? []
+  })
+  expect(urlDibuka[0]).toMatch(/^https:\/\//)
+  expect(app.windows()).toHaveLength(1)
+  await expectNoSeriousA11yViolations('provenance UKM gelap 200 persen')
+
+  const overflow = await panel.evaluate((node) => node.scrollWidth - node.clientWidth)
+  expect(overflow, 'panel provenance UKM tidak boleh overflow horizontal').toBeLessThanOrEqual(1)
+  await page.screenshot({ path: test.info().outputPath('05-provenance-ukm-gelap-200.png'), fullPage: true })
+})
+
 test('kasus prototipe rujuk tetap formatif dan tidak membocorkan jejaring sebelum disposisi', async () => {
   await mulaiStase()
   await tungguAutosave()

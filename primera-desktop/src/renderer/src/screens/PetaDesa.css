@@ -439,6 +439,30 @@
   line-height: 1.5;
 }
 
+.peta-hasil__bukti-intervensi {
+  margin-top: var(--sp-3);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--border-halus);
+  font-size: var(--text-xs);
+}
+
+.peta-hasil__bukti-intervensi > summary {
+  min-height: 44px;
+  cursor: pointer;
+  color: var(--tinta-biru);
+  font-weight: 700;
+}
+
+.peta-hasil__bukti-intervensi > summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+}
+
+.peta-hasil__batas-evidence {
+  color: var(--tinta-lembut);
+  font-style: italic;
+}
+
 /* M2: tombol kegiatan lapangan di panel RW (jarak dari gap parent .peta-detail) */
 .peta-kegiatan {
   display: flex;

@@ -8,7 +8,8 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { HasilKegiatan } from '@engine/kegiatan'
 import { acakUrutan } from '../utils/acakUrutan'
-import { sumberKegiatanUkm } from '@content/ukmCitations'
+import { sumberKegiatanUkm, tautanKegiatanUkm } from '@content/ukmCitations'
+import { TautanSumber } from '../components/TautanSumber'
 import { profilVisualKegiatan } from './kegiatanVisualProfiles'
 import './Kegiatan.css'
 
@@ -91,6 +92,7 @@ export function Kegiatan() {
   const visual = profilVisualKegiatan(kg.jenis)
   const pilihanObj = pilihanTerpilih ? kartu.pilihan.find((p) => p.id === pilihanTerpilih) : null
   const sumberKartu = sumberKegiatanUkm(kartu, kg.jenis)
+  const tautanSumberKartu = tautanKegiatanUkm(kartu, kg.jenis)
 
   return (
     <div className="kegiatan">
@@ -145,6 +147,7 @@ export function Kegiatan() {
                   <div className="kegiatan__sumber">
                     <b className="mono">LANDASAN RESMI</b>
                     <p>{sumberKartu}</p>
+                    <TautanSumber sumber={tautanSumberKartu} />
                   </div>
                 )}
                 <button

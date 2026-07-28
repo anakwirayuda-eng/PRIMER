@@ -34,7 +34,8 @@ export const DIALOGUE_COHERENCE_CONTENT_RELEASE = 'dialogue-coherence-2026-07-20
 export const CLASS_READINESS_CONTENT_RELEASE = 'class-readiness-2026-07-22'
 export const IGD_ADJUDICATION_CONTENT_RELEASE = 'igd-adjudication-2026-07-22'
 export const P1_OBSERVATION_CONTENT_RELEASE = 'p1-observation-governance-2026-07-28'
-export const CONTENT_RELEASE = P1_OBSERVATION_CONTENT_RELEASE
+export const CLINICAL_PROVENANCE_CONTENT_RELEASE = 'clinical-provenance-2026-07-28'
+export const CONTENT_RELEASE = CLINICAL_PROVENANCE_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -50,6 +51,7 @@ export const CONTENT_RELEASE_ORDER = [
   CLASS_READINESS_CONTENT_RELEASE,
   IGD_ADJUDICATION_CONTENT_RELEASE,
   P1_OBSERVATION_CONTENT_RELEASE,
+  CLINICAL_PROVENANCE_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {
@@ -257,8 +259,13 @@ export function validasiPack(pack: ContentPack): string[] {
   }
 
   for (const k of Object.values(pack.kasus)) {
-    if (k.sumber?.length) {
+    if (!k.sumber?.length) {
+      masalah.push(`Kasus ${k.id}: provenance klinis belum tersedia`)
+    } else {
       const sumberIds = new Set<string>()
+      if (k.sumber.length < 2 || k.sumber.length > 10) {
+        masalah.push(`Kasus ${k.id}: jumlah sumber ${k.sumber.length}, wajib 2-10`)
+      }
       if (!k.sumber.some((s) => s.jenis === 'pedoman_indonesia')) {
         masalah.push(`Kasus ${k.id}: sumber terstruktur tanpa pedoman Indonesia`)
       }
@@ -273,6 +280,12 @@ export function validasiPack(pack: ContentPack): string[] {
         }
         if (!Number.isInteger(sumber.tahun) || sumber.tahun < 1900 || sumber.tahun > 2100) {
           masalah.push(`Kasus ${k.id}: tahun sumber '${sumber.id}' tidak valid`)
+        }
+        if (!sumber.cakupan) {
+          masalah.push(`Kasus ${k.id}: sumber '${sumber.id}' tanpa status cakupan`)
+        }
+        if (sumber.cakupan === 'floor_umum' && !sumber.catatan?.trim()) {
+          masalah.push(`Kasus ${k.id}: floor umum '${sumber.id}' tanpa catatan batas interpretasi`)
         }
       }
     }

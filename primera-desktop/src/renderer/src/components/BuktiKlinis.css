@@ -186,6 +186,13 @@
   color: var(--tinta-merah);
 }
 
+.bukti-klinis__batas {
+  max-width: 68ch;
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  line-height: 1.5;
+}
+
 .bukti-klinis__catatan {
   margin: 0;
   max-width: 66ch;

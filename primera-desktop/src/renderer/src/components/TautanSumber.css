@@ -1,0 +1,67 @@
+.tautan-sumber {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sp-1) var(--sp-2);
+  margin-top: var(--sp-2);
+  font-size: var(--text-xs);
+  line-height: 1.55;
+}
+
+.tautan-sumber__label {
+  flex: 0 0 auto;
+  color: var(--tinta-lembut);
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.tautan-sumber__daftar {
+  display: inline-flex;
+  min-width: 0;
+  flex: 1 1 24rem;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-2);
+}
+
+.tautan-sumber__item {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--sp-2);
+}
+
+.tautan-sumber__pemisah {
+  color: var(--tinta-lembut);
+}
+
+.tautan-sumber a {
+  display: inline-flex;
+  min-width: 0;
+  align-items: baseline;
+  gap: var(--sp-1);
+  color: var(--tinta-biru);
+  font-weight: 650;
+  overflow-wrap: anywhere;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+}
+
+.tautan-sumber a:hover {
+  text-decoration-thickness: 2px;
+}
+
+.tautan-sumber a:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 3px;
+}
+
+.tautan-sumber__eksternal {
+  flex: 0 0 auto;
+  font-size: 0.9em;
+}
+
+.tautan-sumber__diblokir {
+  color: var(--tinta-merah);
+  overflow-wrap: anywhere;
+}

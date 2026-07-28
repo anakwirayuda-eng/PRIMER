@@ -1,6 +1,6 @@
 {
   "name": "primera-desktop",
-  "version": "1.1.0-beta.2",
+  "version": "1.1.0-beta.3",
   "description": "PRIMERA: Puskesmas Pagi — Primary Care Simulator & Arena, game desktop simulasi dokter Puskesmas untuk pendidikan kedokteran Indonesia",
   "main": "out/main/index.js",
   "author": "Anak Agung Bagus Wirayuda, MD, PhD",
@@ -21,6 +21,9 @@
     "exam:simulate": "vite-node --config vitest.config.ts scripts/simulate-exam-blueprint.ts",
     "audit:editorial": "vite-node --config vitest.config.ts scripts/audit-editorial.ts",
     "audit:dialogue": "vite-node --config vitest.config.ts scripts/audit-dialogue-quality.ts",
+    "audit:provenance": "vite-node --config vitest.config.ts scripts/audit-clinical-provenance.ts",
+    "audit:provenance:urls": "vite-node --config vitest.config.ts scripts/check-clinical-source-urls.ts",
+    "generate:provenance": "vite-node --config vitest.config.ts scripts/generate-clinical-provenance.ts",
     "m13:kfa": "vite-node --config vitest.config.ts scripts/m13-adjudication/harvest-kfa.ts",
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
     "m13:igd-adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate-igd.ts",

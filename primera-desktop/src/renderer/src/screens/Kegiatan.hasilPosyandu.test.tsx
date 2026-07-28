@@ -82,6 +82,10 @@ describe('<Kegiatan /> - sitasi kartu C2', () => {
     await user.click(screen.getByRole('button', { name: 'Pilihan uji' }))
 
     expect(screen.getByText(/Panduan Pengelolaan Posyandu Bidang Kesehatan/)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Panduan Posyandu 2023.*browser bawaan/i })).toHaveAttribute(
+      'href',
+      expect.stringMatching(/^https:\/\/ayosehat\.kemkes\.go\.id/),
+    )
   })
 })
 describe('<Kegiatan /> — kontrak hasil KLB mengikuti aksi spesifik', () => {

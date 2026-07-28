@@ -15,6 +15,7 @@ import {
   EDITORIAL_UX_CONTENT_RELEASE,
   IGD_ADJUDICATION_CONTENT_RELEASE,
   P1_OBSERVATION_CONTENT_RELEASE,
+  CLINICAL_PROVENANCE_CONTENT_RELEASE,
   encounterArchetypeAktif,
   releasePolicyAktif,
   ukmScenarioAktif,
@@ -43,6 +44,11 @@ function denganVarian<T extends { id: string }>(kasus: T): T {
   return VARIAN_TINGKAT_A[kasus.id] ? { ...kasus, varianPresentasi: VARIAN_TINGKAT_A[kasus.id] } : kasus
 }
 
+function tanpaSumber<T extends { sumber?: unknown }>(kasus: T): Omit<T, 'sumber'> {
+  const { sumber: _sumber, ...isi } = kasus
+  return isi
+}
+
 function actualReviewHashes(): Record<string, string> {
   return Object.fromEntries(
     Object.entries(M13_1A_REVIEW_PAYLOADS).map(([id, payload]) => [
@@ -67,7 +73,9 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
     expect(M13_1A_AUTHORING_MANIFEST.clinicSpecs.filter((item) => item.role === 'representative')).toHaveLength(4)
     expect(new Set(M13_1A_AUTHORING_MANIFEST.clinicSpecs.filter((item) => item.role === 'representative').map((item) => item.authoringTier))).toEqual(new Set(['A', 'B', 'C']))
     for (const draft of M13_1A_AUTHORING_MANIFEST.clinicCases) {
-      expect(PACK.kasus[draft.id], draft.id).toEqual(denganVarian(draft))
+      expect(tanpaSumber(PACK.kasus[draft.id]!), draft.id).toEqual(
+        tanpaSumber(denganVarian(draft)),
+      )
     }
     expect(
       M13_1A_AUTHORING_MANIFEST.clinicSpecs
@@ -159,7 +167,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('aktif hanya di Career: PACK, release, karma, dan isolasi mode konsisten', () => {
-    expect(CONTENT_RELEASE).toBe(P1_OBSERVATION_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(CLINICAL_PROVENANCE_CONTENT_RELEASE)
     expect(CONTENT_RELEASE_ORDER).toEqual([
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
@@ -173,8 +181,13 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       CLASS_READINESS_CONTENT_RELEASE,
       IGD_ADJUDICATION_CONTENT_RELEASE,
       P1_OBSERVATION_CONTENT_RELEASE,
+      CLINICAL_PROVENANCE_CONTENT_RELEASE,
     ])
-    for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) expect(PACK.kasus[kasus.id], kasus.id).toEqual(denganVarian(kasus))
+    for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) {
+      expect(tanpaSumber(PACK.kasus[kasus.id]!), kasus.id).toEqual(
+        tanpaSumber(denganVarian(kasus)),
+      )
+    }
     for (const kasus of M13_1A_AUTHORING_MANIFEST.igdCases) expect(PACK.kasusIgd[kasus.id], kasus.id).toEqual(kasus)
     expect(PACK.keluarga.keluarga_gunawan?.arc.kunjungan.some((item) => item.id === 'gunawan_k2')).toBe(true)
 

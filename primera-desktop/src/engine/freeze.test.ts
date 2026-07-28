@@ -176,6 +176,9 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // stempel tegak-vs-suspek dinilai dan di-hash; callback keluarga menuntut
   // kecocokan kondisi; cap episode mempertahankan 120 kasus aktif paling
   // mendesak secara deterministik.
+  // Unfreeze 2026-07-28 (provenance klinis lengkap, REVISI_ENGINE 60 -> 61):
+  // sumber poli 210/210 kini ikut fingerprint sehingga perubahan sitasi,
+  // cakupan, atau catatan batas tidak dapat menyamar sebagai build identik.
   'reducer.ts': '8f108340c8fe7ba9d9e8f02fc633766cef7d257e3c1061ae75369617da2fc11d',
   'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
   'scoring.ts': '39fa06fe80279a9780f5697de33ccd98eff0f9444d6932f4f0bf430a4695cf6c',
@@ -202,7 +205,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '673d60833a88be503ac53e43b3140d2e1b11e6f4510dcacd25bdebdbc4e8b7a3',
+  'verifikasi.ts': 'b38143ffd94ea45058c618d60447c149d0a0f7161f2782614973999655b431ff',
   'state.ts': '2a0abae08b13388dff33a8f59018c16c7a9438aa893f4e2c53e676cc22537836',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',

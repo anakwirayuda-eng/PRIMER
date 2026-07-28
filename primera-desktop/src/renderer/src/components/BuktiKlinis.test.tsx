@@ -11,6 +11,7 @@ const SUMBER: SumberKlinis[] = [
     url: 'https://kemkes.go.id/pedoman.pdf',
     tahun: 2025,
     jenis: 'pedoman_indonesia',
+    cakupan: 'langsung',
   },
   {
     id: 'evidence',
@@ -18,6 +19,8 @@ const SUMBER: SumberKlinis[] = [
     url: 'https://example.org/guideline',
     tahun: 2026,
     jenis: 'evidence_internasional',
+    cakupan: 'floor_umum',
+    catatan: 'Dokumen ini menjadi floor umum; keputusan spesifik tetap mengikuti konteks kasus.',
   },
 ]
 
@@ -54,8 +57,10 @@ describe('<BuktiKlinis />', () => {
     await userEvent.click(summary)
     expect(details).toHaveAttribute('open')
     expect(screen.getByText('INTI KEPUTUSAN')).toBeVisible()
-    expect(screen.getByText(/INDONESIA.*2025/)).toBeVisible()
-    expect(screen.getByText(/EBM.*2026/)).toBeVisible()
+    expect(screen.getByText(/INDONESIA.*LANGSUNG.*2025/)).toBeVisible()
+    expect(screen.getByText(/EBM.*FLOOR UMUM.*2026/)).toBeVisible()
+    expect(screen.getByText(/Dokumen ini menjadi floor umum/)).toBeVisible()
+    expect(screen.getByText(/Label cakupan membedakan sumber langsung/)).toBeVisible()
 
     const links = screen.getAllByRole('link')
     expect(links).toHaveLength(2)

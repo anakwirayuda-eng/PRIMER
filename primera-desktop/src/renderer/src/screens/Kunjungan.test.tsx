@@ -109,6 +109,7 @@ describe('<Kunjungan /> - sitasi resep sosial C2', () => {
     expect(kepala).toBeInTheDocument()
     expect(sumber).toBeInTheDocument()
     expect(kepala?.nextElementSibling).toBe(sumber)
+    expect(screen.getAllByRole('link', { name: /buka di browser bawaan/i })).toHaveLength(sitasi.tautan.length)
   })
 })
 

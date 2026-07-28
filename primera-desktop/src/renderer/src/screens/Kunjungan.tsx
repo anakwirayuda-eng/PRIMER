@@ -14,6 +14,7 @@ import type { BabakKunjunganFase } from '@engine/state'
 import type { Hambatan, PilihanDialog } from '@content/types'
 import { PACK } from '@content/index'
 import { sitasiIntervensiUkm } from '@content/ukmCitations'
+import { TautanSumber } from '../components/TautanSumber'
 import { hashSeed, Rng } from '@engine/core/rng'
 import { arcKunjunganAktif, hariTindakLanjutKunjungan, skenarioEfektif } from '@engine/kunjungan'
 import { acakUrutan } from '../utils/acakUrutan'
@@ -611,6 +612,7 @@ export function Kunjungan() {
                   <span className="chip">{sitasiIntervensiAktif.labelDukungan}</span>
                 </div>
                 <p className="kunjungan-resep__sitasi-sumber">{sitasiIntervensiAktif.sumber}</p>
+                <TautanSumber sumber={sitasiIntervensiAktif.tautan} />
               </aside>
             )}
             <div className="baris baris--antara">
