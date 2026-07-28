@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-27T01:58:18.108Z",
-  "sourceCommit": "d3834bce184306ec58dfebd3cf6c29a3eb45cf2e+dirty",
-  "artifactFingerprint": "713b537471f1c58d5ca1ff6da4ad56134f632776ab6e09ccf1fe4b3ae47ec253",
-  "packFingerprint": "9b53fa33",
-  "contentRelease": "igd-adjudication-2026-07-22",
-  "engineRevision": 58,
+  "generatedAt": "2026-07-28T02:35:56.274Z",
+  "sourceCommit": "0c29b69b3b282ad40516234560ac931c2e6d9fe5+dirty",
+  "artifactFingerprint": "6adf90936814aaecf19e4b4b618701d8c7ae2b6226ddbe05817babb93c575e42",
+  "packFingerprint": "21ba1da0",
+  "contentRelease": "p1-observation-governance-2026-07-28",
+  "engineRevision": 60,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -121,12 +121,7 @@
             }
           }
         ],
-        "procedures": [
-          {
-            "id": "observasi_neurologis",
-            "name": "Observasi serial komponen GCS (E/V/M), pupil, gejala, dan defisit neurologis"
-          }
-        ],
+        "procedures": [],
         "education": [
           {
             "id": "tanda_bahaya_cedera_kepala",
@@ -219,16 +214,7 @@
           "status": "cocok",
           "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
           "highestTier": "A",
-          "resources": [
-            {
-              "id": "observasi_neurologis",
-              "name": "Observasi serial komponen GCS (E/V/M), pupil, gejala, dan defisit neurologis",
-              "kind": "procedure",
-              "tier": "A",
-              "note": "Core-ready pada profil naratif Sukamaju atau tidak membutuhkan alat khusus.",
-              "grounding": "baseline"
-            }
-          ],
+          "resources": [],
           "unresolvedResourceIds": [],
           "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
         },
@@ -2258,8 +2244,8 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, fungsi ginjal memadai, dan tidak hamil, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO 2025 mempertahankan regimen berbasis dolutegravir dan pencegahan TB, sedangkan WHO service-delivery 2026 menekankan layanan terintegrasi, berpusat pada pasien, retensi, dan re-engagement.",
+        "clue": "Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, dan fungsi ginjal memadai, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Status kehamilan tetap dinilai untuk konseling dan layanan maternal-HIV terintegrasi, tetapi hamil atau berpotensi hamil bukan alasan otomatis untuk menyingkirkan dolutegravir. Bila pasien hamil atau merencanakan kehamilan, lakukan diskusi manfaat-risiko yang terinformasi dan sambungkan ke jalur maternal-HIV sesuai program. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO merekomendasikan dolutegravir sebagai regimen preferred untuk semua populasi, termasuk perempuan hamil dan yang berpotensi hamil; kehamilan memicu informed choice serta integrasi layanan maternal-HIV, bukan larangan otomatis. WHO 2025/2026 mempertahankan regimen berbasis dolutegravir, pencegahan TB, layanan terintegrasi, retensi, dan re-engagement.",
         "realityNote": "Sukamaju ditetapkan sebagai layanan ARV; TLD, konselor, dan jejaring laboratorium siap. Bila hasil darah masih ditunggu tetapi pasien layak, rapid ART tetap berjalan dan ditinjau satu minggu; kasus dengan hasil aman ini kontrol satu bulan. Viral load melalui jejaring. Notifikasi pasangan ditawarkan sukarela, rahasia, aman, dan tanpa paksaan; kunjungan terlewat memicu re-engagement rahasia, bukan penghentian layanan.",
         "ebmPearl": "Tampak sehat tidak menyingkirkan advanced HIV disease: CD4 baseline tetap penting untuk menemukan imunosupresi berat dan menentukan paket profilaksis, tetapi bukan syarat untuk menahan ART. HBsAg juga bermakna karena tenofovir-lamivudin aktif terhadap hepatitis B dan penghentian sembarangan dapat memicu flare. Pada kasus ini CD4 428 sel/mm3, HBsAg nonreaktif, dan tidak ada stadium klinis 3/4, sehingga kotrimoksazol bukan resep otomatis."
       },
@@ -2350,6 +2336,17 @@
               "locator": "Updated clinical-management recommendations retain optimized dolutegravir-based ART and integrate tuberculosis prevention and reproductive considerations within longitudinal HIV care."
             },
             {
+              "sourceId": "who-hiv-dtg-all-populations-2019",
+              "relation": "direct",
+              "title": "WHO recommends dolutegravir as preferred HIV treatment option in all populations",
+              "authority": "World Health Organization",
+              "year": 2019,
+              "officialUrl": "https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations",
+              "population": "People living with HIV, including pregnant women and women of childbearing potential",
+              "facilityScope": "Preferred first- and second-line dolutegravir use with informed discussion of benefits and potential risks.",
+              "locator": "WHO explicitly recommends dolutegravir as preferred first- and second-line treatment for all populations, including pregnant women and women of childbearing potential, with informed choice."
+            },
+            {
               "sourceId": "who-hiv-service-2026",
               "relation": "direct",
               "title": "Consolidated HIV guidelines: service delivery",
@@ -2405,6 +2402,157 @@
     },
     {
       "ordinal": 12,
+      "id": "lab_vaginitis_kandida",
+      "name": "Kandidiasis Vulvovaginal",
+      "icd10": "B37.3",
+      "skdi": "4A",
+      "category": "infeksi",
+      "mustRefer": false,
+      "fktp144": true,
+      "demographics": "15-55 tahun, perempuan",
+      "openingComplaint": "Keputihan putih kental disertai gatal hebat.",
+      "currentManagement": {
+        "requiredDrugs": [
+          {
+            "id": "klotrimazol_vaginal_100",
+            "name": "Klotrimazol Vaginal 100 mg",
+            "dosageForm": "tablet vaginal",
+            "role": "required",
+            "catalogFornas": true,
+            "fornas": {
+              "status": "cocok",
+              "queries": [
+                "klotrimazol"
+              ],
+              "excerpts": [
+                {
+                  "label": "klotrimazol",
+                  "text": "KE Pada pitiriasis yang luas. 3 klotrimazol 1. tab vaginal 100 mg   N",
+                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 16157"
+                }
+              ],
+              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+              "caseAvailabilityGrounded": false
+            },
+            "kfa": {
+              "status": "cocok",
+              "components": [
+                {
+                  "query": "Clotrimazole",
+                  "matches": [
+                    {
+                      "code": "91000744",
+                      "name": "CLOTRIMAZOLE",
+                      "unit": "mg"
+                    }
+                  ]
+                }
+              ],
+              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            }
+          }
+        ],
+        "alternativeDrugs": [],
+        "optionalDrugs": [],
+        "procedures": [],
+        "education": [
+          {
+            "id": "higiene_genital_lembut",
+            "name": "[Genital] Hindari douching, sabun pewangi, dan pakaian lembap",
+            "critical": false
+          },
+          {
+            "id": "kepatuhan_obat",
+            "name": "Kepatuhan minum obat",
+            "critical": false
+          },
+          {
+            "id": "tanda_bahaya",
+            "name": "Tanda bahaya — kapan harus segera kembali",
+            "critical": false
+          }
+        ],
+        "relevantLabs": [
+          {
+            "id": "mikroskopis_gram_koh",
+            "name": "Mikroskopis Gram/KOH",
+            "result": "KOH menunjukkan budding yeast dan pseudohifa."
+          }
+        ],
+        "differentialIcd10": [
+          "B37.3",
+          "N76.0",
+          "N76.2"
+        ],
+        "stabilizationRequired": []
+      },
+      "currentEditorial": {
+        "clue": "Pruritus, eritema, discharge putih menggumpal tanpa bau amis, dan pseudohifa mendukung kandidiasis vulvovaginal. Gunakan azol intravaginal; evaluasi diabetes/kehamilan dan rujuk bila berat, rekuren, atau gagal.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.",
+        "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila pemeriksaan tidak ready, gambaran klinis klasik tanpa red flag masih dapat ditangani sebagai kandidiasis tidak rumit dengan safety-net; kasus rekuren, berat, hamil, atau gagal terapi memerlukan konfirmasi/jejaring."
+      },
+      "evidence": {
+        "ppk": {
+          "status": "cocok",
+          "relation": "direct",
+          "sourceTitle": "Vaginitis",
+          "sourceEntryNumber": "4",
+          "pdfPage": 798,
+          "sourceIcd10": [
+            "N76.0 Acute Vaginitis"
+          ],
+          "excerpts": [
+            {
+              "label": "Penatalaksanaan",
+              "text": "Penatalaksanaan a. Menjaga kebersihan diri terutama daerah vagina -802- b. Hindari pemakaian handuk secara bersamaan c. Hindari pemakaian sabun untuk membersihkan daerah vagina yang dapat menggeser jumlah flora normal dan dapat merubah kondisi pH daerah kewanitaan tersebut. d. Jaga berat badan ideal e. Farmakologis: 1) Tatalaksana vaginosis bakterialis • Metronidazol 500 mg peroral 2 x sehari selama 7 hari • Metronidazol pervagina 2 x sehari selama 5 hari • Krim klindamisin 2% pervagina 1 x sehari selama 7 hari 2) Tatalaksana vaginosis trikomonas • Metronidazol 2 g peroral (dosis tunggal) • Pasangan seks pasien sebaiknya juga diobati 3) Tatalaksana vulvovaginitis kandida • Flukonazol 150 mg peroral (dosis tunggal)",
+              "locator": "PPK 1186/2022, bab 4, PDF p.798"
+            }
+          ]
+        },
+        "pnpk": {
+          "status": "tak-ada-sumber",
+          "sources": [],
+          "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
+        },
+        "ebm": {
+          "status": "tak-ada-sumber",
+          "sources": [],
+          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
+        },
+        "fornas": {
+          "status": "cocok",
+          "limitation": "Fornas menentukan listing/restriksi JKN, bukan stok pada hari permainan. Locator perlu dibaca bersama kolom FPKTP/FPKTL dan restriksi."
+        },
+        "aspak": {
+          "status": "cocok",
+          "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
+          "highestTier": "C",
+          "resources": [
+            {
+              "id": "mikroskopis_gram_koh",
+              "name": "Mikroskopis Gram/KOH",
+              "kind": "laboratory",
+              "tier": "C",
+              "note": "Mikroskop, reagen, dan operator perlu dinyatakan.",
+              "grounding": "declared"
+            }
+          ],
+          "unresolvedResourceIds": [],
+          "limitation": "Resource Tier C/D telah dinyatakan eksplisit pada catatan realita kasus; ini tetap narasi authoring, bukan bukti readiness real-time."
+        },
+        "kfa": {
+          "status": "cocok",
+          "limitation": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas."
+        }
+      },
+      "compiler": {
+        "suggestion": "cocok",
+        "reasons": [],
+        "sourceAttributionWarning": false
+      }
+    },
+    {
+      "ordinal": 13,
       "id": "lab_limfadenitis_servikal_akut",
       "name": "Limfadenitis Servikal Akut Bakterial",
       "icd10": "I88",
@@ -2583,7 +2731,7 @@
       }
     },
     {
-      "ordinal": 13,
+      "ordinal": 14,
       "id": "lab_parotitis_mumps",
       "name": "Parotitis Epidemika (Mumps)",
       "icd10": "B26",
@@ -2723,7 +2871,7 @@
       }
     },
     {
-      "ordinal": 14,
+      "ordinal": 15,
       "id": "lab_salpingitis_pid_ringan",
       "name": "Penyakit Radang Panggul Ringan - Rawat Jalan",
       "icd10": "N70",
@@ -3011,7 +3159,7 @@
       }
     },
     {
-      "ordinal": 15,
+      "ordinal": 16,
       "id": "lab_pielonefritis_tanpa_komplikasi",
       "name": "Pielonefritis Akut Tanpa Komplikasi",
       "icd10": "N10",
@@ -3240,7 +3388,7 @@
       }
     },
     {
-      "ordinal": 16,
+      "ordinal": 17,
       "id": "lab_sindrom_duh_genital_servisitis",
       "name": "Servisitis Mukopurulen - Tata Laksana Sindromik",
       "icd10": "N89",
@@ -3495,7 +3643,7 @@
       }
     },
     {
-      "ordinal": 17,
+      "ordinal": 18,
       "id": "lab_leptospirosis_tanpa_komplikasi",
       "name": "Suspek Leptospirosis Ringan Pascabanjir",
       "icd10": "A27.9",
@@ -3709,7 +3857,7 @@
       }
     },
     {
-      "ordinal": 18,
+      "ordinal": 19,
       "id": "lab_tetanus_generalisata_awal",
       "name": "Tetanus Generalisata Derajat Sedang",
       "icd10": "A35",
@@ -3965,157 +4113,6 @@
           ],
           "unresolvedResourceIds": [],
           "limitation": "Status adalah baseline authoring naratif, bukan simulasi stok/readiness runtime."
-        },
-        "kfa": {
-          "status": "cocok",
-          "limitation": "Kode adalah KFA active-substance master data, bukan kode product-template/variant dan bukan bukti stok atau status Fornas."
-        }
-      },
-      "compiler": {
-        "suggestion": "cocok",
-        "reasons": [],
-        "sourceAttributionWarning": false
-      }
-    },
-    {
-      "ordinal": 19,
-      "id": "lab_vaginitis_kandida",
-      "name": "Vaginitis Kandidiasis",
-      "icd10": "N76.0",
-      "skdi": "4A",
-      "category": "infeksi",
-      "mustRefer": false,
-      "fktp144": true,
-      "demographics": "15-55 tahun, perempuan",
-      "openingComplaint": "Keputihan putih kental disertai gatal hebat.",
-      "currentManagement": {
-        "requiredDrugs": [
-          {
-            "id": "klotrimazol_vaginal_100",
-            "name": "Klotrimazol Vaginal 100 mg",
-            "dosageForm": "tablet vaginal",
-            "role": "required",
-            "catalogFornas": true,
-            "fornas": {
-              "status": "cocok",
-              "queries": [
-                "klotrimazol"
-              ],
-              "excerpts": [
-                {
-                  "label": "klotrimazol",
-                  "text": "KE Pada pitiriasis yang luas. 3 klotrimazol 1. tab vaginal 100 mg   N",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 16157"
-                }
-              ],
-              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-              "caseAvailabilityGrounded": false
-            },
-            "kfa": {
-              "status": "cocok",
-              "components": [
-                {
-                  "query": "Clotrimazole",
-                  "matches": [
-                    {
-                      "code": "91000744",
-                      "name": "CLOTRIMAZOLE",
-                      "unit": "mg"
-                    }
-                  ]
-                }
-              ],
-              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
-            }
-          }
-        ],
-        "alternativeDrugs": [],
-        "optionalDrugs": [],
-        "procedures": [],
-        "education": [
-          {
-            "id": "higiene_genital_lembut",
-            "name": "[Genital] Hindari douching, sabun pewangi, dan pakaian lembap",
-            "critical": false
-          },
-          {
-            "id": "kepatuhan_obat",
-            "name": "Kepatuhan minum obat",
-            "critical": false
-          },
-          {
-            "id": "tanda_bahaya",
-            "name": "Tanda bahaya — kapan harus segera kembali",
-            "critical": false
-          }
-        ],
-        "relevantLabs": [
-          {
-            "id": "mikroskopis_gram_koh",
-            "name": "Mikroskopis Gram/KOH",
-            "result": "KOH menunjukkan budding yeast dan pseudohifa."
-          }
-        ],
-        "differentialIcd10": [
-          "N76.0",
-          "B37.3",
-          "N76.2"
-        ],
-        "stabilizationRequired": []
-      },
-      "currentEditorial": {
-        "clue": "Pruritus, eritema, discharge putih menggumpal tanpa bau amis, dan pseudohifa mendukung kandidiasis vulvovaginal. Gunakan azol intravaginal; evaluasi diabetes/kehamilan dan rujuk bila berat, rekuren, atau gagal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.",
-        "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila pemeriksaan tidak ready, gambaran klinis klasik tanpa red flag masih dapat ditangani sebagai kandidiasis tidak rumit dengan safety-net; kasus rekuren, berat, hamil, atau gagal terapi memerlukan konfirmasi/jejaring."
-      },
-      "evidence": {
-        "ppk": {
-          "status": "cocok",
-          "relation": "direct",
-          "sourceTitle": "Vaginitis",
-          "sourceEntryNumber": "4",
-          "pdfPage": 798,
-          "sourceIcd10": [
-            "N76.0 Acute Vaginitis"
-          ],
-          "excerpts": [
-            {
-              "label": "Penatalaksanaan",
-              "text": "Penatalaksanaan a. Menjaga kebersihan diri terutama daerah vagina -802- b. Hindari pemakaian handuk secara bersamaan c. Hindari pemakaian sabun untuk membersihkan daerah vagina yang dapat menggeser jumlah flora normal dan dapat merubah kondisi pH daerah kewanitaan tersebut. d. Jaga berat badan ideal e. Farmakologis: 1) Tatalaksana vaginosis bakterialis • Metronidazol 500 mg peroral 2 x sehari selama 7 hari • Metronidazol pervagina 2 x sehari selama 5 hari • Krim klindamisin 2% pervagina 1 x sehari selama 7 hari 2) Tatalaksana vaginosis trikomonas • Metronidazol 2 g peroral (dosis tunggal) • Pasangan seks pasien sebaiknya juga diobati 3) Tatalaksana vulvovaginitis kandida • Flukonazol 150 mg peroral (dosis tunggal)",
-              "locator": "PPK 1186/2022, bab 4, PDF p.798"
-            }
-          ]
-        },
-        "pnpk": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Tidak ditemukan PNPK diagnosis-spesifik dalam katalog resmi/corpus lokal yang dipetakan."
-        },
-        "ebm": {
-          "status": "tak-ada-sumber",
-          "sources": [],
-          "limitation": "Belum ada pedoman EBM diagnosis-spesifik tambahan yang dipetakan dalam registry adjudikasi."
-        },
-        "fornas": {
-          "status": "cocok",
-          "limitation": "Fornas menentukan listing/restriksi JKN, bukan stok pada hari permainan. Locator perlu dibaca bersama kolom FPKTP/FPKTL dan restriksi."
-        },
-        "aspak": {
-          "status": "cocok",
-          "profile": "sukamaju_middle_v1 (perdesaan, nonrawat-inap; M13-RP1)",
-          "highestTier": "C",
-          "resources": [
-            {
-              "id": "mikroskopis_gram_koh",
-              "name": "Mikroskopis Gram/KOH",
-              "kind": "laboratory",
-              "tier": "C",
-              "note": "Mikroskop, reagen, dan operator perlu dinyatakan.",
-              "grounding": "declared"
-            }
-          ],
-          "unresolvedResourceIds": [],
-          "limitation": "Resource Tier C/D telah dinyatakan eksplisit pada catatan realita kasus; ini tetap narasi authoring, bukan bukti readiness real-time."
         },
         "kfa": {
           "status": "cocok",
@@ -5705,7 +5702,7 @@
         "procedures": [
           {
             "id": "koreksi_hipoglikemia_gizi_buruk_anak",
-            "name": "Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75"
+            "name": "Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu Nilai Ulang"
           },
           {
             "id": "rehidrasi_gizi_buruk_non_syok",
@@ -5772,9 +5769,9 @@
         ]
       },
       "currentEditorial": {
-        "clue": "BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG lalu segera mulai pemberian makan terapeutik, bukan rule-of-15 dewasa. Cegah hipotermia, pantau ketat, dan mulai antibiotik parenteral sesuai protokol jejaring. Bila anak dehidrasi tetapi tidak syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila F-75/F-100/RUTF atau suplemen harian standar sudah mencukupi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan; rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.",
-        "realityNote": "GDS dan Hb tersedia cepat; pemeriksaan lain tidak boleh menunda stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu siap. Jika ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dengan pemantauan ketat, bukan Plan C. Antibiotik parenteral awal mengikuti protokol jejaring; terapi lengkap berlanjut di TFC/RS. Vitamin A dosis tinggi hanya sesuai indikasi dan riwayat asupan/program.",
+        "clue": "BB/PB di bawah -3 SD, LiLA 10,2 cm, asupan berhenti, diare, demam, lesu, dan GDS 44 mg/dL menunjukkan gizi buruk dengan komplikasi: stabilisasi lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Laporan wali \"tidak mau makan\" bukan hasil uji nafsu makan terstandar. Danger sign, masalah medis akut, dan hipoglikemia sudah cukup untuk rawat inap. Koreksi hipoglikemia dengan glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG, bukan rule-of-15 dewasa; nilai ulang kesadaran dan GDS, lalu beri makan terapeutik bila formula dan pemantauan siap. Cegah hipotermia, pantau, dan mulai antibiotik sesuai protokol jejaring. Bila dehidrasi tanpa syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila formula terapeutik atau suplemen harian sudah mencukupi.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan. Kasus ini masuk melalui danger sign/masalah medis akut dan hipoglikemia, bukan hasil uji nafsu makan yang tidak pernah dilakukan. Rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.",
+        "realityNote": "GDS tersedia cepat; tes lain tidak boleh menunda stabilisasi. ReSoMal, F-75, dan mineral-mix tidak diasumsikan siap. Skor pra-rujuk menilai koreksi gula dan penilaian ulang. Mulai makan terapeutik bila formula/pemantauan siap; ketiadaan F-75 tidak boleh menunda transfer ke TFC/RS. Bila ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dan terpantau, bukan Plan C. Antibiotik mengikuti protokol jejaring.",
         "ebmPearl": "Mata cekung dan turgor lambat dapat menetap pada anak marasmik meski dehidrasi tidak berat. Jangan menilai kebutuhan cairan hanya dari dua tanda tersebut karena kelebihan cairan dapat memicu gagal jantung. Gunakan riwayat kehilangan cairan dan pantau respons terhadap rehidrasi perlahan, seperti nadi, produksi urin, serta kembalinya air mata. Gizi buruk juga dapat menekan tanda infeksi: anak dengan sepsis mungkin tidak demam dan leukositnya dapat normal. Karena itu, protokol memberi antibiotik pada gizi buruk dengan komplikasi meski tanda infeksi tidak menonjol. Pada kwashiorkor, edema dapat menaikkan berat badan secara semu. Periksa edema kedua punggung kaki dan jangan mengandalkan angka timbangan saja."
       },
       "evidence": {
@@ -5894,7 +5891,7 @@
           "resources": [
             {
               "id": "koreksi_hipoglikemia_gizi_buruk_anak",
-              "name": "Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75",
+              "name": "Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu Nilai Ulang",
               "kind": "procedure",
               "tier": "B",
               "note": "Glukosa/sukrosa, alat ukur, jalur oral/NG, dan pemberian makan lanjutan harus siap.",
@@ -13753,7 +13750,7 @@
       "ordinal": 74,
       "id": "lab_benda_asing_konjungtiva",
       "name": "Benda Asing Konjungtiva Superfisial",
-      "icd10": "T15.9",
+      "icd10": "T15.1",
       "skdi": "4A",
       "category": "mata",
       "mustRefer": false,
@@ -13828,7 +13825,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "T15.9",
+          "T15.1",
           "S05.0",
           "H16.0"
         ],
@@ -13836,7 +13833,7 @@
       },
       "currentEditorial": {
         "clue": "Sekam berkecepatan rendah yang tampak longgar di konjungtiva tarsal, dengan visus utuh, pupil normal, tanpa defek kornea, dan tanpa tanda penetrasi, dapat ditangani di FKTP. Catat visus sebelum anestetik, eversi kelopak, gunakan irigasi atau cotton bud steril lembap untuk benda yang jelas superfisial, lalu ulangi fluorescein setelah pengangkatan untuk memastikan tidak ada sisa, defek baru, atau kebocoran. Jangan melakukan probing atau upaya berulang bila benda tertanam, berada di kornea/sumbu visual, melawan saat disentuh, atau mekanismenya mencurigakan. Kloramfenikol topikal boleh dipertimbangkan bila terdapat defek epitel atau risiko infeksi yang bermakna, tetapi bukan pengganti ekstraksi lengkap dan tindak lanjut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. Kode klinis T15.1 dipakai karena lokasi benda sudah teridentifikasi di sakus/konjungtiva tarsal; T15.9 tetap dipertahankan hanya sebagai kode katalog SKDI yang generik. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.",
         "realityNote": "Profil sukamaju_middle_v1 menyatakan lampu fokus, saline steril, anestetik topikal sekali pakai, fluorescein dengan cahaya biru, cotton bud steril, dan operator siap; slit lamp tidak diasumsikan. Hanya sekam longgar yang tampak di konjungtiva tarsal yang diangkat. Benda korneal/tertanam, resistensi, hasil tidak lengkap, atau red flag menghentikan upaya dan memicu rujuk.",
         "ebmPearl": "Material tumbuhan meningkatkan kewaspadaan terhadap infeksi, tetapi tidak otomatis mengubah setiap benda konjungtiva superfisial menjadi kasus rumah sakit. Penentu utamanya adalah mekanisme, lokasi, kedalaman, visus, defek kornea, tanda penetrasi, kemampuan ekstraksi lengkap, dan tindak lanjut. Panduan praktik masih kerap menganjurkan antibiotik topikal, sedangkan pembaruan Cochrane 2025 menilai kepastian bukti profilaksis pada abrasi kornea sangat rendah dan tidak mendukung satu regimen tertentu. Karena vignette ini tidak memiliki defek kornea, kloramfenikol diperlakukan sebagai opsi klinis, bukan syarat nilai. Anestetik topikal hanya dipakai saat pemeriksaan/tindakan dan tidak dibawa pulang."
       },
@@ -17234,87 +17231,10 @@
                 ],
                 "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
               }
-            },
-            {
-              "id": "paracetamol_500",
-              "name": "Parasetamol 500 mg",
-              "dosageForm": "Tablet 500 mg",
-              "role": "alternative",
-              "catalogFornas": true,
-              "fornas": {
-                "status": "cocok",
-                "queries": [
-                  "parasetamol"
-                ],
-                "excerpts": [
-                  {
-                    "label": "parasetamol",
-                    "text": "Hanya untuk nyeri akut pascaoperasi. 7 parasetamol 1. tab 500 mg   180 tab/bulan.  2. sir 120 mg/5 mL   2 btl/kasus.  3. drops 100 mg/mL   1 btl/kasus. ",
-                    "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1184"
-                  }
-                ],
-                "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-                "caseAvailabilityGrounded": false
-              },
-              "kfa": {
-                "status": "cocok",
-                "components": [
-                  {
-                    "query": "Paracetamol",
-                    "matches": [
-                      {
-                        "code": "91000101",
-                        "name": "Paracetamol",
-                        "unit": "mg"
-                      }
-                    ]
-                  }
-                ],
-                "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
-              }
             }
           ]
         ],
-        "optionalDrugs": [
-          {
-            "id": "ibuprofen_400",
-            "name": "Ibuprofen 400 mg",
-            "dosageForm": "Tablet 400 mg",
-            "role": "optional",
-            "catalogFornas": true,
-            "fornas": {
-              "status": "cocok",
-              "queries": [
-                "ibuprofen"
-              ],
-              "excerpts": [
-                {
-                  "label": "ibuprofen",
-                  "text": "1. kaps 250 mg   30 kaps/bulan. 2. tab 500 mg   30 tab/bulan. 2 ibuprofen N",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1041"
-                }
-              ],
-              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-              "caseAvailabilityGrounded": false
-            },
-            "kfa": {
-              "status": "cocok",
-              "components": [
-                {
-                  "query": "Ibuprofen",
-                  "matches": [
-                    {
-                      "code": "91000107",
-                      "name": "IBUPROFEN",
-                      "unit": "mg"
-                    }
-                  ]
-                }
-              ],
-              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
-            }
-          }
-        ],
+        "optionalDrugs": [],
         "procedures": [
           {
             "id": "imobilisasi_bidai",
@@ -17351,7 +17271,7 @@
       "currentEditorial": {
         "clue": "Deformitas, bengkak, dan penolakan menggerakkan lengan setelah jatuh bertumpu telapak tangan harus dianggap fraktur. Tentukan lebih dahulu apakah fraktur terbuka dan nilai status neurovaskular distal. Pada kasus ini kulit utuh, sehingga antibiotik profilaksis dan tetanus tidak diperlukan. Beri analgesia berbasis berat badan. Catat nadi, warna, suhu, sensasi, serta gerak jari sebelum pemasangan bidai. Imobilisasi siku dan pergelangan dalam posisi ditemukan tanpa memaksa meluruskan, lalu periksa ulang status neurovaskular. Tinggikan lengan dan rujuk ke bedah untuk pencitraan serta reposisi definitif. Jangan mencoba reposisi buta di FKTP karena dapat mencederai saraf, pembuluh, kulit, dan lempeng pertumbuhan.",
         "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menempatkan fraktur sebagai kompetensi 3B: dokter FKTP memberi analgesia, melakukan imobilisasi, menilai neurovaskular, lalu merujuk — reposisi definitif bukan kewenangan FKTP. Kriteria rujukan resminya mencakup setiap fraktur dengan deformitas atau pergeseran, setiap fraktur pada anak yang melibatkan atau berdekatan dengan lempeng pertumbuhan, dan setiap gangguan neurovaskular. Perbedaan tata laksana antara fraktur tertutup dan terbuka — antibiotik parenteral dini dan profilaksis tetanus HANYA pada yang terbuka — adalah pembeda yang eksplisit di pedoman.",
-        "realityNote": "Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram: pada usia 5 tahun gunakan sirup, pada anak lebih besar tablet dapat masuk akal.",
+        "realityNote": "Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram. Karena berat badan tidak dimodelkan pada vignette ini, hanya sirup yang dapat ditakar diberi kredit.",
         "ebmPearl": "Jari yang masih bisa digerakkan dan nadi yang masih teraba TIDAK menyingkirkan sindrom kompartemen — dan itulah kesalahan yang paling mahal pada fraktur lengan bawah anak. Nadi menghilang paling akhir, jauh setelah otot mulai mati; tanda paling dini justru nyeri yang tidak sebanding dengan cederanya, nyeri hebat saat jari diregangkan secara pasif, dan kebutuhan analgesia yang terus meningkat. Karena itu jangan pernah membaca \"nadi teraba\" sebagai izin untuk tenang; yang dipantau adalah tren nyeri, bukan sekali pemeriksaan. Jebakan kedua khusus anak: rontgen yang tampak normal sama sekali tidak menyingkirkan fraktur, karena tulang anak yang lentur bisa hanya membengkok (buckle/greenstick) atau retak di lempeng pertumbuhan yang tulang rawannya tidak tertangkap sinar-X. Anak yang menolak memakai lengannya setelah trauma jelas diperlakukan sebagai fraktur — dibidai dan dirujuk — berapa pun bagusnya foto rontgennya."
       },
       "evidence": {
@@ -24019,13 +23939,13 @@
     {
       "ordinal": 129,
       "id": "lab_meningitis_bakterial_suspek",
-      "name": "Suspek Meningitis Bakterial",
+      "name": "Suspek Meningitis Bakterial pada Dewasa Muda",
       "icd10": "G00.9",
       "skdi": "3B",
       "category": "saraf",
       "mustRefer": true,
       "fktp144": false,
-      "demographics": "15-30 tahun, semua gender",
+      "demographics": "18-30 tahun, semua gender",
       "openingComplaint": "Kepala saya sakit hebat sekali sejak kemarin, Dok, demam tinggi, leher rasanya kaku, dan tadi muntah menyembur.",
       "currentManagement": {
         "requiredDrugs": [
@@ -24196,9 +24116,9 @@
         ]
       },
       "currentEditorial": {
-        "clue": "Demam tinggi, sakit kepala hebat, kaku kuduk, fotofobia, muntah, penurunan kesadaran, dan ruam tidak memucat sangat mencurigakan meningitis bakterial dengan penyakit meningokokus invasif. Rujuk emergensi dan terapkan kewaspadaan droplet. WHO 2025 menganjurkan antibiotik parenteral pra-rujuk secara bersyarat bila kecurigaan kuat dan keterlambatan transfer bermakna diperkirakan terjadi. Perjalanan skenario sekitar tiga jam, sehingga beri dosis awal ceftriaxone dewasa 2 g: IV bila akses segera aman, atau IM bila IV belum didapat; jangan menahan ambulans demi infus. Pungsi lumbal dan pemeriksaan darah tidak boleh menunda terapi atau transfer. SpO2 96% tanpa gagal napas tidak memerlukan oksigen rutin. Catat dan laporkan suspek; identifikasi kontak erat untuk koordinasi Dinkes/RS, bukan resep massal otomatis.",
-        "officialGuidance": "PPK FKTP 1186/2022 tidak memiliki bab diagnosis-spesifik untuk meningitis. WHO Guidelines on Meningitis 2025 dan toolkit frontline WHO 2026 menjadi grounding langsung untuk transfer segera, antibiotik pra-rujuk bersyarat, rute IM bila IV belum aman, dan kewaspadaan infeksi. Permenkes 28/2021 mencantumkan ceftriaxone dewasa 2 g IV tiap 12 jam untuk regimen meningitis bakterial; permainan hanya menilai dosis awal pra-rujuk. Panduan Deteksi dan Respon Meningitis Meningokokus Kemenkes mengatur definisi suspek/probable, rujukan, pelaporan, penyelidikan, kontak erat, dan kemoprofilaksis terkoordinasi.",
-        "realityNote": "Vignette menyediakan dua vial seftriakson 1 g, masker, petugas, dan ambulans. Fornas 1199/2025 menempatkan sediaan ini di tingkat rujukan, bukan stok rutin semua FKTP; ini stok emergensi khusus. Bila obat atau IV tidak siap, jangan tunda transfer; gunakan IM bila tersedia. Satu suspek dicatat dan dilaporkan. Dua kasus terkait/14 hari hanya memicu verifikasi, bukan KLB otomatis. Kontak erat dinilai bersama Dinkes/RS.",
+        "clue": "Demam tinggi, sakit kepala hebat, kaku kuduk, fotofobia, muntah, penurunan kesadaran, dan ruam tidak memucat sangat mencurigakan meningitis bakterial dengan penyakit meningokokus invasif. Rujuk emergensi dan terapkan kewaspadaan droplet. WHO 2025/2026 menganjurkan antibiotik parenteral pra-rujuk secara bersyarat bila kecurigaan kuat dan waktu door-to-door diperkirakan lebih dari 30 menit. Jejaring rujukan Sukamaju menampilkan rumah sakit bersaraf terdekat sekitar 45 menit; karena vignette ini khusus dewasa muda 18-30 tahun, beri ceftriaxone 2 g dosis awal: IV bila akses segera aman, atau IM bila IV belum didapat. Jangan menahan ambulans demi infus. Pungsi lumbal dan pemeriksaan darah tidak boleh menunda terapi atau transfer. SpO2 96% tanpa gagal napas tidak memerlukan oksigen rutin. Catat dan laporkan suspek; identifikasi kontak erat untuk koordinasi Dinkes/RS, bukan resep massal otomatis.",
+        "officialGuidance": "PPK FKTP 1186/2022 tidak memiliki bab diagnosis-spesifik untuk meningitis. WHO Guidelines on Meningitis 2025 dan toolkit frontline WHO 2026 menjadi grounding langsung untuk transfer segera, antibiotik pra-rujuk bila waktu door-to-door lebih dari 30 menit, dosis ceftriaxone 2 g pada dewasa atau 50 mg/kg pada anak, rute IM bila IV belum aman, dan kewaspadaan infeksi. Vignette ini sengaja dibatasi pada dewasa 18-30 tahun sehingga tidak mengajarkan dosis dewasa kepada pasien anak. Permenkes 28/2021 mencantumkan ceftriaxone dewasa 2 g IV tiap 12 jam untuk regimen meningitis bakterial; permainan hanya menilai dosis awal pra-rujuk. Panduan Deteksi dan Respon Meningitis Meningokokus Kemenkes mengatur definisi suspek/probable, rujukan, pelaporan, penyelidikan, kontak erat, dan kemoprofilaksis terkoordinasi.",
+        "realityNote": "SISRUTE Sukamaju menampilkan RS bersaraf terdekat sekitar 45 menit door-to-door. Dua vial seftriakson 1 g tersedia sebagai stok emergensi khusus; Fornas 1199/2025 tidak menjadikannya stok rutin semua FKTP. Bila obat atau IV tidak siap, jangan tunda transfer; gunakan IM bila tersedia. Satu suspek dilaporkan. Dua kasus terkait/14 hari memicu verifikasi, bukan KLB otomatis; kontak erat dinilai bersama Dinkes/RS.",
         "ebmPearl": "Jangan menunggu gambaran buku teks sempurna. Trias demam, kaku kuduk, dan perubahan kesadaran tidak selalu lengkap; tanda Kernig atau Brudzinski juga bersensitivitas rendah, sehingga hasil negatif tidak menyingkirkan meningitis. Sebaliknya, demam akut, penurunan kesadaran, dan ruam purpura yang tidak memucat harus mempercepat tindakan terhadap penyakit meningokokus invasif. Ambang keputusan FKTP bukan memastikan organisme dengan pungsi lumbal, melainkan mengenali kegawatan, memulai intervensi pra-rujuk yang tepat tanpa menunda transfer, melindungi orang di sekitar pasien, dan mengaktifkan surveilans."
       },
       "evidence": {

@@ -404,6 +404,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
     id: 'lab_kolik_ureter_obstruksi',
     nama: 'Kolik Ureter — Suspek Batu Obstruktif',
     icd10: 'N20.1',
+    kepastianDiagnosis: 'suspek',
     skdi: '3A',
     kategori: 'pencernaan',
     fktp144: false,

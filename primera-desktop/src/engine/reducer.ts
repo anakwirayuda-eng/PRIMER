@@ -364,7 +364,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     case 'TAMBAH_EDUKASI':
     case 'HAPUS_EDUKASI':
     case 'TAMBAH_TINDAKAN':
-    case 'HAPUS_TINDAKAN': {
+    case 'HAPUS_TINDAKAN':
+    case 'MULAI_OBSERVASI':
+    case 'NILAI_ULANG_OBSERVASI': {
       const enc = s.klinik.aktif
       if (!enc) return err(s, 'Tidak ada pasien aktif.')
       // M4.18 — gerbang stok: obat habis tak bisa diresepkan. Entri undefined =
@@ -463,11 +465,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const t = { ...s.tally }
       t.totalPasien += 1
       if (nilai.diagnosisBenar) t.diagnosisBenar += 1
+      // Akurasi kode dan kalibrasi kepastian adalah dua sasaran berbeda.
+      const kalibrasiSesuai =
+        nilai.diagnosisBenar && nilai.kepastianDiagnosisSesuai !== false
       if (nilai.jenisDiagnosis === 'tegak') {
-        if (nilai.diagnosisBenar) t.tegakBenar += 1
+        if (kalibrasiSesuai) t.tegakBenar += 1
         else t.tegakSalah += 1
       } else {
-        if (nilai.diagnosisBenar) t.suspekBenar += 1
+        if (kalibrasiSesuai) t.suspekBenar += 1
         else t.suspekSalah += 1
       }
       if (action.jenis === 'rujuk') {
@@ -562,6 +567,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         nilai.disposisiTepat &&
         !nilai.konfirmasiTakTerpenuhi &&
         !nilai.stabilisasiTerlewat &&
+        !nilai.observasiTerlewat &&
         !nilai.terapiKritisTerlewat &&
         !nilai.tindakanBerbahaya &&
         !nilai.obatBerbahaya &&
@@ -636,7 +642,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // tetap cukup dihukum via skor spt sekarang.
       const pantasKonsekuensi =
         !nilai.diagnosisBenar || nilai.skorTerapi < 50 || resepBerbahaya || nilai.tindakanBerbahaya || nilai.cowboy ||
-        nilai.terapiKritisTerlewat ||
+        nilai.terapiKritisTerlewat || nilai.observasiTerlewat ||
         nilai.edukasiKritisTerlewat.includes('minum_oat_tuntas')
       if (kasus.konsekuensi && pantasKonsekuensi && !observasiMenungguLab && action.jenis !== 'rujuk') {
         const rng = new Rng(s.seed, 'konsekuensi', s.hari, kasus.id)
@@ -1203,15 +1209,19 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // `tutorialAktif` SELALU dimatikan di sini (satu-kali, terlepas nilainya
       // sebelum ini) — titik keluar tunggal case DISPOSISI.
       const kebalTutorial = s.tutorialAktif
-      const tallyFinal = kebalTutorial ? s.tally : t
-      const dexFinal = kebalTutorial ? s.dex : dex
-      const kapitasiFinal = kebalTutorial ? s.kapitasi : kapitasi
-      const stokFinal = kebalTutorial ? s.gudang.stok : stokBaru
-      const belanjaObatFinal = kebalTutorial ? s.keuanganBulan.belanjaObat : belanjaObat
-      const jadwalFinal = kebalTutorial ? s.jadwal : jadwal
-      const desaFinal = kebalTutorial ? s.desa : desaBaru
-      const prolanisFinal = kebalTutorial ? s.prolanis : prolanisSetelahKlinik
-      const careEpisodesFinal = kebalTutorial ? s.careEpisodes : careEpisodes
+      const prototypeFormatif =
+        kasus.activationStatus === 'lab_prototype_unadjudicated' &&
+        kasus.reviewStatus !== 'physician_approved'
+      const kebalDampak = kebalTutorial || prototypeFormatif
+      const tallyFinal = kebalDampak ? s.tally : t
+      const dexFinal = kebalDampak ? s.dex : dex
+      const kapitasiFinal = kebalDampak ? s.kapitasi : kapitasi
+      const stokFinal = kebalDampak ? s.gudang.stok : stokBaru
+      const belanjaObatFinal = kebalDampak ? s.keuanganBulan.belanjaObat : belanjaObat
+      const jadwalFinal = kebalDampak ? s.jadwal : jadwal
+      const desaFinal = kebalDampak ? s.desa : desaBaru
+      const prolanisFinal = kebalDampak ? s.prolanis : prolanisSetelahKlinik
+      const careEpisodesFinal = kebalDampak ? s.careEpisodes : careEpisodes
       // CODEX: DEX_BERTAMBAH/SURAT_MASUK dipancarkan tanpa syarat di atas —
       // toaster (Toaster.tsx) akan bilang "Buku Saku diperbarui"/"Surat baru"
       // meski dex/inbox sungguhan dibekukan barusan. Pangkas KEDUA event itu
@@ -1225,9 +1235,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // sendiri (tetap dihitung apa adanya, tetap dibekukan seperti biasa).
       const penilaianTampil: PenilaianEncounter = kebalTutorial
         ? { ...penilaianFinal, tutorialLatihan: true }
-        : penilaianFinal
+        : prototypeFormatif
+          ? { ...penilaianFinal, formativePrototype: true }
+          : penilaianFinal
       const eventsFinal = (
-        kebalTutorial
+        kebalDampak
           ? events.filter((e) => e.type !== 'DEX_BERTAMBAH' && e.type !== 'SURAT_MASUK')
           : events
       ).map((e) => (e.type === 'ENCOUNTER_SELESAI' ? { ...e, penilaian: penilaianTampil } : e))
@@ -1247,11 +1259,14 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           klinik: {
             ...s.klinik,
             aktif: undefined,
+            // Latihan tutorial tidak masuk rekap karena merupakan onboarding.
+            // Kasus formatif tetap tampil di rekap/debrief, tetapi field
+            // `formativePrototype` membuat scoring mengeluarkannya dari grade.
             selesaiHariIni: kebalTutorial
               ? s.klinik.selesaiHariIni
               : [...s.klinik.selesaiHariIni, penilaianTampil],
           },
-          ...(suratBaruKlinik.length > 0 && !kebalTutorial
+          ...(suratBaruKlinik.length > 0 && !kebalDampak
             ? { inbox: [...s.inbox, ...suratBaruKlinik] }
             : {}),
           tutorialAktif: false,

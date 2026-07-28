@@ -37,10 +37,13 @@ describe('M13-137 adjudication wave 23: benda asing konjungtiva superfisial', ()
     const kasus = PACK.kasus[ID]!
     expect(kasus).toMatchObject({
       nama: 'Benda Asing Konjungtiva Superfisial',
-      icd10: 'T15.9',
+      icd10: 'T15.1',
       skdi: '4A',
       harusDirujuk: false,
     })
+    expect(kasus.diagnosisBanding[0]).toBe('T15.1')
+    expect(PACK.skdi144.find((item) => item.id === 'foreign_body_conjunctiva')?.icd10).toBe('T15.9')
+    expect(kasus.panduanResmi).toMatch(/T15\.1.*lokasi.*sakus\/konjungtiva tarsal.*T15\.9.*katalog.*generik/is)
     expect(kasus.anamnesis).toEqual(expect.arrayContaining([
       expect.objectContaining({ id: 'q_gejala_redflag', esensial: true }),
       expect.objectContaining({ id: 'q_mekanisme', esensial: true }),

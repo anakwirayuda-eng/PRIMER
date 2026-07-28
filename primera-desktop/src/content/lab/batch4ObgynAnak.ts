@@ -40,6 +40,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     id: 'lab_kehamilan_ektopik_terganggu_suspek',
     nama: 'Suspek Kehamilan Ektopik Terganggu',
     icd10: 'O00.1',
+    kepastianDiagnosis: 'suspek',
     skdi: '3B',
     kategori: 'kia',
     fktp144: false,
@@ -648,6 +649,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     id: 'lab_mola_hidatidosa',
     nama: 'Suspek Mola Hidatidosa (Hamil Anggur)',
     icd10: 'O01.9',
+    kepastianDiagnosis: 'suspek',
     skdi: '2',
     kategori: 'kia',
     fktp144: false,
@@ -1174,9 +1176,18 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     diagnosisBanding: ['S52.5', 'S52.6', 'S63.5'],
     tatalaksana: {
       obatBenar: [],
-      obatAlternatif: [['paracetamol_sirup', 'paracetamol_500']],
-      obatOpsional: ['ibuprofen_400'],
+      obatAlternatif: [['paracetamol_sirup']],
       obatSalahUmum: [
+        {
+          id: 'paracetamol_500',
+          alasan: 'Tablet 500 mg adalah unit dewasa, sedangkan dosis anak harus dihitung dari berat badan. Vignette tidak menyediakan alat pembagi dosis; gunakan sirup yang dapat ditakar.',
+          bahaya: 'nonPrimer',
+        },
+        {
+          id: 'ibuprofen_400',
+          alasan: 'Ibuprofen bukan larangan universal pada fraktur anak, tetapi tablet 400 mg bukan jawaban baku untuk rentang usia 5-12 tahun tanpa berat badan dan perhitungan dosis. Gunakan analgesia yang dapat ditakar.',
+          bahaya: 'nonPrimer',
+        },
         {
           id: 'tramadol_50',
           alasan: 'Terlihat sebagai jawaban logis untuk nyeri fraktur yang hebat, tetapi tramadol dikontraindikasikan pada anak di bawah 12 tahun: metabolismenya lewat CYP2D6 sangat bervariasi, dan pada metabolizer cepat kadar opioid aktif melonjak tak terduga sampai menyebabkan depresi napas. FDA dan EMA membatasi penggunaannya pada anak justru setelah laporan kematian. Nyeri fraktur anak dikelola dengan analgesia berbasis berat badan ditambah bidai yang baik — imobilisasi yang benar adalah analgesik paling kuat di ruangan ini.',
@@ -1212,7 +1223,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     stabilisasiWajib: ['imobilisasi_bidai'],
     clue: 'Deformitas, bengkak, dan penolakan menggerakkan lengan setelah jatuh bertumpu telapak tangan harus dianggap fraktur. Tentukan lebih dahulu apakah fraktur terbuka dan nilai status neurovaskular distal. Pada kasus ini kulit utuh, sehingga antibiotik profilaksis dan tetanus tidak diperlukan. Beri analgesia berbasis berat badan. Catat nadi, warna, suhu, sensasi, serta gerak jari sebelum pemasangan bidai. Imobilisasi siku dan pergelangan dalam posisi ditemukan tanpa memaksa meluruskan, lalu periksa ulang status neurovaskular. Tinggikan lengan dan rujuk ke bedah untuk pencitraan serta reposisi definitif. Jangan mencoba reposisi buta di FKTP karena dapat mencederai saraf, pembuluh, kulit, dan lempeng pertumbuhan.',
     panduanResmi: `${PPK_FLOOR} PPK Dokter FKTP menempatkan fraktur sebagai kompetensi 3B: dokter FKTP memberi analgesia, melakukan imobilisasi, menilai neurovaskular, lalu merujuk — reposisi definitif bukan kewenangan FKTP. Kriteria rujukan resminya mencakup setiap fraktur dengan deformitas atau pergeseran, setiap fraktur pada anak yang melibatkan atau berdekatan dengan lempeng pertumbuhan, dan setiap gangguan neurovaskular. Perbedaan tata laksana antara fraktur tertutup dan terbuka — antibiotik parenteral dini dan profilaksis tetanus HANYA pada yang terbuka — adalah pembeda yang eksplisit di pedoman.`,
-    catatanRealita: 'Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram: pada usia 5 tahun gunakan sirup, pada anak lebih besar tablet dapat masuk akal.',
+    catatanRealita: 'Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram. Karena berat badan tidak dimodelkan pada vignette ini, hanya sirup yang dapat ditakar diberi kredit.',
     mutiaraEbm: 'Jari yang masih bisa digerakkan dan nadi yang masih teraba TIDAK menyingkirkan sindrom kompartemen — dan itulah kesalahan yang paling mahal pada fraktur lengan bawah anak. Nadi menghilang paling akhir, jauh setelah otot mulai mati; tanda paling dini justru nyeri yang tidak sebanding dengan cederanya, nyeri hebat saat jari diregangkan secara pasif, dan kebutuhan analgesia yang terus meningkat. Karena itu jangan pernah membaca "nadi teraba" sebagai izin untuk tenang; yang dipantau adalah tren nyeri, bukan sekali pemeriksaan. Jebakan kedua khusus anak: rontgen yang tampak normal sama sekali tidak menyingkirkan fraktur, karena tulang anak yang lentur bisa hanya membengkok (buckle/greenstick) atau retak di lempeng pertumbuhan yang tulang rawannya tidak tertangkap sinar-X. Anak yang menolak memakai lengannya setelah trauma jelas diperlakukan sebagai fraktur — dibidai dan dirujuk — berapa pun bagusnya foto rontgennya.',
     konsekuensi: {
       narasi: 'Bila lengan dikirim tanpa bidai atau justru ditarik-tarik untuk "diluruskan", fragmen bergeser di dalam dan mencederai saraf median serta pembuluh; perdarahan ke dalam kompartemen yang tertutup fasia meningkatkan tekanan sampai aliran darah otot berhenti. Bila keluarga dibiarkan membawanya ke tukang urut, tulang menyambung dalam posisi bengkok dan koreksinya kelak menuntut operasi besar.',
@@ -1625,9 +1636,9 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       'antibiotik_parenteral_gizi_buruk_protokol',
       'pemantauan_ketat_vital',
     ],
-    clue: 'BB/PB di bawah -3 SD, LiLA 10,2 cm, gagal uji nafsu makan, diare, demam, lesu, dan GDS 44 mg/dL berarti gizi buruk dengan komplikasi: stabilisasi awal lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Koreksi hipoglikemia memakai glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG lalu segera mulai pemberian makan terapeutik, bukan rule-of-15 dewasa. Cegah hipotermia, pantau ketat, dan mulai antibiotik parenteral sesuai protokol jejaring. Bila anak dehidrasi tetapi tidak syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila F-75/F-100/RUTF atau suplemen harian standar sudah mencukupi.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan; rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.',
-    catatanRealita: 'GDS dan Hb tersedia cepat; pemeriksaan lain tidak boleh menunda stabilisasi atau transfer. ReSoMal, F-75, dan mineral-mix tidak diasumsikan selalu siap. Jika ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dengan pemantauan ketat, bukan Plan C. Antibiotik parenteral awal mengikuti protokol jejaring; terapi lengkap berlanjut di TFC/RS. Vitamin A dosis tinggi hanya sesuai indikasi dan riwayat asupan/program.',
+    clue: 'BB/PB di bawah -3 SD, LiLA 10,2 cm, asupan berhenti, diare, demam, lesu, dan GDS 44 mg/dL menunjukkan gizi buruk dengan komplikasi: stabilisasi lalu rawat inap TFC/RS, bukan RUTF rawat jalan. Laporan wali "tidak mau makan" bukan hasil uji nafsu makan terstandar. Danger sign, masalah medis akut, dan hipoglikemia sudah cukup untuk rawat inap. Koreksi hipoglikemia dengan glukosa atau sukrosa 10% sekitar 5 mL/kg oral/NG, bukan rule-of-15 dewasa; nilai ulang kesadaran dan GDS, lalu beri makan terapeutik bila formula dan pemantauan siap. Cegah hipotermia, pantau, dan mulai antibiotik sesuai protokol jejaring. Bila dehidrasi tanpa syok, berikan ReSoMal perlahan; WHO 2023 membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia. Hindari Plan C cepat. Vitamin A dosis tinggi bukan rutinitas bila formula terapeutik atau suplemen harian sudah mencukupi.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 memuat bab Malnutrisi Energi Protein (tingkat kemampuan 4A) dan menetapkan gizi buruk dengan komplikasi medis sebagai kasus rawat inap/rujuk. Pedoman Pencegahan dan Tatalaksana Gizi Buruk pada Balita Kemenkes 2020 memberi alur 10 langkah. WHO Wasting/Nutritional Oedema Guideline 2023 menggantikan guideline 2013: rekomendasi B2 mendukung rawat inap pada danger sign, masalah medis akut, edema berat, atau gagal uji nafsu makan. Kasus ini masuk melalui danger sign/masalah medis akut dan hipoglikemia, bukan hasil uji nafsu makan yang tidak pernah dilakukan. Rekomendasi B7 memilih ReSoMal namun membolehkan ORS osmolaritas rendah bila ReSoMal tidak tersedia.',
+    catatanRealita: 'GDS tersedia cepat; tes lain tidak boleh menunda stabilisasi. ReSoMal, F-75, dan mineral-mix tidak diasumsikan siap. Skor pra-rujuk menilai koreksi gula dan penilaian ulang. Mulai makan terapeutik bila formula/pemantauan siap; ketiadaan F-75 tidak boleh menunda transfer ke TFC/RS. Bila ReSoMal kosong, gunakan ORS osmolaritas rendah perlahan dan terpantau, bukan Plan C. Antibiotik mengikuti protokol jejaring.',
     mutiaraEbm: 'Mata cekung dan turgor lambat dapat menetap pada anak marasmik meski dehidrasi tidak berat. Jangan menilai kebutuhan cairan hanya dari dua tanda tersebut karena kelebihan cairan dapat memicu gagal jantung. Gunakan riwayat kehilangan cairan dan pantau respons terhadap rehidrasi perlahan, seperti nadi, produksi urin, serta kembalinya air mata. Gizi buruk juga dapat menekan tanda infeksi: anak dengan sepsis mungkin tidak demam dan leukositnya dapat normal. Karena itu, protokol memberi antibiotik pada gizi buruk dengan komplikasi meski tanda infeksi tidak menonjol. Pada kwashiorkor, edema dapat menaikkan berat badan secara semu. Periksa edema kedua punggung kaki dan jangan mengandalkan angka timbangan saja.',
     konsekuensi: {
       narasi: 'Tanpa koreksi hipoglikemia dan pencegahan hipotermia, kondisi anak dapat cepat memburuk hingga kejang, gangguan kesadaran, dan gagal napas. Sebaliknya, bolus Plan C pada anak yang tidak syok dapat memicu kelebihan cairan dan gagal jantung. Pilihan aman adalah gula segera, jaga hangat, rehidrasi perlahan yang dipantau, antibiotik sesuai protokol, dan transfer tanpa menunggu pemeriksaan tambahan.',

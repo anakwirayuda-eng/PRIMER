@@ -1017,6 +1017,17 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
     },
     clue: 'Epistaksis anterior: dudukkan pasien condong ke depan lalu tekan bagian lunak hidung terus-menerus sedikitnya 5 menit, lazimnya 10–15 menit, tanpa sering melepas untuk memeriksa. Vasokonstriktor topikal dapat membantu; tampon anterior dipakai bila sumber tidak dapat dikendalikan dengan langkah awal. Hipertensi kronik dinilai dan diobati sebagai komorbid, tetapi penurunan TD bukan pengganti hemostasis lokal.',
     panduanResmi: 'PPK 1186/2022 tidak memiliki jalur epistaksis tersendiri. Floor FKTP adalah stabilitas hemodinamik, kompresi hidung yang benar, terapi lokal bertahap, dan rujuk bila masif, posterior, berulang unilateral, atau gagal dikendalikan. AAO-HNSF Nosebleed Guideline 2020 menempatkan kompresi berkelanjutan sebagai tindakan awal dan packing bila lokasi perdarahan tidak dapat diidentifikasi atau dikontrol.',
+    observasi: {
+      durasiMenit: 15,
+      tujuan: 'Lepaskan kompresi hanya setelah interval penuh untuk menilai hemostasis dan stabilitas pasien.',
+      parameter: [
+        'perdarahan aktif dari kavum nasi anterior',
+        'aliran darah ke faring posterior',
+        'nadi, perfusi, dan gejala presinkop',
+      ],
+      hasilUlang: 'Setelah kompresi kontinu 15 menit dan vasokonstriktor topikal, perdarahan berhenti. Tidak ada aliran ke faring posterior, pasien stabil, dan instruksi pencegahan kekambuhan dapat diberikan.',
+      disposisiSetelah: 'pulang',
+    },
     konsekuensi: {
       narasi: 'Teknik penekanan yang salah atau kepala menengadah membuat darah tertelan dan menunda hemostasis; epistaksis masif berisiko aspirasi dan anemia. Hipertensi kronik tetap perlu kontrol tersendiri.',
       kembaliHariMin: 2,

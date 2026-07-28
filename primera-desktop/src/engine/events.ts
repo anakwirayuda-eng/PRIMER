@@ -15,6 +15,8 @@ export type GameEvent =
   | { type: 'VITAL_TERUKUR' }
   | { type: 'TEMUAN_FISIK'; region: string; temuan: string }
   | { type: 'LAB_DIPESAN'; labId: string; besok: boolean }
+  | { type: 'OBSERVASI_DIMULAI'; durasiMenit: number }
+  | { type: 'OBSERVASI_SELESAI'; durasiMenit: number; hasil: string }
   | { type: 'FIREWALL_ALERGI'; obatId: string; golongan: string }
   | { type: 'STEMPEL'; jenis: 'tegak' | 'suspek' | 'pulang' | 'rujuk' | 'kontraindikasi' }
   | { type: 'ENCOUNTER_SELESAI'; penilaian: PenilaianEncounter }

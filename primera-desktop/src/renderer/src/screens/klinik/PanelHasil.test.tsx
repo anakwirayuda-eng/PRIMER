@@ -215,17 +215,19 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
 
   it('kasus prototipe lab ditandai belum teradjudikasi pada debrief', () => {
     const kasus = Object.values(PACK.kasus).find(
-      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+      (item) =>
+        item.activationStatus === 'lab_prototype_unadjudicated' &&
+        item.reviewStatus !== 'physician_approved',
     )!
     render(
       <PanelHasil
-        hasil={{ ...HASIL_DASAR, kasusId: kasus.id }}
+        hasil={{ ...HASIL_DASAR, kasusId: kasus.id, formativePrototype: true }}
         bolehPanggil={true}
         alasanTutup=""
         onSelesai={() => {}}
       />,
     )
-    expect(screen.getByText(/Prototipe lab — belum teradjudikasi/i)).toBeInTheDocument()
+    expect(screen.getByText(/Latihan formatif — progres tidak dicatat/i)).toBeInTheDocument()
   })
 
   it('kasus dengan provenance terstruktur menampilkan referensi ringkas yang dapat dibuka', () => {

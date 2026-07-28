@@ -966,6 +966,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
     id: 'stroke_iskemik',
     nama: 'Suspek Stroke Akut',
     icd10: 'I64',
+    kepastianDiagnosis: 'suspek',
     skdi: '3B',
     kategori: 'saraf',
     fktp144: false,

@@ -141,6 +141,10 @@ export interface EncounterState {
   tindakan: string[]
   /** Percobaan resep yang diblokir firewall alergi (untuk telemetri pedagogis). */
   firewallTerpicu: number
+  /** Pasien sudah masuk siklus observasi, tetapi hasil nilai ulang belum dibuka. */
+  observasiDimulai?: boolean
+  /** Siklus observasi dan nilai ulang kasus sudah diselesaikan. */
+  observasiDilakukan?: boolean
   disposisi?: Disposisi
   sbar?: SbarIsi
   /** M10.5 §3a: alasan rujukan di luar `harusDirujuk` (validity-check di clinic.ts). */
@@ -153,6 +157,10 @@ export interface PenilaianEncounter {
   pasienNama: string
   diagnosisBenar: boolean
   jenisDiagnosis: JenisDiagnosis
+  /** Tingkat kepastian yang didukung vignette dan kemampuan FKTP. */
+  kepastianDiagnosisDiharapkan?: JenisDiagnosis
+  /** ICD benar dan stempel kepastian sesuai konteks kasus. */
+  kepastianDiagnosisSesuai?: boolean
   skorAnamnesis: number // 0-100: esensial tercakup, penalti shotgun
   skorPemeriksaan: number // 0-100: region relevan diperiksa, penalti berlebih
   skorTerapi: number // 0-100
@@ -194,6 +202,8 @@ export interface PenilaianEncounter {
   konfirmasiTakTerpenuhi: boolean
   /** Tindakan stabilisasi wajib belum dilakukan sebelum pasien dirujuk. */
   stabilisasiTerlewat: boolean
+  /** Kasus mensyaratkan nilai ulang, tetapi pemain langsung menentukan disposisi. */
+  observasiTerlewat?: boolean
   /**
    * Terapi penyelamat nyawa (`terapiKritis`) belum diberikan (audit CODEX
    * 2026-07-16 #2). Digerbang di clinic.ts (cap D) & dibaca reducer untuk
@@ -225,6 +235,8 @@ export interface PenilaianEncounter {
    * menyembunyikan rincian skor yang menghukum & tampilkan framing netral.
    */
   tutorialLatihan?: boolean
+  /** Konten boleh dimainkan untuk belajar, tetapi tidak mengubah progres formal. */
+  formativePrototype?: boolean
   /**
    * DeepThink triangulasi (2026-07-05, docs/DEEPTHINK_EDUKASI_KRITIS.md, O6):
    * id topik `edukasiKritis` yang TERLEWAT (kosong bila tak ada/semua

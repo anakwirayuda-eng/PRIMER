@@ -1,5 +1,11 @@
 # DOSSIER SERAH TERIMA — PRIMERA "Puskesmas Pagi" untuk CODEX / GPT 5.6 Sol
 
+> **ARSIP HISTORIS (13 Juli 2026).** Untuk pemulihan konteks operasional
+> terbaru setelah M12/M13, adjudikasi kasus, dan batch beta.2, baca
+> `CLAUDE_RECOVERY_DOSSIER_2026-07-28.md` terlebih dahulu. Angka, status
+> milestone, aturan sumber DOEN/Fornas, dan antrean kerja di dokumen lama ini
+> tidak semuanya masih berlaku.
+
 **Ditulis:** 2026-07-13, oleh Claude (Sonnet 5), atas permintaan Dr. Anak Agung Bagus Wirayuda.
 **Tujuan dokumen ini:** memberi Anda (CODEX, dijalankan sebagai GPT 5.6 Sol) SEMUA konteks yang
 dibutuhkan untuk melanjutkan, mengimprove, dan menyelesaikan milestone-milestone PRIMERA

@@ -649,7 +649,16 @@ function fnv1a(teks: string): string {
 // surveilans UKP->UKM dengan respons khusus: notifikasi, verifikasi, kontak
 // erat 14 hari, serta kemoprofilaksis terkoordinasi. Kartu KLB dan komposisi
 // sinyal dapat berubah pada replay yang menjumpai kasus ini.
-export const REVISI_ENGINE = 58
+// 59 (2026-07-28 - P1 klinis/observasi/governance): kasus tertentu kini
+// mensyaratkan observasi dan nilai ulang sebelum disposisi; prototipe lab yang
+// belum ditandatangani dokter tetap dapat dimainkan tetapi tidak menulis
+// progres formal. Keduanya mengubah skor/state replay dan wajib revisi baru.
+// 60 (2026-07-28 - integritas kepastian diagnosis/bridge): target
+// tegak-vs-suspek kini dinilai eksplisit dan ikut fingerprint. Callback
+// keluarga hanya boleh memakai anggota dengan kondisi yang cocok, sedangkan
+// ledger episode mempertahankan 120 episode aktif paling mendesak secara
+// deterministik. Ketiganya dapat mengubah skor/state replay.
+export const REVISI_ENGINE = 60
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -676,6 +685,9 @@ export function sidikJariPack(pack: ContentPack): string {
       stringifyKanonik({
         id: k.id,
         icd: k.icd10,
+        aktivasi: k.activationStatus ?? null,
+        review: k.reviewStatus ?? null,
+        kepastian: k.kepastianDiagnosis ?? 'tegak',
         rujuk: k.harusDirujuk ?? false,
         // Fix CODEX-25 #4 (2026-07-12): bisaPrb menentukan apakah rujukan diterima
         // menjadwalkan pasien PRB kembali → menggeser antrian/tally hari berikut
@@ -690,6 +702,7 @@ export function sidikJariPack(pack: ContentPack): string {
         // (clinic.ts) sama persis vitalDiukur — score-affecting, wajib hash.
         konfirmasi: k.konfirmasiWajib ?? null,
         stabilisasi: k.stabilisasiWajib ?? null,
+        observasi: k.observasi ?? null,
         // M10.5 §3a (2026-07-12): justifikasiRujukValid menentukan apakah
         // deklarasi TACC membatalkan rujukanNonSpesialistik (clinic.ts) —
         // score-affecting (Referral Guillotine), wajib hash.

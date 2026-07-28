@@ -433,6 +433,42 @@ export function aksiKlinik(
       }
     }
 
+    case 'MULAI_OBSERVASI': {
+      const salahFase = bukanFase(enc, 'disposisi')
+      if (salahFase) return salahFase
+      if (!kasus.observasi) {
+        return gagal(enc, 'Kasus ini tidak memiliki indikasi observasi terstruktur.')
+      }
+      if (enc.observasiDimulai || enc.observasiDilakukan) return tanpaPerubahan(enc)
+      return {
+        enc: { ...enc, observasiDimulai: true },
+        events: [{
+          type: 'OBSERVASI_DIMULAI',
+          durasiMenit: kasus.observasi.durasiMenit,
+        }],
+      }
+    }
+
+    case 'NILAI_ULANG_OBSERVASI': {
+      const salahFase = bukanFase(enc, 'disposisi')
+      if (salahFase) return salahFase
+      if (!kasus.observasi) {
+        return gagal(enc, 'Kasus ini tidak memiliki indikasi observasi terstruktur.')
+      }
+      if (!enc.observasiDimulai) {
+        return gagal(enc, 'Mulai observasi sebelum melakukan nilai ulang.')
+      }
+      if (enc.observasiDilakukan) return tanpaPerubahan(enc)
+      return {
+        enc: { ...enc, observasiDilakukan: true },
+        events: [{
+          type: 'OBSERVASI_SELESAI',
+          durasiMenit: kasus.observasi.durasiMenit,
+          hasil: kasus.observasi.hasilUlang,
+        }],
+      }
+    }
+
     /* -- Aksi lain bukan urusan klinik ------------------------------------------ */
 
     default:
@@ -452,6 +488,10 @@ export function nilaiEncounter(
   /* -- Diagnosis -------------------------------------------------------------- */
   const diagnosisBenar = enc.diagnosis?.icd10 === kasus.icd10
   const jenisDiagnosis: JenisDiagnosis = enc.diagnosis?.jenis ?? 'suspek'
+  const kepastianDiagnosisDiharapkan: JenisDiagnosis =
+    kasus.kepastianDiagnosis ?? 'tegak'
+  const kepastianDiagnosisSesuai =
+    diagnosisBenar && jenisDiagnosis === kepastianDiagnosisDiharapkan
 
   /* -- Anamnesis: cakupan esensial + kedalaman OLDCARTS − penalti distraktor --- */
   // M10 Batch-2 (CODEX C.6): pertanyaan ber-`hanyaUntuk` yang tak cocok gender
@@ -539,6 +579,8 @@ export function nilaiEncounter(
   const stabilisasiTerlewat =
     enc.disposisi === 'rujuk' &&
     (kasus.stabilisasiWajib ?? []).some((id) => !enc.tindakan.includes(id))
+  const observasiTerlewat =
+    kasus.observasi !== undefined && enc.observasiDilakukan !== true
 
   /* -- Terapi: cakupan obat benar − penalti obat di luar tatalaksana ----------- */
   // Jebakan alergi: bila pasien membawa alergi kelas yang dijebak kasus, standar
@@ -768,11 +810,13 @@ export function nilaiEncounter(
   // (dibaca reducer utk SISRUTE/Dex/surat) tak pernah tahu soal justifikasi,
   // jadi rujukan yg justru VALID tetap dianggap "disposisi keliru" di semua
   // jalur lain. Cabang di-mirror persis rujukanNonSpesialistik di bawah.
-  const disposisiTepat = prb
-    ? disposisi === 'pulang' || disposisi === 'observasi'
-    : kasus.harusDirujuk
-      ? disposisi === 'rujuk'
-      : disposisi === 'pulang' || disposisi === 'observasi' || (disposisi === 'rujuk' && justifikasiValid)
+  const disposisiTepat = kasus.observasi
+    ? enc.observasiDilakukan === true && disposisi === kasus.observasi.disposisiSetelah
+    : prb
+      ? disposisi === 'pulang' || disposisi === 'observasi'
+      : kasus.harusDirujuk
+        ? disposisi === 'rujuk'
+        : disposisi === 'pulang' || disposisi === 'observasi' || (disposisi === 'rujuk' && justifikasiValid)
   const rujukanNonSpesialistik = prb
     ? disposisi === 'rujuk'
     : disposisi === 'rujuk' && !kasus.harusDirujuk && !justifikasiValid
@@ -813,7 +857,13 @@ export function nilaiEncounter(
   }
 
   /* -- Grade tertimbang ---------------------------------------------------------- */
-  const skorDiagnosis = diagnosisBenar ? 100 : 0
+  const skorDiagnosis = !diagnosisBenar
+    ? 0
+    : kepastianDiagnosisSesuai
+      ? 100
+      : kepastianDiagnosisDiharapkan === 'suspek'
+        ? 75
+        : 90
   // Kasus tanpa target obat/prosedur adalah manajemen nonfarmakologis, bukan
   // "terapi sempurna tanpa aksi". Bobot terapi dialihkan ke edukasi, sementara
   // obat/tindakan tak terindikasi tetap menjadi penalti negatif tersendiri.
@@ -866,6 +916,9 @@ export function nilaiEncounter(
   // Melewatkan stabilisasi berisiko selama transport meski arah rujukan benar;
   // cap tier C, setara kelalaian konfirmasi klinis penting, bukan cowboy/cedera.
   if (stabilisasiTerlewat) capGrade.push(69)
+  // Observasi yang diwajibkan vignette adalah bagian keputusan klinis, bukan
+  // tombol kosmetik. Memulangkan/merujuk sebelum nilai ulang membatasi grade C.
+  if (observasiTerlewat) capGrade.push(69)
   // Melewatkan terapi PENYELAMAT NYAWA (MgSO4 preeklampsia, dosis-1 antibiotik
   // pneumonia berat, adrenalin, oksigen edema paru) → maks D (54), setara
   // obatBerbahaya/cowboy: ini bahaya nyawa langsung, bukan sekadar suboptimal
@@ -878,6 +931,16 @@ export function nilaiEncounter(
   // antibiotikTanpaIndikasi (stewardship/kewaspadaan, bukan cedera nyata).
   if (enc.firewallTerpicu > 0) capGrade.push(69)
   if (rujukanNonSpesialistik) capGrade.push(84)
+  // ICD tepat tidak membenarkan kepastian palsu. Menyatakan TEGAK ketika
+  // vignette hanya mendukung SUSPEK dibatasi B; terlalu ragu pada diagnosis
+  // yang sudah terkonfirmasi mendapat pengurangan lunak lewat skor diagnosis.
+  if (
+    diagnosisBenar &&
+    kepastianDiagnosisDiharapkan === 'suspek' &&
+    jenisDiagnosis === 'tegak'
+  ) {
+    capGrade.push(84)
+  }
   if (capGrade.length > 0) nilaiTotal = Math.min(nilaiTotal, ...capGrade)
   const grade: PenilaianEncounter['grade'] =
     nilaiTotal >= 85 ? 'A' : nilaiTotal >= 70 ? 'B' : nilaiTotal >= 55 ? 'C' : 'D'
@@ -903,6 +966,8 @@ export function nilaiEncounter(
     pasienNama: enc.pasien.nama,
     diagnosisBenar,
     jenisDiagnosis,
+    kepastianDiagnosisDiharapkan,
+    kepastianDiagnosisSesuai,
     skorAnamnesis,
     skorPemeriksaan,
     skorTerapi,
@@ -922,6 +987,7 @@ export function nilaiEncounter(
     firewallTerpicu: enc.firewallTerpicu > 0,
     konfirmasiTakTerpenuhi,
     stabilisasiTerlewat,
+    observasiTerlewat,
     terapiKritisTerlewat,
     labTakRelevan,
     ...(sbarSkor !== undefined ? { sbarSkor } : {}),

@@ -184,7 +184,7 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'scrofuloderma',
     spec: {
-      id: 'lab_skrofuloderma_suspek', nama: 'Suspek Skrofuloderma (TB Kulit)', icd10: 'A18.4', kategori: 'kulit', prevalensi: 'rendah', harusDirujuk: true, spesialisRujukan: 'penyakit_dalam',
+      id: 'lab_skrofuloderma_suspek', nama: 'Suspek Skrofuloderma (TB Kulit)', icd10: 'A18.4', kepastianDiagnosis: 'suspek', kategori: 'kulit', prevalensi: 'rendah', harusDirujuk: true, spesialisRujukan: 'penyakit_dalam',
       keluhanUtama: 'Benjolan leher pecah menjadi luka berair yang tidak sembuh.', usia: [15, 55], vital: { ...NORMAL, suhu: 37.2 },
       pembuka: ['Benjolan dan lukanya berkembang bagaimana?', 'Dua bulan benjolan tidak nyeri, kemudian melunak dan pecah; berat badan turun.'],
       pertanyaan: [
@@ -767,7 +767,7 @@ const DEFINITIONS: LabDefinition[] = [
       tatalaksana: {
         obatBenar: [],
         obatOpsional: ['paracetamol_500'],
-        prosedur: ['observasi_neurologis'],
+        prosedurOpsional: ['observasi_neurologis'],
         edukasi: ['tanda_bahaya_cedera_kepala', 'pengawasan_24_jam_cedera_kepala', 'pemulihan_bertahap_cedera_kepala'],
         edukasiKritis: ['tanda_bahaya_cedera_kepala', 'pengawasan_24_jam_cedera_kepala'],
       },
@@ -775,6 +775,18 @@ const DEFINITIONS: LabDefinition[] = [
       panduanResmi: `${PNPK_COT_2022} PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. NICE NG232 lebih konservatif di layanan komunitas: sakit kepala persisten, setiap muntah, pingsan/amnesia, antikoagulan atau antiplatelet tertentu, dan ketidakamanan pengawasan memicu evaluasi rumah sakit. Kasus dewasa ini sengaja tidak memiliki satu pun fitur tersebut; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.`,
       catatanRealita: 'Sukamaju mampu melakukan observasi serial neurologis tetapi tidak memiliki CT. Pasien tanpa indikasi imaging dapat pulang setelah kondisi stabil dan pengawasan rumah dipastikan. Bila satu red flag muncul, observasi berkepanjangan di FKTP bukan pengganti CT atau evaluasi rumah sakit.',
       mutiaraEbm: 'GCS 15 tidak sendirian membuktikan aman; keputusan lahir dari mekanisme, gejala, obat, komorbid, pemeriksaan serial, dan keamanan pulang. Sebaliknya, benturan kepala tidak otomatis berarti konkusi atau membutuhkan CT. Pasien tanpa gejala konkusi tidak memerlukan bed rest berkepanjangan, tetapi sebaiknya menghindari berkendara dan aktivitas berisiko benturan ulang pada hari kejadian. Bila gejala konkusi muncul, gunakan istirahat relatif singkat selama satu sampai dua hari lalu naikkan aktivitas secara bertahap sesuai toleransi.',
+      observasi: {
+        durasiMenit: 120,
+        tujuan: 'Lakukan satu siklus observasi neurologis serial pada vignette risiko rendah ini sebelum memastikan keamanan pulang.',
+        parameter: [
+          'GCS per komponen dan pupil',
+          'sakit kepala, muntah, kejang, atau kebingungan baru',
+          'defisit fokal, gait, serta nyeri leher',
+          'kesiapan pendamping dan akses kembali',
+        ],
+        hasilUlang: 'Selama siklus observasi 2 jam, GCS tetap E4 V5 M6, pupil isokor-reaktif, tidak muncul sakit kepala menetap, muntah, amnesia, kejang, defisit, atau gangguan gait. Pendamping siap mengawasi 24 jam.',
+        disposisiSetelah: 'pulang',
+      },
       sumber: [
         {
           id: 'pnpk_cot_2022',

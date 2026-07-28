@@ -78,11 +78,13 @@ describe('M10 Batch-3 C.2 — tinea topikal-saja + impetigo mupirosin', () => {
     const dgnOral = nilaiEncounter(encFor('kulit_tinea_korporis', ['ketokonazol_krim', 'griseofulvin_500']), tinea, PACK)
     expect(dgnOral.skorTerapi).toBe(100)
   })
-  it('impetigo: mupirosin topikal = obatBenar, cefadroxil oral opsional', () => {
+  it('impetigo lokal: mupirosin topikal cukup dan antibiotik oral tidak digratiskan', () => {
     const imp = PACK.kasus['kulit_pioderma_impetigo']!
     expect(imp.tatalaksana.obatBenar).toContain('mupirosin_krim')
     expect(imp.tatalaksana.obatBenar).not.toContain('gentamisin_krim')
-    expect(imp.tatalaksana.obatOpsional).toContain('cefadroxil_500')
+    expect(imp.tatalaksana.obatOpsional ?? []).not.toContain('cefadroxil_500')
+    expect(imp.clue).toMatch(/lesi terlokalisir.*topikal/is)
+    expect(imp.clue).toMatch(/lesi luas.*oral.*berat badan/is)
     expect(PACK.obat['mupirosin_krim']).toBeDefined()
     const topikalSaja = nilaiEncounter(encFor('kulit_pioderma_impetigo', ['mupirosin_krim']), imp, PACK)
     expect(topikalSaja.skorTerapi).toBe(100)

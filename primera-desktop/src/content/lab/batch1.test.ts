@@ -2,13 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { CURRICULUM_BLUEPRINT, PACK } from '../index'
 import {
   CONTENT_RELEASE,
-  IGD_ADJUDICATION_CONTENT_RELEASE,
+  P1_OBSERVATION_CONTENT_RELEASE,
   encounterArchetypeAktif,
   validasiPack,
 } from '../pack'
 import { validasiCurriculumBlueprint } from '../curriculum'
 import { LAB_BATCH_1_ARCHETYPE_SPECS, LAB_BATCH_1_CASES } from './batch1'
 import { LAB_ENRICHMENT, applyLabEnrichment } from './enrichment'
+import { PHYSICIAN_APPROVED_LAB_CASE_IDS } from './index'
 import { VARIAN_TINGKAT_A } from '../varianTingkatAData'
 
 describe('M13 lab full-fledge - batch 1', () => {
@@ -26,6 +27,9 @@ describe('M13 lab full-fledge - batch 1', () => {
       // terenrich+tervarian, bukan kasus dasar.
       expect(PACK.kasus[kasus.id], kasus.id).toEqual({
         ...applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]),
+        ...(PHYSICIAN_APPROVED_LAB_CASE_IDS.has(kasus.id)
+          ? { reviewStatus: 'physician_approved' }
+          : {}),
         ...(VARIAN_TINGKAT_A[kasus.id] ? { varianPresentasi: VARIAN_TINGKAT_A[kasus.id] } : {}),
       })
       expect(kasus.activationStatus, kasus.id).toBe('lab_prototype_unadjudicated')
@@ -42,7 +46,7 @@ describe('M13 lab full-fledge - batch 1', () => {
   })
 
   it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
-    expect(CONTENT_RELEASE).toBe(IGD_ADJUDICATION_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(P1_OBSERVATION_CONTENT_RELEASE)
     for (const kasus of LAB_BATCH_1_CASES) {
       expect(
         encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),

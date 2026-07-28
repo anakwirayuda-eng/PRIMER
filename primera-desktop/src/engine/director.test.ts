@@ -428,7 +428,13 @@ describe('susunAntrianHarian', () => {
       rw: 6,
       jarakMenit: 10,
       ekonomi: 'cukup',
-      anggota: [{ nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', peran: 'lansia' }],
+      anggota: [{
+        nama: 'Mbah Ayu',
+        usia: 71,
+        jenisKelamin: 'P',
+        peran: 'lansia',
+        kondisi: ['lansia_test'],
+      }],
       indikatorAwal: {},
       arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
     }
@@ -467,7 +473,13 @@ describe('susunAntrianHarian', () => {
       rw: 6,
       jarakMenit: 10,
       ekonomi: 'cukup',
-      anggota: [{ nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', peran: 'lansia' }],
+      anggota: [{
+        nama: 'Mbah Ayu',
+        usia: 71,
+        jenisKelamin: 'P',
+        peran: 'lansia',
+        kondisi: ['lansia_jkn_test'],
+      }],
       indikatorAwal: {},
       arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
     }
@@ -507,6 +519,47 @@ describe('susunAntrianHarian', () => {
         expect(pasien.bpjs).toBe(jkn === 'ya')
       }
       expect(jumlahTertaut).toBeGreaterThan(0)
+    }
+  })
+
+  it('Bridge B1.1: demografi saja tidak menciptakan continuity klinis palsu', () => {
+    const pack = buatPack([
+      buatKasus('lansia_test', { demografi: { usiaMin: 50, usiaMax: 80, jenisKelamin: 'P' } }),
+    ])
+    pack.keluarga['keluarga_uji'] = {
+      id: 'keluarga_uji',
+      namaKeluarga: 'Uji',
+      rw: 6,
+      jarakMenit: 10,
+      ekonomi: 'cukup',
+      anggota: [{ nama: 'Mbah Ayu', usia: 71, jenisKelamin: 'P', peran: 'lansia' }],
+      indikatorAwal: {},
+      arc: { sinopsis: '', kunjungan: [], epilogBerhasil: '', epilogGagal: '' },
+    }
+    const state = buatState({
+      desa: {
+        keluarga: {
+          keluarga_uji: { ...buatKeluargaState('keluarga_uji'), jumlahKunjungan: 3, trust: 8 },
+        },
+        kader: {},
+        rw: [],
+        binaan: ['keluarga_uji'],
+        surveilans: [],
+        drift: { minggu: 1, jumlah: 0 },
+      },
+    })
+
+    for (let seed = 0; seed < 200; seed++) {
+      const pasien = susunAntrianHarian(
+        state,
+        pack,
+        new Rng(seed, 'd'),
+        [],
+        new Rng(seed, 'flavor'),
+      )[0]!
+      expect(pasien.keluargaId).toBeUndefined()
+      expect(pasien.bonusTrust).toBe(false)
+      expect(pasien.nama).not.toBe('Mbah Ayu')
     }
   })
 })

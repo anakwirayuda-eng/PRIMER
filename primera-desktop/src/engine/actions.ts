@@ -43,6 +43,8 @@ export type Action =
   | { type: 'HAPUS_EDUKASI'; edukasiId: string }
   | { type: 'TAMBAH_TINDAKAN'; tindakanId: string }
   | { type: 'HAPUS_TINDAKAN'; tindakanId: string }
+  | { type: 'MULAI_OBSERVASI' }
+  | { type: 'NILAI_ULANG_OBSERVASI' }
   | {
       type: 'DISPOSISI'
       jenis: Disposisi

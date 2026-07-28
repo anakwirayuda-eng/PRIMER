@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
+import { kasusFormatif } from '@content/pack'
 import { buildInitialState } from './init'
 import { advance } from './reducer'
 import { KASUS_TUTORIAL } from './tutorial'
@@ -87,12 +88,17 @@ describe('Tutorial "onboarding railroaded" — imunitas skor', () => {
   })
 
   it('DISPOSISI pasien KEDUA (pasca-tutorial) skor NORMAL — tally bergerak', () => {
-    let s = buildInitialState('Uji Tutorial', 42, PACK)
+    // Seed 1 memastikan pasien kedua adalah kasus produksi, bukan prototipe
+    // formatif yang memang tidak boleh menambah tally.
+    let s = buildInitialState('Uji Tutorial', 1, PACK)
     s = run(s, { type: 'PANGGIL_PASIEN' })
     s = tanganiPasienAktif(s) // pasien #1 — tutorial, kebal
 
     s = run(s, { type: 'PANGGIL_PASIEN' })
     expect(s.tutorialAktif).toBe(false) // sudah mati sebelum pasien #2
+    const kasusKedua = PACK.kasus[s.klinik.aktif!.pasien.kasusId]
+    expect(kasusKedua).toBeDefined()
+    expect(kasusFormatif(kasusKedua)).toBe(false)
     s = tanganiPasienAktif(s) // pasien #2 — skor sungguhan
 
     expect(s.tally.totalPasien).toBe(1)

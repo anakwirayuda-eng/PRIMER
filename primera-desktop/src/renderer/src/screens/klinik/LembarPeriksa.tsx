@@ -116,10 +116,14 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             {p.followUpDari !== undefined && <span className="chip chip--merah">Kembali</span>}
             {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
               <span
-                className="chip chip--kunyit"
-                data-tip="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+                className={`chip ${kasus.reviewStatus === 'physician_approved' ? 'chip--biru' : 'chip--kunyit'}`}
+                data-tip={
+                  kasus.reviewStatus === 'physician_approved'
+                    ? 'Kasus pilot Karier ini sudah melewati adjudikasi dokter.'
+                    : 'Kasus dapat dimainkan untuk belajar, tetapi belum melewati adjudikasi dokter dan tidak mengubah progres formal.'
+                }
               >
-                Prototipe lab
+                {kasus.reviewStatus === 'physician_approved' ? 'Pilot teradjudikasi' : 'Latihan formatif'}
               </span>
             )}
           </div>

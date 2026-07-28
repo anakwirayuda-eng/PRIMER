@@ -54,7 +54,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const guillotine = guillotineAktif ? Math.max(0, 1 - Math.max(0, rrns - 5) * 0.05) : 1
   const totalDiagnosis = t.tegakBenar + t.tegakSalah + t.suspekBenar + t.suspekSalah
   const kalibrasi =
-    ((t.tegakBenar + 0.9 * t.suspekBenar + 0.4 * t.suspekSalah) / Math.max(1, totalDiagnosis)) * 100
+    ((t.tegakBenar + t.suspekBenar + 0.4 * t.suspekSalah) / Math.max(1, totalDiagnosis)) * 100
   const prosesKlinis = t.totalPasien > 0 ? t.sumSkorProses / t.totalPasien : 0
   const kualitasOutcome = 0.75 * akurasi * 100 + 0.25 * kalibrasi
   // Outcome tetap dominan, tetapi proses SOAP yang sudah dinilai per pasien
@@ -226,11 +226,14 @@ const NILAI_GRADE: Record<'A' | 'B' | 'C' | 'D', number> = { A: 4, B: 3, C: 2, D
  */
 export function ringkasanHarian(state: GameState): { grade: string; catatan: string[] } {
   const hasil = state.klinik.selesaiHariIni
+  const hasilResmi = hasil.filter((item) => !item.formativePrototype)
+  const hasilFormatif = hasil.filter((item) => item.formativePrototype)
   const catatan: string[] = []
 
   let grade = '—'
-  if (hasil.length > 0) {
-    const rata = hasil.reduce((jml, p) => jml + NILAI_GRADE[p.grade], 0) / hasil.length
+  if (hasilResmi.length > 0) {
+    const rata =
+      hasilResmi.reduce((jml, p) => jml + NILAI_GRADE[p.grade], 0) / hasilResmi.length
     grade = rata >= 3.5 ? 'A' : rata >= 2.5 ? 'B' : rata >= 1.5 ? 'C' : 'D'
   }
 
@@ -265,6 +268,12 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
         `Tatalaksana ${p.pasienNama} belum tuntas. Jangan kaget bila ia kembali dalam beberapa hari.`,
       )
     }
+  }
+
+  if (hasilFormatif.length > 0) {
+    catatan.push(
+      `${hasilFormatif.length} latihan formatif selesai. Umpan baliknya tetap ditampilkan, tetapi tidak mengubah grade, Dex, kapitasi, atau progres formal.`,
+    )
   }
 
   // Kunjungan rumah hari ini.
@@ -322,8 +331,10 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
     )
   }
 
-  if (catatan.length === 0) {
+  if (catatan.length === 0 && hasilResmi.length > 0) {
     catatan.push('Hari berjalan mulus. Istirahatlah — besok pagi antrian sudah menunggu.')
+  } else if (catatan.length === 0) {
+    catatan.push('Belum ada encounter resmi yang dapat dinilai hari ini.')
   }
 
   return { grade, catatan }

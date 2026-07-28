@@ -357,7 +357,7 @@ export const TINDAKAN_LAB_BATCH4: Record<string, Tindakan> = {
   },
   koreksi_hipoglikemia_gizi_buruk_anak: {
     id: 'koreksi_hipoglikemia_gizi_buruk_anak',
-    nama: 'Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu F-75',
+    nama: 'Gizi Buruk Anak: Glukosa/Sukrosa 10% 5 mL/kg Oral/NG lalu Nilai Ulang',
     icd9: '99.29',
     biaya: 15000,
   },

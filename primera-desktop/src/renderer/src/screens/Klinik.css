@@ -595,6 +595,33 @@
 
 /* -- Terapi ----------------------------------------------------------------------- */
 
+.klinik-jejaring-prarujuk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--sp-1) var(--sp-3);
+  align-items: center;
+  padding: var(--sp-3);
+  border-left: 3px solid var(--tinta-biru);
+  background: var(--wash-biru);
+}
+
+.klinik-jejaring-prarujuk > div {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-05);
+  min-width: 0;
+}
+
+.klinik-jejaring-prarujuk__label {
+  color: var(--tinta-biru);
+}
+
+.klinik-jejaring-prarujuk > p {
+  grid-column: 1 / -1;
+  margin: 0;
+  line-height: var(--baris-normal);
+}
+
 .klinik-cari {
   width: 100%;
   padding: var(--sp-2) var(--sp-3);
@@ -721,6 +748,40 @@
   border-top: 1px solid var(--border-tegas);
   padding-top: var(--sp-1);
   font-weight: 700;
+}
+
+.klinik-observasi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  padding: var(--sp-3);
+  border: 1px solid var(--kunyit-600);
+  border-left-width: 3px;
+  background: var(--wash-kunyit);
+}
+
+.klinik-observasi--selesai {
+  border-color: var(--daun-600);
+  background: var(--wash-daun);
+}
+
+.klinik-observasi p {
+  margin: 0;
+  line-height: var(--baris-normal);
+}
+
+.klinik-observasi__parameter {
+  margin: 0;
+  padding-left: 1.25rem;
+  line-height: var(--baris-normal);
+}
+
+.klinik-observasi__hasil {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-1);
+  padding-top: var(--sp-2);
+  border-top: 1px solid var(--border-halus);
 }
 
 .klinik-sbar__kolom {

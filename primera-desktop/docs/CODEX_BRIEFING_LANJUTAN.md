@@ -1,5 +1,11 @@
 # CODEX_BRIEFING_LANJUTAN.md — briefing lanjutan + strategi baru + tugas aktif
 
+> **ARSIP OPERASIONAL (17-19 Juli 2026).** Banyak item antrean di bawah sudah
+> selesai. Untuk snapshot terbaru, status Git, beta.2, adjudikasi 16/137,
+> governance formatif, dan pekerjaan berikutnya, baca
+> `CLAUDE_RECOVERY_DOSSIER_2026-07-28.md`. Pertahankan dokumen ini sebagai
+> audit trail, bukan task queue aktif.
+
 **Ditulis**: 2026-07-17, oleh sesi Claude (Fable) yang sama yang mengerjakan gelombang M11
 REVISI_ENGINE 41. **Baseline saat ditulis**: branch `codex-gpt56-experiment`, working tree bersih,
 commit terakhir `c65dc78`, `npx vitest run` → **86 file test, 966 test, semua hijau**,

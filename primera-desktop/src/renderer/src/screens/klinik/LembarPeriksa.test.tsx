@@ -30,13 +30,15 @@ describe('<LembarPeriksa /> — aria-label tombol coret resep bernama (#15)', ()
 describe('<LembarPeriksa /> — status konten lab transparan', () => {
   it('kasus yang belum teradjudikasi diberi penanda visual tanpa membocorkan diagnosis', () => {
     const kasus = Object.values(PACK.kasus).find(
-      (item) => item.activationStatus === 'lab_prototype_unadjudicated',
+      (item) =>
+        item.activationStatus === 'lab_prototype_unadjudicated' &&
+        item.reviewStatus !== 'physician_approved',
     )!
     const pasien = buatPasienDariKasus(kasus.id, PACK, new Rng(2, 'prototype'))
     const enc = buatEncounter(pasien)
     render(<LembarPeriksa enc={enc} kasus={kasus} dispatch={() => {}} />)
 
-    expect(screen.getByText('Prototipe lab')).toBeInTheDocument()
+    expect(screen.getByText('Latihan formatif')).toBeInTheDocument()
     expect(screen.queryByText(kasus.nama)).not.toBeInTheDocument()
   })
 })

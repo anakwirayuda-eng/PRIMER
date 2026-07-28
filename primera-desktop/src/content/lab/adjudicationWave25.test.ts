@@ -84,12 +84,24 @@ describe('M13-137 adjudication wave 25: cedera superfisial kepala risiko rendah'
     expect(kepala?.temuan).toMatch(/hemotimpanum.*Battle sign.*raccoon eyes.*rinorea\/otorea/is)
   })
 
-  it('menjadikan observasi wajib, analgesia opsional, dan imaging nonrutin', () => {
+  it('menjadikan observasi terstruktur wajib, analgesia opsional, dan imaging nonrutin', () => {
     const kasus = PACK.kasus[ID]!
     expect(kasus.lab).toEqual([])
     expect(kasus.tatalaksana.obatBenar).toEqual([])
     expect(kasus.tatalaksana.obatOpsional).toEqual(['paracetamol_500'])
-    expect(kasus.tatalaksana.prosedur).toEqual(['observasi_neurologis'])
+    expect(kasus.tatalaksana.prosedur).toBeUndefined()
+    expect(kasus.tatalaksana.prosedurOpsional).toEqual(['observasi_neurologis'])
+    expect(kasus.observasi).toMatchObject({
+      durasiMenit: 120,
+      disposisiSetelah: 'pulang',
+    })
+    expect(kasus.observasi?.parameter).toEqual(
+      expect.arrayContaining([
+        expect.stringMatching(/GCS.*pupil/i),
+        expect.stringMatching(/sakit kepala.*muntah.*kejang/i),
+      ]),
+    )
+    expect(kasus.observasi?.hasilUlang).toMatch(/GCS tetap E4 V5 M6.*tidak muncul/is)
     expect(PACK.tindakan.observasi_neurologis?.nama)
       .toMatch(/GCS \(E\/V\/M\).*pupil.*gejala.*defisit neurologis/is)
     expect(kasus.clue).toMatch(/bukan otomatis konkusi.*foto polos kepala atau CT rutin/is)

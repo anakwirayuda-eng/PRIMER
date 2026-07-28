@@ -12,6 +12,7 @@ import type { JenisSurat, LangkahUmpanBalikRujukan, Surat } from '@engine/state'
 import type { Persona } from '@content/types'
 import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
+import { kasusFormatif } from '@content/pack'
 import { storyletHariIniDetail } from './mejaKerja/storylet'
 import { profilVisualStorylet } from './mejaKerja/storyletVisualProfiles'
 import { agendaBesok } from './mejaKerja/agendaBesok'
@@ -583,6 +584,9 @@ export function MejaKerja() {
                           {p.bpjs ? 'BPJS' : 'Umum'}
                         </span>
                         {p.followUpDari !== undefined && <span className="chip chip--merah">Kembali</span>}
+                        {kasusFormatif(PACK.kasus[p.kasusId]) && (
+                          <span className="chip chip--kunyit">Latihan formatif</span>
+                        )}
                       </span>
                     </div>
                     {(() => {
@@ -851,7 +855,7 @@ export function MejaKerja() {
               </span>
               <div className="kolom mk__debrief-tally">
                 <span className="teks-kecil">
-                  Pasien tertangani: <strong className="mono">{state.klinik.selesaiHariIni.length}</strong>
+                  Encounter selesai: <strong className="mono">{state.klinik.selesaiHariIni.length}</strong>
                   {state.klinik.autoHariIni.jumlah > 0 && (
                     <span className="teks-lembut"> (+{state.klinik.autoHariIni.jumlah} auto)</span>
                   )}
@@ -863,8 +867,17 @@ export function MejaKerja() {
                       // internal mentah ("lab_anafilaksis_makanan") — ganti nama
                       // kasus manusiawi. Aman anti-bocor: encounter sudah
                       // SELESAI, diagnosis sudah terbuka di PanelHasil.
-                      <span key={i} className="chip" data-tip={PACK.kasus[p.kasusId]?.nama ?? p.kasusId}>
+                      <span
+                        key={i}
+                        className={`chip ${p.formativePrototype ? 'chip--kunyit' : ''}`}
+                        data-tip={
+                          p.formativePrototype
+                            ? `${PACK.kasus[p.kasusId]?.nama ?? p.kasusId} · latihan formatif, tidak memengaruhi progres`
+                            : PACK.kasus[p.kasusId]?.nama ?? p.kasusId
+                        }
+                      >
                         {p.pasienNama} · {p.grade}
+                        {p.formativePrototype ? ' · formatif' : ''}
                       </span>
                     ))}
                   </span>

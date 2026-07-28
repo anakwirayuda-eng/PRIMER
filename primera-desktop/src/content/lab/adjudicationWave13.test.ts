@@ -57,6 +57,9 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
     expect(kasus.tatalaksana.edukasi).toContain('tpt_hiv_setelah_skrining_tb')
     expect(kasus.tatalaksana.edukasiKritis).toEqual(['kepatuhan_arv', 'retensi_hiv_viral_load'])
     expect(kasus.clue).toMatch(/TDF\/3TC\/DTG.*hari yang sama/is)
+    expect(kasus.clue).not.toMatch(/tidak hamil.*mulai TDF\/3TC\/DTG/is)
+    expect(kasus.clue).toMatch(/hamil atau berpotensi hamil bukan alasan otomatis.*dolutegravir/is)
+    expect(kasus.clue).toMatch(/layanan maternal-HIV terintegrasi/i)
     expect(kasus.clue).toMatch(/TB aktif disingkirkan.*kelayakan TPT/is)
     expect(kasus.clue).toMatch(/Kotrimoksazol tidak otomatis/is)
     expect(kasus.clue).toMatch(/U=U.*supresi viral terverifikasi/is)
@@ -77,6 +80,7 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
       'kemenkes-hiv-ims-2022',
       'kemenkes-puskesmas-hiv-2024',
       'who-hiv-clinical-2025',
+      'who-hiv-dtg-all-populations-2019',
       'who-hiv-service-2026',
     ])
     expect(kasus.sumber?.map((item) => item.id)).toEqual([
@@ -86,9 +90,11 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
       'lampiran_hiv_ims_2022',
       'pedoman_puskesmas_klaster3_2024',
       'who_hiv_clinical_2025',
+      'who_hiv_dtg_all_populations_2019',
       'who_hiv_service_2026',
     ])
     expect(kasus.panduanResmi).toMatch(/mencabut sebagian besar.*Pasal 41 dan Lampirannya tetap berlaku/is)
+    expect(kasus.panduanResmi).toMatch(/semua populasi.*perempuan hamil.*bukan larangan otomatis/is)
   })
 
   it('menjadikan kusta PB diagnosis klinis dengan MDT tiga obat dan pencegahan disabilitas', () => {

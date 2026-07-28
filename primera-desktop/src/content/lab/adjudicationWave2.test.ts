@@ -15,7 +15,7 @@ function record(id: typeof IDS[number]) {
   return DATA.cases.find((item) => item.id === id)!
 }
 
-describe('M13-137 adjudication wave 2: kegawatan anak', () => {
+describe('M13-137 adjudication wave 2: kegawatan anak dan pra-rujuk', () => {
   it('mempertahankan empat kasus sebagai prototipe yang belum diadjudikasi dokter', () => {
     for (const id of IDS) {
       expect(PACK.kasus[id]?.activationStatus, id).toBe('lab_prototype_unadjudicated')
@@ -74,9 +74,14 @@ describe('M13-137 adjudication wave 2: kegawatan anak', () => {
     expect(kasus.stabilisasiWajib).toEqual(['pemantauan_ketat_vital'])
     expect(kasus.ambangKluster).toBe(2)
     expect(kasus.diagnosisBanding).toEqual(['G00.9', 'A87.9', 'I60.9'])
-    expect(kasus.clue).toMatch(/tiga jam.*2 g.*IV.*IM/is)
+    expect(kasus.nama).toBe('Suspek Meningitis Bakterial pada Dewasa Muda')
+    expect(kasus.demografi).toMatchObject({ usiaMin: 18, usiaMax: 30 })
+    expect(kasus.clue).toMatch(/45 menit.*2 g.*IV.*IM/is)
+    expect(kasus.clue).toMatch(/lebih dari 30 menit/i)
+    expect(`${kasus.clue}\n${kasus.konsekuensi?.narasi}`).not.toMatch(/tiga jam/i)
+    expect(kasus.panduanResmi).toMatch(/2 g pada dewasa.*50 mg\/kg pada anak/is)
     expect(kasus.clue).toMatch(/SpO2 96%.*tidak memerlukan oksigen rutin/is)
-    expect(kasus.catatanRealita).toMatch(/dua vial.*stok emergensi khusus.*bukan KLB otomatis/is)
+    expect(kasus.catatanRealita).toMatch(/45 menit.*dua vial.*stok emergensi khusus.*bukan KLB otomatis/is)
     expect(kasus.mutiaraEbm).not.toMatch(/sekitar 5%|khas Indonesia/i)
     expect(PACK.tindakan.kewaspadaan_droplet_meningokokus?.nama).toMatch(/droplet/i)
     expect(PACK.edukasi.profilaksis_kontak_meningokokus?.nama).toMatch(/kontak erat.*koordinasikan/i)
@@ -123,10 +128,16 @@ describe('M13-137 adjudication wave 2: kegawatan anak', () => {
     ])
     expect(kasus.stabilisasiWajib).toEqual(kasus.tatalaksana.prosedur)
     expect(kasus.tatalaksana.edukasiKritis).toEqual(['rujuk_gizi_buruk_komplikasi'])
+    expect(kasus.clue).not.toMatch(/gagal uji nafsu makan/i)
+    expect(kasus.clue).toMatch(/bukan hasil uji nafsu makan terstandar/i)
+    expect(kasus.clue).toMatch(/danger sign.*masalah medis akut.*hipoglikemia/is)
     expect(kasus.clue).toMatch(/5 mL\/kg.*bukan rule-of-15 dewasa/is)
     expect(kasus.clue).toMatch(/ORS osmolaritas rendah bila ReSoMal tidak tersedia/i)
     expect(kasus.clue).toMatch(/Vitamin A dosis tinggi bukan rutinitas/i)
     expect(PACK.tindakan.koreksi_hipoglikemia_gizi_buruk_anak?.nama).toMatch(/5 mL\/kg/i)
+    expect(PACK.tindakan.koreksi_hipoglikemia_gizi_buruk_anak?.nama).toMatch(/nilai ulang/i)
+    expect(PACK.tindakan.koreksi_hipoglikemia_gizi_buruk_anak?.nama).not.toMatch(/F-75/i)
+    expect(kasus.catatanRealita).toMatch(/ketiadaan F-75 tidak boleh menunda transfer/i)
     expect(PACK.tindakan.jaga_hangat_gizi_buruk_anak).toBeDefined()
     expect(PACK.tindakan.antibiotik_parenteral_gizi_buruk_protokol).toBeDefined()
     expect(record('lab_gizi_buruk_komplikasi').evidence.ppk).toEqual(expect.objectContaining({

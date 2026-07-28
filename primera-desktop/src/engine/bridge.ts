@@ -115,10 +115,17 @@ export function perbaruiEpisode(
     : [...episodes, next]
 
   if (result.length <= BATAS_EPISODE) return result
-  const active = result.filter((episode) => episode.status !== 'terverifikasi' && episode.status !== 'berakhir')
+  const active = result
+    .filter((episode) => episode.status !== 'terverifikasi' && episode.status !== 'berakhir')
+    .sort((a, b) => {
+      const dueA = a.dueDay ?? Number.POSITIVE_INFINITY
+      const dueB = b.dueDay ?? Number.POSITIVE_INFINITY
+      return dueA - dueB || b.updatedDay - a.updatedDay || a.id.localeCompare(b.id)
+    })
+    .slice(0, BATAS_EPISODE)
   const closed = result
     .filter((episode) => episode.status === 'terverifikasi' || episode.status === 'berakhir')
-    .sort((a, b) => b.updatedDay - a.updatedDay)
+    .sort((a, b) => b.updatedDay - a.updatedDay || a.id.localeCompare(b.id))
   return [...active, ...closed.slice(0, Math.max(0, BATAS_EPISODE - active.length))]
 }
 

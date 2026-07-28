@@ -142,7 +142,10 @@ function encounterKarmaPrapto(
     diperiksa: kasus.pemeriksaanFisik.filter((p) => p.relevan).map((p) => p.region),
     labDipesan: kasus.lab.filter((l) => l.relevan).map((l) => l.id),
     labTersedia: kasus.lab.filter((l) => l.relevan).map((l) => l.id),
-    diagnosis: { icd10: diagnosisBenar ? kasus.icd10 : 'A90', jenis: 'tegak' },
+    diagnosis: {
+      icd10: diagnosisBenar ? kasus.icd10 : 'A90',
+      jenis: kasus.kepastianDiagnosis ?? 'tegak',
+    },
     resep: [
       ...kasus.tatalaksana.obatBenar,
       ...(kasus.tatalaksana.obatAlternatif ?? []).flatMap((grup) => (grup[0] ? [grup[0]] : [])),

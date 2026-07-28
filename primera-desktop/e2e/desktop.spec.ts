@@ -8,6 +8,35 @@ let app: ElectronApplication
 let page: Page
 let userDataDir: string
 
+async function mulaiStase(nama = 'Dokter E2E'): Promise<void> {
+  await expect(page.getByRole('heading', { name: 'PRIMERA' })).toBeVisible()
+  await page.getByPlaceholder('tulis namamu di sini').fill(nama)
+  await page.getByRole('button', { name: 'Mulai Stase' }).click()
+  const onboarding = page.getByRole('dialog', { name: 'Panduan hari pertama' })
+  await expect(onboarding).toBeVisible()
+  await onboarding.getByRole('button', { name: 'Lewati' }).click()
+  await expect(page.getByRole('main', { name: 'Meja Kerja' })).toBeVisible()
+}
+
+async function aturGelap200Persen(): Promise<void> {
+  await page.getByRole('button', { name: 'Buka Pengaturan' }).click()
+  const settings = page.getByRole('dialog', { name: 'Pengaturan' })
+  await settings.getByRole('radio', { name: 'Gelap' }).click()
+  const textScale = settings.getByRole('slider', { name: 'Ukuran Teks' })
+  await textScale.fill('2')
+  await expect(settings).toContainText('200%')
+  await settings.getByRole('button', { name: 'Tutup' }).click()
+}
+
+async function tungguAutosave(): Promise<void> {
+  await expect.poll(async () => page.evaluate(async () => {
+    const primer = (window as typeof window & {
+      primer: { save: { read(slot: string): Promise<string | null> } }
+    }).primer
+    return (await primer.save.read('autosave')) !== null
+  })).toBe(true)
+}
+
 async function expectNoSeriousA11yViolations(label: string): Promise<void> {
   // DevTools-protocol evaluation is needed here: the production CSP correctly
   // rejects inline <script>, while Electron has no secondary tab for Axe's
@@ -23,7 +52,7 @@ async function expectNoSeriousA11yViolations(label: string): Promise<void> {
   expect(blockers, `${label}: ${blockers.map((item) => `${item.id} (${item.nodes.length})`).join(', ')}`).toEqual([])
 }
 
-test.beforeAll(async () => {
+test.beforeEach(async () => {
   userDataDir = await mkdtemp(join(tmpdir(), 'primera-e2e-'))
   app = await electron.launch({
     args: [resolve('out/main/index.js'), `--user-data-dir=${userDataDir}`],
@@ -31,39 +60,27 @@ test.beforeAll(async () => {
   })
   page = await app.firstWindow()
   await page.setViewportSize({ width: 1440, height: 900 })
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.reload()
 })
 
-test.afterAll(async () => {
+test.afterEach(async () => {
   await app?.close()
   if (userDataDir) await rm(userDataDir, { recursive: true, force: true })
 })
 
 test('alur boot, mulai stase, mode gelap, dan teks 200% tetap dapat digunakan', async () => {
   await expect(page.getByRole('heading', { name: 'PRIMERA' })).toBeVisible()
-  // Audit keadaan interaktif menetap, bukan frame transisi masuk 700 ms yang
-  // memang sedang memudarkan seluruh panel dari transparan.
-  await page.waitForTimeout(1_200)
+  await expect(page.locator('.title__aksi')).toHaveCSS('opacity', '1')
   await expectNoSeriousA11yViolations('layar judul')
   await page.screenshot({ path: test.info().outputPath('01-title.png'), fullPage: true })
 
-  await page.getByPlaceholder('tulis namamu di sini').fill('Dokter E2E')
-  await page.getByRole('button', { name: 'Mulai Stase' }).click()
-  const onboarding = page.getByRole('dialog', { name: 'Panduan hari pertama' })
-  await expect(onboarding).toBeVisible()
-  await onboarding.getByRole('button', { name: 'Lewati' }).click()
-
-  await expect(page.getByRole('main', { name: 'Meja Kerja' })).toBeVisible()
+  await mulaiStase()
   await expect(page.getByRole('navigation')).toContainText('Klinik')
   await expectNoSeriousA11yViolations('meja kerja terang')
   await page.screenshot({ path: test.info().outputPath('02-meja-terang.png'), fullPage: true })
 
-  await page.getByRole('button', { name: 'Buka Pengaturan' }).click()
-  const settings = page.getByRole('dialog', { name: 'Pengaturan' })
-  await settings.getByRole('radio', { name: 'Gelap' }).click()
-  const textScale = settings.getByRole('slider', { name: 'Ukuran Teks' })
-  await textScale.fill('2')
-  await expect(settings).toContainText('200%')
-  await settings.getByRole('button', { name: 'Tutup' }).click()
+  await aturGelap200Persen()
 
   const frame = page.locator('.app-frame')
   await expect(frame).toHaveAttribute('data-mode', 'malam')
@@ -102,6 +119,10 @@ test('alur boot, mulai stase, mode gelap, dan teks 200% tetap dapat digunakan', 
 })
 
 test('debrief IGD menampilkan sumber ringkas tanpa overflow pada mode gelap dan teks 200%', async () => {
+  await mulaiStase()
+  await aturGelap200Persen()
+  await tungguAutosave()
+
   const tersimpan = await page.evaluate(async () => {
     const primer = (window as typeof window & {
       primer: { save: { read(slot: string): Promise<string | null>; write(slot: string, json: string): Promise<boolean> } }
@@ -163,4 +184,46 @@ test('debrief IGD menampilkan sumber ringkas tanpa overflow pada mode gelap dan 
   const overflow = await page.locator('.mk__surat-kertas').evaluate((node) => node.scrollWidth - node.clientWidth)
   expect(overflow, 'panel debrief dan URL panjang tidak boleh membuat surat overflow horizontal').toBeLessThanOrEqual(1)
   await page.screenshot({ path: test.info().outputPath('04-debrief-igd-gelap-200.png'), fullPage: true })
+})
+
+test('kasus prototipe rujuk tetap formatif dan tidak membocorkan jejaring sebelum disposisi', async () => {
+  await mulaiStase()
+  await tungguAutosave()
+
+  const tersimpan = await page.evaluate(async () => {
+    const primer = (window as typeof window & {
+      primer: { save: { read(slot: string): Promise<string | null>; write(slot: string, json: string): Promise<boolean> } }
+    }).primer
+    const json = await primer.save.read('autosave')
+    if (!json) return false
+    const amplop = JSON.parse(json) as {
+      state?: {
+        layar?: string
+        tutorialAktif?: boolean
+        klinik?: {
+          aktif?: unknown
+          antrian?: Array<{ kasusId?: string }>
+        }
+      }
+    }
+    const pasien = amplop.state?.klinik?.antrian?.[0]
+    if (!amplop.state || !amplop.state.klinik || !pasien) return false
+    amplop.state.layar = 'klinik'
+    amplop.state.tutorialAktif = false
+    delete amplop.state.klinik.aktif
+    pasien.kasusId = 'lab_skrofuloderma_suspek'
+    return primer.save.write('autosave', JSON.stringify(amplop))
+  })
+  expect(tersimpan).toBe(true)
+
+  await page.reload()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E.*Hari 1/ }).click()
+  await expect(page.getByRole('main', { name: 'Klinik' })).toBeVisible()
+  await expect(page.getByText('Latihan formatif', { exact: true })).toBeVisible()
+  await expectNoSeriousA11yViolations('ruang tunggu kasus formatif')
+
+  await page.getByRole('button', { name: /Panggil Pasien Berikutnya/ }).click()
+  await expect(page.getByRole('region', { name: /Deck aksi klinik.*Anamnesis/ })).toBeVisible()
+  await expect(page.getByLabel('Informasi jejaring pra-rujuk')).toHaveCount(0)
+  await expect(page.getByText('JEJARING PRA-RUJUK')).toHaveCount(0)
 })

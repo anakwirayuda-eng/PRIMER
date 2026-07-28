@@ -1,8 +1,8 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-07-27
+**Tanggal kompilasi:** 2026-07-28
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `d3834bce184306ec58dfebd3cf6c29a3eb45cf2e+dirty`, artefak `713b537471f1c58d5ca1ff6da4ad56134f632776ab6e09ccf1fe4b3ae47ec253`, pack `9b53fa33`, content release `igd-adjudication-2026-07-22`, `REVISI_ENGINE=58`
+**Snapshot:** commit `0c29b69b3b282ad40516234560ac931c2e6d9fe5+dirty`, artefak `6adf90936814aaecf19e4b4b618701d8c7ae2b6226ddbe05817babb93c575e42`, pack `21ba1da0`, content release `p1-observation-governance-2026-07-28`, `REVISI_ENGINE=60`
 
 ## Ringkasan eksekutif
 
@@ -68,7 +68,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-27.
+- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-07-28.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
@@ -125,6 +125,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_hepatitis_a_akut` - Hepatitis A Akut Tanpa Gagal Hati: tidak ada red flag provenance otomatis
 - `lab_hepatitis_b_kronik` - Hepatitis B Kronik Tanpa Gejala: tidak ada red flag provenance otomatis
 - `lab_hiv_tanpa_komplikasi` - Infeksi HIV Asimtomatik - Inisiasi ART: tidak ada red flag provenance otomatis
+- `lab_vaginitis_kandida` - Kandidiasis Vulvovaginal: tidak ada red flag provenance otomatis
 - `lab_limfadenitis_servikal_akut` - Limfadenitis Servikal Akut Bakterial: tidak ada red flag provenance otomatis
 - `lab_parotitis_mumps` - Parotitis Epidemika (Mumps): tidak ada red flag provenance otomatis
 - `lab_salpingitis_pid_ringan` - Penyakit Radang Panggul Ringan - Rawat Jalan: tidak ada red flag provenance otomatis
@@ -132,7 +133,6 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_sindrom_duh_genital_servisitis` - Servisitis Mukopurulen - Tata Laksana Sindromik: tidak ada red flag provenance otomatis
 - `lab_leptospirosis_tanpa_komplikasi` - Suspek Leptospirosis Ringan Pascabanjir: tidak ada red flag provenance otomatis
 - `lab_tetanus_generalisata_awal` - Tetanus Generalisata Derajat Sedang: tidak ada red flag provenance otomatis
-- `lab_vaginitis_kandida` - Vaginitis Kandidiasis: tidak ada red flag provenance otomatis
 - `lab_vaginosis_bakterialis` - Vaginosis Bakterialis: tidak ada red flag provenance otomatis
 - `lab_vulvitis_iritan` - Vulvitis Iritan: tidak ada red flag provenance otomatis
 - `lab_gangguan_somatoform` - Gangguan Somatoform - Keluhan Fisik Persisten: tidak ada red flag provenance otomatis
@@ -242,7 +242,7 @@ Kasus berikut sudah menulis “PPK/1186” pada teks pemain, tetapi crosswalk ha
 - `lab_ppok_eksaserbasi_berat` - PPOK Eksaserbasi Berat dengan Dugaan Infeksi Saluran Napas Bawah: tidak ada red flag provenance otomatis
 - `lab_tb_paru_putus_obat_suspek_mdr` - TB Paru Resistan Rifampisin setelah Putus Pengobatan: tidak ada red flag provenance otomatis
 - `lab_kejang_demam_sederhana` - Kejang Demam Sederhana: tidak ada red flag provenance otomatis
-- `lab_meningitis_bakterial_suspek` - Suspek Meningitis Bakterial: tidak ada red flag provenance otomatis
+- `lab_meningitis_bakterial_suspek` - Suspek Meningitis Bakterial pada Dewasa Muda: tidak ada red flag provenance otomatis
 - `lab_tia_serangan_iskemik_sesaat` - Suspek TIA — Defisit Fokal Sudah Pulih: tidak ada red flag provenance otomatis
 - `lab_abses_peritonsil` - Abses Peritonsil: tidak ada red flag provenance otomatis
 - `lab_benda_asing_esofagus` - Benda Asing Esofagus pada Anak — Baterai Kancing: tidak ada red flag provenance otomatis

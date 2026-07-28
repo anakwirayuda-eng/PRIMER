@@ -353,6 +353,17 @@ export const M13_1A_CLINIC_DRAFTS: KasusKlinis[] = [
     clue: 'Pasien sadar dengan gejala adrenergik dan GDS 58 mg/dL: beri 15-20 g glukosa oral, periksa ulang 15 menit, dan ulangi bila masih <70 mg/dL atau gejala menetap. Setelah pulih, beri makan utama/camilan, hentikan dosis sulfonilurea berikutnya sampai regimen ditinjau, dan cari faktor pemicu. Karena glimepirid dapat menimbulkan hipoglikemia berkepanjangan/berulang, PNPK DM2 2026 meminta pemantauan glukosa 24-72 jam sesuai obat, fungsi ginjal, dan kekambuhan. Puskesmas Sukamaju tidak diasumsikan memiliki observasi 24 jam, sehingga pasien dirujuk pada hari yang sama untuk observasi terpantau setelah koreksi awal; jangan memulangkan hanya karena satu hasil glukosa sudah normal.',
     panduanResmi: 'PNPK DM2 Dewasa 2026 memakai ambang <70 mg/dL, glukosa 15-20 g untuk pasien sadar, pemeriksaan ulang 15 menit, dan makanan setelah kadar normal.',
     catatanRealita: 'Glukosa 15 g dapat diberikan sebagai gula terukur yang dilarutkan dalam air bila gel/tablet tidak ada. Rujukan pada kasus ini bukan karena semua hipoglikemia ringan wajib dirawat, melainkan paparan sulfonilurea kerja panjang dan keterbatasan observasi berkelanjutan di Sukamaju.',
+    observasi: {
+      durasiMenit: 15,
+      tujuan: 'Nilai respons setelah 15–20 g glukosa oral sebelum melanjutkan rujukan terpantau.',
+      parameter: [
+        'GDS ulang',
+        'kesadaran dan gejala neuroglikopenia',
+        'tremor, keringat dingin, dan kemampuan makan',
+      ],
+      hasilUlang: 'Lima belas menit kemudian GDS 86 mg/dL, pasien sadar penuh, tremor dan keringat dingin mereda, serta mampu makan. Risiko kekambuhan akibat sulfonilurea tetap memerlukan observasi terpantau melalui jejaring.',
+      disposisiSetelah: 'rujuk',
+    },
     konsekuensi: {
       narasi: 'Tanpa koreksi dan evaluasi pencetus, hipoglikemia dapat berulang dan berkembang menjadi neuroglikopenia.',
       kembaliHariMin: 0,

@@ -168,14 +168,22 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-22 (class readiness, REVISI_ENGINE 56 -> 57): adopsi
   // rencana balik rujukan menjadi aksi eksplisit; terapi N/A dan SBAR masuk
   // scoring; tanggal karma dinormalisasi agar satu slot lapangan tetap feasible.
-  'reducer.ts': '3c9f3633f63984fa847a2dc379ae964215834f10f54913d0895bcc5a2889bf9f',
-  'clinic.ts': 'fdd3a391374469a4a475af7657f1abbd131acd049a7db9fbe5a71078297b6b5c',
-  'scoring.ts': 'd2402b2fa2f3fca1b8bc05efff9498c7881fed72bcd418d44e730b8201e8a0c2',
+  // Unfreeze 2026-07-28 (P1 observasi/governance, REVISI_ENGINE 58 -> 59):
+  // observasi klinis menjadi aksi dan gate skor terstruktur; kasus prototipe
+  // yang belum disahkan dokter tetap memberi debrief formatif tetapi tidak
+  // menulis tally, Dex, ekonomi, konsekuensi, atau progres formal.
+  // Unfreeze 2026-07-28 (integritas diagnosis/bridge, REVISI_ENGINE 59 -> 60):
+  // stempel tegak-vs-suspek dinilai dan di-hash; callback keluarga menuntut
+  // kecocokan kondisi; cap episode mempertahankan 120 kasus aktif paling
+  // mendesak secara deterministik.
+  'reducer.ts': '8f108340c8fe7ba9d9e8f02fc633766cef7d257e3c1061ae75369617da2fc11d',
+  'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
+  'scoring.ts': '39fa06fe80279a9780f5697de33ccd98eff0f9444d6932f4f0bf430a4695cf6c',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
-  'director.ts': '48d6b737ee362f90f9c62d88930c2b3fb1c0150edc53fe7e346406d1815591dd',
+  'director.ts': '0ab438aed5be288c1ca9afd1f44ec9a4233c876e1587a17f40f2f07be7881ec9',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -194,13 +202,13 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'ca90af640a1e2d2a77ea4b8e8dd4c92ce660140f18e93b3d99a5907c3c9af280',
-  'state.ts': '5a0b990ef872871caeeae361e7dedd3d6000319df0eb764bcca025c1c2f586c1',
+  'verifikasi.ts': '673d60833a88be503ac53e43b3140d2e1b11e6f4510dcacd25bdebdbc4e8b7a3',
+  'state.ts': '2a0abae08b13388dff33a8f59018c16c7a9438aa893f4e2c53e676cc22537836',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',
-  'bridge.ts': '75a6225307abe70898234f3b7ad77737b02b47f688530826129d2a29752e0641',
+  'bridge.ts': '89d667eb5598b020bb86a20ed3ea582186d00cb736820e653eb1c59dbfc1558f',
 }
 
 describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 18 file penentu replay/skor terkunci', () => {

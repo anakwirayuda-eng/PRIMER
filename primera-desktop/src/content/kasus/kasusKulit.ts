@@ -379,17 +379,17 @@ export const KASUS_KULIT: KasusKlinis[] = [
       // M10 Batch-3 (C.2, riset IDSA 2014/Perdoski/IDAI): impetigo TERLOKALISIR
       // (kasus ini: krusta madu di wajah anak) → LINI PERTAMA = mupirosin topikal
       // SAJA (dulu gentamisin, non-guideline). Antibiotik oral (cefadroxil) hanya
-      // BILA luas/multipel → obatOpsional (tak wajib, tak dihukum). Dulu keduanya
-      // wajib sekaligus (over-treatment utk lesi terbatas).
+      // BILA luas/multipel → antibiotik oral berbasis berat badan. Vignette ini
+      // terlokalisir dan engine belum menghitung dosis anak per kilogram, maka
+      // tablet dewasa tidak boleh diberi status opsional yang tampak sah.
       obatBenar: ['mupirosin_krim'],
-      obatOpsional: ['cefadroxil_500'],
       obatSalahUmum: [
         { id: 'hidrokortison_krim', alasan: 'Impetigo adalah infeksi bakteri (Staphylococcus/Streptococcus). Kortikosteroid menekan imun lokal dan memperburuk infeksi, bukan mengobatinya.', bahaya: 'kontraindikasi' },
         { id: 'ketokonazol_krim', alasan: 'Bukan jamur — krusta madu khas bakteri. Antijamur tidak berefek.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_tangan', 'cuci_seprai_panas'],
     },
-    clue: 'Impetigo krustosa: KRUSTA MADU (honey-colored) di wajah anak. Terlokalisir → LINI PERTAMA mupirosin topikal (IDSA/Perdoski); LUAS/multipel → tambah antibiotik oral anti-Staph (cefadroxil; eritromisin bila alergi penisilin). Rendam & lepaskan krusta, potong kuku, cuci tangan (PPK Perdoski/IDAI).',
+    clue: 'Impetigo krustosa: krusta madu di wajah anak. Lesi terlokalisir pada vignette ini ditangani dengan antibiotik topikal dan higiene. Bila lesi luas/multipel atau ada tanda sistemik, nilai kebutuhan antibiotik oral berbasis berat badan; tablet cefadroxil 500 mg tidak otomatis benar untuk anak.',
     panduanResmi: 'PPK 1186/2022: pada lesi bertutup krusta/pus, kompres terbuka PK 1/5.000 atau povidon iodin 7,5% (encer 10x) dulu; topikal asam fusidat 2% ATAU mupirosin 2% (2-3x/hari, 7-10 hari) saat krusta bersih. Asam fusidat = alternatif topikal resmi bila mupirosin kosong.',
     catatanRealita: 'Fornas 1199/2025 menempatkan mupirosin di FPKTL dengan restriksi MRSA terkonfirmasi; game mengajarkan opsi EBM, bukan menjamin stok Puskesmas. Lesi terlokalisir tidak boleh otomatis dinaikkan ke antibiotik oral hanya karena obat topikal kosong. Ikuti formularium lokal, luas lesi, dan jalur akses/rujuk.',
     konsekuensi: {
@@ -519,7 +519,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
   /* ======================================================================
    * 5. Herpes Zoster — PILAR PENGAJARAN: asiklovir dalam 72 jam
    * Poin ajar: vesikel bergerombol UNILATERAL dermatomal + nyeri. Asiklovir efektif
-   * bila mulai <72 jam onset ruam untuk kurangi nyeri & neuralgia pascaherpetik.
+   * bila mulai dini untuk mempercepat perbaikan lesi dan mengurangi nyeri akut.
    * ==================================================================== */
   {
     id: 'kulit_herpes_zoster',
@@ -622,16 +622,39 @@ export const KASUS_KULIT: KasusKlinis[] = [
       ],
       edukasi: ['kepatuhan_obat', 'kebersihan_kulit', 'tanda_bahaya'],
     },
-    clue: 'Herpes zoster: vesikel bergerombol UNILATERAL dermatomal + nyeri neuralgik. ASIKLOVIR HARUS dimulai <72 JAM sejak ruam (asiklovir 5×800 mg/hari 7 hari; sediaan 400 mg → 2 tablet per dosis) untuk memangkas durasi & risiko NEURALGIA PASCAHERPETIK. Analgesik adekuat. Waspadai zoster oftalmikus (rujuk mata) (PPK Perdoski/CDC).',
-    panduanResmi: 'PPK 1186/2022 menyetujui asiklovir 5×800 mg/hari 7 hari (valasiklovir 3×1000 mg alternatif). Catatan divergen: PPK menyebut antivirus \'efektif 24 jam pertama\' — lebih ketat dari jendela <72 jam di clue. Rujuk bila bayi/anak/geriatri (imunokompromais), komplikasi, atau multifarmaka.',
+    clue: 'Herpes zoster: vesikel bergerombol unilateral dermatomal dengan nyeri neuralgik. Antivirus paling bermanfaat bila dimulai dini, terutama dalam 72 jam; terapi mempercepat resolusi lesi, mengurangi pembentukan lesi baru, pelepasan virus, dan nyeri akut. Neuralgia pascaherpetik tetap dapat terjadi: bukti berkualitas tinggi tidak menunjukkan asiklovir oral menurunkan insidennya secara bermakna. Waspadai zoster oftalmikus dan imunokompromais.',
+    panduanResmi: 'PPK 1186/2022 memuat asiklovir 5×800 mg/hari selama 7 hari; sediaan game 400 mg berarti dua tablet per dosis. CDC menekankan manfaat terapi sedini mungkin untuk perjalanan akut. Jangan menjanjikan pencegahan neuralgia pascaherpetik: Cochrane tidak menemukan penurunan insidens yang bermakna dengan asiklovir oral.',
     catatanRealita: 'Fornas 1199/2025 menyediakan asiklovir oral di FPKTP, sedangkan valasiklovir berada di FPKTL. Regimen asiklovir 5×800 mg/hari berarti 10 tablet 400 mg/hari: cek kemampuan pasien mengikuti jadwal, bantu pengingat, dan jangan mengganti obat di luar kewenangan hanya demi jadwal lebih ringkas.',
     konsekuensi: {
-      narasi: 'Bila antivirus terlambat (>72 jam) atau tidak diberikan, risiko neuralgia pascaherpetik (nyeri menahun berbulan-bulan) meningkat tajam, terutama pada lansia & pasien DM.',
+      narasi: 'Tanpa terapi dini yang sesuai, lesi baru, pelepasan virus, dan nyeri akut dapat berlangsung lebih lama; infeksi sekunder atau keterlibatan mata memerlukan evaluasi segera. Neuralgia pascaherpetik dapat terjadi meskipun antivirus diberikan.',
       kembaliHariMin: 14,
       kembaliHariMax: 60,
       kondisiKembali: 'Ruam sudah mengering tetapi pasien kembali mengeluh nyeri terbakar hebat menetap di bekas lesi (neuralgia pascaherpetik) yang mengganggu tidur.',
-      guideline: 'PPK Perdoski / CDC Shingles — antivirus dalam 72 jam untuk cegah neuralgia pascaherpetik.',
+      guideline: 'PPK 1186/2022; CDC Shingles; Cochrane CD006866 — manfaat akut antivirus tidak boleh disamakan dengan pencegahan pasti neuralgia pascaherpetik.',
     },
+    sumber: [
+      {
+        id: 'kemenkes_ppk_fktp_1186_1936_2022',
+        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
+        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
+        tahun: 2023,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_shingles_clinical_2024',
+        label: 'CDC - Clinical Overview of Shingles',
+        url: 'https://www.cdc.gov/shingles/hcp/clinical-overview/index.html',
+        tahun: 2024,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'cochrane_antiviral_phn',
+        label: 'Cochrane - Antiviral Treatment for Preventing Postherpetic Neuralgia',
+        url: 'https://www.cochrane.org/evidence/CD006866_antiviral-treatment-preventing-nerve-pain-after-shingles-postherpetic-neuralgia',
+        tahun: 2014,
+        jenis: 'evidence_internasional',
+      },
+    ],
   },
 
   /* ======================================================================
@@ -649,18 +672,18 @@ export const KASUS_KULIT: KasusKlinis[] = [
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Muncul lenting-lenting berair menyebar di seluruh badan saya dok, disertai demam.',
-    demografi: { usiaMin: 12, usiaMax: 30 },
+    demografi: { usiaMin: 13, usiaMax: 30 },
     vital: { td: '115/75', nadi: 90, rr: 18, suhu: 38.2 },
     anamnesis: [
       {
         id: 'q_keluhan',
         kategori: 'keluhan_utama',
-        tanya: 'Keluhannya bagaimana dan mulai dari mana?',
-        jawab: 'Awalnya demam dan badan pegal dok, lalu muncul lenting berair mulai dari badan, menyebar ke wajah dan lengan.',
+        tanya: 'Keluhannya bagaimana, mulai dari mana, dan kapan ruam pertama muncul?',
+        jawab: 'Awalnya demam dan badan pegal dok. Lenting pertama baru muncul tadi pagi, sekitar 18 jam lalu, mulai dari badan lalu menyebar ke wajah dan lengan.',
         variasi: {
-          polos: 'Panas dhisik dok, terus mbrintili banyu wiwit awak, nyebar tekan rainé.',
-          terpelajar: 'Didahului demam dan badan tidak enak dok, lalu muncul lenting-lenting berair mulai dari badan menyebar ke wajah dan tangan.',
-          cemas: 'Lentingnya cepat sekali menyebar dok, saya takut ini berbahaya dan menular ke keluarga.',
+          polos: 'Panas dhisik dok. Mbrintili banyune lagi metu esuk mau, kira-kira 18 jam, wiwit awak terus nyebar tekan rai.',
+          terpelajar: 'Didahului demam dan badan tidak enak. Lenting pertama muncul sekitar 18 jam lalu, mulai dari badan lalu menyebar ke wajah dan tangan.',
+          cemas: 'Lenting pertama muncul tadi pagi, kira-kira 18 jam lalu, lalu cepat menyebar. Saya takut ini berbahaya dan menular ke keluarga.',
         },
         esensial: true,
         oldcarts: ['onset', 'lokasi'],
@@ -740,6 +763,22 @@ export const KASUS_KULIT: KasusKlinis[] = [
     clue: 'Varisela: lesi POLIMORF (semua stadium bersamaan) dengan distribusi sentripetal + demam. Pada usia >12 tahun atau kelompok berisiko, asiklovir oral dapat dipertimbangkan dan manfaat maksimal diperoleh bila dimulai dalam 24 jam pertama ruam; penyakit berat/imunokompromais memerlukan tata laksana rujukan. Beri terapi simtomatik, hindari ibuprofen, dan isolasi sampai seluruh lesi berkrusta.',
     panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Varisela memuat asiklovir dewasa 800 mg 5 kali/hari selama 7 hari serta terapi simtomatik. CDC 2024 memperjelas bahwa antivirus oral pada kelompok yang layak paling bermanfaat bila dimulai dalam 24 jam pertama; varisela berat, pneumonia, kehamilan berkomplikasi, atau imunokompromais memerlukan konsultasi/rujukan.',
     catatanRealita: 'VZIG bukan stok rutin Puskesmas. Kontak hamil, neonatus, atau imunokompromais memerlukan koordinasi/rujukan segera untuk penilaian dan profilaksis yang sensitif waktu; catat hari pajanan. Jangan memulai profilaksis asiklovir secara improvisasi tanpa protokol lokal atau arahan spesialis.',
+    sumber: [
+      {
+        id: 'kemenkes_ppk_fktp_1186_1936_2022',
+        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
+        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
+        tahun: 2023,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_varicella_treatment_2024',
+        label: 'CDC - How to Treat Chickenpox',
+        url: 'https://www.cdc.gov/chickenpox/treatment/index.html',
+        tahun: 2024,
+        jenis: 'evidence_internasional',
+      },
+    ],
     konsekuensi: {
       narasi: 'Digaruk berlebihan menyebabkan infeksi sekunder & jaringan parut; penularan ke ibu hamil dapat menimbulkan varisela kongenital/neonatal yang berat.',
       kembaliHariMin: 3,
@@ -871,7 +910,7 @@ export const KASUS_KULIT: KasusKlinis[] = [
   /* ======================================================================
    * 8. Pedikulosis Kapitis (Kutu Kepala) — PILAR: permetrin + kontak + cuci seprai
    * Poin ajar: gatal kulit kepala + telur (nits) melekat erat di batang rambut.
-   * Permetrin (krim 5% tersedia; ideal 1%); OBATI SEMUA KONTAK serumah/kelas serentak + cuci seprai/topi air panas.
+   * Permetrin losion 1%; periksa kontak dan terapi yang terbukti terinfestasi.
    * ==================================================================== */
   {
     id: 'kulit_pedikulosis_kapitis',
@@ -966,22 +1005,47 @@ export const KASUS_KULIT: KasusKlinis[] = [
     ],
     diagnosisBanding: ['B85.0', 'L21.0', 'B86'],
     tatalaksana: {
-      obatBenar: ['permetrin_krim'],
+      obatBenar: ['permetrin_losion_1'],
       obatSalahUmum: [
-        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu (parasit), bukan jamur — antijamur tidak berefek. Butuh pedikulisida permetrin (sediaan krim 5% Puskesmas dipakai untuk kulit kepala; standar ideal 1%).', bahaya: 'nonPrimer' },
+        { id: 'permetrin_krim', alasan: 'Krim permetrin 5% adalah sediaan skabisida, bukan substitusi diam-diam untuk losion 1% pedikulosis kapitis. Konsentrasi dan cara pakainya berbeda.', bahaya: 'nonPrimer' },
+        { id: 'ketokonazol_krim', alasan: 'Pedikulosis disebabkan kutu, bukan jamur. Antijamur tidak berefek; gunakan pedikulisida dengan sediaan dan konsentrasi yang benar.', bahaya: 'nonPrimer' },
         { id: 'hidrokortison_krim', alasan: 'Steroid hanya meredakan gatal sesaat tanpa membunuh kutu; sumber masalah (kutu & telur) tetap ada dan menular.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['kebersihan_kulit', 'cuci_seprai_panas', 'cuci_tangan'],
     },
-    clue: 'Pedikulosis kapitis: gatal kulit kepala + NITS melekat erat di batang rambut (beda dari ketombe). Permetrin krim (di Puskesmas tersedia sediaan 5%; standar ideal pedikulisida 1%) dioleskan merata ke rambut & kulit kepala, DIAMKAN 10 menit lalu bilas, ULANGI 7-10 hari (bunuh nimfa yang menetas). WAJIB: obati SEMUA KONTAK (serumah/sekelas) SERENTAK + sisir serit + rendam sisir/cuci topi-seprai-bantal air PANAS (≥60°C) (PPK Perdoski/CDC).',
-    panduanResmi: 'Divergensi: clue/CDC menyarankan permetrin dibilas ~10 menit & OBATI SEMUA kontak serentak. PPK 1186/2022 justru: permetrin 1% (cream rinse) DIBIARKAN 2 JAM, dan kontak keluarga/teman hanya DIPERIKSA — terapi cuma untuk yang TERBUKTI infestasi, bukan profilaksis massal.',
+    clue: 'Pedikulosis kapitis: kutu hidup atau nits yang melekat erat dekat kulit kepala. Gunakan permetrin losion 1% sesuai petunjuk produk dan ulangi sekitar hari ke-9 bila obat tidak membunuh seluruh telur. Periksa anggota rumah dan kontak dekat; terapi serentak diberikan kepada yang terinfestasi serta teman tidur, bukan otomatis seluruh kelas. Hindari berbagi sisir/topi dan bersihkan benda yang baru dipakai.',
+    panduanResmi: 'PPK 1186/2022 memuat permetrin 1% dan pemeriksaan kontak keluarga/teman sebelum terapi. CDC juga menyarankan memeriksa anggota rumah serta kontak dekat dan menangani orang yang terinfestasi bersama teman tidurnya pada waktu yang sama. Ikuti waktu paparan dan pengulangan pada label sediaan; jangan menukar losion 1% dengan krim 5% tanpa protokol.',
+    catatanRealita: 'Fornas 1199/2025 tidak menjamin losion permetrin 1% tersedia di semua Puskesmas. Vignette menyatakan sediaan ini tersedia melalui pengadaan lokal; bila tidak ada, gunakan jalur formularium/protokol setempat, bukan mengoleskan krim skabies 5% ke kulit kepala sebagai substitusi improvisasi.',
     konsekuensi: {
-      narasi: 'Bila kontak serumah/sekelas tidak diobati serentak dan barang tidak dibersihkan, terjadi reinfestasi berulang (ping-pong); garukan menimbulkan infeksi sekunder pada kulit kepala.',
+      narasi: 'Bila orang yang terinfestasi dan teman tidurnya tidak ditangani bersamaan atau benda yang baru dipakai tetap tercemar, reinfestasi dapat terjadi; garukan juga dapat memicu infeksi sekunder.',
       kembaliHariMin: 10,
       kembaliHariMax: 21,
       kondisiKembali: 'Anak kembali dengan gatal berulang karena tertular lagi dari adik dan teman sekelas yang tidak ikut diobati.',
-      guideline: 'PPK Perdoski / CDC Head Lice — pedikulisida + obati kontak serentak + dekontaminasi fomites.',
+      guideline: 'PPK 1186/2022; CDC Head Lice — permetrin 1%, periksa kontak, terapi orang yang terinfestasi dan teman tidur, serta bersihkan benda yang baru dipakai.',
     },
+    sumber: [
+      {
+        id: 'kemenkes_ppk_fktp_1186_1936_2022',
+        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
+        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
+        tahun: 2023,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_head_lice_clinical_2024',
+        label: 'CDC - Clinical Care of Head Lice',
+        url: 'https://www.cdc.gov/lice/hcp/clinical-care/index.html',
+        tahun: 2024,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'cdc_head_lice_treatment_2024',
+        label: 'CDC - Treatment of Head Lice',
+        url: 'https://www.cdc.gov/lice/treatment/index.html',
+        tahun: 2024,
+        jenis: 'evidence_internasional',
+      },
+    ],
   },
 
   /* ======================================================================

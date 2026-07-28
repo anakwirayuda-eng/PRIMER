@@ -270,15 +270,16 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'tonsilitis_akut',
-    nama: 'Tonsilitis Akut Bakterial',
+    nama: 'Tonsilitis Akut Remaja/Dewasa - Suspek Streptokokus Grup A',
     icd10: 'J03.9',
+    kepastianDiagnosis: 'suspek',
     skdi: '4A',
     kategori: 'tht',
     fktp144: true,
     harusDirujuk: false,
     prevalensi: 'sedang',
     keluhanUtama: 'Amandel saya bengkak dok, sakit menelan dan demam tinggi.',
-    demografi: { usiaMin: 6, usiaMax: 25 },
+    demografi: { usiaMin: 15, usiaMax: 25 },
     vital: { td: '110/70', nadi: 96, rr: 20, suhu: 38.7 },
     anamnesis: [
       {
@@ -356,7 +357,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       { region: 'abdomen', temuan: 'Supel, nyeri tekan (-).', relevan: false },
     ],
     lab: [
-      { id: 'darah_rutin', hasil: 'Leukosit 14.200/µL dominasi netrofil (leukositosis) — mendukung infeksi bakteri.', flag: 'tinggi', relevan: true },
+      {
+        id: 'darah_rutin',
+        hasil: 'Leukosit 14.200/µL dominasi neutrofil. Temuan ini tidak mengonfirmasi GAS dan tidak membedakan penyebab secara andal.',
+        flag: 'tinggi',
+        relevan: false,
+      },
     ],
     diagnosisBanding: ['J03.9', 'J02.9', 'J36'],
     tatalaksana: {
@@ -370,15 +376,31 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // tak tuntas → demam rematik/komplikasi jantung (pola sama faringitis_akut).
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'Tonsilitis bakterial (Streptokokus): demam tinggi, tonsil membesar + eksudat, KGB servikal nyeri, TANPA batuk-pilek. Lini pertama amoxicillin 10 hari (cegah demam rematik); bila ALERGI PENISILIN → makrolida (azitromisin/eritromisin). Red flag abses peritonsil/obstruksi (trismus, uvula terdorong, ngiler, stridor) → rujuk.',
-    panduanResmi: 'Clue cukup amoxicillin (makrolida bila alergi). PPK 1186/2022 menambah opsi Penisilin G Benzatin 50.000 U/kgBB IM dosis tunggal DAN Kortikosteroid rutin (Deksametason 3x0,5 mg dewasa, 3 hari) untuk menekan inflamasi — steroid rutin ini tak dianjurkan pedoman internasional.',
+    clue: 'Eksudat tonsil, demam, KGB servikal anterior nyeri, dan tidak adanya batuk meningkatkan kemungkinan GAS, tetapi tidak membuktikannya. Bila tersedia, RADT atau kultur mengonfirmasi sebelum antibiotik. Vignette remaja akhir/dewasa ini memakai regimen PPK lokal sebagai jalur pragmatis dengan diagnosis kerja tetap SUSPEK. Trismus, deviasi uvula, drooling, stridor, atau toksisitas mengarah ke komplikasi dan memerlukan rujukan.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi floor lokal dan memuat amoksisilin/penisilin serta alternatif makrolida bila alergi; dosis tetap disesuaikan dengan usia/berat. Pedoman CDC 2025 menegaskan bahwa pemeriksaan klinis dan hitung darah tidak dapat mengonfirmasi GAS tanpa tes mikrobiologis bila gejala viral tidak jelas. Kortikosteroid bukan pengganti konfirmasi maupun antibiotik yang tepat.',
+    sumber: [
+      {
+        id: 'kemenkes_ppk_fktp_1186_1936_2022',
+        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
+        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
+        tahun: 2023,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_gas_pharyngitis_2025',
+        label: 'CDC 2025 - Clinical Guidance for Group A Streptococcal Pharyngitis',
+        url: 'https://www.cdc.gov/group-a-strep/hcp/clinical-guidance/strep-throat.html',
+        tahun: 2025,
+        jenis: 'evidence_internasional',
+      },
+    ],
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup', 'amoxiclav_625'],
       alternatifBenar: ['azitromisin_500'],
     },
     konsekuensi: {
-      narasi: 'Bila antibiotik tidak dituntaskan, risiko demam rematik akut dan komplikasi jantung; bila amoxicillin dipaksakan pada pasien alergi penisilin, dapat terjadi reaksi anafilaksis.',
+      narasi: 'GAS yang benar-benar terkonfirmasi tetapi tidak ditangani atau terapinya tidak tuntas dapat berkomplikasi, termasuk demam rematik; memaksakan amoksisilin pada pasien alergi dapat memicu reaksi berat.',
       kembaliHariMin: 7,
       kembaliHariMax: 21,
       kondisiKembali: 'Pasien kembali dengan nyeri sendi berpindah dan riwayat radang tenggorokan yang tidak tuntas diobati — curiga demam rematik.',
@@ -616,8 +638,24 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       ],
       edukasi: ['posisi_tidur_gerd', 'diet_lambung', 'berhenti_merokok', 'tanda_bahaya'],
     },
-    clue: 'GERD: heartburn retrosternal + regurgitasi asam, memberat setelah makan & berbaring, MEMBAIK saat aktivitas (kebalikan angina). Diagnosis klinis → terapi empiris PPI 4–8 minggu + modifikasi gaya hidup (tinggikan kepala saat tidur, jangan langsung berbaring, kurangi kopi/rokok/gorengan). Endoskopi HANYA bila ada alarm (disfagia, penurunan BB, anemia, hematemesis/melena, usia >45–50 onset baru) atau gagal terapi (PPK IDI). Nyeri dada atipik → singkirkan jantung dulu.',
-    panduanResmi: 'PPK 1186/2022 memformalkan \'PPI test\': omeprazol 2×20 mg atau lansoprazol 2×30 mg 7-14 hari; perbaikan 50-75% mengonfirmasi GERD, lanjut sampai 4 minggu, boleh + prokinetik domperidon 3×10 mg. Bila PPI kosong, ganti H2-blocker (ranitidin 150 mg/famotidin 20 mg).',
+    clue: 'Heartburn retrosternal dan regurgitasi asam yang memburuk setelah makan atau berbaring mendukung GERD. Setelah penyebab jantung dinilai pada nyeri dada, pasien tanpa alarm dapat menjalani PPI empiris 8 minggu sekali sehari sebelum makan serta modifikasi gaya hidup. Respons gejala memperkuat dugaan, tetapi tidak mengonfirmasi GERD sendirian karena spesifisitas PPI test rendah. Disfagia, perdarahan, anemia, penurunan berat badan, muntah persisten, atau respons tidak memadai memerlukan evaluasi lanjutan melalui jejaring.',
+    panduanResmi: 'PPK 1186/2022 menjadi floor lokal dan memuat PPI test singkat serta pilihan PPI/H2-blocker. ACG 2022 memperbarui jalur: pada gejala klasik tanpa alarm, lakukan uji PPI 8 minggu sekali sehari sebelum makan; respons klinis mendukung, bukan membuktikan, diagnosis. Meta-analisis diagnostik 2022 menemukan sensitivitas sekitar 79% tetapi spesifisitas hanya 45%, sehingga perbaikan gejala tidak boleh disebut konfirmasi definitif. Pilihan obat pengganti mengikuti Fornas dan stok aktual, bukan otomatis memakai produk historis yang mungkin sudah tidak relevan.',
+    sumber: [
+      {
+        id: 'acg_gerd_2022',
+        label: 'ACG Clinical Guideline for GERD (2022)',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/34807007/',
+        tahun: 2022,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'ppi_test_meta_2022',
+        label: 'Systematic Review & Meta-analysis: Diagnostic Accuracy of the PPI Test',
+        url: 'https://pubmed.ncbi.nlm.nih.gov/35324483/',
+        tahun: 2022,
+        jenis: 'evidence_internasional',
+      },
+    ],
     konsekuensi: {
       narasi: 'Bila gaya hidup tidak diperbaiki dan diberi NSAID, refluks/gastritis memberat; sebaliknya over-endoskopi dini tanpa alarm membebani pasien dan sistem tanpa mengubah tata laksana awal.',
       kembaliHariMin: 14,

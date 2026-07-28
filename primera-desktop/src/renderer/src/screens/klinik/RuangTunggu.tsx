@@ -5,6 +5,7 @@
  */
 
 import { PACK } from '@content/index'
+import { kasusFormatif } from '@content/pack'
 import type { GameState } from '@engine/state'
 import { kasusEfektif } from '@engine/clinic'
 import type { Action } from '@engine/actions'
@@ -97,6 +98,14 @@ export function RuangTunggu({ state, dispatch }: Props) {
                   {p.followUpDari !== undefined && (
                     <span className="chip chip--merah">KEMBALI</span>
                   )}
+                  {kasusFormatif(kasusDasar) && (
+                    <span
+                      className="chip chip--kunyit"
+                      data-tip="Kasus eksplorasi: umpan balik tersedia, tetapi hasilnya tidak mengubah progres formal."
+                    >
+                      Latihan formatif
+                    </span>
+                  )}
                 </div>
               </article>
             )
@@ -167,6 +176,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
                 }`}
               >
                 {n.pasienNama} — {n.grade}
+                {n.formativePrototype ? ' · formatif' : ''}
               </span>
             ))}
             {auto.jumlah > 0 && (

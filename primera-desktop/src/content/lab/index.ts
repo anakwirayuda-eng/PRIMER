@@ -10,6 +10,31 @@ import { LAB_BATCH_4_OA_ARCHETYPE_SPECS, LAB_BATCH_4_OA_CASES } from './batch4Ob
 import { LAB_ENRICHMENT, applyLabEnrichment } from './enrichment'
 
 /**
+ * Keputusan dokter yang sudah tercatat terminal pada
+ * docs/M13_137_DECISION_LOG.md. Status ini tidak mengubah isolasi mode Karier,
+ * tetapi membedakan kasus yang boleh menyumbang progres formal dari prototipe
+ * yang masih dimainkan sebagai latihan formatif.
+ */
+export const PHYSICIAN_APPROVED_LAB_CASE_IDS = new Set<string>([
+  'lab_gizi_buruk_komplikasi',
+  'lab_mastoiditis_akut',
+  'lab_bronkiolitis_berat',
+  'lab_meningitis_bakterial_suspek',
+  'lab_benda_asing_esofagus',
+  'lab_tia_serangan_iskemik_sesaat',
+  'lab_anafilaksis_makanan',
+  'lab_perdarahan_gi_atas',
+  'lab_pneumotoraks_spontan',
+  'lab_tetanus_generalisata_awal',
+  'lab_hiv_tanpa_komplikasi',
+  'lab_gangguan_somatoform',
+  'lab_benda_asing_konjungtiva',
+  'lab_trauma_abdomen_tumpul',
+  'lab_trauma_tumpul_kepala_ringan',
+  'lab_luka_bakar_derajat2_dangkal',
+])
+
+/**
  * Kasus dasar dari tiga batch 4A + batch 4 tier-rujuk (M13 full-fledge), lalu
  * dilewatkan lapisan pengayaan interaktif (variasi persona / distraktor /
  * jebakan resep / konsekuensi — lihat enrichment.ts). Pengayaan aditif &
@@ -24,7 +49,13 @@ export const LAB_ALL_CASES: KasusKlinis[] = [
   ...LAB_BATCH_4_MTS_CASES,
   ...LAB_BATCH_4_DALAM_CASES,
   ...LAB_BATCH_4_OA_CASES,
-].map((kasus) => applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]))
+]
+  .map((kasus) => applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]))
+  .map((kasus) =>
+    PHYSICIAN_APPROVED_LAB_CASE_IDS.has(kasus.id)
+      ? { ...kasus, reviewStatus: 'physician_approved' as const }
+      : kasus,
+  )
 
 export const LAB_ALL_ARCHETYPE_SPECS: Record<string, LabArchetypeSpec> = {
   ...LAB_BATCH_1_ARCHETYPE_SPECS,

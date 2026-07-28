@@ -176,7 +176,6 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
   for (const e of lastEvents) {
     if (e.type === 'FIREWALL_ALERGI') firewall = { obatId: e.obatId, golongan: e.golongan }
   }
-
   return (
     <>
       <div className="klinik-deck__isi">

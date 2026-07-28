@@ -122,6 +122,35 @@ describe('Bridge B2 - continuity ledger lintas UKM, UKP, dan RS', () => {
     expect(duaKali[0]?.familyId).toBe('keluarga_wulan')
   })
 
+  it('ledger tetap maksimal 120 saat seluruh episode aktif dan memprioritaskan tenggat terdekat', () => {
+    const episodes = Array.from({ length: 120 }, (_, index): CareEpisodeLite => ({
+      ...episodeDasar(),
+      id: `episode_${String(index).padStart(3, '0')}`,
+      dueDay: index + 10,
+      updatedDay: index,
+    }))
+    const hasil = perbaruiEpisode(episodes, {
+      id: 'episode_paling_mendesak',
+      day: 20,
+      subjectId: 'warga_mendesak',
+      subjectName: 'Ibu Mendesak',
+      source: 'klinik',
+      problemId: 'kontrol_mendesak',
+      problemLabel: 'Kontrol mendesak',
+      owner: 'dokter',
+      status: 'menunggu',
+      signal: 'Tenggat klinis paling dekat.',
+      nextAction: 'Tindak lanjuti hari ini.',
+      dueDay: 1,
+      eventLabel: 'Terdeteksi',
+      eventDetail: 'Episode mendesak masuk ke ledger penuh.',
+    })
+
+    expect(hasil).toHaveLength(120)
+    expect(hasil.some((episode) => episode.id === 'episode_paling_mendesak')).toBe(true)
+    expect(hasil.some((episode) => episode.id === 'episode_119')).toBe(false)
+  })
+
   it('ringkasan memakai hari permainan untuk mendeteksi overdue dan memisahkan verifikasi dari hasil buruk', () => {
     const active = episodeDasar('menunggu')
     const verified = { ...episodeDasar('terverifikasi'), id: 'episode_selesai', dueDay: undefined }

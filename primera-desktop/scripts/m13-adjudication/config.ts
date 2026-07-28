@@ -977,6 +977,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults, adolescents, children, and pregnant or breastfeeding people living with HIV',
     facilityScope: 'Optimized antiretroviral regimens, vertical-transmission prevention, and tuberculosis prevention within public-health HIV programmes.',
   },
+  'who-hiv-dtg-all-populations-2019': {
+    title: 'WHO recommends dolutegravir as preferred HIV treatment option in all populations',
+    authority: 'World Health Organization',
+    year: 2019,
+    officialUrl: 'https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations',
+    population: 'People living with HIV, including pregnant women and women of childbearing potential',
+    facilityScope: 'Preferred first- and second-line dolutegravir use with informed discussion of benefits and potential risks.',
+  },
   'who-hiv-service-2026': {
     title: 'Consolidated HIV guidelines: service delivery',
     authority: 'World Health Organization',
@@ -1627,6 +1635,10 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'who-hiv-clinical-2025',
     relation: 'direct',
     locator: 'Updated clinical-management recommendations retain optimized dolutegravir-based ART and integrate tuberculosis prevention and reproductive considerations within longitudinal HIV care.',
+  }, {
+    sourceId: 'who-hiv-dtg-all-populations-2019',
+    relation: 'direct',
+    locator: 'WHO explicitly recommends dolutegravir as preferred first- and second-line treatment for all populations, including pregnant women and women of childbearing potential, with informed choice.',
   }, {
     sourceId: 'who-hiv-service-2026',
     relation: 'direct',

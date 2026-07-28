@@ -350,6 +350,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
     id: 'lab_hipertiroid_graves',
     nama: 'Suspek Penyakit Graves dengan Tirotoksikosis',
     icd10: 'E05.0',
+    kepastianDiagnosis: 'suspek',
     skdi: '3A',
     kategori: 'metabolik',
     fktp144: false,

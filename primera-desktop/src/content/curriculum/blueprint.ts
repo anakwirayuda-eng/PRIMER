@@ -153,6 +153,13 @@ const CATALOG_CONCEPT_OVERRIDES: Record<string, ClinicalConcept[]> = {
     { id: 'concept:herpes_simplex', diagnosis: 'Herpes simpleks oral' },
   ],
   herpes_simplex: [{ id: 'concept:herpes_simplex', diagnosis: 'Herpes simpleks' }],
+  vaginitis: [
+    {
+      id: 'concept:vulvovaginal_candidiasis',
+      diagnosis: 'Kandidiasis vulvovaginal',
+      aliases: ['Vaginitis kandida'],
+    },
+  ],
   vulnus_laseratum: [
     { id: 'concept:laceration', diagnosis: 'Vulnus laseratum' },
     { id: 'concept:puncture_wound', diagnosis: 'Vulnus punctum' },

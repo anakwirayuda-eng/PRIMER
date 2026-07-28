@@ -101,6 +101,7 @@ export interface FktpLabSpec {
   id: string
   nama: string
   icd10: string
+  kepastianDiagnosis?: KasusKlinis['kepastianDiagnosis']
   kategori: KategoriKasus
   keluhanUtama: string
   keluhanUtamaOlehPendamping?: boolean
@@ -119,6 +120,7 @@ export interface FktpLabSpec {
   catatanRealita?: string
   mutiaraEbm?: string
   sumber?: SumberKlinis[]
+  observasi?: KasusKlinis['observasi']
   prevalensi?: 'tinggi' | 'sedang' | 'rendah'
   harusDirujuk?: boolean
   spesialisRujukan?: SpesialisasiRs
@@ -146,6 +148,7 @@ export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
     id: spec.id,
     nama: spec.nama,
     icd10: spec.icd10,
+    kepastianDiagnosis: spec.kepastianDiagnosis,
     skdi: '4A',
     kategori: spec.kategori,
     fktp144: true,
@@ -191,6 +194,7 @@ export function buatKasusFktpLab(spec: FktpLabSpec): KasusKlinis {
     catatanRealita: spec.catatanRealita,
     mutiaraEbm: spec.mutiaraEbm,
     sumber: spec.sumber,
+    observasi: spec.observasi,
     stabilisasiWajib: spec.stabilisasiWajib,
     konfirmasiWajib: spec.konfirmasiWajib,
   })

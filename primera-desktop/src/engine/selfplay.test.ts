@@ -123,10 +123,14 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
     }
   }
 
-  // DIAGNOSIS: komit ICD-10 benar dengan stempel TEGAK.
+  // DIAGNOSIS: komit ICD-10 benar dengan tingkat kepastian yang didukung kasus.
   s = run(s, { type: 'LANJUT_FASE' }).state // pemeriksaan → diagnosis
   expect(s.klinik.aktif?.fase).toBe('diagnosis')
-  s = run(s, { type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' }).state
+  s = run(s, {
+    type: 'KOMIT_DIAGNOSIS',
+    icd10: kasus.icd10,
+    jenis: kasus.kepastianDiagnosis ?? 'tegak',
+  }).state
 
   // TERAPI: semua obatBenar + SATU wakil tiap grup alternatif + edukasi wajib.
   // CODEX audit (2026-07-12, temuan #13B): dokter rajin kini benar-benar
@@ -164,6 +168,10 @@ function tanganiPasienRajin(state: GameState): { state: GameState; penilaian: Pe
 
   // DISPOSISI: rujuk (dengan SBAR lengkap) bila harusDirujuk, selain itu pulang.
   s = run(s, { type: 'LANJUT_FASE' }).state // terapi → disposisi
+  if (kasus.observasi) {
+    s = run(s, { type: 'MULAI_OBSERVASI' }).state
+    s = run(s, { type: 'NILAI_ULANG_OBSERVASI' }).state
+  }
   const aksiDisposisi: Action = kasus.harusDirujuk
     ? {
         type: 'DISPOSISI',
@@ -362,7 +370,7 @@ describe('selfplay: dokter rajin 8 hari (konten produksi, seed 12345)', () => {
     expect(hasil.penilaian.length).toBeGreaterThanOrEqual(14) // 2+2+3×5 = 19 slot playable d1-d7
     for (const p of hasil.penilaian) {
       expect(p.diagnosisBenar).toBe(true)
-      expect(p.jenisDiagnosis).toBe('tegak')
+      expect(p.kepastianDiagnosisSesuai).toBe(true)
       expect(p.disposisiTepat).toBe(true)
       expect(p.rujukanNonSpesialistik).toBe(false)
       expect(p.cowboy).toBe(false)
@@ -378,17 +386,26 @@ describe('selfplay: dokter rajin 8 hari (konten produksi, seed 12345)', () => {
     )
   })
 
-  it('tally naik konsisten dengan jumlah encounter yang dimainkan', () => {
-    expect(s.tally.totalPasien).toBe(hasil.penilaian.length)
-    expect(s.tally.diagnosisBenar).toBe(hasil.penilaian.length)
-    expect(s.tally.tegakBenar).toBe(hasil.penilaian.length)
+  it('tally naik konsisten dengan encounter resmi; prototipe formatif tidak mencemari progres', () => {
+    const penilaianResmi = hasil.penilaian.filter((item) => !item.formativePrototype)
+    expect(s.tally.totalPasien).toBe(penilaianResmi.length)
+    expect(s.tally.diagnosisBenar).toBe(penilaianResmi.length)
+    expect(s.tally.tegakBenar).toBe(
+      penilaianResmi.filter((item) => item.jenisDiagnosis === 'tegak').length,
+    )
     expect(s.tally.tegakSalah).toBe(0)
-    expect(s.tally.suspekBenar + s.tally.suspekSalah).toBe(0)
+    expect(s.tally.suspekBenar).toBe(
+      penilaianResmi.filter((item) => item.jenisDiagnosis === 'suspek').length,
+    )
+    expect(s.tally.suspekSalah).toBe(0)
     expect(s.tally.cowboy).toBe(0)
     expect(s.tally.rujukanNonSpesialistik).toBe(0)
     // Dex terisi untuk tiap kasus yang ditangani.
-    for (const p of hasil.penilaian) {
+    for (const p of penilaianResmi) {
       expect(s.dex[p.kasusId]?.ditangani).toBeGreaterThanOrEqual(1)
+    }
+    for (const p of hasil.penilaian.filter((item) => item.formativePrototype)) {
+      expect(s.dex[p.kasusId]).toBeUndefined()
     }
   })
 

@@ -44,22 +44,25 @@ describe('M5.22 — kurva pacing per fase', () => {
   })
 
   it('cakupan kategori: kategori belum tersentuh lebih sering muncul dari yang sudah', () => {
-    // Dex penuh untuk SEMUA kasus non-jiwa → kategori 'jiwa' belum tersentuh;
-    // bandingkan frekuensi kemunculan kasus jiwa vs baseline tanpa dorongan.
+    // Dex penuh untuk semua kasus non-jiwa membuat kategori jiwa tertinggal.
+    // Bandingkan terhadap baseline pada seed identik; jumlah absolut sengaja
+    // tidak dikunci karena governance prototipe membatasi pool formal harian.
     const dex: GameState['dex'] = {}
     for (const k of Object.values(PACK.kasus)) {
       if (k.kategori === 'jiwa') continue
       dex[k.id] = { kasusId: k.id, ditangani: 3, benar: 3, bintang: 2, terakhirHari: 9 }
     }
-    const s = { ...buildInitialState('Uji', 42, PACK), hari: 40, dex }
-    let munculJiwa = 0
+    const dasar = { ...buildInitialState('Uji', 42, PACK), hari: 40 }
+    const tertinggal = { ...dasar, dex }
+    let jiwaBaseline = 0
+    let jiwaTertinggal = 0
     for (let seed = 0; seed < 200; seed++) {
-      const antrian = susunAntrianHarian(s, PACK, new Rng(seed, 'kat'))
-      munculJiwa += antrian.filter((p) => PACK.kasus[p.kasusId]?.kategori === 'jiwa').length
+      const baseline = susunAntrianHarian(dasar, PACK, new Rng(seed, 'kat'))
+      const denganBoost = susunAntrianHarian(tertinggal, PACK, new Rng(seed, 'kat'))
+      jiwaBaseline += baseline.filter((p) => PACK.kasus[p.kasusId]?.kategori === 'jiwa').length
+      jiwaTertinggal += denganBoost.filter((p) => PACK.kasus[p.kasusId]?.kategori === 'jiwa').length
     }
-    // 4 kasus jiwa dari 67 (~6% pool). Dgn bintang-2 (bobot 1) utk sisanya dan
-    // belum-pernah ×3 + boost kategori ×1.5 utk jiwa, porsinya harus dominan.
-    expect(munculJiwa).toBeGreaterThan(200 * 3 * 0.2) // >20% slot
+    expect(jiwaTertinggal).toBeGreaterThan(jiwaBaseline)
   })
 })
 

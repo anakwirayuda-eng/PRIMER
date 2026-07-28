@@ -207,10 +207,28 @@ export interface KonsekuensiKlinis {
   guideline?: string
 }
 
+/**
+ * Siklus observasi klinis terkompresi untuk simulator. Durasi tetap ditampilkan
+ * sebagai durasi klinis, tetapi pemain menjalankan nilai ulang dalam satu aksi
+ * agar satu encounter tidak perlu menunggu jam dunia permainan.
+ */
+export interface ObservasiKlinis {
+  durasiMenit: number
+  tujuan: string
+  parameter: string[]
+  hasilUlang: string
+  disposisiSetelah: 'pulang' | 'rujuk'
+}
+
 export interface KasusKlinis {
   id: string
   nama: string
   icd10: string
+  /**
+   * Tingkat kepastian yang dapat dipertanggungjawabkan pada akhir encounter.
+   * Default `tegak`; pakai `suspek` bila konfirmasi definitif belum tersedia.
+   */
+  kepastianDiagnosis?: 'tegak' | 'suspek'
   skdi: Skdi
   kategori: KategoriKasus
   /**
@@ -219,6 +237,8 @@ export interface KasusKlinis {
    * yang sudah melewati adjudikasi klinis produksi.
    */
   activationStatus?: 'lab_prototype_unadjudicated'
+  /** Adjudikasi dokter selesai; status prototipe tetap dipakai untuk isolasi mode. */
+  reviewStatus?: 'physician_approved'
   /** Termasuk daftar 144 penyakit wajib tuntas FKTP. */
   fktp144: boolean
   /** Kasus yang seharusnya DIRUJUK (di luar kompetensi 4A / butuh stabilisasi-rujuk). */
@@ -317,6 +337,8 @@ export interface KasusKlinis {
    * membuka dokumen asli di browser bawaan dan tidak memengaruhi skor/replay.
    */
   sumber?: SumberKlinis[]
+  /** Nilai ulang wajib sebelum disposisi akhir pada vignette yang sesuai. */
+  observasi?: ObservasiKlinis
   konsekuensi?: KonsekuensiKlinis
   /** Sebagian pasien kasus ini membawa alergi yang menjebak terapi standar. */
   alergiTrap?: { kelas: string; obatTerlarang: string[]; alternatifBenar: string[] }

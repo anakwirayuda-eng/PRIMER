@@ -108,6 +108,14 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
   // membebani kapitasi sejak reducer diperbaiki — ringkasan biaya di sini
   // sebelumnya cuma lab+obat, jadi tak cocok dgn kas sungguhan.
   const biayaTindakan = enc.tindakan.reduce((total, id) => total + (PACK.tindakan[id]?.biaya ?? 0), 0)
+  const observasi = kasus.observasi
+  const observasiDimulai = enc.observasiDimulai === true
+  const observasiSelesai = enc.observasiDilakukan === true
+  const labMenunggu = enc.labDipesan.find(
+    (id) =>
+      PACK.lab[id]?.bolehTundaTerapi === true &&
+      kasus.lab.some((item) => item.id === id && item.relevan),
+  )
 
   // Fix #19a (audit CODEX 2026-07-11): gate submit dulu cuma cek non-kosong
   // (length>0, 1 karakter lolos) — tak selaras ambang kualitas SBAR sungguhan
@@ -185,6 +193,53 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
         {!modeRujuk ? (
           <div className="klinik-deck__grup">
             <div className="judul-seksi">Disposisi</div>
+            {observasi && (
+              <section
+                className={`klinik-observasi${observasiSelesai ? ' klinik-observasi--selesai' : ''}`}
+                aria-label="Observasi dan nilai ulang"
+              >
+                <div className="baris baris--antara">
+                  <strong>Observasi & nilai ulang</strong>
+                  <span className={`chip ${observasiSelesai ? 'chip--daun' : 'chip--kunyit'}`}>
+                    {observasiSelesai
+                      ? 'Selesai'
+                      : observasiDimulai
+                        ? 'Menunggu nilai ulang'
+                        : `${observasi.durasiMenit} menit klinis`}
+                  </span>
+                </div>
+                <p className="teks-kecil">{observasi.tujuan}</p>
+                <ul className="klinik-observasi__parameter teks-xs teks-lembut">
+                  {observasi.parameter.map((parameter) => (
+                    <li key={parameter}>{parameter}</li>
+                  ))}
+                </ul>
+                {observasiSelesai ? (
+                  <div className="klinik-observasi__hasil" role="status">
+                    <span className="mono teks-xs">HASIL NILAI ULANG</span>
+                    <p className="teks-kecil">{observasi.hasilUlang}</p>
+                  </div>
+                ) : observasiDimulai ? (
+                  <button
+                    className="tombol tombol--kunyit tombol--besar"
+                    onClick={() => dispatch({ type: 'NILAI_ULANG_OBSERVASI' })}
+                    disabled={!punyaDiagnosis || tutorialAktif}
+                    data-tip="Durasi klinis dikompresi. Periksa ulang parameter sebelum menentukan disposisi."
+                  >
+                    NILAI ULANG SETELAH {observasi.durasiMenit} MENIT
+                  </button>
+                ) : (
+                  <button
+                    className="tombol tombol--kunyit tombol--besar"
+                    onClick={() => dispatch({ type: 'MULAI_OBSERVASI' })}
+                    disabled={!punyaDiagnosis || tutorialAktif}
+                    data-tip="Mulai siklus observasi. Hasil baru terbuka setelah kamu memilih nilai ulang."
+                  >
+                    MULAI OBSERVASI
+                  </button>
+                )}
+              </section>
+            )}
             <button
               className={`tombol tombol--utama tombol--besar${tutorialAktif ? ' klinik-sorot-tutorial' : ''}`}
               onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'pulang' })}
@@ -198,21 +253,23 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
             >
               PULANGKAN
             </button>
-            <button
-              className="tombol tombol--besar"
-              onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'observasi' })}
-              disabled={!punyaDiagnosis || tutorialAktif}
-              title={
-                tutorialAktif
-                  ? 'Kasus latihan ini cukup dipulangkan.'
-                  : punyaDiagnosis
-                    ? undefined
-                    : alasanTanpaDiagnosis
-              }
-              data-tip="Observasi di Puskesmas dulu sebelum pulang."
-            >
-              OBSERVASI
-            </button>
+            {labMenunggu && !observasi && (
+              <button
+                className="tombol tombol--besar"
+                onClick={() => dispatch({ type: 'DISPOSISI', jenis: 'observasi' })}
+                disabled={!punyaDiagnosis || tutorialAktif}
+                title={
+                  tutorialAktif
+                    ? 'Kasus latihan ini cukup dipulangkan.'
+                    : punyaDiagnosis
+                      ? undefined
+                      : alasanTanpaDiagnosis
+                }
+                data-tip="Tutup kunjungan sementara dan jadwalkan pasien kembali saat hasil lab tersedia."
+              >
+                TUNGGU HASIL {PACK.lab[labMenunggu]?.nama.toUpperCase() ?? 'LAB'}
+              </button>
+            )}
             <button
               className="tombol tombol--kunyit tombol--besar"
               onClick={bukaFormRujuk}

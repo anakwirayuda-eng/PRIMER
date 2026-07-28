@@ -55,6 +55,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
     : undefined
   const adaGapFormatif =
     !hasil.diagnosisBenar ||
+    hasil.kepastianDiagnosisSesuai === false ||
     (gapFormatif !== undefined && Object.values(gapFormatif).some((daftar) => daftar.length > 0))
 
   const barisSkor: { label: string; nilai: number; dinilai?: boolean }[] = [
@@ -71,6 +72,9 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
   ]
   if (hasil.stabilisasiTerlewat) {
     bendera.push({ teks: 'Stabilisasi pra-rujuk terlewat', kelas: 'chip--merah' })
+  }
+  if (hasil.observasiTerlewat) {
+    bendera.push({ teks: 'Observasi wajib terlewat', kelas: 'chip--merah' })
   }
   if (hasil.rujukanNonSpesialistik)
     bendera.push({ teks: 'Rujukan tidak sesuai tujuan layanan', kelas: 'chip--merah' })
@@ -133,14 +137,24 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
             <div className="judul-seksi">Konsultasi Selesai</div>
             <div className="klinik-hasil__nama">{hasil.pasienNama}</div>
             <div className="teks-kecil teks-lembut">
-              {tutorial ? 'Latihan pertama tuntas — ini tak memengaruhi skor.' : LABEL_GRADE[hasil.grade]}
+              {tutorial
+                ? 'Latihan pertama tuntas — ini tak memengaruhi skor.'
+                : hasil.formativePrototype
+                  ? `Umpan balik formatif: ${LABEL_GRADE[hasil.grade]}. Progres tidak dicatat.`
+                  : LABEL_GRADE[hasil.grade]}
             </div>
             {kasus?.activationStatus === 'lab_prototype_unadjudicated' && (
               <span
-                className="chip chip--kunyit"
-                data-tip="Konten pengembangan ini belum melewati adjudikasi klinis final."
+                className={`chip ${hasil.formativePrototype ? 'chip--kunyit' : 'chip--biru'}`}
+                data-tip={
+                  hasil.formativePrototype
+                    ? 'Konten ini belum diadjudikasi dokter. Skor ditampilkan untuk belajar, tetapi tally, Dex, ekonomi, dan konsekuensi formal dibekukan.'
+                    : 'Kasus pilot Karier ini sudah melewati adjudikasi dokter.'
+                }
               >
-                Prototipe lab — belum teradjudikasi
+                {hasil.formativePrototype
+                  ? 'Latihan formatif — progres tidak dicatat'
+                  : 'Pilot Karier — disetujui dokter'}
               </span>
             )}
           </div>
@@ -165,6 +179,18 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
               : 'Diagnosis masih keliru, tetapi pilihan SUSPEK sesuai dengan tingkat kepastian yang belum memadai. Sebagian nilai kalibrasi tetap terjaga.'}
           </p>
         )}
+        {!tutorial &&
+          hasil.diagnosisBenar &&
+          hasil.kepastianDiagnosisSesuai === false &&
+          hasil.kepastianDiagnosisDiharapkan && (
+            <p className="teks-kecil teks-lembut klinik-hasil__kalibrasi">
+              Kode diagnosis tepat, tetapi bukti pada encounter ini mendukung stempel{' '}
+              <strong>{hasil.kepastianDiagnosisDiharapkan.toUpperCase()}</strong>.{' '}
+              {hasil.kepastianDiagnosisDiharapkan === 'suspek'
+                ? 'Jangan mengubah probabilitas klinis menjadi kepastian sebelum konfirmasi yang relevan tersedia.'
+                : 'Temuan sudah cukup untuk diagnosis kerja tegak; SUSPEK terlalu ragu untuk konteks ini.'}
+            </p>
+          )}
 
         {!tutorial && (
           <div className="klinik-hasil__skor">

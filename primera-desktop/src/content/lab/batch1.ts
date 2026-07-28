@@ -1085,6 +1085,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     id: 'lab_ileus_obstruktif',
     nama: 'Obstruksi Usus Mekanik (Suspek Adhesi)',
     icd10: 'K56.6',
+    kepastianDiagnosis: 'suspek',
     skdi: '3B',
     kategori: 'pencernaan',
     fktp144: false,

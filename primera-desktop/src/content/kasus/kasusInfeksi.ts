@@ -141,15 +141,16 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
    * ==================================================================== */
   {
     id: 'faringitis_akut',
-    nama: 'Faringitis Akut Bakterial (Streptokokus Grup A)',
+    nama: 'Faringitis Akut Remaja/Dewasa - Suspek Streptokokus Grup A',
     icd10: 'J02.9',
+    kepastianDiagnosis: 'suspek',
     skdi: '4A',
     kategori: 'respirasi',
     fktp144: true,
     harusDirujuk: false,
     prevalensi: 'tinggi',
     keluhanUtama: 'Tenggorokan saya sakit sekali dok, menelan rasanya perih.',
-    demografi: { usiaMin: 8, usiaMax: 30 },
+    demografi: { usiaMin: 15, usiaMax: 30 },
     vital: { td: '115/75', nadi: 92, rr: 18, suhu: 38.4 },
     anamnesis: [
       {
@@ -228,10 +229,12 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       { region: 'abdomen', temuan: 'Datar, supel, nyeri tekan (-).', relevan: false },
     ],
     lab: [
-      // M10 §49: relevan disamakan dgn saudara klinisnya tonsilitis (relevan:true) —
-      // faringotonsilitis streptokokus entitas sama; dulu satu-satunya outlier
-      // relevan:false → penalti labTakRelevan arbitrer utk aksi identik.
-      { id: 'darah_rutin', hasil: 'Leukosit 13.500/µL dengan dominasi netrofil (leukositosis) — mendukung infeksi bakteri.', flag: 'tinggi', relevan: true },
+      {
+        id: 'darah_rutin',
+        hasil: 'Leukosit 13.500/µL dengan dominasi neutrofil. Temuan ini tidak mengonfirmasi GAS dan tidak membedakan penyebab secara andal.',
+        flag: 'tinggi',
+        relevan: false,
+      },
     ],
     diagnosisBanding: ['J02.9', 'J03.9', 'J06.9'],
     tatalaksana: {
@@ -244,15 +247,31 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // tak tuntas 10 hari → demam rematik/komplikasi jantung.
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'Skor Centor tinggi (demam, eksudat tonsil, KGB servikal nyeri, tanpa batuk) → faringitis Streptokokus Grup A. Lini pertama amoxicillin; bila alergi penisilin, ganti makrolida (eritromisin).',
-    panduanResmi: 'Clue/EBM internasional cukup antibiotik untuk faringitis Streptokokus; PPK 1186/2022 justru menambah KORTIKOSTEROID rutin (Deksametason 3x0,5 mg/hari dewasa, 3 hari) untuk menekan inflamasi, di samping Amoksisilin 3x500 mg 6-10 hari atau Eritromisin 4x500 mg bila alergi penisilin.',
+    clue: 'Demam, eksudat, KGB servikal anterior nyeri, dan tidak adanya batuk meningkatkan kemungkinan GAS, tetapi skor klinis maupun leukositosis tidak mengonfirmasinya. Bila RADT atau kultur tersedia, gunakan untuk konfirmasi sebelum antibiotik. Dalam vignette remaja akhir/dewasa ini, regimen PPK lokal dipakai sebagai jalur pragmatis dengan diagnosis kerja tetap SUSPEK; alergi penisilin harus menggeser pilihan ke alternatif non-penisilin.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi floor tata laksana lokal dan memuat amoksisilin atau eritromisin bila alergi; dosis tetap harus disesuaikan dengan usia/berat pasien. Pedoman CDC 2025 menegaskan bahwa tanpa gejala viral yang jelas, pemeriksaan klinis saja tidak dapat membedakan faringitis viral dari GAS; RADT atau kultur tenggorok mengonfirmasi diagnosis bila tersedia. Dokumentasikan alasan bila fasilitas konfirmasi tidak tersedia dan jangan menyebut Centor atau hitung darah sebagai bukti pasti.',
+    sumber: [
+      {
+        id: 'kemenkes_ppk_fktp_1186_1936_2022',
+        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
+        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
+        tahun: 2023,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_gas_pharyngitis_2025',
+        label: 'CDC 2025 - Clinical Guidance for Group A Streptococcal Pharyngitis',
+        url: 'https://www.cdc.gov/group-a-strep/hcp/clinical-guidance/strep-throat.html',
+        tahun: 2025,
+        jenis: 'evidence_internasional',
+      },
+    ],
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup'],
       alternatifBenar: ['eritromisin_500'],
     },
     konsekuensi: {
-      narasi: 'Bila antibiotik tidak dituntaskan 10 hari, risiko demam rematik akut dan komplikasi jantung; bila dipaksakan amoxicillin pada pasien alergi, dapat terjadi reaksi anafilaksis.',
+      narasi: 'GAS yang benar-benar terkonfirmasi tetapi tidak ditangani atau terapinya tidak tuntas dapat berkomplikasi, termasuk demam rematik; memaksakan amoksisilin pada pasien alergi dapat memicu reaksi berat.',
       kembaliHariMin: 7,
       kembaliHariMax: 14,
       kondisiKembali: 'Pasien kembali dengan nyeri sendi berpindah dan riwayat demam yang tidak tuntas diobati.',
@@ -387,8 +406,9 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     id: 'demam_tifoid',
     // M13 Batch 6: ambang kluster pindah dari AMBANG_CLUSTER (surveilans.ts).
     ambangKluster: 2,
-    nama: 'Demam Tifoid',
+    nama: 'Suspek Demam Tifoid',
     icd10: 'A01.0',
+    kepastianDiagnosis: 'suspek',
     skdi: '4A',
     kategori: 'infeksi',
     fktp144: true,
@@ -473,7 +493,12 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       { region: 'kulit', temuan: 'Tidak tampak rose spots yang jelas; turgor cukup.', relevan: false },
     ],
     lab: [
-      { id: 'widal', hasil: 'Titer O 1/320, titer H 1/160 (bermakna pada daerah endemis).', flag: 'abnormal', relevan: true },
+      {
+        id: 'widal',
+        hasil: 'Titer O 1/320 dan H 1/160. Satu hasil Widal tidak menegakkan tifoid karena reaktivitas silang serta angka positif palsu yang tinggi.',
+        flag: 'abnormal',
+        relevan: false,
+      },
       { id: 'darah_rutin', hasil: 'Leukosit 3.900/µL (leukopenia), aneosinofilia, trombosit borderline.', flag: 'abnormal', relevan: true },
     ],
     diagnosisBanding: ['A01.0', 'A90', 'B54'],
@@ -484,18 +509,37 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // Kloramfenikol tetap default (lini pertama Fornas/PPK), tapi kini grup
       // "pilih salah satu" bersama kotrimoksazol/amoksisilin (alternatif sah
       // sesuai clue) — bukan wajib-tunggal, bukan pula dihukum berat.
-      obatBenar: ['paracetamol_500'],
-      obatAlternatif: [['kloramfenikol_250', 'cotrimoxazole_480', 'amoxicillin_500']],
+      obatBenar: [],
+      obatAlternatif: [
+        ['paracetamol_500', 'paracetamol_sirup'],
+        ['kloramfenikol_250', 'cotrimoxazole_480', 'amoxicillin_500', 'amoxicillin_sirup'],
+      ],
       edukasi: ['kepatuhan_obat', 'istirahat_cukup', 'cuci_tangan', 'gizi_seimbang'],
       // CODEX M10 ronde-2 (2026-07-06): konsekuensi.narasi eksplisit — antibiotik
       // tak tuntas → perforasi usus/perdarahan minggu ke-3.
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'Demam stepladder (naik bertahap, puncak sore-malam) + lidah kotor + bradikardia relatif → tifoid. Lini pertama FKTP/Fornas: kloramfenikol (alternatif kotrimoksazol/amoksisilin; bila tersedia & sesuai antibiogram/derajat, sefiksim/seftriakson) — tekankan tuntas + istirahat total untuk cegah perforasi usus. Catatan: Widal tunggal punya angka positif-palsu tinggi, tegakkan dengan gambaran klinis + konteks endemis; kultur bila tersedia.',
-    panduanResmi: 'PPK 1186/2022 merinci lini pertama kloramfenikol dewasa 4×500 mg selama 10 hari, dengan syarat resmi yg sering terlupa: JANGAN beri bila leukosit <2000/mm³. Rujuk bila 5 hari terapi belum membaik, atau ada toxic typhoid/komplikasi/komorbid berat.',
+    clue: 'Tidak ada pola demam, lidah, bradikardia relatif, atau hitung darah yang cukup spesifik untuk memastikan tifoid. Kultur darah adalah pemeriksaan utama bila dapat diakses; Widal tunggal tidak dianjurkan sebagai alat konfirmasi. Pada pasien stabil ini, diagnosis tetap SUSPEK dan terapi empiris mengikuti floor PPK lokal dengan sediaan serta dosis sesuai usia/berat, sambil menilai diagnosis banding, derajat sakit, respons, dan pola resistensi setempat.',
+    panduanResmi: 'PPK 1186/2022 memuat pilihan antibiotik dan batas rujukan, termasuk gagal membaik atau muncul toksisitas/komplikasi; sediaan dan dosis harus mengikuti usia/berat. Kemenkes dan CDC sama-sama menempatkan kultur darah sebagai penopang diagnosis serta memperingatkan keterbatasan Widal. Karena resistensi antimikroba berubah menurut wilayah dan waktu, pilihan antibiotik harus mengikuti kebijakan program dan antibiogram lokal bila tersedia.',
+    sumber: [
+      {
+        id: 'kemenkes_demam_tifoid_2024',
+        label: 'Kemenkes - Mengenal Demam Tifoid',
+        url: 'https://keslan.kemkes.go.id/view_artikel/3492/mengenal-demam-tifoid',
+        tahun: 2024,
+        jenis: 'pedoman_indonesia',
+      },
+      {
+        id: 'cdc_typhoid_guidance_2025',
+        label: 'CDC - Clinical Guidance for Typhoid and Paratyphoid Fever',
+        url: 'https://www.cdc.gov/typhoid-fever/hcp/clinical-guidance/index.html',
+        tahun: 2025,
+        jenis: 'evidence_internasional',
+      },
+    ],
     catatanRealita: 'Kultur darah bukan pemeriksaan rutin on-site dalam standar laboratorium Puskesmas. Bila diperlukan, gunakan jejaring spesimen/rujukan; jangan mengganti konfirmasi dengan Widal tunggal. Keterbatasan alat tidak mengubah kewajiban menilai derajat sakit, memantau respons, dan merujuk bila toksik, berkomplikasi, atau gagal membaik.',
     konsekuensi: {
-      narasi: 'Bila antibiotik tidak dituntaskan atau pasien tetap beraktivitas berat, risiko perforasi usus dan perdarahan saluran cerna pada minggu ke-3.',
+      narasi: 'Tifoid yang tidak tertangani atau tidak merespons terapi dapat berkembang menjadi perdarahan atau perforasi usus; perburukan klinis memerlukan evaluasi dan rujukan segera.',
       kembaliHariMin: 7,
       kembaliHariMax: 14,
       kondisiKembali: 'Pasien kembali dengan nyeri perut hebat mendadak dan perut papan (defans muskular) — curiga perforasi.',
@@ -618,14 +662,18 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     // instruksi Rencana Terapi A (tanpa-dehidrasi) — sering keliru diterapkan
     // pulang-langsung pada anak yang sebenarnya sudah dehidrasi ringan-sedang.
     mutiaraEbm: '"Oralit tiap kali BAB cair" adalah instruksi Rencana Terapi A (TANPA dehidrasi) — sering keliru diterapkan langsung-pulang pada anak yang sebenarnya SUDAH menunjukkan tanda dehidrasi ringan-sedang. Kuncinya: volume terhitung (75 mL/kgBB) + observasi 3–4 jam di faskes dulu, baru boleh pulang bila membaik.',
-    // Catatan mekanik (audit CODEX 2026-07-11, agar tak disalahartikan audit
-    // berikutnya sbg sudah tergerbang): "observasi 3-4 jam lalu NILAI ULANG"
-    // adalah instruksi klinis nyata (LINTAS DIARE Kemenkes/WHO) — TEKS SAJA.
-    // Engine saat ini tak membedakan disposisi 'observasi' dari 'pulang' utk
-    // kasus non-rujuk (clinic.ts) & skorTerapi murni dari resep, bukan dari
-    // observasi/waktu — klik PULANGKAN langsung setelah resep benar tetap
-    // skor penuh. Gate observasi sungguhan = mekanik baru (REVISI-touching),
-    // ditahan sampai scope M13/M14/M10.5b diputuskan eksplisit.
+    observasi: {
+      durasiMenit: 240,
+      tujuan: 'Selesaikan Rencana Terapi B dan nilai ulang derajat dehidrasi sebelum memutuskan pulang atau eskalasi.',
+      parameter: [
+        'kesadaran dan aktivitas anak',
+        'kemampuan serta keinginan minum',
+        'mata, mukosa, dan turgor kulit',
+        'nadi, perfusi, muntah, serta keluaran urine',
+      ],
+      hasilUlang: 'Setelah oralit terhitung selama 4 jam, anak lebih aktif, minum normal, mata tidak lagi cekung, turgor cepat kembali, nadi 96/menit, perfusi baik, dan tidak muntah lagi.',
+      disposisiSetelah: 'pulang',
+    },
     konsekuensi: {
       narasi: 'Terapi yang tidak sesuai (dosis oralit/zinc salah, atau justru diberi antibiotik yang tak perlu) meningkatkan risiko dehidrasi anak ini memberat menjadi syok hipovolemik.',
       kembaliHariMin: 2,

@@ -241,3 +241,18 @@ describe('<DeckTerapi /> - kotak cari Edukasi/Tindakan tidak kehilangan fokus', 
     expect(input).toHaveFocus()
   })
 })
+
+describe('<DeckTerapi /> - keputusan rujukan tidak dibocorkan saat terapi', () => {
+  it('tidak menampilkan jejaring hanya karena kasus tersembunyi wajib dirujuk', () => {
+    const kasus = PACK.kasus.lab_meningitis_bakterial_suspek!
+    const enc = {
+      ...buatEncounter(buatPasienDariKasus(kasus.id, PACK, new Rng(14, 'jejaring'))),
+      fase: 'terapi' as const,
+      diagnosis: { icd10: kasus.icd10, jenis: 'suspek' as const },
+    }
+    render(<DeckTerapi enc={enc} dispatch={() => {}} lastEvents={[]} eventTick={0} />)
+
+    expect(screen.queryByLabelText('Informasi jejaring pra-rujuk')).not.toBeInTheDocument()
+    expect(screen.queryByText('JEJARING PRA-RUJUK')).not.toBeInTheDocument()
+  })
+})

@@ -23,7 +23,9 @@ export const M13_1A_REVIEW_HASHES: Record<string, string> = {
   // sudah ada (bukan keputusan klinis baru — lihat physicianSignoffs.ts) —
   // envelope berubah krn kontennya berubah, sesuai aturan hash-di-bagian-6.
   'm13-1a-review-clinic-asma_eksaserbasi_berat_anak': '5c81d35ff3bfca14d41f934b624a96d912a5c3038a68ee3c6ccc3ced73f9b762',
-  'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': 'a588ec8d26d7a365aa6a061f60b64b198d71becc8797e684c02e3d81bf3f96ba',
+  // Refresh 2026-07-28: pemeriksaan ulang 15 menit yang sudah diwajibkan
+  // physicianSignoff H1 kini direpresentasikan sebagai observasi terstruktur.
+  'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': '7c7ad727638d083253bfd7b0cefc3412a15a9d2c85e92e8ae3a20d88f706edd0',
   'm13-1a-review-clinic-benda_asing_hidung_anak': '3d684ef2da6606685568b3a051f251915a6990bfc10b31f584b64ecb6a3d497f',
   'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'de4c265f093d6d303be9aac966e6fdf88f066f560b7ea660ae2b230130da2411',
   'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': '59716bc25f10783fdf30ca69a301e75ecd096abf0086bc4f12d083863e0f5e24',

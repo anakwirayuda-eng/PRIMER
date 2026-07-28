@@ -204,6 +204,7 @@ const KASUS_FARINGITIS: KasusKlinis = {
   id: 'faringitis_mini',
   nama: 'Faringitis Akut',
   icd10: 'J02.9',
+  kepastianDiagnosis: 'suspek',
   skdi: '4A',
   kategori: 'infeksi',
   fktp144: true,
@@ -261,6 +262,7 @@ const KASUS_RUJUK: KasusKlinis = {
   id: 'pneumonia_mini',
   nama: 'Pneumonia Balita',
   icd10: 'J18.9',
+  kepastianDiagnosis: 'suspek',
   skdi: '3B',
   kategori: 'respirasi',
   fktp144: true,
@@ -948,9 +950,22 @@ describe('nilaiEncounter — kalibrasi stempel dua tinta', () => {
   })
 
   it('diagnosis benar terdeteksi dari kecocokan ICD-10', () => {
-    const benar = nilaiEncounter(encDenganDiagnosis('tegak', 'J02.9'), KASUS_FARINGITIS, PACK)
+    const benar = nilaiEncounter(encDenganDiagnosis('suspek', 'J02.9'), KASUS_FARINGITIS, PACK)
     expect(benar.diagnosisBenar).toBe(true)
-    expect(benar.jenisDiagnosis).toBe('tegak')
+    expect(benar.jenisDiagnosis).toBe('suspek')
+    expect(benar.kepastianDiagnosisSesuai).toBe(true)
+  })
+
+  it('ICD benar tetapi TEGAK pada kasus yang masih suspek dibatasi grade B', () => {
+    const terlaluYakin = nilaiEncounter(
+      encDenganDiagnosis('tegak', 'J02.9'),
+      KASUS_FARINGITIS,
+      PACK,
+    )
+    expect(terlaluYakin.diagnosisBenar).toBe(true)
+    expect(terlaluYakin.kepastianDiagnosisDiharapkan).toBe('suspek')
+    expect(terlaluYakin.kepastianDiagnosisSesuai).toBe(false)
+    expect(terlaluYakin.grade).not.toBe('A')
   })
 })
 
@@ -968,7 +983,7 @@ describe('nilaiEncounter — grade masuk akal', () => {
       { type: 'PERIKSA', region: 'kepala_leher' },
       { type: 'PESAN_LAB', labId: 'darah_rutin' },
       { type: 'LANJUT_FASE' }, // pemeriksaan → diagnosis
-      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'tegak' }, // → terapi (otomatis)
+      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'suspek' }, // → terapi (otomatis)
       { type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' },
       { type: 'TAMBAH_OBAT', obatId: 'paracetamol_500' },
       { type: 'TAMBAH_EDUKASI', edukasiId: 'etika_batuk' },

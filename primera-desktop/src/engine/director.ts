@@ -11,7 +11,7 @@
 
 import type { GameState, ModeStase, PasienAktif } from './state'
 import { musimDariHari } from './state'
-import { encounterArchetypeAktif, type ContentPack } from '@content/pack'
+import { encounterArchetypeAktif, kasusFormatif, type ContentPack } from '@content/pack'
 import type { KasusKlinis, Persona } from '@content/types'
 import type { Rng } from './core/rng'
 import { clusterAktif } from './surveilans'
@@ -132,6 +132,23 @@ const BIAS_4A_MINGGU_1 = 0.92
 
 function kasusAman(k: KasusKlinis): boolean {
   return k.skdi === '4A' && !k.harusDirujuk
+}
+
+const KONDISI_KELUARGA_PER_KASUS: Readonly<Record<string, readonly string[]>> = {
+  asma_ringan: ['asma_anak'],
+  anemia_defisiensi_bumil: ['anemia_ringan'],
+  jiwa_skizofrenia: ['skizofrenia_putus_obat'],
+}
+
+function kondisiAnggotaSesuaiKasus(
+  anggota: { kondisi?: readonly string[] },
+  kasus: KasusKlinis,
+): boolean {
+  const kondisiDiterima = new Set([
+    kasus.id,
+    ...(KONDISI_KELUARGA_PER_KASUS[kasus.id] ?? []),
+  ])
+  return anggota.kondisi?.some((kondisi) => kondisiDiterima.has(kondisi)) === true
 }
 
 /* ---------------------------------------------------------------------------
@@ -261,14 +278,22 @@ export function susunAntrianHarian(
   // insersi key perakitan pack; refactor tak-berbahaya (menyusun ulang file
   // kasus) dulu bisa mengubah hasil rng.weighted TANPA mengubah sidik jari
   // (yang menyortir). Kandidat kini deterministik thd ISI pack, bukan bentuknya.
-  const semua = Object.values(pack.kasus)
+  const semuaAktif = Object.values(pack.kasus)
     .filter(
       (k) =>
         !kecuali.includes(k.id) &&
         encounterArchetypeAktif(pack, 'clinic', k.id, state.mode, state.contentRelease),
     )
     .sort((a, b) => a.id.localeCompare(b.id))
-  if (semua.length === 0) return []
+  if (semuaAktif.length === 0) return []
+
+  // Konten belum diadjudikasi tetap tersedia sebagai latihan Karier, tetapi
+  // tidak boleh mendominasi antrean resmi hanya karena Dex-nya sengaja tidak
+  // pernah bertambah. Slot inti selalu ditarik dari kasus teradjudikasi;
+  // mulai hari 3, paling banyak satu slot diganti latihan formatif.
+  const formatif = semuaAktif.filter(kasusFormatif)
+  const resmi = semuaAktif.filter((kasus) => !kasusFormatif(kasus))
+  const semua = resmi.length > 0 ? resmi : semuaAktif
 
   const mingguPertama = state.hari <= 7
   const poolAman = semua.filter(kasusAman)
@@ -358,6 +383,26 @@ export function susunAntrianHarian(
     }
   }
 
+  if (state.hari > 2 && resmi.length > 0 && formatif.length > 0 && terpilih.length > 0) {
+    const sudahAdaRujukan = terpilih.some((kasus) => kasus.harusDirujuk)
+    const kandidatFormatif = formatif.filter(
+      (kasus) => !sudahAdaRujukan || !kasus.harusDirujuk,
+    )
+    if (kandidatFormatif.length > 0) {
+      const pilihanFormatif = rng.weighted(
+        kandidatFormatif.map((kasus) => ({
+          item: kasus,
+          // Bobot epidemiologi tetap relevan, tetapi Dex sengaja diabaikan
+          // karena progres formatif memang dibekukan.
+          bobot:
+            (kasus.prevalensi === 'tinggi' ? 3 : kasus.prevalensi === 'rendah' ? 0.6 : 1.5) *
+            (kategoriTersentuh.has(kasus.kategori) ? 1 : 1.5),
+        })),
+      )
+      terpilih[terpilih.length - 1] = pilihanFormatif
+    }
+  }
+
   // Fix #28b: satu Set dipakai bersama utk seluruh antrian hari ini, supaya
   // dua pasien (mis. dua kasus berbeda dgn jenis kelamin sama) tak kebetulan
   // dapat nama sama persis.
@@ -385,7 +430,8 @@ export function susunAntrianHarian(
             (a) =>
               a.usia >= kasus.demografi.usiaMin &&
               a.usia <= kasus.demografi.usiaMax &&
-              (!kasus.demografi.jenisKelamin || a.jenisKelamin === kasus.demografi.jenisKelamin),
+              (!kasus.demografi.jenisKelamin || a.jenisKelamin === kasus.demografi.jenisKelamin) &&
+              kondisiAnggotaSesuaiKasus(a, kasus),
           )
         : undefined
       return anggota ? [{ idx, anggota }] : []

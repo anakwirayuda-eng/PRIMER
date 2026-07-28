@@ -115,8 +115,8 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_arv', 'retensi_hiv_viral_load'],
     },
     konfirmasiWajib: 'tes_hiv_serial',
-    clue: 'Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, fungsi ginjal memadai, dan tidak hamil, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.',
-    panduanResmi: `${PPK} PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO 2025 mempertahankan regimen berbasis dolutegravir dan pencegahan TB, sedangkan WHO service-delivery 2026 menekankan layanan terintegrasi, berpusat pada pasien, retensi, dan re-engagement.`,
+    clue: 'Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, dan fungsi ginjal memadai, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Status kehamilan tetap dinilai untuk konseling dan layanan maternal-HIV terintegrasi, tetapi hamil atau berpotensi hamil bukan alasan otomatis untuk menyingkirkan dolutegravir. Bila pasien hamil atau merencanakan kehamilan, lakukan diskusi manfaat-risiko yang terinformasi dan sambungkan ke jalur maternal-HIV sesuai program. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.',
+    panduanResmi: `${PPK} PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO merekomendasikan dolutegravir sebagai regimen preferred untuk semua populasi, termasuk perempuan hamil dan yang berpotensi hamil; kehamilan memicu informed choice serta integrasi layanan maternal-HIV, bukan larangan otomatis. WHO 2025/2026 mempertahankan regimen berbasis dolutegravir, pencegahan TB, layanan terintegrasi, retensi, dan re-engagement.`,
     catatanRealita: 'Sukamaju ditetapkan sebagai layanan ARV; TLD, konselor, dan jejaring laboratorium siap. Bila hasil darah masih ditunggu tetapi pasien layak, rapid ART tetap berjalan dan ditinjau satu minggu; kasus dengan hasil aman ini kontrol satu bulan. Viral load melalui jejaring. Notifikasi pasangan ditawarkan sukarela, rahasia, aman, dan tanpa paksaan; kunjungan terlewat memicu re-engagement rahasia, bukan penghentian layanan.',
     mutiaraEbm: 'Tampak sehat tidak menyingkirkan advanced HIV disease: CD4 baseline tetap penting untuk menemukan imunosupresi berat dan menentukan paket profilaksis, tetapi bukan syarat untuk menahan ART. HBsAg juga bermakna karena tenofovir-lamivudin aktif terhadap hepatitis B dan penghentian sembarangan dapat memicu flare. Pada kasus ini CD4 428 sel/mm3, HBsAg nonreaktif, dan tidak ada stadium klinis 3/4, sehingga kotrimoksazol bukan resep otomatis.',
     sumber: [
@@ -160,6 +160,13 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
         label: 'WHO Updated HIV Clinical Management 2025',
         url: 'https://www.who.int/publications/i/item/9789240119468',
         tahun: 2025,
+        jenis: 'evidence_internasional',
+      },
+      {
+        id: 'who_hiv_dtg_all_populations_2019',
+        label: 'WHO 2019 - Dolutegravir Preferred in All Populations',
+        url: 'https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations',
+        tahun: 2019,
         jenis: 'evidence_internasional',
       },
       {
@@ -259,7 +266,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_benda_asing_konjungtiva', nama: 'Benda Asing Konjungtiva Superfisial', icd10: 'T15.9', kategori: 'mata',
+    id: 'lab_benda_asing_konjungtiva', nama: 'Benda Asing Konjungtiva Superfisial', icd10: 'T15.1', kategori: 'mata',
     keluhanUtama: 'Mata kanan terasa mengganjal setelah sekam tertiup angin saat berkebun tadi pagi.', usia: [18, 60], vital: { td: '122/76', nadi: 80, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Apa yang masuk ke mata, kapan kejadiannya, dan bagaimana benda itu mengenai mata?', 'Sekam tertiup angin ke mata kanan saat saya berkebun tadi pagi. Tidak ada mesin atau benturan; saya tidak memakai kacamata pelindung.'],
     pertanyaan: [
@@ -272,7 +279,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['mata', 'Sebelum ekstraksi: visus setara kedua mata; pupil bulat-reaktif dan bilik depan tampak tenang. Setelah kelopak atas dieversi, satu sekam longgar tampak di konjungtiva tarsal. Fluorescein tidak menunjukkan defek epitel kornea dan uji Seidel negatif.'],
       ['umum', 'Kondisi umum baik.', false],
     ],
-    diagnosisBanding: ['T15.9', 'S05.0', 'H16.0'],
+    diagnosisBanding: ['T15.1', 'S05.0', 'H16.0'],
     tatalaksana: {
       obatBenar: [],
       obatOpsional: ['kloramfenikol_tetes_mata'],
@@ -281,7 +288,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       edukasiKritis: ['perawatan_pasca_benda_asing_mata', 'tanda_bahaya'],
     },
     clue: 'Sekam berkecepatan rendah yang tampak longgar di konjungtiva tarsal, dengan visus utuh, pupil normal, tanpa defek kornea, dan tanpa tanda penetrasi, dapat ditangani di FKTP. Catat visus sebelum anestetik, eversi kelopak, gunakan irigasi atau cotton bud steril lembap untuk benda yang jelas superfisial, lalu ulangi fluorescein setelah pengangkatan untuk memastikan tidak ada sisa, defek baru, atau kebocoran. Jangan melakukan probing atau upaya berulang bila benda tertanam, berada di kornea/sumbu visual, melawan saat disentuh, atau mekanismenya mencurigakan. Kloramfenikol topikal boleh dipertimbangkan bila terdapat defek epitel atau risiko infeksi yang bermakna, tetapi bukan pengganti ekstraksi lengkap dan tindak lanjut.',
-    panduanResmi: `${PPK} Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.`,
+    panduanResmi: `${PPK} Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. Kode klinis T15.1 dipakai karena lokasi benda sudah teridentifikasi di sakus/konjungtiva tarsal; T15.9 tetap dipertahankan hanya sebagai kode katalog SKDI yang generik. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.`,
     catatanRealita: 'Profil sukamaju_middle_v1 menyatakan lampu fokus, saline steril, anestetik topikal sekali pakai, fluorescein dengan cahaya biru, cotton bud steril, dan operator siap; slit lamp tidak diasumsikan. Hanya sekam longgar yang tampak di konjungtiva tarsal yang diangkat. Benda korneal/tertanam, resistensi, hasil tidak lengkap, atau red flag menghentikan upaya dan memicu rujuk.',
     mutiaraEbm: 'Material tumbuhan meningkatkan kewaspadaan terhadap infeksi, tetapi tidak otomatis mengubah setiap benda konjungtiva superfisial menjadi kasus rumah sakit. Penentu utamanya adalah mekanisme, lokasi, kedalaman, visus, defek kornea, tanda penetrasi, kemampuan ekstraksi lengkap, dan tindak lanjut. Panduan praktik masih kerap menganjurkan antibiotik topikal, sedangkan pembaruan Cochrane 2025 menilai kepastian bukti profilaksis pada abrasi kornea sangat rendah dan tidak mendukung satu regimen tertentu. Karena vignette ini tidak memiliki defek kornea, kloramfenikol diperlakukan sebagai opsi klinis, bukan syarat nilai. Anestetik topikal hanya dipakai saat pemeriksaan/tindakan dan tidak dibawa pulang.',
     sumber: [
@@ -578,7 +585,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_vaginitis_kandida', nama: 'Vaginitis Kandidiasis', icd10: 'N76.0', kategori: 'infeksi', prevalensi: 'sedang',
+    id: 'lab_vaginitis_kandida', nama: 'Kandidiasis Vulvovaginal', icd10: 'B37.3', kategori: 'infeksi', prevalensi: 'sedang',
     keluhanUtama: 'Keputihan putih kental disertai gatal hebat.', usia: [15, 55], jenisKelamin: 'P', vital: { td: '118/74', nadi: 78, rr: 18, suhu: 36.7, spo2: 99 },
     pembuka: ['Bagaimana bentuk cairan, bau, dan rasa gatalnya?', 'Putih menggumpal seperti susu basi, tidak amis, dan gatal sekali.'],
     pertanyaan: [
@@ -588,7 +595,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['kulit', 'Vulva eritematosa; discharge putih kental melekat, tanpa bau amis atau nyeri goyang serviks.', true]],
     lab: [['mikroskopis_gram_koh', 'KOH menunjukkan budding yeast dan pseudohifa.', 'abnormal']],
-    diagnosisBanding: ['N76.0', 'B37.3', 'N76.2'],
+    diagnosisBanding: ['B37.3', 'N76.0', 'N76.2'],
     tatalaksana: { obatBenar: ['klotrimazol_vaginal_100'], edukasi: ['higiene_genital_lembut', 'kepatuhan_obat', 'tanda_bahaya'] },
     clue: 'Pruritus, eritema, discharge putih menggumpal tanpa bau amis, dan pseudohifa mendukung kandidiasis vulvovaginal. Gunakan azol intravaginal; evaluasi diabetes/kehamilan dan rujuk bila berat, rekuren, atau gagal.',
     panduanResmi: `${PPK} Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.`,
@@ -842,7 +849,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_leptospirosis_tanpa_komplikasi', ambangKluster: 2, nama: 'Suspek Leptospirosis Ringan Pascabanjir', icd10: 'A27.9', kategori: 'infeksi',
+    id: 'lab_leptospirosis_tanpa_komplikasi', ambangKluster: 2, nama: 'Suspek Leptospirosis Ringan Pascabanjir', icd10: 'A27.9', kepastianDiagnosis: 'suspek', kategori: 'infeksi',
     keluhanUtama: 'Demam mendadak, sakit kepala, dan betis sangat nyeri setelah membersihkan rumah kebanjiran.', usia: [15, 65], vital: { td: '112/70', nadi: 98, rr: 20, suhu: 38.7, spo2: 98 },
     pembuka: ['Kapan demam mulai dan bagaimana pajanan banjirnya?', 'Tiga hari setelah berjalan di air banjir dengan luka kecil di kaki.'],
     pertanyaan: [
@@ -901,7 +908,7 @@ export const LAB_BATCH_2_ARCHETYPE_SPECS: Record<string, { conceptId: string; cr
   lab_parafimosis_reduksibel: { conceptId: 'concept:paraphimosis', credits: ['fktp144:paraphimosis'] },
   lab_sindrom_duh_genital_servisitis: { conceptId: 'concept:nongonococcal_genital_discharge', credits: ['fktp144:genital_discharge'] },
   lab_vulvitis_iritan: { conceptId: 'concept:vulvitis', credits: ['fktp144:vulvitis'] },
-  lab_vaginitis_kandida: { conceptId: 'concept:vaginitis', credits: ['fktp144:vaginitis'] },
+  lab_vaginitis_kandida: { conceptId: 'concept:vulvovaginal_candidiasis', credits: ['fktp144:vaginitis'] },
   lab_vaginosis_bakterialis: { conceptId: 'concept:bacterial_vaginosis', credits: ['fktp144:bacterial_vaginosis'] },
   lab_salpingitis_pid_ringan: { conceptId: 'concept:salpingitis', credits: ['fktp144:salpingitis'] },
   lab_abortus_spontan_komplit: { conceptId: 'concept:complete_abortion', credits: ['fktp144:complete_abortion'] },

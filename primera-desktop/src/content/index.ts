@@ -50,6 +50,7 @@ import {
   TINDAKAN_LAB_BATCH4,
 } from './lab/catalogBatch4'
 import { validasiPedagogyPilots } from './pedagogyPilots'
+import { lengkapiSumberKlinis } from './clinicalSources'
 
 export {
   DUEL_DIAGNOSIS_PILOTS,
@@ -122,9 +123,18 @@ const BASE_CURRICULUM_BLUEPRINT = buildCurriculumBlueprint(BASE_CONTENT_CATALOG)
 // Varian Tingkat-A dipasang SETELAH aktivasi M13-1a supaya kasus hasil
 // aktivasi ikut terjangkau; blueprint tidak membaca varianPresentasi jadi
 // urutan thd buildCurriculumBlueprint tak berpengaruh.
-const CONTENT_CATALOG = terapkanVarianKunjunganTingkatA(
+const CONTENT_CATALOG_DASAR = terapkanVarianKunjunganTingkatA(
   terapkanVarianTingkatA(aktifkanKatalogM13_1A(BASE_CONTENT_CATALOG)),
 )
+const CONTENT_CATALOG: ContentCatalog = {
+  ...CONTENT_CATALOG_DASAR,
+  kasus: Object.fromEntries(
+    Object.entries(CONTENT_CATALOG_DASAR.kasus).map(([id, kasus]) => [
+      id,
+      lengkapiSumberKlinis(kasus),
+    ]),
+  ),
+}
 
 /** M13-0A + M13-1a: manifest authoring kanonik lengkap, termasuk evidence registry. */
 export const CURRICULUM_BLUEPRINT = aktifkanBlueprintM13_1A(BASE_CURRICULUM_BLUEPRINT)

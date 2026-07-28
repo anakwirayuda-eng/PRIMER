@@ -209,7 +209,12 @@ function tanganiPasienProfil(
 
   const diagnosisBenar = rng.chance(profil.diagnosisCorrectProb) || kasus.diagnosisBanding.length === 0
   const icd10Dipakai = diagnosisBenar ? kasus.icd10 : rng.pick(kasus.diagnosisBanding)
-  const jenis = rng.chance(profil.diagnosisTegakProb) ? 'tegak' : 'suspek'
+  const jenis =
+    profil.nama === 'teliti'
+      ? kasus.kepastianDiagnosis ?? 'tegak'
+      : rng.chance(profil.diagnosisTegakProb)
+        ? 'tegak'
+        : 'suspek'
   s = coba(s, { type: 'KOMIT_DIAGNOSIS', icd10: icd10Dipakai, jenis })
 
   // CODEX audit pasca-GM (2026-07-13, temuan #20): dulu meresepkan obatBenar
@@ -251,6 +256,10 @@ function tanganiPasienProfil(
     if (rng.chance(profil.edukasiFraction)) s = coba(s, { type: 'TAMBAH_EDUKASI', edukasiId })
   }
   s = coba(s, { type: 'LANJUT_FASE' })
+  if (kasus.observasi && profil.nama === 'teliti') {
+    s = coba(s, { type: 'MULAI_OBSERVASI' })
+    s = coba(s, { type: 'NILAI_ULANG_OBSERVASI' })
+  }
 
   // PRB (rujuk-balik, M3.13): pasien SUDAH distabilkan RS — disposisi tepat
   // adalah pulang/observasi (kontrol lanjutan lokal), BUKAN kasus.harusDirujuk

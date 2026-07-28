@@ -74,6 +74,12 @@ describe('PACK — validasi silang id konten', () => {
       // M13-137-16 (2026-07-27) - katalog memakai T30 generik untuk luka bakar
       // derajat 1-2, sedangkan encounter ini diketahui mengenai lengan bawah.
       'burn_grade12', // T30 (lokasi tidak spesifik) vs kasus T22.2 (derajat dua lengan bawah)
+      // Audit korektif M13-137-13 (2026-07-28): katalog SKDI memakai kode
+      // benda asing mata generik, sedangkan lokasi encounter teridentifikasi.
+      'foreign_body_conjunctiva', // T15.9 generik vs kasus T15.1 (sakus konjungtiva)
+      // Audit korektif P1 (2026-07-28): katalog menyimpan sindrom vaginitis
+      // generik, sedangkan encounter telah mengidentifikasi etiologi kandida.
+      'vaginitis', // N76.0 generik vs kasus B37.3 (kandidiasis vulvovaginal)
       // M9.2 (2026-07-04) — tertaut manual setelah verifikasi thd dokumen
       // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
       // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.
