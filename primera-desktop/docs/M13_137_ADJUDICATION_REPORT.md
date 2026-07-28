@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-07-28
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `a61301d62a676df461e22185912a48a38627700e+dirty`, artefak `aeef67707e680414e1dbf3020f95ba5078ee09486c762b4320ecbc29647b6f2c`, pack `541d47bf`, content release `clinical-provenance-2026-07-28`, `REVISI_ENGINE=61`
+**Snapshot:** commit `320979516a55e94916a25d0157c2c1058180a688`, artefak `aeef67707e680414e1dbf3020f95ba5078ee09486c762b4320ecbc29647b6f2c`, pack `541d47bf`, content release `clinical-provenance-2026-07-28`, `REVISI_ENGINE=61`
 
 ## Ringkasan eksekutif
 

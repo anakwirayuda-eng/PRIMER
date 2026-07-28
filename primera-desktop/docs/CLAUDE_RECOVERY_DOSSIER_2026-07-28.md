@@ -4,6 +4,10 @@
 **Pemilik produk dan penanggung jawab klinis:** dr. Anak Agung Bagus Wirayuda  
 **Repo aktif:** `D:\Dev\PRIMER-CODEX-lab\primera-desktop`  
 **Branch aktif:** `codex-gpt56-experiment`  
+**Snapshot gameplay:** commit `320979516a55e94916a25d0157c2c1058180a688`
+
+**Build distribusi:** `1.1.0-beta.3`, tag `test-beta-3209795`
+
 **Tujuan dokumen:** memulihkan konteks Claude/Fable setelah crash total, sampai
 ke keadaan source, keputusan, build, risiko, dan antrean kerja paling mutakhir.
 
@@ -36,24 +40,35 @@ Snapshot saat dossier ini ditulis:
 - `20` kasus IGD, terdiri dari baseline dan `14` ekspansi yang sudah memiliki
   adjudikasi dokter.
 - `16` keluarga binaan dan `27` skenario kunjungan UKM.
-- `REVISI_ENGINE = 60`.
-- `CONTENT_RELEASE = p1-observation-governance-2026-07-28`.
-- Versi aplikasi `1.1.0-beta.2`.
-- Full suite terakhir: `148` file, `1371/1371` test lulus.
-- E2E Electron terakhir: `3/3` lulus pada build produksi.
+- `REVISI_ENGINE = 61`.
+- `CONTENT_RELEASE = clinical-provenance-2026-07-28`.
+- Versi aplikasi `1.1.0-beta.3`.
+- Full suite terakhir: `150` file, `1377/1377` test lulus.
+- E2E Electron terakhir: `4/4` lulus pada build produksi.
 - Typecheck bersih; freeze Golden Master `18/18` lulus.
-- Installer terbaru sudah dibangun, tetapi **belum dipastikan dipasang sebagai
-  instalasi aktif**:
-  - `dist\PRIMERA test-beta Setup 1.1.0-beta.2.exe`
-  - ukuran `107,959,830` byte;
+- Provenance runtime:
+  - poli `210/210`;
+  - IGD `20/20`;
+  - kunjungan keluarga `27/27`;
+  - Posyandu, Prolanis, KLB, Duel Diagnosis, dan Teach-back;
+  - `263` URL unik, `490` pemakaian link poli, dan `0` URL dipastikan mati.
+- Installer terbaru sudah dibangun, dipasang, dan diverifikasi sebagai
+  instalasi aktif:
+  - `dist\PRIMERA test-beta Setup 1.1.0-beta.3.exe`
+  - ukuran `107,972,356` byte;
   - SHA-256
-    `9E1F5354721C5AB1FE5CFFD888DFB06DC6047AC52B4B4B87BCB23E2FF52C23FF`;
+    `75498F3BDC1D6EA022AC0D189AAE2B02FD30C6A23FB3DC86CD457059779CE6CA`;
   - status Authenticode: **NotSigned**.
+  - versi executable, package internal `app.asar`, dan registry Windows
+    semuanya terverifikasi `1.1.0-beta.3`.
+  - GitHub prerelease:
+    `https://github.com/anakwirayuda-eng/PRIMER/releases/tag/test-beta-3209795`.
 
-**Peringatan paling penting:** GitHub saat ini berhenti di commit `0c29b69`,
-sedangkan batch `beta.2` di atas masih berupa working tree besar yang belum
-committed. Jangan menyebut installer itu reproducible dari GitHub sampai batch
-tersebut diverifikasi, committed, dan pushed.
+**Peringatan paling penting:** batch kode terbaru sudah committed, pushed,
+ditag, dirilis, dan dipasang. Gerbang yang kini benar-benar terbuka bukan lagi
+penyegelan Git, melainkan M13-1b human pilot dan physician adjudication
+M13-137 item 17-137. Jangan menyamakan provenance lengkap atau compiler
+`137/137 cocok` dengan persetujuan dokter atas seluruh prototipe.
 
 ---
 
@@ -144,16 +159,19 @@ https://github.com/anakwirayuda-eng/PRIMER.git
 - Jangan push ke `master` atau branch produksi Claude.
 - Jangan force-push.
 - Jangan reset/revert perubahan yang tidak dibuat sendiri.
-- Working tree sekarang sengaja dirty dan memuat campuran kemajuan beberapa
-  sesi. Baca diff per file sebelum menyentuhnya.
-- Commit terakhir yang sudah ada di remote:
+- Pada snapshot dossier ini, working tree gameplay bersih sebelum artefak
+  adjudikasi dan dossier diregenerasi. Tetap jalankan `git status` karena
+  status dapat berubah setelah dokumen ini ditulis.
+- Commit gameplay/distribusi yang sudah ada di remote:
 
 ```text
-0c29b69 feat(m13): adjudicate minor burn case 16
+3209795 feat(beta): complete clickable clinical provenance
 ```
 
-- Branch lokal dan remote sama-sama menunjuk `0c29b69`; seluruh batch `beta.2`
-  setelahnya belum committed.
+- Branch lokal dan remote sama-sama menunjuk `3209795` saat verifikasi.
+- Tag `test-beta-3209795` menunjuk commit tersebut.
+- Installer adalah GitHub Release asset, bukan file yang di-commit ke Git;
+  `dist/` tetap di-ignore dengan sengaja.
 
 ---
 
@@ -321,18 +339,63 @@ Yang **tidak** disetujui sebagai fitur runtime sekarang:
 
 Resource Tier A-D tetap checklist editorial, bukan state engine.
 
-### 5.5 Batas klaim provenance saat ini
+### 5.5 Provenance runtime aktif dan batas klaimnya
 
-Batch `beta.2` mulai menambahkan sumber klinis clickable yang terstruktur.
-Namun coverage runtime baru `24/210` kasus dengan `83` link. Setiap kasus yang
-ditampilkan sebagai bersumber diwajibkan memiliki sekurangnya satu floor
-Indonesia dan satu evidence internasional.
+Build `beta.3` menutup coverage provenance yang sebelumnya parsial:
+
+- `210/210` kasus poli memiliki `2-10` sumber terstruktur;
+- setiap kasus poli mempunyai sekurangnya satu sumber Indonesia dan satu
+  evidence internasional;
+- `20/20` IGD tetap memiliki debrief dan sumber clickable;
+- `27/27` skenario kunjungan mempunyai floor UKM serta evidence resep sosial
+  yang dipilih;
+- Posyandu, Prolanis, KLB, delapan Duel Diagnosis, dan delapan Teach-back
+  memiliki tautan sumber pada titik debrief yang sesuai;
+- seluruh URL keluar harus HTTPS tanpa embedded credentials.
+
+Sumber poli diberi status cakupan:
+
+- `langsung`: menopang keputusan encounter secara langsung;
+- `terkait`: relevan, tetapi tidak boleh dipresentasikan sebagai guideline
+  diagnosis-spesifik;
+- `floor_umum`: batas bawah layanan/regulasi; wajib disertai catatan batas
+  interpretasi.
+
+Inventaris saat build:
+
+- `490` pemakaian sumber poli:
+  - `412` langsung;
+  - `59` terkait;
+  - `19` floor umum;
+- `263` URL unik lintas poli, IGD, UKM, dan pilot pedagogik;
+- audit otomatis terakhir:
+  - `210` terjangkau langsung;
+  - `52` dibatasi anti-bot/HTTP 403 tetapi bukan URL mati;
+  - `0` dipastikan rusak;
+  - `1` laman resmi Ditjen P2 TB intermiten pada fetch otomatis, tetapi
+    terbuka saat pemeriksaan browser manual.
+
+Lokasi penting:
+
+```text
+src\content\clinicalSources.ts
+src\content\clinicalSourceAssignments.generated.ts
+scripts\generate-clinical-provenance.ts
+scripts\audit-clinical-provenance.ts
+scripts\check-clinical-source-urls.ts
+docs\CLINICAL_PROVENANCE_MATRIX.md
+```
+
+Perubahan label, URL, tahun, jenis, cakupan, atau catatan sumber poli kini
+masuk `sidikJariPack`; itulah alasan `REVISI_ENGINE` naik ke `61`.
 
 Jangan mengklaim:
 
-- `210/210` sudah punya provenance runtime lengkap;
+- provenance lengkap berarti `210/210` sudah physician-approved;
+- sumber `terkait` atau `floor_umum` adalah rekomendasi diagnosis-spesifik;
 - `137/137 cocok` berarti physician-approved;
-- seluruh konten sudah current hanya karena compiler hijau.
+- semua URL yang memberi 403 tidak valid;
+- seluruh konten selamanya current hanya karena compiler hijau hari ini.
 
 ---
 
@@ -706,7 +769,7 @@ Selesai:
 - bridge hero-loop pilot;
 - write-back program.
 
-### 9.4 Batch beta.2
+### 9.4 Fondasi batch beta.2
 
 Perbaikan terbaru:
 
@@ -722,17 +785,28 @@ Perbaikan terbaru:
 ### 9.5 Skor jujur
 
 Secara rekayasa, bridge sudah sekitar `8,9/10` pada audit sebelum beta.2 dan
-lebih kuat setelah semantic matching/cap fix. Namun klaim "wow dan satisfying"
-belum final karena belum ada playtest tiga mahasiswa/proxy. Jangan menurunkan
-statusnya kembali ke 5,7 karena itu baseline historis, tetapi jangan pula
-self-certify pengalaman emosional dari unit test.
+lebih kuat setelah semantic matching/cap fix. Batch beta.3 tidak mengubah
+kausalitas bridge; ia membuat landasan evidence UKM dan UKP dapat ditelusuri
+dari debrief. Namun klaim "wow dan satisfying" belum final karena belum ada
+playtest tiga mahasiswa/proxy. Jangan menurunkan statusnya kembali ke 5,7
+karena itu baseline historis, tetapi jangan pula self-certify pengalaman
+emosional dari unit test.
 
 ---
 
-## 10. Batch Terbaru P0-P3: Belum Committed
+## 10. Batch P0-P3 dan Provenance Beta.3: Sudah Disegel
 
-Bagian ini menjelaskan diff lokal setelah commit `0c29b69`. Ini pekerjaan
-aktif, bukan sejarah yang sudah aman di remote.
+Subbagian 10.1-10.4 berasal dari batch P0-P3 yang semula berada di working
+tree. Seluruhnya kini sudah masuk sejarah remote. Lapisan provenance pada
+10.5-10.8 disegel melalui:
+
+```text
+3209795 feat(beta): complete clickable clinical provenance
+tag: test-beta-3209795
+release: PRIMERA test-beta 1.1.0-beta.3
+```
+
+Jangan lagi memperlakukan bagian ini sebagai diff lokal yang belum aman.
 
 ### 10.1 Governance formatif
 
@@ -804,13 +878,51 @@ risiko sulfonilurea kerja panjang serta ketiadaan observasi 24 jam.
 
 ### 10.5 Provenance clickable
 
-File baru:
+Arsitektur poli:
 
 ```text
 src\content\clinicalSources.ts
+src\content\clinicalSourceAssignments.generated.ts
+scripts\generate-clinical-provenance.ts
 ```
 
-Sumber prioritas mencakup:
+Generator menggabungkan registry M13, adjudication data, dan crosswalk
+eksplisit untuk tepat `210` id kasus. `assertExactKeys` dan invariant test
+mencegah kasus baru diam-diam tidak mendapat sumber.
+
+Arsitektur audit:
+
+```text
+scripts\audit-clinical-provenance.ts
+scripts\check-clinical-source-urls.ts
+docs\CLINICAL_PROVENANCE_MATRIX.md
+```
+
+Arsitektur renderer:
+
+```text
+src\renderer\src\components\BuktiKlinis.tsx
+src\renderer\src\components\TautanSumber.tsx
+```
+
+`BuktiKlinis` menangani debrief UKP/IGD. `TautanSumber` menangani link ringkas
+UKM. Keduanya:
+
+- hanya membuka URL HTTPS tanpa credentials;
+- memakai browser bawaan;
+- mempunyai accessible name;
+- ringkas/default-collapsed agar tidak menambah cognitive overload.
+
+Coverage:
+
+- poli `210/210`;
+- IGD `20/20`;
+- kunjungan keluarga `27/27`;
+- kegiatan Posyandu/Prolanis/KLB;
+- Duel Diagnosis `8/8`;
+- Teach-back `8/8`.
+
+Sumber prioritas tetap mencakup:
 
 - GINA 2026;
 - WHO TB 2025;
@@ -821,7 +933,8 @@ Sumber prioritas mencakup:
 - WHO arboviral 2025;
 - PNPK/Kemenkes terkait.
 
-UI debrief dapat membuka link melalui browser sistem.
+Jangan menambah link generik hanya demi angka. Pilih `langsung`, `terkait`,
+atau `floor_umum`, dan beri batas interpretasi untuk floor umum.
 
 ### 10.6 UI dan E2E
 
@@ -829,13 +942,15 @@ E2E produksi sekarang menguji:
 
 1. boot, dark mode, text scale 200%, Axe, overflow, HUD overlap;
 2. IGD debrief source link dan layout 200%;
-3. save-injected unadjudicated prototype:
+3. UKM provenance pada dark mode dan text scale 200%, termasuk pembukaan link
+   tanpa menciptakan jendela app kedua;
+4. save-injected unadjudicated prototype:
    - label formatif terlihat;
    - referral network tidak bocor sebelum jawaban.
 
 ### 10.7 Dependency hardening
 
-- package version menjadi `1.1.0-beta.2`;
+- package version menjadi `1.1.0-beta.3`;
 - override:
   - `postcss 8.5.23`;
   - `tar 7.5.22`;
@@ -848,12 +963,15 @@ mayor/downgrade yang berisiko. Runtime dependency surface bersih.
 
 ### 10.8 Review artifact M13
 
-Artefak adjudikasi diregenerasi terhadap source dirty terbaru:
+Artefak adjudikasi diregenerasi terhadap commit gameplay yang sudah disegel:
 
-- `generated sourceCommit = 0c29b69...+dirty`;
-- `engineRevision = 60`;
-- `contentRelease = p1-observation-governance-2026-07-28`;
+- `generated sourceCommit = 320979516a55e94916a25d0157c2c1058180a688`;
+- `engineRevision = 61`;
+- `contentRelease = clinical-provenance-2026-07-28`;
 - 137 cocok;
+- pack fingerprint `541d47bf`;
+- artifact fingerprint
+  `aeef67707e680414e1dbf3020f95ba5078ee09486c762b4320ecbc29647b6f2c`;
 - review hash M13-1a diperbarui secara eksplisit untuk rekonsiliasi H1.
 
 Ini bukan self-signing; keputusan H1 sudah ada dan perubahan menyelaraskan
@@ -861,14 +979,25 @@ runtime dengan keputusan tersebut.
 
 ---
 
-## 11. Verifikasi Snapshot Beta.2
+## 11. Verifikasi Snapshot Beta.3
 
 ### 11.1 Test dan build
 
-- Full Vitest: `148` file, `1371/1371` lulus.
+- Full Vitest: `150` file, `1377/1377` lulus.
 - TypeScript: bersih.
 - Freeze: `18/18`.
-- Playwright Electron: `3/3`.
+- Playwright Electron: `4/4`.
+- Matriks provenance:
+  - `210/210` kasus poli lengkap;
+  - `490` pemakaian sumber poli;
+  - `0` masalah struktur.
+- URL audit:
+  - `263` URL unik;
+  - `0` dipastikan mati;
+  - `52` dibatasi anti-bot;
+  - `1` endpoint Kemenkes intermiten saat fetch otomatis dan telah
+    diverifikasi manual di browser.
+- Production dependency audit: `0` vulnerability.
 - Soak 90 hari Karier: lulus.
 - Soak 30 hari Ujian: lulus.
 - Ideal integrated player:
@@ -919,28 +1048,65 @@ tetap diperlukan.
 
 ### 11.4 Bundle
 
-- Renderer JS: sekitar `3,51 MiB`.
-- CSS: sekitar `176,2 KiB`.
+- Renderer JS: `3,62 MiB`.
+- CSS: `178,0 KiB`.
 
 ### 11.5 Installer
 
 ```text
 D:\Dev\PRIMER-CODEX-lab\primera-desktop\dist\
-PRIMERA test-beta Setup 1.1.0-beta.2.exe
+PRIMERA test-beta Setup 1.1.0-beta.3.exe
+```
+
+Ukuran:
+
+```text
+107,972,356 byte
 ```
 
 SHA-256:
 
 ```text
-9E1F5354721C5AB1FE5CFFD888DFB06DC6047AC52B4B4B87BCB23E2FF52C23FF
+75498F3BDC1D6EA022AC0D189AAE2B02FD30C6A23FB3DC86CD457059779CE6CA
 ```
 
-**Batas distribusi:**
+GitHub:
+
+```text
+tag: test-beta-3209795
+release: https://github.com/anakwirayuda-eng/PRIMER/releases/tag/test-beta-3209795
+asset digest: sha256:75498f3bdc1d6ea022ac0d189aae2b02fd30c6a23fb3dc86cd457059779ce6ca
+```
+
+Instalasi aktif:
+
+```text
+C:\Users\HP\AppData\Local\Programs\primera-desktop\
+```
+
+Tiga pemeriksaan independen cocok:
+
+- `FileVersion = 1.1.0-beta.3`;
+- `app.asar/package.json = 1.1.0-beta.3`;
+- registry uninstall `DisplayVersion = 1.1.0-beta.3`.
+
+Bundle gameplay juga cocok byte-for-byte:
+
+```text
+installed app.asar SHA-256:
+1F6C61B1875DAEEBEBF9989259C9EB72BE85923B02EE79F9F00BCEFF48A74A66
+
+dist/win-unpacked app.asar SHA-256:
+1F6C61B1875DAEEBEBF9989259C9EB72BE85923B02EE79F9F00BCEFF48A74A66
+```
+
+**Batas distribusi yang tersisa:**
 
 - installer unsigned;
 - SmartScreen/reputasi publisher belum ditangani;
-- instalasi aktif belum dikonfirmasi sudah ditimpa beta.2;
-- belum ada commit yang mereproduksi source persis installer ini.
+- belum ada clean-install matrix pada beberapa laptop mahasiswa;
+- GitHub asset + hash menjamin integritas file, tetapi tidak menggantikan
+  identitas publisher dari Authenticode.
 
 ---
 
@@ -958,13 +1124,13 @@ Angka di bawah adalah audit rekayasa terstruktur, bukan validasi psikometrik.
 | Struktur konten | 144 playable, 210 poli, orphan guards | 9,0 |
 | Tooling evidence | Compiler, registry, review artifact | 8,8 |
 | Kesiapan review klinis | Artifact kuat, tetapi baru 16/137 poli disetujui | 6,5 |
-| Evidence runtime clickable | Baru 24/210 kasus | 6,0 |
+| Evidence runtime clickable | 210/210 poli + IGD/UKM/pilot, typed coverage | 9,2 |
 | Bukti fun/cognitive load manusia | Belum ada pilot 3 mahasiswa/proxy | 4,5 |
-| Kepercayaan distribusi | Installer ber-hash tetapi unsigned/uncommitted | 6,5 |
+| Kepercayaan distribusi | Source/tag/release/hash cocok; masih unsigned | 7,8 |
 
 Kesimpulan:
 
-- seluruh area **code-addressable** yang ditangani batch ini sudah di atas 8;
+- seluruh area **code-addressable** pada batch provenance sudah di atas 8;
 - area yang masih di bawah 8 bukan boleh "diperbaiki" dengan mengubah angka:
   ia membutuhkan dokter, mahasiswa, atau sertifikat signing.
 
@@ -972,24 +1138,7 @@ Kesimpulan:
 
 ## 13. Antrean Kerja Aktif
 
-### Prioritas 0 - segel batch beta.2
-
-1. Baca diff 67 file + 3 file baru.
-2. Jalankan ulang:
-   - full suite;
-   - typecheck;
-   - freeze;
-   - E2E;
-   - prod audit;
-   - `git diff --check`.
-3. Pastikan tidak ada perubahan pengguna yang terhapus.
-4. Commit batch secara sadar; bila terlalu besar, pisahkan hanya menurut
-   boundary yang benar-benar aman.
-5. Push `codex-gpt56-experiment`.
-6. Rebuild dari commit yang sama dan catat hash baru. Hash installer sekarang
-   tidak boleh dipakai sebagai manifest cohort setelah source berubah.
-
-### Prioritas 1 - M13-1b human pilot
+### Prioritas 0 - M13-1b human pilot
 
 - Tiga mahasiswa/proxy.
 - Skenario normal dan dangerous path.
@@ -1002,8 +1151,10 @@ Kesimpulan:
   - fatigue/cognitive load;
   - kesenangan dan keinginan lanjut.
 - Dr. Wirayuda memberi zero-material-defect decision setelah data.
+- Gunakan build `1.1.0-beta.3` sebagai kandidat awal. Jangan mengubah engine
+  di tengah sesi pilot tanpa mencatat build peserta.
 
-### Prioritas 2 - adjudikasi M13-137
+### Prioritas 1 - adjudikasi M13-137
 
 - Lanjut kasus 17-137.
 - Batch kecil.
@@ -1011,22 +1162,26 @@ Kesimpulan:
 - Setelah sign-off, kasus dapat pindah dari formatif ke formal secara
   release-controlled.
 
-### Prioritas 3 - perluas provenance runtime
+### Prioritas 2 - distribusi kelas
 
-- Prioritaskan kasus formal dan high-risk.
-- Gunakan registry yang ada.
-- Satu kasus bersumber harus mempunyai floor Indonesia + evidence mutakhir.
-- Jangan memalsukan completeness dengan link generik.
-
-### Prioritas 4 - distribusi kelas
-
-- Code-signing certificate/Authenticode.
+- Dapatkan code-signing certificate/Authenticode.
 - Uji clean install pada beberapa laptop mahasiswa.
 - Uji update dan save migration.
 - Arsipkan build cohort + manifest + hash.
 - Siapkan petunjuk SmartScreen hanya sebagai fallback, bukan pengganti signing.
+- Jangan commit file `dist`; unggah installer sebagai Release asset.
 
-### Prioritas 5 - UKM dan M12
+### Prioritas 3 - pemeliharaan provenance
+
+- Jalankan `npm run audit:provenance` setiap menambah kasus.
+- Jalankan `npm run audit:provenance:urls` sebelum release.
+- Triage source `terkait` dan `floor_umum` bertahap ke sumber langsung bila
+  dokumen diagnosis-spesifik tersedia.
+- Jangan mengganti URL hanya karena situs memberi 403 kepada bot.
+- Catat tanggal akses dan lakukan current-source review periodik; coverage
+  lengkap bukan jaminan currency permanen.
+
+### Prioritas 4 - UKM dan M12
 
 - Human evaluation hero loops.
 - Inventaris semua art observation vs hotspot/teks.
@@ -1034,7 +1189,7 @@ Kesimpulan:
 - Pertahankan keterbacaan dark mode dan 200%.
 - Jangan memulai avatar kompleks jika tidak menambah keputusan/emosi.
 
-### Prioritas 6 - M15
+### Prioritas 5 - M15
 
 - Kurasi registry 3-5 snapshot awal.
 - Legal/ethical image review.
@@ -1067,7 +1222,7 @@ Jangan:
 - menghidupkan resource hidden penalty;
 - mengubah engine di tengah cohort;
 - menyebut installer signed;
-- menyebut working tree clean;
+- menyebut working tree clean tanpa menjalankan `git status`;
 - menganggap `225 kasus` adalah angka runtime saat ini.
 
 ---
@@ -1115,11 +1270,13 @@ Urutan baca Claude:
    - `docs\DIALOGUE_COHERENCE_AUDIT_2026-07-20.md`
 9. M15
    - `docs\M15_ARSIP_JAGA_MALAM_BRIEF.md`
-10. Arsip lama
+10. Matriks provenance runtime
+   - `docs\CLINICAL_PROVENANCE_MATRIX.md`
+11. Arsip lama
    - `docs\CODEX_HANDOFF_DOSSIER.md`
    - `docs\CODEX_BRIEFING_LANJUTAN.md`
 
-Dokumen nomor 10 adalah sejarah. Jangan memakai daftar tugasnya sebagai
+Dokumen nomor 11 adalah sejarah. Jangan memakai daftar tugasnya sebagai
 antrean aktif tanpa cross-check terhadap dossier ini dan Git.
 
 ---
@@ -1148,6 +1305,8 @@ npx vitest run
 npm run typecheck
 npx vitest run src/engine/freeze.test.ts
 npm run test:e2e
+npm run audit:provenance -- --markdown
+npm run audit:provenance:urls
 npm audit --omit=dev
 ```
 
@@ -1159,6 +1318,8 @@ Jangan langsung mengedit. Pertama cocokkan:
 - package version;
 - test count;
 - installer hash;
+- GitHub Release asset digest;
+- versi internal instalasi aktif dari `app.asar`;
 - physician-approved set;
 - current dirty diff.
 
@@ -1185,21 +1346,21 @@ Hindari:
 
 ## 19. Keputusan Operasional Berikutnya yang Disarankan
 
-**Jangan langsung lanjut adjudikasi 17 sebelum menyegel batch beta.2.**
+**Penyegelan beta.3 sudah selesai. Jangan mengulang pekerjaan itu.**
 
-Urutan paling aman dan paling cepat:
+Urutan paling bernilai berikutnya:
 
-1. review diff beta.2;
-2. ulang gerbang;
-3. commit + push;
-4. rebuild dari commit dan buat hash distribusi baru;
-5. instal bila game ditutup dan dr. Wirayuda meminta;
-6. playtest singkat;
-7. lanjut M13-137-17 dalam batch adjudikasi berikutnya.
+1. lakukan playtest singkat internal pada instalasi aktif `1.1.0-beta.3`;
+2. pertahankan build tersebut untuk M13-1b pada tiga mahasiswa/proxy;
+3. catat usability, cognitive load, dangerous-path, dan pemahaman bridge;
+4. secara paralel, lanjutkan physician adjudication dari M13-137-17 dalam
+   batch kecil;
+5. sebelum cohort kelas, selesaikan clean-install matrix dan keputusan
+   code-signing.
 
-Alasannya sederhana: saat ini kode lokal lebih maju daripada GitHub. Menambah
-pekerjaan baru di atas batch belum tersegel memperbesar risiko kehilangan atau
-kesulitan menelusuri regresi.
+Alasannya: kode, tag, GitHub Release, hash, dan instalasi lokal kini sudah
+sinkron. Risiko terbesar berpindah dari kehilangan perubahan lokal ke
+kurangnya bukti manusia dan identitas publisher.
 
 ---
 
@@ -1215,8 +1376,9 @@ PRIMERA sudah jauh melewati tahap brainstorm. Ia sekarang memiliki:
 - visual pass;
 - storylette;
 - evidence tooling;
+- provenance clickable lintas UKP, IGD, UKM, dan pilot pedagogik;
 - release integrity;
-- installer beta.
+- installer beta.3 yang committed, pushed, dirilis, dan terpasang.
 
 Masalah berikutnya bukan "apakah ada game". Masalah berikutnya adalah
 **membuktikan bahwa build ini aman, menyenangkan, mudah dipahami, dan layak
