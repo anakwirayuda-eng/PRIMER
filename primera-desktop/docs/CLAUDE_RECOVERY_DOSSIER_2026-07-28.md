@@ -168,7 +168,9 @@ https://github.com/anakwirayuda-eng/PRIMER.git
 3209795 feat(beta): complete clickable clinical provenance
 ```
 
-- Branch lokal dan remote sama-sama menunjuk `3209795` saat verifikasi.
+- Branch lokal dan remote sama-sama sudah memuat `3209795`. HEAD dapat lebih
+  baru karena checkpoint dossier yang hanya mengubah dokumentasi; itu tidak
+  membuat installer gameplay harus dibangun ulang.
 - Tag `test-beta-3209795` menunjuk commit tersebut.
 - Installer adalah GitHub Release asset, bukan file yang di-commit ke Git;
   `dist/` tetap di-ignore dengan sengaja.
