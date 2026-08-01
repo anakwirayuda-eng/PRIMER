@@ -25,6 +25,15 @@ export function Igd() {
   }, [igd?.fase])
   const [rumahSakitId, setRumahSakitId] = useState('')
   useEffect(() => setRumahSakitId(''), [igd?.kasusId])
+  // Bug hunt ronde-2 2026-08-01: tak satu pun tombol aksi IGD dulu di-disable
+  // setelah diklik (beda dari Kegiatan.tsx yang sudah mengunci pilihan) —
+  // klik ganda fisik/switch mouse aus/ghost-click yang tiba SANGAT cepat bisa
+  // mendarat di tombol BARU yang menempati posisi sama begitu React mengganti
+  // total blok JSX fase (dispatch sinkron, guard aksiIgd hanya menolak replay
+  // id LAMA, bukan klik nyasar ke kontrol baru yang valid). Reset begitu fase/
+  // langkah benar-benar berganti — jadi tombol fase BARU tetap bisa diklik.
+  const [terkirim, setTerkirim] = useState(false)
+  useEffect(() => setTerkirim(false), [igd?.fase, igd?.langkahIndex])
   const kasusMaybe = igd ? PACK.kasusIgd[igd.kasusId] : undefined
   const langkahMaybe = igd && kasusMaybe ? kasusMaybe.langkah[igd.langkahIndex] : undefined
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
@@ -145,7 +154,11 @@ export function Igd() {
                 <button
                   key={p.id}
                   className="igd__opsi"
-                  onClick={() => dispatch({ type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: p.id })}
+                  disabled={terkirim}
+                  onClick={() => {
+                    setTerkirim(true)
+                    dispatch({ type: 'AKSI_IGD', langkahId: langkah.id, pilihanId: p.id })
+                  }}
                 >
                   {p.label}
                 </button>
@@ -163,10 +176,24 @@ export function Igd() {
               Kualitas kompresi menentukan peluang kembalinya sirkulasi.
             </p>
             <div className="igd__pilihan">
-              <button className="igd__opsi igd__opsi--rjp" onClick={() => dispatch({ type: 'RJP_IGD', berkualitas: true })}>
+              <button
+                className="igd__opsi igd__opsi--rjp"
+                disabled={terkirim}
+                onClick={() => {
+                  setTerkirim(true)
+                  dispatch({ type: 'RJP_IGD', berkualitas: true })
+                }}
+              >
                 RJP berkualitas: kompresi 100–120×/menit, kedalaman 5 cm, minim interupsi
               </button>
-              <button className="igd__opsi" onClick={() => dispatch({ type: 'RJP_IGD', berkualitas: false })}>
+              <button
+                className="igd__opsi"
+                disabled={terkirim}
+                onClick={() => {
+                  setTerkirim(true)
+                  dispatch({ type: 'RJP_IGD', berkualitas: false })
+                }}
+              >
                 Kompresi seadanya sambil menunggu bantuan
               </button>
             </div>
@@ -187,13 +214,21 @@ export function Igd() {
             <div className="igd__pilihan">
               <button
                 className="igd__opsi igd__opsi--rjp"
-                onClick={() => dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })}
+                disabled={terkirim}
+                onClick={() => {
+                  setTerkirim(true)
+                  dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'ulang_abcde' })
+                }}
               >
                 Evaluasi ulang ABCDE + monitor + oksigen sebelum transportasi
               </button>
               <button
                 className="igd__opsi"
-                onClick={() => dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'langsung_rujuk' })}
+                disabled={terkirim}
+                onClick={() => {
+                  setTerkirim(true)
+                  dispatch({ type: 'STABILISASI_LANJUTAN_IGD', pilihanId: 'langsung_rujuk' })
+                }}
               >
                 Langsung siapkan rujukan — waktu mendesak, stabilisasi lanjutan bisa menunggu
               </button>
@@ -242,21 +277,29 @@ export function Igd() {
             <div className="igd__pilihan">
               <button
                 className="igd__opsi"
-                disabled={!rsRujukan}
+                disabled={!rsRujukan || terkirim}
                 title={!rsRujukan ? 'Pilih rumah sakit tujuan dulu pada daftar di atas.' : undefined}
-                onClick={() =>
+                onClick={() => {
+                  setTerkirim(true)
                   dispatch({
                     type: 'DISPOSISI_IGD',
                     jenis: 'rujuk',
                     ...(rsRujukan ? { rumahSakitId: rsRujukan.id } : {}),
                   })
-                }
+                }}
               >
                 {rsRujukan
                   ? `Rujuk ke ${rsRujukan.nama} (${rsRujukan.jarakMenit} menit)`
                   : 'Pilih rumah sakit tujuan sebelum merujuk'}
               </button>
-              <button className="igd__opsi" onClick={() => dispatch({ type: 'DISPOSISI_IGD', jenis: 'pulang' })}>
+              <button
+                className="igd__opsi"
+                disabled={terkirim}
+                onClick={() => {
+                  setTerkirim(true)
+                  dispatch({ type: 'DISPOSISI_IGD', jenis: 'pulang' })
+                }}
+              >
                 Observasi lalu pulangkan dari Puskesmas
               </button>
             </div>
