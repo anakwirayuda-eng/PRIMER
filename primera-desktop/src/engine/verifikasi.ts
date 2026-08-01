@@ -662,7 +662,25 @@ function fnv1a(teks: string): string {
 // menjadi bagian fingerprint, setara dengan provenance IGD. Perubahan label,
 // URL, tahun, jenis, cakupan, atau batas interpretasi kini tidak dapat lolos
 // sebagai build identik meski aturan skor tidak berubah.
-export const REVISI_ENGINE = 61
+// 62 (2026-08-01 - batch kenyamanan gameplay S3-S7, satu bump utk semua):
+// (S4) slot formatif Karier hari 3+ menjadi undian seeded 0.5/hari dan tak
+// lagi menimpa slot jaminan pity-timer 4A/belum-pernah; auto-resolve
+// LANJUTKAN mengecualikan pasien formatif dari undian autoBermasalah &
+// jadwal terlantar (governance: formatif tak menyentuh tally). (S5) ambang
+// pengali kapitasi proksi PIS-PK dikalibrasi ulang 0.20/0.30 → 0.18/0.24
+// (ceiling praktis iksDesa ~0.24-0.26); driftProlanis langkah turun DM
+// 10..30 → 15..35 + parameter `skala` (kredit parsial klinik grade B = 0.5).
+// (S6) silaturahmi akhir pekan dibatasi rapport awal (trust <
+// TRUST_PLAFON_SILATURAHMI=4) dan akurasi delegasi kader Posyandu 0.8 → 0.65
+// (PELUANG_KADER_BENAR). (S7) pembukaan Posyandu & Respons KLB diumumkan
+// surat pada hari bukanya; janji PIS-PK yang seluruhnya ditepati mengirim
+// surat kabar_warga positif; lima flag mati `*BaruTerbuka` dihapus. (S3)
+// surat ambang burnout 40/70 (latch flags suratBurnout40/70) di ekor urutan
+// surat harian + hitungSkor mengekspos rincian.rasioProlanisTerkontrol
+// (opsional). Semua mengubah komposisi antrian/inbox/flags/skor replay —
+// replay dossier build lama melenceng → wajib jatuh ke
+// "tidak_dapat_diverifikasi", bukan divonis tidak sah palsu.
+export const REVISI_ENGINE = 62
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

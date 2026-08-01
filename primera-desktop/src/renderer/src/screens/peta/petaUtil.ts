@@ -107,10 +107,28 @@ export function warnaPetak(rw: RwState): string {
  * Sehat" (<0.5, klasifikasiIks) sudah beda warna, tapi warna saja mudah
  * terlewat sekilas mata — tambah metafora visual "cuaca desa memburuk" yang
  * lebih terasa. Hanya utk RW yg SUDAH tersurvei (abu-abu = belum ada data,
- * bukan buruk).
+ * bukan buruk). S9-peta-visual: juga digerbang !dataTipis — cakupan survei
+ * < 30% belum layak dapat alarm cuaca (lihat dataTipis di bawah).
  */
 export function mendungPetak(rw: RwState): boolean {
-  return rw.kkTersurvei > 0 && rw.iks < 0.5
+  return rw.kkTersurvei > 0 && rw.iks < 0.5 && !dataTipis(rw)
+}
+
+/** Ambang cakupan survei: di bawah ini petak digambar "data tipis" (pudar). */
+export const AMBANG_DATA_TIPIS = 0.3
+
+/**
+ * S9-peta-visual: hari-hari awal kader baru menyurvei 2-4 dari ~25 KK per RW
+ * (prosesHarianKader), tapi warna petak langsung sepekat RW bercakupan penuh —
+ * Hari 2 seluruh petak tersurvei merah tua seragam, terbaca "desa gawat"
+ * padahal datanya baru secuil. Cakupan < AMBANG_DATA_TIPIS → petak diberi
+ * kelas `peta-petak--tipis` (isi pudar + garis putus, PetaDesa.css) dan
+ * mendung ditahan: warna pekat & alarm cuaca harus DIPEROLEH lewat cakupan
+ * survei — senafas pilar "setiap angka diperoleh". Murni presentasional:
+ * IKS & klasifikasi engine tidak berubah sedikit pun.
+ */
+export function dataTipis(rw: RwState): boolean {
+  return rw.kkTersurvei > 0 && rw.totalKk > 0 && rw.kkTersurvei / rw.totalKk < AMBANG_DATA_TIPIS
 }
 
 /* ---------------------------------------------------------------------------

@@ -40,6 +40,6 @@ describe('<Igd /> — keputusan tujuan rujukan', () => {
     )!
     pasangDisposisi(kasus.id)
     render(<Igd />)
-    expect(screen.queryByText('Prototipe lab')).not.toBeInTheDocument()
+    expect(screen.queryByText('Kasus uji coba')).not.toBeInTheDocument()
   })
 })

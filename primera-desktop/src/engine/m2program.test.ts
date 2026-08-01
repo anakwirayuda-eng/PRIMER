@@ -9,7 +9,7 @@ import type { GameState } from './state'
 import type { Action } from './actions'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
-import { kartuPosyandu } from './kegiatan'
+import { kartuPosyandu, buatKegiatan, delegasiKegiatan, nilaiKegiatan, PELUANG_KADER_BENAR } from './kegiatan'
 import { Rng } from './core/rng'
 import { hitungSkor } from './scoring'
 import {
@@ -107,6 +107,24 @@ describe('M2 — unlock & guard', () => {
     expect(s.lapanganTerpakai).toBe(true)
     const r = ev(s, { type: 'MULAI_POSYANDU', rw: 2 })
     expect(r.events.some((e) => e.type === 'ERROR_AKSI')).toBe(true) // slot habis
+  })
+
+  it('S7 — surat pengumuman menyertai pembukaan Posyandu & KLB; flag mati tak ditulis lagi', () => {
+    const sPosyandu = siangHari(HARI_BUKA_POSYANDU.karier)
+    expect(sPosyandu.inbox.some((m) => m.jenis === 'sistem' && m.judul.includes('Posyandu dibuka'))).toBe(true)
+    expect(sPosyandu.flags['posyanduBaruTerbuka']).toBeUndefined()
+    expect(sPosyandu.flags['petaBaruTerbuka']).toBeUndefined()
+    expect(sPosyandu.flags['kunjunganBaruTerbuka']).toBeUndefined()
+
+    const sKlb = siangHari(HARI_BUKA_KLB.karier)
+    expect(sKlb.inbox.some((m) => m.jenis === 'sistem' && m.judul.includes('Respons KLB dibuka'))).toBe(true)
+    expect(sKlb.flags['klbBaruTerbuka']).toBeUndefined()
+    expect(sKlb.flags['prolanisBaruTerbuka']).toBeUndefined()
+
+    // Mode Ujian: hari buka terskala (D5/D15), surat tetap terbit.
+    const sUjian = siangHariMode(HARI_BUKA_KLB.ujian, 'ujian')
+    expect(sUjian.inbox.some((m) => m.judul.includes('Posyandu dibuka'))).toBe(true)
+    expect(sUjian.inbox.some((m) => m.judul.includes('Respons KLB dibuka'))).toBe(true)
   })
 
   it('layar TETAP "kegiatan" setelah sesi selesai, agar KartuHasil sempat dirender (CODEX audit UI/UX 2026-07-10, #5)', () => {
@@ -261,6 +279,37 @@ describe('D5 — Posyandu ILP "5 Langkah" (migrasi 2026-07-11): pool 12-kartu, 1
       if (r.state.kegiatan) terlihat.add(r.state.kegiatan.kartu[0]!.id)
     }
     expect(terlihat.size).toBeGreaterThan(1)
+  })
+})
+
+describe('S6-degenerate (b) — delegasi kader: tradeoff nyata, bukan jalan pintas', () => {
+  it('konstanta peluang kader = 0.65 — UI menurunkan teks risikonya dari sini', () => {
+    expect(PELUANG_KADER_BENAR).toBe(0.65)
+    expect(Math.round((1 - PELUANG_KADER_BENAR) * 100)).toBe(35)
+  })
+
+  it('akurasi delegasi penuh 4 kartu ≈ 65%/kartu lintas 200 seed (deterministik per seed)', () => {
+    let benar = 0
+    let total = 0
+    for (let seed = 0; seed < 200; seed++) {
+      const kg = buatKegiatan('posyandu', kartuPosyandu(new Rng(seed, 'dek-uji')), { rw: 1 })
+      const hasil = nilaiKegiatan(delegasiKegiatan(kg, new Rng(seed, 'delegasi-uji')))
+      benar += hasil.benar
+      total += hasil.total
+    }
+    expect(total).toBe(800)
+    const akurasi = benar / total
+    // Binomial(800, 0.65): ±0.05 ≈ 3σ — regresi balik ke 0.8 mendarat ≈0.80,
+    // jauh di atas batas atas 0.70.
+    expect(akurasi).toBeGreaterThan(0.6)
+    expect(akurasi).toBeLessThan(0.7)
+  })
+
+  it('delegasi replay-safe: seed sama → jawaban kader identik', () => {
+    const dek = kartuPosyandu(new Rng(7, 'dek-uji'))
+    const a = delegasiKegiatan(buatKegiatan('posyandu', dek, { rw: 2 }), new Rng(7, 'delegasi-uji'))
+    const b = delegasiKegiatan(buatKegiatan('posyandu', dek, { rw: 2 }), new Rng(7, 'delegasi-uji'))
+    expect(a.jawaban).toEqual(b.jawaban)
   })
 })
 

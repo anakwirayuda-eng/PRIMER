@@ -7,6 +7,7 @@
 
 import { useGame } from '../store'
 import { hitungSkor } from '@engine/director'
+import { MIN_RUJUKAN_GUILLOTINE } from '@engine/scoring'
 import { HARI_STASE } from '@engine/paketUjian'
 import type { Musim } from '@engine/state'
 import './Rapor.css'
@@ -20,6 +21,12 @@ interface BarisRincian {
   label: string
   nilai: string
   waspada?: boolean
+  /**
+   * Penjelasan hover/fokus via TooltipInstan global (data-tip). Bantuan
+   * visual — angka & status inti tetap di `nilai` (terbaca SR); preseden
+   * data-tip polos sudah ada di file ini (badge "Belum ada aktivitas").
+   */
+  tip?: string
 }
 
 function KartuDimensi({
@@ -76,7 +83,7 @@ function KartuDimensi({
         ) : (
           rincian.map((r) => (
             <li key={r.label} className="rapor-dimensi__baris teks-kecil">
-              <span className="teks-lembut">{r.label}</span>
+              <span className="teks-lembut" data-tip={r.tip}>{r.label}</span>
               <span className={`mono${r.waspada ? ' rapor-dimensi__waspada' : ''}`}>{r.nilai}</span>
             </li>
           ))
@@ -110,6 +117,19 @@ export function Rapor() {
 
   const guillotineAman = r.guillotine >= 1
   const potonganGuillotine = Math.round((1 - r.guillotine) * 100)
+  // S3 burnout-rapor (c): "guillotine" adalah jargon desain — pemain hanya
+  // perlu tahu ADA ambang RRNS 5% yang memotong skor klinik, dan bahwa vonis
+  // baru berjalan setelah sampel rujukan cukup (konstanta dari scoring.ts,
+  // bukan salinan angka). Dulu "guillotine aman" juga MENYESATKAN di sampel
+  // kecil: <3 rujukan selalu tampil "aman" walau RRNS 100%.
+  const rrnsDivonis = t.rujukanTotal >= MIN_RUJUKAN_GUILLOTINE
+
+  // S3 burnout-rapor (d): jurnal refleksi — tulisan pemain (TULIS_REFLEKSI,
+  // blok sore) dulu ditelan state tanpa pernah bisa dibaca ulang. Terbaru dulu.
+  const entriRefleksi = Object.entries(state.refleksi)
+    .map(([hari, teks]) => ({ hari: Number(hari), teks: teks.trim() }))
+    .filter((e) => e.teks !== '')
+    .sort((a, b) => b.hari - a.hari)
 
   // CODEX audit UI/UX 2026-07-10 (#23): gradeDariTotal menstempel A-D tanpa
   // syarat "ada cukup data" — Hari 1 pagi (tally nol) tapi manajemen/resiliensi
@@ -126,9 +146,15 @@ export function Rapor() {
     t.igdMeninggal > 0 ||
     t.autoBermasalah > 0
 
-  const barisTally: { label: string; nilai: string; waspada?: boolean }[] = [
+  const barisTally: BarisRincian[] = [
     { label: 'Pasien ditangani', nilai: `${t.totalPasien}` },
     { label: 'Diagnosis benar', nilai: `${t.diagnosisBenar}` },
+    {
+      label: 'Diserahkan ke insting — bermasalah',
+      tip: 'Pasien antrean yang tak sempat kamu periksa diselesaikan "instingmu" saat blok pagi ditutup. Yang bermasalah ikut menyeret akurasi diagnosis (masuk penyebut UKP) dan bisa kembali besok dengan kondisi memburuk — makin sering terjadi saat burnout tinggi.',
+      nilai: `${t.autoBermasalah}`,
+      waspada: t.autoBermasalah > 0,
+    },
     { label: 'Stempel TEGAK (benar / salah)', nilai: `${t.tegakBenar} / ${t.tegakSalah}` },
     { label: 'Stempel SUSPEK (benar / salah)', nilai: `${t.suspekBenar} / ${t.suspekSalah}` },
     {
@@ -155,6 +181,12 @@ export function Rapor() {
       nilai: `${t.kunjunganTotal} (${t.kunjunganBerhasil})`,
     },
     { label: 'Diusir warga', nilai: `${t.kunjunganDiusir}` },
+    {
+      label: 'Peluang UKM diabaikan (apatis)',
+      tip: 'Kunjungan rumah yang selesai tanpa satu pun teknik komunikasi tepat ATAU temuan terverifikasi — kesempatan pembinaan yang terbuang. Setiap kejadian memotong 2 poin UKM.',
+      nilai: `${t.apathy}`,
+      waspada: t.apathy > 0,
+    },
     { label: 'Karma terjadi / dicegah', nilai: `${t.karmaTerjadi} / ${t.karmaDicegah}` },
     { label: 'Hari kelelahan', nilai: `${t.hariKelelahan}` },
   ]
@@ -203,11 +235,14 @@ export function Rapor() {
             rincian={[
               { label: 'Akurasi diagnosis', nilai: `${koma(r.akurasiDiagnosis, 0)}%` },
               {
-                label: 'RRNS (rujukan non-spesialistik)',
-                nilai: guillotineAman
-                  ? `${koma(r.rrns)}% · guillotine aman`
-                  : `${koma(r.rrns)}% · terpangkas ${potonganGuillotine}%`,
-                waspada: !guillotineAman,
+                label: 'Rujukan non-spesialistik (RRNS)',
+                tip: 'RRNS = porsi rujukanmu untuk kasus kompetensi 4A yang semestinya tuntas di Puskesmas. Lewat 5%, skor klinik ikut terpotong — makin tinggi rasionya makin dalam potongannya, habis total di 25%. Vonis baru berjalan setelah minimal 3 rujukan.',
+                nilai: !rrnsDivonis
+                  ? `${koma(r.rrns)}% · belum divonis (rujukan < ${MIN_RUJUKAN_GUILLOTINE})`
+                  : guillotineAman
+                    ? `${koma(r.rrns)}% · dalam batas aman (≤5%)`
+                    : `${koma(r.rrns)}% · skor klinik terpotong ${potonganGuillotine}%`,
+                waspada: rrnsDivonis && !guillotineAman,
               },
               { label: 'Kalibrasi stempel (tegak/suspek)', nilai: `${koma(r.kalibrasi, 0)}%` },
               { label: 'Mutu proses SOAP', nilai: `${koma(r.prosesKlinis, 0)}%` },
@@ -227,6 +262,20 @@ export function Rapor() {
               {
                 label: 'Kunjungan berhasil',
                 nilai: `${t.kunjunganBerhasil}/${t.kunjunganTotal}`,
+              },
+              {
+                label: 'Peserta Prolanis terkendali',
+                tip: 'Fraksi roster Prolanis (hipertensi & DM) yang parameternya terkendali — menyumbang 20% skor UKM. Peserta yang tak pernah kamu sesi tetap dihitung tak terkendali, jadi mengabaikan Prolanis bukan strategi gratis.',
+                nilai:
+                  r.rasioProlanisTerkontrol === undefined
+                    ? '—'
+                    : state.prolanis.roster.length === 0
+                      ? 'belum ada peserta'
+                      : `${koma(r.rasioProlanisTerkontrol * 100, 0)}%`,
+                waspada:
+                  r.rasioProlanisTerkontrol !== undefined &&
+                  state.prolanis.roster.length > 0 &&
+                  r.rasioProlanisTerkontrol < 0.5,
               },
               { label: 'Kualitas komunikasi (MI + SAJI)', nilai: `${koma(r.kualitasMi, 0)}%` },
             ]}
@@ -277,12 +326,14 @@ export function Rapor() {
         {/* ---- Tally + kalender musim ----------------------------------------- */}
         <div className="rapor__bawah">
           <section className="kartu rapor-tally">
-            <span className="judul-seksi">Tally Berjalan</span>
+            {/* Copy-audit 2026-08-01: "Tally" = nama field engine, bukan bahasa
+                rapor yang dibaca dosen/mahasiswa. */}
+            <span className="judul-seksi">Rekapitulasi Berjalan</span>
             <table className="rapor-tally__tabel">
               <tbody>
                 {barisTally.map((b) => (
                   <tr key={b.label}>
-                    <td className="teks-kecil teks-lembut">{b.label}</td>
+                    <td className="teks-kecil teks-lembut" data-tip={b.tip}>{b.label}</td>
                     <td
                       className={`mono teks-kecil rapor-tally__angka${b.waspada ? ' rapor-dimensi__waspada' : ''}`}
                     >
@@ -354,6 +405,28 @@ export function Rapor() {
             </section>
           )}
         </div>
+
+        {/* S3 burnout-rapor (d): jurnal refleksi — read-back tulisan pemain.
+            <details> tertutup default: ini arsip pribadi, bukan dasbor angka. */}
+        <details className="kartu rapor-refleksi">
+          <summary className="judul-seksi rapor-refleksi__summary">
+            Jurnal Refleksi{entriRefleksi.length > 0 ? ` — ${entriRefleksi.length} catatan` : ''}
+          </summary>
+          {entriRefleksi.length === 0 ? (
+            <p className="teks-kecil teks-lembut rapor-refleksi__kosong">
+              Belum ada catatan. Refleksi yang kamu tulis di Meja Kerja saat sore akan terkumpul di sini.
+            </p>
+          ) : (
+            <ul className="rapor-refleksi__daftar">
+              {entriRefleksi.map((e) => (
+                <li key={e.hari} className="rapor-refleksi__entri">
+                  <span className="mono teks-xs teks-lembut">Hari {e.hari}</span>
+                  <p className="teks-kecil rapor-refleksi__teks">{e.teks}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </details>
       </div>
     </div>
   )

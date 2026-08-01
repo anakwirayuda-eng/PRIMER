@@ -200,6 +200,7 @@ describe('P1 - governance prototipe 137', () => {
     }
 
     for (const hari of [3, 15, 45, 80]) {
+      let seedDenganFormatif = 0
       for (let seed = 1; seed <= 80; seed++) {
         const antrian = susunAntrianHarian(
           { ...awal, hari, tutorialAktif: false },
@@ -213,8 +214,56 @@ describe('P1 - governance prototipe 137', () => {
         )
         expect(formatif.length).toBeLessThanOrEqual(1)
         expect(antrian.length - formatif.length).toBeGreaterThan(0)
+        if (formatif.length === 1) seedDenganFormatif += 1
       }
+      // S4-formatif-slot: formatif kini undian seeded 0.5/hari — lintas 80
+      // seed wajib ADA hari ber-formatif dan ADA hari tanpa formatif
+      // (bukan kepastian harian seperti sebelumnya).
+      expect(seedDenganFormatif).toBeGreaterThan(0)
+      expect(seedDenganFormatif).toBeLessThan(80)
     }
+  })
+
+  it('S4: pasien formatif yang dilewatkan LANJUTKAN tidak menyentuh autoBermasalah/jadwal; pasien resmi tetap kena undian', () => {
+    // Ambil kasus formatif secara dinamis (adjudikasi 137 sedang berjalan —
+    // jangan hardcode id yang bisa berubah status physician_approved).
+    const idFormatif = Object.values(PACK.kasus)
+      .filter((kasus) => kasusFormatif(kasus))
+      .map((kasus) => kasus.id)
+      .sort()[0]!
+    const rngPasien = new Rng(2718, 's4-auto-formatif')
+    const buatAntrian = (kasusId: string, jumlah: number) =>
+      Array.from({ length: jumlah }, () => buatPasienDariKasus(kasusId, PACK, rngPasien))
+    const dasar: GameState = {
+      ...buildInitialState('Audit Auto Formatif', 2718, PACK),
+      tutorialAktif: false,
+      burnout: 100, // pBermasalah 0.45 — 20 undian lama nyaris pasti kena >= 1
+    }
+
+    const murniFormatif = advance(
+      { ...dasar, klinik: { ...dasar.klinik, antrian: buatAntrian(idFormatif, 20) } },
+      { type: 'LANJUTKAN' },
+      PACK,
+    ).state
+    expect(murniFormatif.tally.autoBermasalah).toBe(0)
+    expect(murniFormatif.klinik.autoHariIni.bermasalah).toBe(0)
+    expect(murniFormatif.jadwal.filter((j) => j.id.startsWith('jadwal_terlantar_'))).toHaveLength(0)
+    // `jumlah` tetap informasional (rekap "instingmu"), bukan tally — sengaja tak berubah.
+    expect(murniFormatif.klinik.autoHariIni.jumlah).toBe(20)
+
+    const campuran = advance(
+      {
+        ...dasar,
+        klinik: {
+          ...dasar.klinik,
+          antrian: [...buatAntrian(idFormatif, 20), ...buatAntrian('ispa_common_cold', 20)],
+        },
+      },
+      { type: 'LANJUTKAN' },
+      PACK,
+    ).state
+    // Filter tidak mematikan mekanismenya: pasien resmi tetap bisa bermasalah.
+    expect(campuran.tally.autoBermasalah).toBeGreaterThan(0)
   })
 
   it('grade harian mengabaikan kegagalan prototipe tetapi tetap menampilkan umpan baliknya', () => {

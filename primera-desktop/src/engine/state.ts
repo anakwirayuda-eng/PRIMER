@@ -943,5 +943,12 @@ export interface Skor4Dimensi {
     kualitasMi: number // 0-100
     kalibrasi: number // 0-100 (stempel dua tinta)
     prosesKlinis: number // 0-100 (rerata mutu anamnesis, pemeriksaan, terapi, edukasi)
+    /**
+     * 0-1 — fraksi roster Prolanis yang parameternya terkendali (suku 20% UKM,
+     * predikat kanonik `prolanisTerkendali`). OPSIONAL: snapshot beku
+     * `tamat.skor` dari save sebelum field ini lahir tidak memilikinya —
+     * UI wajib fallback ('—'), jangan menganggapnya 0.
+     */
+    rasioProlanisTerkontrol?: number
   }
 }

@@ -199,7 +199,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                         <p className="mk__episode-masalah">{episode.problemLabel}</p>
                       </div>
                       <dl className="mk__episode-pemilik">
-                        <dt>Pemilik aksi</dt>
+                        <dt>Penanggung jawab</dt>
                         <dd>{LABEL_OWNER[episode.owner]}</dd>
                         <dt>Diperbarui</dt>
                         <dd>Hari {episode.updatedDay}</dd>

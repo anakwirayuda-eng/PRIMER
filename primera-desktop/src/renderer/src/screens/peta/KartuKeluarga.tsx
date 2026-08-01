@@ -173,9 +173,16 @@ export function KartuKeluarga({
       </div>
 
       <div className="peta-keluarga__indikator">
+        {/* Anti-sumpek 2026-08-01: dulu SEMUA 12 chip indikator dirender
+            (termasuk yang belum ber-data) — baris terpadat di seluruh game
+            (~12 pill mono dalam ~350px). Kini hanya indikator BER-DATA yang
+            tampil sebagai chip; sisanya dilipat jadi satu chip "belum terdata"
+            dengan tooltip daftar lengkap. Chip kosong putus-putus tetap dipakai
+            saat SEMUA indikator belum terdata agar kartu tak tampak "sehat". */}
         {SEMUA_INDIKATOR_PISPK.map((ind) => {
           const nilai = kel.indikator[ind]
           if (nilai.status === 'na') return null // tidak berlaku secara demografis
+          if (nilai.sumber === 'belum') return null // dilipat ke chip ringkasan
           const label = LABEL_INDIKATOR[ind]
           return (
             <span key={ind} className={kelasChipIndikator(nilai)} data-tip={judulChipIndikator(nilai, label.penuh)}>
@@ -183,15 +190,33 @@ export function KartuKeluarga({
             </span>
           )
         })}
+        {(() => {
+          const belum = SEMUA_INDIKATOR_PISPK.filter(
+            (ind) => kel.indikator[ind].status !== 'na' && kel.indikator[ind].sumber === 'belum',
+          )
+          if (belum.length === 0) return null
+          return (
+            <span
+              className="chip chip--kosong"
+              data-tip={`Belum ada data (${belum.length}): ${belum
+                .map((ind) => LABEL_INDIKATOR[ind].penuh)
+                .join('; ')}. Kader atau kunjunganmu yang mengisinya.`}
+            >
+              {SIMBOL_SUMBER.belum} {belum.length} belum terdata
+            </span>
+          )
+        })()}
       </div>
 
       <div className="baris baris--antara peta-keluarga__aksi">
         <div className="baris">
-          <span className="chip" data-tip="Progres kunjungan berseri (arc) keluarga ini.">
+          {/* Copy-audit 2026-08-01: "arc" = jargon desain naratif — pemain
+              membaca "pendampingan". */}
+          <span className="chip" data-tip="Kemajuan rangkaian kunjungan untuk keluarga ini.">
             Kunjungan {Math.min(kel.arcIndex, totalKunjunganArc)}/{totalKunjunganArc}
           </span>
-          {kel.arcSelesai === 'berhasil' && <span className="chip chip--daun">ARC BERHASIL</span>}
-          {kel.arcSelesai === 'gagal' && <span className="chip chip--merah">ARC GAGAL</span>}
+          {kel.arcSelesai === 'berhasil' && <span className="chip chip--daun">PENDAMPINGAN TUNTAS</span>}
+          {kel.arcSelesai === 'gagal' && <span className="chip chip--merah">PENDAMPINGAN GAGAL</span>}
         </div>
         <div className="baris">
           {/* CODEX audit UI/UX 2026-07-10 (#15): ketiga tombol aksi kartu ini
@@ -234,7 +259,7 @@ export function KartuKeluarga({
             data-tip={alasanKunjungan ?? `Berangkat kunjungan rumah — memakai ${biayaStamina} stamina.`}
             aria-label={`Kunjungi ${content.namaKeluarga}`}
           >
-            Kunjungi (siang · {biayaStamina} pip)
+            Kunjungi (siang · {biayaStamina} stamina)
           </button>
         </div>
       </div>

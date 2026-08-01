@@ -8,7 +8,7 @@ import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
 import { BuktiKlinis } from '../../components/BuktiKlinis'
 import { TeksTerbaca } from '../../components/TeksTerbaca'
-import { DuelDiagnosis, TeachBack } from './RefleksiKlinis'
+import { DuelDiagnosis, TeachBack, duelTersedia, teachBackTersedia } from './RefleksiKlinis'
 import { LABEL_REGION, namaDiagnosis } from './util'
 
 interface Props {
@@ -57,6 +57,19 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
     !hasil.diagnosisBenar ||
     hasil.kepastianDiagnosisSesuai === false ||
     (gapFormatif !== undefined && Object.values(gapFormatif).some((daftar) => daftar.length > 0))
+
+  // S1-panelhasil: grup "Pelajari Lebih Dalam" — hitung hanya topik yang
+  // benar-benar tampil supaya angka di summary jujur. Duel/teach-back tetap
+  // di luar jalur tutorial (gate !tutorial yang sama seperti sebelumnya).
+  const adaDuel = !tutorial && duelTersedia(hasil.kasusId, dex)
+  const adaTeachBack = !tutorial && teachBackTersedia(hasil.kasusId)
+  const jumlahBelajar =
+    (kasus?.mutiaraEbm ? 1 : 0) +
+    (kasus?.catatanRealita ? 1 : 0) +
+    (kasus?.panduanResmi ? 1 : 0) +
+    (kasus?.sumber?.length ? 1 : 0) +
+    (adaDuel ? 1 : 0) +
+    (adaTeachBack ? 1 : 0)
 
   const barisSkor: { label: string; nilai: number; dinilai?: boolean }[] = [
     { label: 'Anamnesis', nilai: hasil.skorAnamnesis },
@@ -110,10 +123,29 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         ref={ref}
         className="modal klinik-hasil"
         tabIndex={-1}
-        onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
         aria-label="Hasil konsultasi"
+        onClick={(e) => e.stopPropagation()}
+        // S1-panelhasil: Enter = "Pasien Berikutnya", HANYA bila fokus masih di
+        // kontainer dialog itu sendiri (target === currentTarget — kondisi awal
+        // useFocusTrap fokusKontainer, M14 #14b). Bila fokus di tombol/summary/
+        // tautan/input, event ini cuma bubbling (target ≠ currentTarget) — Enter
+        // milik elemen itu, jangan dobel-aksi. !e.repeat menepis Enter yang
+        // masih tertahan dari layar sebelumnya (keydown pemicunya terjadi
+        // SEBELUM modal ini mount, repeat berikutnya ber-flag repeat=true).
+        onKeyDown={(e) => {
+          if (
+            e.key === 'Enter' &&
+            !e.repeat &&
+            e.target === e.currentTarget &&
+            !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey &&
+            bolehPanggil
+          ) {
+            e.preventDefault()
+            onSelesai(true)
+          }
+        }}
       >
         <div className="klinik-hasil__atas">
           {/* CODEX: pasien tutorial dituntun lewat jalur MINIMAL (1 pertanyaan,
@@ -148,13 +180,13 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
                 className={`chip ${hasil.formativePrototype ? 'chip--kunyit' : 'chip--biru'}`}
                 data-tip={
                   hasil.formativePrototype
-                    ? 'Konten ini belum diadjudikasi dokter. Skor ditampilkan untuk belajar, tetapi tally, Dex, ekonomi, dan konsekuensi formal dibekukan.'
-                    : 'Kasus pilot Karier ini sudah melewati adjudikasi dokter.'
+                    ? 'Kasus ini belum ditinjau final oleh dokter penelaah. Skornya ditampilkan untuk belajar, tetapi tidak dicatat ke rapor, Buku Saku, keuangan Puskesmas, maupun konsekuensi lanjutan.'
+                    : 'Kasus baru ini sudah ditinjau dan disetujui dokter penelaah.'
                 }
               >
                 {hasil.formativePrototype
                   ? 'Latihan formatif — progres tidak dicatat'
-                  : 'Pilot Karier — disetujui dokter'}
+                  : 'Kasus baru — ditinjau dokter'}
               </span>
             )}
           </div>
@@ -208,7 +240,11 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
                     style={{ width: dinilai ? `${nilai}%` : '0%' }}
                   />
                 </div>
-                <span className="mono teks-xs">{dinilai ? nilai : 'N/A'}</span>
+                {/* Copy-audit 2026-08-01: "N/A" polos → strip ber-tooltip
+                    (aria-label meter di atas sudah menjelaskan utk SR). */}
+                <span className="mono teks-xs" data-tip={dinilai ? undefined : 'Tidak dinilai pada kasus ini'}>
+                  {dinilai ? nilai : '—'}
+                </span>
               </div>
             ))}
           </div>
@@ -292,56 +328,66 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
           <TeksTerbaca teks={hasil.clue} className="teks-kecil" />
         </div>
 
-        {/* M11: lapisan pengayaan — mutiara EBM "temuan bisa menyesatkan" +
-            catatan realita FKTP. Dibaca langsung dari PACK (murni display, tak
-            lewat engine/skor). Muncul hanya bila kasus menyediakannya.
-            Sapuan UI/UX 2026-07-16: kini <details> — debrief tak lagi tembok
-            teks 4 folder; Panduan Resmi default terbuka (baku penilaian),
-            dua lainnya dilipat. Isi tetap di DOM (jsdom: test getByText aman). */}
-        {kasus?.mutiaraEbm && (
-          <details className="folder klinik-hasil__ebm">
-            <summary className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</summary>
-            <TeksTerbaca teks={kasus.mutiaraEbm} className="teks-kecil" />
+        {/* M11 → S1-panelhasil (2026-08-01): seluruh lapisan pengayaan (mutiara
+            EBM "temuan bisa menyesatkan", realita FKTP, panduan RESMI Kemenkes,
+            referensi kasus, duel/teach-back) kini hidup di SATU grup <details>
+            "Pelajari Lebih Dalam" yang default TERLIPAT — debrief hasil-dulu,
+            pengayaan menyusul sesuai minat. Panduan Resmi tetap default TERBUKA
+            di dalam grup (jangkar baku penilaian). Semua isi tetap di DOM
+            (jsdom: test getByText/getByRole aman). */}
+        {jumlahBelajar > 0 && (
+          <details className="klinik-hasil__belajar">
+            <summary className="judul-seksi">
+              Pelajari Lebih Dalam
+              <span className="klinik-hasil__belajar-jumlah mono">{jumlahBelajar} topik</span>
+            </summary>
+            <div className="klinik-hasil__belajar-isi">
+              {kasus?.mutiaraEbm && (
+                <details className="folder klinik-hasil__ebm">
+                  <summary className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</summary>
+                  <TeksTerbaca teks={kasus.mutiaraEbm} className="teks-kecil" />
+                </details>
+              )}
+              {kasus?.catatanRealita && (
+                <details className="folder klinik-hasil__realita">
+                  <summary className="judul-seksi">🏥 Realita FKTP</summary>
+                  <TeksTerbaca teks={kasus.catatanRealita} className="teks-kecil" />
+                </details>
+              )}
+              {/* M11.5: lapisan otoritas ke-3 — panduan RESMI Kemenkes (PPK
+                  1186/2022), terpisah dari clue (EBM internasional) & realita.
+                  Jangkar penilaian → satu-satunya yang default TERBUKA di grup. */}
+              {kasus?.panduanResmi && (
+                <details className="folder klinik-hasil__panduan" open>
+                  <summary className="judul-seksi">📜 Panduan Resmi Kemenkes</summary>
+                  <TeksTerbaca teks={kasus.panduanResmi} className="teks-kecil" />
+                  {/* §3b (M10.5, docs/M10_5_FIDELITAS.md): koreksi medikolegal — PPK
+                      bukan "hukum mutlak anti-EBM". Diktum VI/VII KMK 1186/2022
+                      sendiri mengizinkan deviasi ber-EBM yg terdokumentasi. */}
+                  <p className="teks-kecil teks-lembut klinik-hasil__panduan-catatan">
+                    Panduan ini menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila
+                    didukung alasan klinis kuat dan didokumentasikan, sesuai KMK 1186/2022 Diktum VI/VII.
+                  </p>
+                </details>
+              )}
+              {kasus?.sumber?.length ? (
+                <BuktiKlinis
+                  judul="Referensi kasus"
+                  namaKasus={kasus.nama}
+                  ringkasan={kasus.clue}
+                  sumber={kasus.sumber}
+                  tampilkanRingkasan={false}
+                  className="klinik-hasil__sumber"
+                />
+              ) : null}
+              {(adaDuel || adaTeachBack) && (
+                <div className="klinik-hasil__refleksi" aria-label="Latihan refleksi klinis opsional">
+                  <DuelDiagnosis key={`duel-${hasil.kasusId}`} kasusId={hasil.kasusId} dex={dex} />
+                  <TeachBack key={`teachback-${hasil.kasusId}`} kasusId={hasil.kasusId} />
+                </div>
+              )}
+            </div>
           </details>
-        )}
-        {kasus?.catatanRealita && (
-          <details className="folder klinik-hasil__realita">
-            <summary className="judul-seksi">🏥 Realita FKTP</summary>
-            <TeksTerbaca teks={kasus.catatanRealita} className="teks-kecil" />
-          </details>
-        )}
-        {/* M11.5: lapisan otoritas ke-3 — panduan RESMI Kemenkes (PPK
-            1186/2022), terpisah dari clue (EBM internasional) & realita. Sama
-            kelas display-only. Muncul hanya bila kasus menyediakannya. */}
-        {kasus?.panduanResmi && (
-          <details className="folder klinik-hasil__panduan" open>
-            <summary className="judul-seksi">📜 Panduan Resmi Kemenkes</summary>
-            <TeksTerbaca teks={kasus.panduanResmi} className="teks-kecil" />
-            {/* §3b (M10.5, docs/M10_5_FIDELITAS.md): koreksi medikolegal — PPK
-                bukan "hukum mutlak anti-EBM". Diktum VI/VII KMK 1186/2022
-                sendiri mengizinkan deviasi ber-EBM yg terdokumentasi. */}
-            <p className="teks-kecil teks-lembut klinik-hasil__panduan-catatan">
-              Panduan ini menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila
-              didukung alasan klinis kuat dan didokumentasikan, sesuai KMK 1186/2022 Diktum VI/VII.
-            </p>
-          </details>
-        )}
-        {kasus?.sumber?.length ? (
-          <BuktiKlinis
-            judul="Referensi kasus"
-            namaKasus={kasus.nama}
-            ringkasan={kasus.clue}
-            sumber={kasus.sumber}
-            tampilkanRingkasan={false}
-            className="klinik-hasil__sumber"
-          />
-        ) : null}
-
-        {!tutorial && (
-          <div className="klinik-hasil__refleksi" aria-label="Latihan refleksi klinis opsional">
-            <DuelDiagnosis key={`duel-${hasil.kasusId}`} kasusId={hasil.kasusId} dex={dex} />
-            <TeachBack key={`teachback-${hasil.kasusId}`} kasusId={hasil.kasusId} />
-          </div>
         )}
 
         <div className="baris klinik-hasil__aksi">
@@ -350,7 +396,12 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
           </button>
           <span className="tumbuh" />
           {bolehPanggil ? (
-            <button className="tombol tombol--utama tombol--besar" onClick={() => onSelesai(true)}>
+            <button
+              className="tombol tombol--utama tombol--besar"
+              onClick={() => onSelesai(true)}
+              aria-keyshortcuts="Enter"
+              data-tip="Pintasan: Enter (saat fokus masih di dialog)"
+            >
               Pasien Berikutnya &rarr;
             </button>
           ) : (

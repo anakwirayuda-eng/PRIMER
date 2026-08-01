@@ -208,6 +208,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
             // bisa diklik" & melanggar invarian kunci-penuh. Dikunci spt
             // kedua tab lain (satu-satunya tab tercapai selama tutorial).
             disabled={tutorialAktif}
+            title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
           >
             Resep ({enc.resep.length})
           </button>
@@ -264,6 +265,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                       aria-pressed
                       onClick={() => dispatch({ type: 'HAPUS_OBAT', obatId: id })}
                       disabled={tutorialAktif}
+                      title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
                       data-tip="Klik untuk mencoret dari resep."
                     >
                       ✓ {o.nama}
@@ -333,6 +335,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
                     aria-expanded={terbuka}
                     onClick={() => toggleLaciObat(kel)}
                     disabled={tutorialAktif}
+                    title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
                   >
                     <span className="klinik-eduk__laci-panah" aria-hidden="true">
                       {terbuka ? '▾' : '▸'}
@@ -421,7 +424,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
               )
             })}
             <span className="teks-xs teks-lembut">
-              Antibiotik tanpa indikasi tercatat oleh Dinkes (stewardship) &mdash; resepkan bijak.
+              Antibiotik tanpa indikasi tercatat oleh Dinkes (penatagunaan antimikroba) &mdash; resepkan bijak.
             </span>
           </div>
         )}
@@ -701,6 +704,7 @@ export function DeckTerapi({ enc, dispatch, lastEvents, eventTick, tutorialAktif
           className={`tombol tombol--utama tombol--besar${sorotLanjut ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
           disabled={tutorialAktif && !sorotLanjut}
+          title={tutorialAktif && !sorotLanjut ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
         >
           Selesai Terapi &mdash; ke Disposisi &rarr;
         </button>

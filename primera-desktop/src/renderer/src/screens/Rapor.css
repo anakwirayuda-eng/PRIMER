@@ -230,3 +230,45 @@
   border-top: 1px dashed var(--border-halus);
   padding-top: var(--sp-2);
 }
+
+/* -- Jurnal Refleksi (S3 burnout-rapor d) ------------------------------------ */
+.rapor-refleksi__summary {
+  cursor: pointer;
+}
+
+.rapor-refleksi__summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+}
+
+.rapor-refleksi__kosong,
+.rapor-refleksi__daftar {
+  margin-top: var(--sp-3);
+}
+
+.rapor-refleksi__daftar {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-3);
+}
+
+.rapor-refleksi__entri {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-05);
+  border-bottom: 1px dashed var(--border-halus);
+  padding-bottom: var(--sp-2);
+}
+
+.rapor-refleksi__entri:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+/* Teks bebas pemain: hormati baris baru, jangan biarkan kata panjang
+   menjebol lebar kartu. */
+.rapor-refleksi__teks {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}

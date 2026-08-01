@@ -74,6 +74,10 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     render(<MejaKerja />)
     const user = userEvent.setup()
 
+    // S2-mejakerja-sore: slot kini terlipat <details> tertutup — buka dulu
+    // lewat summary (jsdom ≥24 mendukung toggle details/summary).
+    await user.click(screen.getByText('Arsip Manual — simpan ke slot'))
+
     // Audit premium 2026-07-23: tooltip slot kini data-tip (tooltip instan
     // global), bukan title native — cari via nama tombol + assert tip-nya.
     const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
@@ -106,6 +110,9 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     render(<MejaKerja />)
     const user = userEvent.setup()
 
+    // S2-mejakerja-sore: buka lipatan Arsip Manual dulu.
+    await user.click(screen.getByText('Arsip Manual — simpan ke slot'))
+
     const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
     await user.click(tombolSlot)
 
@@ -126,6 +133,9 @@ describe('<MejaKerja /> — konfirmasi timpa slot arsip manual', () => {
     useGame.setState({ state: s, slots: [], meta: null, arsip: null, sedangMemuat: false })
     render(<MejaKerja />)
     const user = userEvent.setup()
+
+    // S2-mejakerja-sore: buka lipatan Arsip Manual dulu.
+    await user.click(screen.getByText('Arsip Manual — simpan ke slot'))
 
     const tombolSlot = screen.getByRole('button', { name: /Slot 1/ })
     expect(tombolSlot).toHaveAttribute('data-tip', expect.stringContaining('Simpan ke slot1'))

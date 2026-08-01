@@ -101,12 +101,12 @@ describe('<MejaKerja /> — navigasi surat keluarga', () => {
     expect(terapkan).toBeDisabled()
 
     await user.click(screen.getByRole('checkbox', { name: /Rekonsiliasi terapi/ }))
-    await user.click(screen.getByRole('checkbox', { name: /Tetapkan kontrol/ }))
+    await user.click(screen.getByRole('checkbox', { name: /Tetapkan jadwal kontrol/ }))
     await user.click(screen.getByRole('checkbox', { name: /Hubungkan pemantauan/ }))
     expect(terapkan).toBeEnabled()
     await user.click(terapkan)
 
     expect(useGame.getState().state?.careEpisodes[0]?.referral?.stage).toBe('acted')
-    expect(screen.getByText(/sudah diadopsi ke care plan FKTP/i)).toBeInTheDocument()
+    expect(screen.getByText(/sudah masuk ke rencana perawatan FKTP/i)).toBeInTheDocument()
   })
 })

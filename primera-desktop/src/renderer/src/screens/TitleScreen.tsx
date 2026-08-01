@@ -459,7 +459,7 @@ export function TitleScreen() {
                     title={
                       info.compatible
                         ? undefined
-                        : `Arsip ${info.slot} berasal dari rilis ${info.contentRelease} dan hanya dapat dibuka dengan build yang sama.`
+                        : `Arsip ${info.slot.replace('slot', 'Slot ')} dibuat pada versi konten yang berbeda, jadi hanya bisa dibuka dengan versi aplikasi yang sama.`
                     }
                     data-tip={`Muat arsip ${info.slot}.`}
                   >

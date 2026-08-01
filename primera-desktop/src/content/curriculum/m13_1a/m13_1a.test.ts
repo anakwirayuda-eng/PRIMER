@@ -16,6 +16,7 @@ import {
   IGD_ADJUDICATION_CONTENT_RELEASE,
   P1_OBSERVATION_CONTENT_RELEASE,
   CLINICAL_PROVENANCE_CONTENT_RELEASE,
+  GAMEPLAY_COMFORT_CONTENT_RELEASE,
   encounterArchetypeAktif,
   releasePolicyAktif,
   ukmScenarioAktif,
@@ -167,7 +168,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   })
 
   it('aktif hanya di Career: PACK, release, karma, dan isolasi mode konsisten', () => {
-    expect(CONTENT_RELEASE).toBe(CLINICAL_PROVENANCE_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(GAMEPLAY_COMFORT_CONTENT_RELEASE)
     expect(CONTENT_RELEASE_ORDER).toEqual([
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
@@ -182,6 +183,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       IGD_ADJUDICATION_CONTENT_RELEASE,
       P1_OBSERVATION_CONTENT_RELEASE,
       CLINICAL_PROVENANCE_CONTENT_RELEASE,
+      GAMEPLAY_COMFORT_CONTENT_RELEASE,
     ])
     for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) {
       expect(tanpaSumber(PACK.kasus[kasus.id]!), kasus.id).toEqual(
@@ -451,7 +453,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
     expect(fraktur.tatalaksana.obatBenar).toEqual(expect.arrayContaining(['vaksin_td', 'tetanus_imunoglobulin_250']))
     expect(fraktur.clue).toMatch(/tanpa probing, irigasi, debridement/i)
     expect(fraktur.mutiaraEbm).toMatch(/jangan melakukan mini-washout/i)
-    expect(fraktur.panduanResmi).toMatch(/PNPK Fraktur 270\/2019.*NICE NG37.*BOAST/is)
+    expect(fraktur.panduanResmi).toMatch(/PNPK Fraktur 270\/2019.*ACS.*BOAST/is)
     expect(fraktur.catatanRealita).toMatch(/tidak membuktikan.*satu antibiotik.*semua fraktur terbuka/is)
     expect(fraktur.stabilisasiWajib).toEqual([
       'balut_luka_steril',

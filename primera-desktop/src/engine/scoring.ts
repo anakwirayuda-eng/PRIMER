@@ -14,6 +14,13 @@ function clamp(nilai: number, min: number, max: number): number {
 }
 
 /**
+ * S3 burnout-rapor: ambang sampel guillotine diekspor supaya Rapor bisa
+ * berkata jujur "belum divonis" tanpa menyalin angka 3 yang bisa drift
+ * diam-diam dari aturan aslinya di hitungSkor.
+ */
+export const MIN_RUJUKAN_GUILLOTINE = 3
+
+/**
  * DeepThink ronde-2 (Hukum Bilangan Kecil): `rasioKunjungan`/`kualitasMi` lama
  * pakai `Math.max(1, total)` sbg penyebut — mahasiswa yang kunjungan SEKALI lalu
  * berhasil mengunci rasio 100% SELAMANYA dgn usaha nyaris nol, setara dgn yang
@@ -29,7 +36,9 @@ const EKSPEKTASI_KUNJUNGAN_KARIER = 24
 const EKSPEKTASI_KUNJUNGAN_UJIAN = 8
 
 function gradeDariTotal(total: number): { grade: Skor4Dimensi['grade']; gradeLabel: string } {
-  if (total >= 85) return { grade: 'A', gradeLabel: 'PTT Teladan' }
+  // Copy-audit 2026-08-01: "PTT" (Pegawai Tidak Tetap) = program yang sudah
+  // dihapus 2017 dan tak pernah dieja di mana pun — cukup "Teladan".
+  if (total >= 85) return { grade: 'A', gradeLabel: 'Teladan' }
   if (total >= 70) return { grade: 'B', gradeLabel: 'Kompeten' }
   if (total >= 55) return { grade: 'C', gradeLabel: 'Lulus' }
   return { grade: 'D', gradeLabel: 'Perlu Pembinaan' }
@@ -50,7 +59,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const rrns = t.rujukanTotal > 0 ? (t.rujukanNonSpesialistik / t.rujukanTotal) * 100 : 0
   // Guillotine butuh sampel: satu rujukan keliru di hari pertama tidak boleh
   // memusnahkan seluruh UKP (denominator kecil meledakkan rasio).
-  const guillotineAktif = t.rujukanTotal >= 3
+  const guillotineAktif = t.rujukanTotal >= MIN_RUJUKAN_GUILLOTINE
   const guillotine = guillotineAktif ? Math.max(0, 1 - Math.max(0, rrns - 5) * 0.05) : 1
   const totalDiagnosis = t.tegakBenar + t.tegakSalah + t.suspekBenar + t.suspekSalah
   const kalibrasi =
@@ -214,6 +223,10 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
       kualitasMi: kualitasKomunikasi,
       kalibrasi,
       prosesKlinis,
+      // S3 burnout-rapor: suku 20% UKM ini dulu tak kasat mata di Rapor.
+      // Opsional di tipe — snapshot beku tamat.skor dari save lama tak
+      // memilikinya (UI wajib fallback, jangan anggap 0).
+      rasioProlanisTerkontrol,
     },
   }
 }
@@ -295,13 +308,16 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
     // kini janji yang DITEPATI — kualitas MI, ketepatan hipotesis COM-B,
     // pergeseran trust, dan catatan penulis skenario utk pilihan yg meleset.
     if (!kontakAwalSah) {
+      // Copy-audit 2026-08-01: dulu dump telemetri ber-· dengan istilah mentah
+      // ("trust", "hipotesis hambatan") — kini kalimat utuh bahasa pemain.
       const rincianIngatkan = kunjungan.kualitasIngatkan === undefined
         ? ''
-        : ` · Ingatkan ${kunjungan.kualitasIngatkan}/100 · komunikasi SAJI ${kunjungan.kualitasSaji}/100`
+        : ` Fase Ingatkan ${kunjungan.kualitasIngatkan}/100, komunikasi SAJI ${kunjungan.kualitasSaji}/100.`
       catatan.push(
-        `Rincian kunjungan: kualitas dialog MI ${kunjungan.kualitasMi}/100${rincianIngatkan} · hipotesis hambatan ` +
-          `${kunjungan.hipotesisBenar ? 'TEPAT' : 'MELESET'} · trust ${kunjungan.trustDelta >= 0 ? '+' : ''}${kunjungan.trustDelta} · ` +
-          `${kunjungan.indikatorTerverifikasi.length} indikator terverifikasi.`,
+        `Rincian kunjungan — mutu wawancara motivasional (MI): ${kunjungan.kualitasMi}/100.${rincianIngatkan} ` +
+          `Dugaan hambatanmu ${kunjungan.hipotesisBenar ? 'tepat' : 'meleset'}. ` +
+          `Kepercayaan keluarga ${kunjungan.trustDelta >= 0 ? 'naik ' : 'turun '}${Math.abs(kunjungan.trustDelta)}. ` +
+          `${kunjungan.indikatorTerverifikasi.length} indikator berhasil kamu verifikasi sendiri.`,
       )
     }
     for (const cat of kunjungan.catatanPedagogis ?? []) {
@@ -312,7 +328,7 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
   // Karma yang meletus hari ini (surat IGD subuh) + firasat jatuh tempo dekat.
   for (const surat of state.inbox) {
     if (surat.jenis === 'karma' && surat.hari === state.hari) {
-      catatan.push(`${surat.judul} — baca suratnya di Kotak Masuk. Ini konsekuensi bernama.`)
+      catatan.push(`${surat.judul} — baca suratnya di Kotak Masuk. Ini buah dari keputusan yang pernah kamu ambil.`)
     }
   }
   for (const j of state.jadwal) {
@@ -334,7 +350,7 @@ export function ringkasanHarian(state: GameState): { grade: string; catatan: str
   if (catatan.length === 0 && hasilResmi.length > 0) {
     catatan.push('Hari berjalan mulus. Istirahatlah — besok pagi antrian sudah menunggu.')
   } else if (catatan.length === 0) {
-    catatan.push('Belum ada encounter resmi yang dapat dinilai hari ini.')
+    catatan.push('Belum ada pasien resmi yang bisa dinilai hari ini.')
   }
 
   return { grade, catatan }

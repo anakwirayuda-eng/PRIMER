@@ -322,6 +322,46 @@ describe('susunAntrianHarian', () => {
     expect(munculLangka).toBe(200)
   })
 
+  it('S4-formatif-slot: slot formatif diundi 0.5/hari dan tidak menimpa slot jaminan pity-timer', () => {
+    // Fixture pity di atas + kasus formatif. Saat pity menulis slot terakhir
+    // (langka4a), formatif WAJIB pindah ke slot pertama — dulu keduanya menulis
+    // indeks terakhir sehingga jaminan cakupan 4A mati tiap hari ber-formatif.
+    const pack = buatPack([
+      buatKasus('lama_1'),
+      buatKasus('lama_2'),
+      buatKasus('lama_3'),
+      buatKasus('langka4a', { prevalensi: 'rendah' }),
+      buatKasus('proto_a', { activationStatus: 'lab_prototype_unadjudicated' }),
+      buatKasus('proto_b', { activationStatus: 'lab_prototype_unadjudicated' }),
+    ])
+    const dex = {
+      lama_1: { kasusId: 'lama_1', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+      lama_2: { kasusId: 'lama_2', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+      lama_3: { kasusId: 'lama_3', ditangani: 5, benar: 5, bintang: 3, terakhirHari: 9 },
+    }
+    let hariDenganFormatif = 0
+    let formatifDiSlotPertama = 0
+    for (let seed = 0; seed < 200; seed++) {
+      const antrian = susunAntrianHarian(buatState({ hari: 10, dex }), pack, new Rng(seed, 'pity-formatif'))
+      const semuaProto = antrian.filter((p) => p.kasusId.startsWith('proto_'))
+      expect(semuaProto.length).toBeLessThanOrEqual(1)
+      const idxFormatif = antrian.findIndex((p) => p.kasusId.startsWith('proto_'))
+      if (idxFormatif >= 0) hariDenganFormatif += 1
+      if (idxFormatif === 0 && antrian.length >= 2) {
+        // Indeks 0 hanya dipakai ketika pity BARU SAJA menulis slot terakhir —
+        // slot jaminan itu wajib selamat ('langka4a' = satu-satunya 4A belum-pernah,
+        // rng.pick pity pasti memilihnya).
+        formatifDiSlotPertama += 1
+        expect(antrian[antrian.length - 1]!.kasusId).toBe('langka4a')
+      }
+    }
+    // Undian 0.5/hari: lintas 200 seed harus ada hari ber-formatif DAN tanpa formatif.
+    expect(hariDenganFormatif).toBeGreaterThan(0)
+    expect(hariDenganFormatif).toBeLessThan(200)
+    // Relokasi pity-protection benar-benar tereksekusi (assertion di atas bukan vakum).
+    expect(formatifDiSlotPertama).toBeGreaterThan(0)
+  })
+
   // CODEX audit pasca-GM (2026-07-13, temuan #10a): kluster (`clusterAktif`,
   // surveilans.ts) dihitung dari `state.desa.surveilans`, yang RW pasiennya
   // diisi dari stream FLAVOR (pribadi per-mahasiswa) — bukan kurikulum. Di mode
@@ -813,7 +853,7 @@ describe('hitungSkor — profil adversarial', () => {
     )
     expect(sempurna.total).toBeCloseTo(100)
     expect(sempurna.grade).toBe('A')
-    expect(sempurna.gradeLabel).toBe('PTT Teladan')
+    expect(sempurna.gradeLabel).toBe('Teladan')
 
     const kosong = hitungSkor(buatState())
     // Belum ada data UKP/UKM → hanya Manajemen 15 + Resiliensi 15 = 30 → D.

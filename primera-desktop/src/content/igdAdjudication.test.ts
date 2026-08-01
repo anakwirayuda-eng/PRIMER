@@ -7,7 +7,7 @@ import {
   CONTENT_RELEASE,
   CONTENT_RELEASE_ORDER,
   IGD_ADJUDICATION_CONTENT_RELEASE,
-  CLINICAL_PROVENANCE_CONTENT_RELEASE,
+  GAMEPLAY_COMFORT_CONTENT_RELEASE,
   encounterArchetypeAktif,
 } from './pack'
 
@@ -42,8 +42,8 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
     expect(approved).toHaveLength(14)
     expect(Object.values(PACK.kasusIgd).filter((kasus) => kasus.activationStatus)).toHaveLength(0)
     expect(CONTENT_RELEASE_ORDER).toContain(IGD_ADJUDICATION_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE).toBe(CLINICAL_PROVENANCE_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(CLINICAL_PROVENANCE_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(GAMEPLAY_COMFORT_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(GAMEPLAY_COMFORT_CONTENT_RELEASE)
   })
 
   it('tidak mengubah id pilihan, kunci benar, atau efek stabilitas dari prototipe yang direview', () => {

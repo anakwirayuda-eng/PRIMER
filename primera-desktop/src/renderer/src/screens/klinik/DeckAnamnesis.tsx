@@ -161,6 +161,7 @@ export function DeckAnamnesis({ enc, kasus, dispatch, lastEvents, eventTick, tut
           className={`tombol tombol--utama tombol--besar${sorotSelesai ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
           disabled={tutorialAktif && !sorotSelesai}
+          title={tutorialAktif && !sorotSelesai ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
         >
           Selesai Anamnesis &mdash; ke Pemeriksaan &rarr;
         </button>

@@ -35,7 +35,15 @@ export const CLASS_READINESS_CONTENT_RELEASE = 'class-readiness-2026-07-22'
 export const IGD_ADJUDICATION_CONTENT_RELEASE = 'igd-adjudication-2026-07-22'
 export const P1_OBSERVATION_CONTENT_RELEASE = 'p1-observation-governance-2026-07-28'
 export const CLINICAL_PROVENANCE_CONTENT_RELEASE = 'clinical-provenance-2026-07-28'
-export const CONTENT_RELEASE = CLINICAL_PROVENANCE_CONTENT_RELEASE
+/**
+ * Batch kenyamanan gameplay 2026-08-01 (S1-S10 + copy-audit): debrief
+ * hasil-dulu, surat ambang burnout/pembukaan program/janji-ditepati, slot
+ * formatif diundi & bebas tax, ambang IKS/Prolanis terjangkau, silaturahmi
+ * & delegasi kader di-rebalance, plus penyapuan bahasa pemain (jargon
+ * internal → bahasa manusia). Decision-facing → rilis konten baru.
+ */
+export const GAMEPLAY_COMFORT_CONTENT_RELEASE = 'gameplay-comfort-2026-08-01'
+export const CONTENT_RELEASE = GAMEPLAY_COMFORT_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -52,6 +60,7 @@ export const CONTENT_RELEASE_ORDER = [
   IGD_ADJUDICATION_CONTENT_RELEASE,
   P1_OBSERVATION_CONTENT_RELEASE,
   CLINICAL_PROVENANCE_CONTENT_RELEASE,
+  GAMEPLAY_COMFORT_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

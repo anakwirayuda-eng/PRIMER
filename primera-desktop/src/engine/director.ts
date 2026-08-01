@@ -290,7 +290,9 @@ export function susunAntrianHarian(
   // Konten belum diadjudikasi tetap tersedia sebagai latihan Karier, tetapi
   // tidak boleh mendominasi antrean resmi hanya karena Dex-nya sengaja tidak
   // pernah bertambah. Slot inti selalu ditarik dari kasus teradjudikasi;
-  // mulai hari 3, paling banyak satu slot diganti latihan formatif.
+  // mulai hari 3, paling banyak satu slot diganti latihan formatif lewat
+  // undian seeded 0.5/hari — dan tak pernah menimpa slot jaminan kurikulum
+  // (S4-formatif-slot, lihat blok formatif di bawah).
   const formatif = semuaAktif.filter(kasusFormatif)
   const resmi = semuaAktif.filter((kasus) => !kasusFormatif(kasus))
   const semua = resmi.length > 0 ? resmi : semuaAktif
@@ -334,6 +336,10 @@ export function susunAntrianHarian(
   // karena kasus lain yang lebih sering muncul kebetulan terpilih lebih dulu).
   // Dipilih UNIFORM (bukan tertimbang prevalensi) khusus untuk slot ini — pity-
   // timer harus melawan bobot prevalensi, bukan tunduk padanya.
+  // S4-formatif-slot: catat bila slot jaminan (indeks terakhir) BARU SAJA
+  // ditulis pity-timer 4A / fallback belum-pernah di blok ini — slot formatif
+  // di bawah dilarang menimpanya.
+  let slotJaminanDiganti = false
   const ada4ABelumPernah = terpilih.some((k) => k.skdi === '4A' && state.dex[k.id] === undefined)
   if (!ada4ABelumPernah && terpilih.length > 0) {
     const belumPernah4A = semua.filter(
@@ -344,6 +350,7 @@ export function susunAntrianHarian(
     const sumber4A = belumPernah4AAman.length > 0 ? belumPernah4AAman : belumPernah4A
     if (sumber4A.length > 0) {
       terpilih[terpilih.length - 1] = rng.pick(sumber4A)
+      slotJaminanDiganti = true
     } else {
       // Tak ada 4A belum-pernah tersisa — jaminan cakupan lama tetap berlaku
       // untuk kasus non-4A (mis. rujukan 3A/3B) supaya library itu pun tersentuh.
@@ -355,6 +362,7 @@ export function susunAntrianHarian(
         if (belumPernah.length > 0) {
           const pengganti = rng.weighted(belumPernah.map((k) => ({ item: k, bobot: bobotKasus(k, state, berkluster, kategoriTersentuh) })))
           terpilih[terpilih.length - 1] = pengganti
+          slotJaminanDiganti = true
         }
       }
     }
@@ -384,22 +392,38 @@ export function susunAntrianHarian(
   }
 
   if (state.hari > 2 && resmi.length > 0 && formatif.length > 0 && terpilih.length > 0) {
-    const sudahAdaRujukan = terpilih.some((kasus) => kasus.harusDirujuk)
-    const kandidatFormatif = formatif.filter(
-      (kasus) => !sudahAdaRujukan || !kasus.harusDirujuk,
-    )
-    if (kandidatFormatif.length > 0) {
-      const pilihanFormatif = rng.weighted(
-        kandidatFormatif.map((kasus) => ({
-          item: kasus,
-          // Bobot epidemiologi tetap relevan, tetapi Dex sengaja diabaikan
-          // karena progres formatif memang dibekukan.
-          bobot:
-            (kasus.prevalensi === 'tinggi' ? 3 : kasus.prevalensi === 'rendah' ? 0.6 : 1.5) *
-            (kategoriTersentuh.has(kasus.kategori) ? 1 : 1.5),
-        })),
+    // S4-formatif-slot: dua perubahan disengaja (Karier saja — mode Ujian
+    // sudah return lebih awal; hari 1-2 tetap steril formatif via gerbang di atas):
+    //  1. Formatif kini UNDIAN seeded 0.5/hari, bukan kepastian harian. Draw
+    //     dilakukan TANPA SYARAT di sini supaya konsumsi rng blok ini tidak
+    //     bergantung hasil pity (pola draw stabil, mudah direplay/di-debug).
+    //  2. Formatif DILARANG menimpa slot jaminan yang baru ditulis pity-timer
+    //     4A / fallback belum-pernah — dulu keduanya menulis indeks terakhir,
+    //     mematikan jaminan cakupan kurikulum setiap hari ber-formatif. Bila
+    //     slot terakhir baru diganti, formatif pindah ke slot PERTAMA; antrian
+    //     < 2 slot berarti tak ada slot aman → formatif absen hari itu
+    //     (defensif: pada alur normal, pity yang terpicu mengimplikasikan
+    //     antrian >= 3, jadi cabang skip ini praktis tak tersentuh).
+    const undianFormatifLolos = rng.chance(0.5)
+    if (undianFormatifLolos && (!slotJaminanDiganti || terpilih.length >= 2)) {
+      const indeksFormatif = slotJaminanDiganti ? 0 : terpilih.length - 1
+      const sudahAdaRujukan = terpilih.some((kasus) => kasus.harusDirujuk)
+      const kandidatFormatif = formatif.filter(
+        (kasus) => !sudahAdaRujukan || !kasus.harusDirujuk,
       )
-      terpilih[terpilih.length - 1] = pilihanFormatif
+      if (kandidatFormatif.length > 0) {
+        const pilihanFormatif = rng.weighted(
+          kandidatFormatif.map((kasus) => ({
+            item: kasus,
+            // Bobot epidemiologi tetap relevan, tetapi Dex sengaja diabaikan
+            // karena progres formatif memang dibekukan.
+            bobot:
+              (kasus.prevalensi === 'tinggi' ? 3 : kasus.prevalensi === 'rendah' ? 0.6 : 1.5) *
+              (kategoriTersentuh.has(kasus.kategori) ? 1 : 1.5),
+          })),
+        )
+        terpilih[indeksFormatif] = pilihanFormatif
+      }
     }
   }
 

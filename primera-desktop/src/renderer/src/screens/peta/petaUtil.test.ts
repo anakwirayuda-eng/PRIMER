@@ -5,7 +5,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync, readdirSync, statSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { formatIks, mendungPetak, warnaPetak } from './petaUtil'
+import { dataTipis, formatIks, mendungPetak, warnaPetak } from './petaUtil'
 import { klasifikasiIks } from '@engine/pispk'
 import type { RwState } from '@engine/state'
 
@@ -55,6 +55,27 @@ describe('mendungPetak', () => {
 
   it('belum tersurvei (kkTersurvei=0) → tidak mendung meski iks rendah (itu "belum ada data", bukan "buruk")', () => {
     expect(mendungPetak(rw({ iks: 0, kkTersurvei: 0 }))).toBe(false)
+  })
+
+  it('data tipis (< 30% tersurvei) menahan mendung meski IKS rendah — alarm harus diperoleh lewat cakupan', () => {
+    expect(mendungPetak(rw({ iks: 0.2, kkTersurvei: 3 }))).toBe(false)
+    expect(mendungPetak(rw({ iks: 0.2, kkTersurvei: 10 }))).toBe(true)
+  })
+})
+
+describe('dataTipis — gerbang "data tipis" < 30% cakupan (S9-peta-visual)', () => {
+  it('belum tersurvei = abu-abu, BUKAN tipis', () => {
+    expect(dataTipis(rw({ kkTersurvei: 0 }))).toBe(false)
+  })
+
+  it('cakupan awal 3/25 (12%) → tipis; batas 7/25 (28%) tipis, 8/25 (32%) tidak', () => {
+    expect(dataTipis(rw({ kkTersurvei: 3, totalKk: 25 }))).toBe(true)
+    expect(dataTipis(rw({ kkTersurvei: 7, totalKk: 25 }))).toBe(true)
+    expect(dataTipis(rw({ kkTersurvei: 8, totalKk: 25 }))).toBe(false)
+  })
+
+  it('tepat 30% (6/20) → TIDAK tipis (ambang eksklusif)', () => {
+    expect(dataTipis(rw({ kkTersurvei: 6, totalKk: 20 }))).toBe(false)
   })
 })
 

@@ -371,23 +371,33 @@ export function DexSkdi() {
                   bisa dibuka ulang kapan saja per kasus. Murni display, dibaca
                   langsung dari PACK (sama kelas dgn clue) — TAK menyentuh skor/
                   sidik jari. Muncul hanya bila kasus menyediakannya. */}
+              {/* Anti-sumpek 2026-08-01: tiga lapisan ini dulu selalu terbuka —
+                  di kolom detail 320px menjadi tembok teks. Kini <details>
+                  terlipat (kontrak sama dgn folder PanelHasil); Mutiara Klinis
+                  di atas tetap selalu tampil sebagai jangkar pedagogis. */}
               {kasusTerpilih?.mutiaraEbm && (
-                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--ebm">
-                  <span className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</span>
+                <details className="dexskdi-detail__lapisan dexskdi-detail__lapisan--ebm">
+                  <summary className="dexskdi-detail__lapisan-kepala">
+                    <span className="judul-seksi">💡 Waspada — Temuan Bisa Menyesatkan</span>
+                  </summary>
                   <TeksTerbaca teks={kasusTerpilih.mutiaraEbm} className="teks-kecil" />
-                </div>
+                </details>
               )}
               {kasusTerpilih?.catatanRealita && (
-                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--realita">
-                  <span className="judul-seksi">🏥 Realita FKTP</span>
+                <details className="dexskdi-detail__lapisan dexskdi-detail__lapisan--realita">
+                  <summary className="dexskdi-detail__lapisan-kepala">
+                    <span className="judul-seksi">🏥 Realita FKTP</span>
+                  </summary>
                   <TeksTerbaca teks={kasusTerpilih.catatanRealita} className="teks-kecil" />
-                </div>
+                </details>
               )}
               {kasusTerpilih?.panduanResmi && (
-                <div className="dexskdi-detail__lapisan dexskdi-detail__lapisan--panduan">
-                  <span className="judul-seksi">📜 Panduan Resmi Kemenkes</span>
+                <details className="dexskdi-detail__lapisan dexskdi-detail__lapisan--panduan">
+                  <summary className="dexskdi-detail__lapisan-kepala">
+                    <span className="judul-seksi">📜 Panduan Resmi Kemenkes</span>
+                  </summary>
                   <TeksTerbaca teks={kasusTerpilih.panduanResmi} className="teks-kecil" />
-                </div>
+                </details>
               )}
 
               {kasusTerpilih !== undefined && (

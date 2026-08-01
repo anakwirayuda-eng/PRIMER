@@ -6,6 +6,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
+import { PELUANG_KADER_BENAR } from '@engine/kegiatan'
 import type { HasilKegiatan } from '@engine/kegiatan'
 import { acakUrutan } from '../utils/acakUrutan'
 import { sumberKegiatanUkm, tautanKegiatanUkm } from '@content/ukmCitations'
@@ -21,6 +22,11 @@ const JUDUL: Record<string, { label: string; sub: string }> = {
   prolanis: { label: 'PROLANIS', sub: 'Pemantauan penyakit kronis bulanan' },
   klb: { label: 'RESPONS KLB', sub: 'Penyelidikan & pengendalian wabah' },
 }
+
+// S6-degenerate (b): risiko keliru kader diturunkan LANGSUNG dari konstanta
+// engine — teks UI tak bisa lagi menjanjikan angka yang berbeda dari perilaku
+// sebenarnya (0.65 benar → 35% keliru).
+const RISIKO_KADER_PERSEN = Math.round((1 - PELUANG_KADER_BENAR) * 100)
 
 export function Kegiatan() {
   const state = useGame((s) => s.state)!
@@ -127,6 +133,7 @@ export function Kegiatan() {
                   key={p.id}
                   className={`kegiatan__opsi ${nadaKelas}`}
                   disabled={pilihanTerpilih !== null}
+                  title={pilihanTerpilih !== null ? 'Jawaban sudah dikunci — baca pembahasannya, lalu lanjut ke kartu berikutnya.' : undefined}
                   onClick={() => setPilihanTerpilih(p.id)}
                 >
                   {p.label}
@@ -165,9 +172,9 @@ export function Kegiatan() {
               <button
                 className="tombol tombol--senyap kegiatan__delegasi"
                 onClick={() => dispatch({ type: 'DELEGASI_KEGIATAN' })}
-                data-tip="Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar 20% keputusan bisa keliru."
+                data-tip={`Serahkan sisa meja ke kader. Cepat, tapi kader manusia — sekitar ${RISIKO_KADER_PERSEN}% keputusan bisa keliru. Sesi bermutu tetap butuh dampinganmu.`}
               >
-                Delegasikan sisa meja ke kader (risiko ~20% keliru)
+                Delegasikan sisa meja ke kader (risiko ~{RISIKO_KADER_PERSEN}% keliru)
               </button>
             )}
           </div>
@@ -204,7 +211,7 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
               ? 'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'
               : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
           {hasil.jenis === 'prolanis' &&
-            'Parameter tiap masalah peserta yang hadir bergerak menurut keputusanmu. Yang dua bulan berturut tak terkontrol akan berujung di poli — pantau bulan depan.'}
+            'Kondisi tiap peserta bergerak mengikuti keputusanmu. Peserta yang dua bulan berturut-turut tidak terkendali akan berakhir di poli — pantau bulan depan.'}
           {hasil.jenis === 'klb' &&
             (klbTuntas
               ? 'Kluster ditanggulangi: penularan di wilayah diputus, IKS RW terangkat.'

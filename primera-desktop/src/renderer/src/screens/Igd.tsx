@@ -90,9 +90,9 @@ export function Igd() {
               {kasus.activationStatus === 'lab_prototype_unadjudicated' && (
                 <span
                   className="chip chip--kunyit"
-                  data-tip="Kasus ini aktif hanya di lab pengembangan dan belum melewati adjudikasi klinis final."
+                  data-tip="Kasus ini masih dalam uji coba dan belum ditinjau final oleh dokter penelaah."
                 >
-                  Prototipe lab
+                  Kasus uji coba
                 </span>
               )}
             </div>
@@ -243,6 +243,7 @@ export function Igd() {
               <button
                 className="igd__opsi"
                 disabled={!rsRujukan}
+                title={!rsRujukan ? 'Pilih rumah sakit tujuan dulu pada daftar di atas.' : undefined}
                 onClick={() =>
                   dispatch({
                     type: 'DISPOSISI_IGD',

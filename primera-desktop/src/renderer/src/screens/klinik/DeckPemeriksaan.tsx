@@ -175,6 +175,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
                   aria-expanded={terbuka}
                   onClick={() => toggleKelompokLab(kel)}
                   disabled={tutorialAktif}
+                  title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
                 >
                   <span className="klinik-eduk__laci-panah" aria-hidden="true">
                     {terbuka ? '▾' : '▸'}
@@ -247,6 +248,7 @@ export function DeckPemeriksaan({ enc, dispatch, tutorialAktif = false }: Props)
           className={`tombol tombol--utama tombol--besar${sorotSelesai ? ' klinik-sorot-tutorial' : ''}`}
           onClick={() => dispatch({ type: 'LANJUT_FASE' })}
           disabled={tutorialAktif && !sorotSelesai}
+          title={tutorialAktif && !sorotSelesai ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
         >
           Selesai Pemeriksaan &mdash; ke Diagnosis &rarr;
         </button>

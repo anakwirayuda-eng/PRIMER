@@ -56,3 +56,29 @@ describe('<PetaSvg /> — label tak bertabrakan (CODEX audit UI/UX 2026-07-10, #
     expect(screen.getByRole('button', { name: /Kampung Uji Panjang Sekali/ })).toBeInTheDocument()
   })
 })
+
+describe('<PetaSvg /> — data tipis & label cakupan (S9-peta-visual)', () => {
+  it('cakupan < 30% → kelas peta-petak--tipis + caveat "data awal" di aria-label', () => {
+    const tipis = daftarRw().map((rw) => ({ ...rw, kkTersurvei: 3 }))
+    const { container } = render(
+      <PetaSvg daftarRw={tipis} terpilih={null} karmaRw={new Set()} onPilih={() => {}} />,
+    )
+    expect(container.querySelector('.peta-petak--tipis')).not.toBeNull()
+    expect(
+      screen.getByRole('button', { name: /data awal, belum representatif/ }),
+    ).toBeInTheDocument()
+  })
+
+  it('cakupan cukup (40%) → tanpa kelas tipis', () => {
+    const { container } = render(
+      <PetaSvg daftarRw={daftarRw()} terpilih={null} karmaRw={new Set()} onPilih={() => {}} />,
+    )
+    expect(container.querySelector('.peta-petak--tipis')).toBeNull()
+  })
+
+  it('sub-label dipendekkan "10/25 KK" — teks lama meluber keluar petak kecil', () => {
+    render(<PetaSvg daftarRw={daftarRw()} terpilih={null} karmaRw={new Set()} onPilih={() => {}} />)
+    expect(screen.getByText('10/25 KK')).toBeInTheDocument()
+    expect(screen.queryByText(/KK tersurvei 10\/25/)).not.toBeInTheDocument()
+  })
+})

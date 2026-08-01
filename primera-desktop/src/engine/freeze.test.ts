@@ -179,14 +179,23 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-28 (provenance klinis lengkap, REVISI_ENGINE 60 -> 61):
   // sumber poli 210/210 kini ikut fingerprint sehingga perubahan sitasi,
   // cakupan, atau catatan batas tidak dapat menyamar sebagai build identik.
-  'reducer.ts': '8f108340c8fe7ba9d9e8f02fc633766cef7d257e3c1061ae75369617da2fc11d',
+  // Unfreeze 2026-08-01 (batch kenyamanan gameplay S3-S7, REVISI_ENGINE
+  // 61 -> 62 — satu bump utk seluruh batch): slot formatif diundi 0.5/hari
+  // tanpa menimpa slot jaminan pity + auto-resolve bebas tax formatif
+  // (director/reducer); ambang kapitasi 0.18/0.24 + drift DM 15..35 + kredit
+  // parsial grade B Prolanis (reducer/kegiatan); silaturahmi plafon trust 4 +
+  // delegasi kader 0.65 (reducer/kegiatan); surat pembukaan Posyandu/KLB,
+  // surat janji-ditepati, surat ambang burnout 40/70 (reducer); hitungSkor
+  // mengekspos rincian.rasioProlanisTerkontrol opsional (scoring/state);
+  // verifikasi.ts ikut karena REVISI_ENGINE. Rincian di verifikasi.ts rev 62.
+  'reducer.ts': '78007a9a749a0167e3d75a67c179787964b3aed028bf00fdb9ae60d3ed9da5ae',
   'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
-  'scoring.ts': '39fa06fe80279a9780f5697de33ccd98eff0f9444d6932f4f0bf430a4695cf6c',
+  'scoring.ts': '9d1568e7a8b0801400b99da68dc680087f42828ac6d584be1d7320d658a1ca0a',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
-  'director.ts': '0ab438aed5be288c1ca9afd1f44ec9a4233c876e1587a17f40f2f07be7881ec9',
+  'director.ts': '9d1031feb28f246686ee4ab58b172bb358f9785ee0463fd17f925fcc2a7c3c9a',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -197,7 +206,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-23 (M13-137-04, REVISI_ENGINE 57 -> 58): suspek
   // meningokokus mendapat pola notifikasi, kontak erat, dan profilaksis
   // terkoordinasi sendiri alih-alih jatuh ke droplet generik.
-  'kegiatan.ts': '8325da25a646bfd4f6ba827b6d5a8cd643d0b971352ce10031332a69cee276b5',
+  'kegiatan.ts': '5c104088ead096f10fa9c5fbf54854ffa9e291fdfe6288fc4df72938e3a9520d',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
@@ -205,8 +214,8 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': 'b38143ffd94ea45058c618d60447c149d0a0f7161f2782614973999655b431ff',
-  'state.ts': '2a0abae08b13388dff33a8f59018c16c7a9438aa893f4e2c53e676cc22537836',
+  'verifikasi.ts': '4df72b68a11035971d24c8958b3c3738027f6040a78168ad7b6b5e0b33200528',
+  'state.ts': '5eff0197fe1e671edffd7d7c97ea261ef55c8289255abb09cf27db6644bf8db6',
   'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',

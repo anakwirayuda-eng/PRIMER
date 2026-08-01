@@ -36,12 +36,7 @@
 .sisrute-rs__kartu--dipilih {
   border-color: var(--kunyit-600);
   box-shadow: var(--ring-waspada);
-  background: var(--kunyit-100);
-}
-
-/* CODEX P2 audit 2026-07-04: --kunyit-100 tak diremap gelap — lihat Klinik.css. */
-[data-mode='malam'] .sisrute-rs__kartu--dipilih {
-  background: rgba(234, 165, 79, 0.16);
+  background: var(--wash-kunyit); /* token wash: malam otomatis benar */
 }
 
 /* Kartu RS yang spesialisasinya cocok kasus aktif — jangan dikunci, hanya disorot. */

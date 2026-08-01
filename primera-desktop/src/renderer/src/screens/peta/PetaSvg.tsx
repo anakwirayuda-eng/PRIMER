@@ -6,7 +6,7 @@
  */
 
 import type { RwState } from '@engine/state'
-import { formatIks, jalurOrganik, LABEL_JARAK, mendungPetak, PETAK_RW, warnaPetak } from './petaUtil'
+import { dataTipis, formatIks, jalurOrganik, LABEL_JARAK, mendungPetak, PETAK_RW, warnaPetak } from './petaUtil'
 
 interface Props {
   daftarRw: RwState[]
@@ -82,15 +82,21 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
         const bentuk = PETAK_RW[rw.nomor]
         if (!bentuk) return null
         const aktif = terpilih === rw.nomor
+        // S9-peta-visual: cakupan < 30% → petak pudar (kelas --tipis) supaya
+        // warna pekat tidak menakut-nakuti saat datanya baru 2-4 KK.
+        const tipis = dataTipis(rw)
         const labelPetak =
           `RW ${rw.nomor} — ${rw.nama} (jarak ${LABEL_JARAK[rw.jarak]}). ` +
           (rw.kkTersurvei > 0
-            ? `IKS agregat ${formatIks(rw.iks)}.`
+            ? `IKS agregat ${formatIks(rw.iks)}.` +
+              (tipis
+                ? ` Baru ${rw.kkTersurvei} dari ${rw.totalKk} KK tersurvei — data awal, belum representatif.`
+                : '')
             : 'Belum tersurvei kader — datanya masih abu-abu.')
         return (
           <g
             key={rw.nomor}
-            className={`peta-petak ${aktif ? 'peta-petak--aktif' : ''}`}
+            className={`peta-petak ${aktif ? 'peta-petak--aktif' : ''} ${tipis ? 'peta-petak--tipis' : ''}`}
             onClick={() => onPilih(rw.nomor)}
             // CODEX audit UI/UX 2026-07-10 (#10): <g onClick> polos tak masuk
             // tab order & tak punya semantik aktivasi — keyboard-only tak
@@ -123,8 +129,15 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
             <text x={bentuk.cx} y={bentuk.cy - 4} textAnchor="middle" className="peta-label">
               {`RW ${rw.nomor}`}
             </text>
+            {/* S9-peta-visual: teks lama "KK tersurvei 3/28" (±17 karakter mono
+                ≈122 unit viewBox) meluber keluar petak kecil (RW 4/RW 8, lebar
+                dalam ±95-105 unit). textAnchor sudah middle & font sudah di
+                lantai token (--text-xs — DILARANG lebih kecil, tokens.css);
+                karena teks SVG ikut skala viewBox, rasio luber sama di semua
+                lebar jendela — satu-satunya tuas: pendekkan teksnya. Kalimat
+                lengkap tetap di <title>/aria-label & panel detail RW. */}
             <text x={bentuk.cx} y={bentuk.cy + 13} textAnchor="middle" className="peta-label peta-label--sub">
-              {`KK tersurvei ${rw.kkTersurvei}/${rw.totalKk}`}
+              {`${rw.kkTersurvei}/${rw.totalKk} KK`}
             </text>
             {karmaRw.has(rw.nomor) && (
               <g className="peta-karma">

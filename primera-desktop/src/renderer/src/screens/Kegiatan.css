@@ -93,24 +93,14 @@
 
 .kegiatan__opsi--benar {
   border-color: var(--daun-700);
-  background: var(--daun-50);
+  background: var(--wash-daun); /* token wash: malam otomatis benar */
   opacity: 1;
 }
 
 .kegiatan__opsi--salah {
   border-color: var(--tinta-merah);
-  background: #f6ddda;
+  background: var(--wash-merah); /* token wash: malam otomatis benar */
   opacity: 1;
-}
-
-/* CODEX P2 audit 2026-07-04: --daun-50 & #f6ddda (spt chip--merah) tak
-   diremap gelap — teks umpan balik jatuh nyaris tak terbaca di mode malam. */
-[data-mode='malam'] .kegiatan__opsi--benar {
-  background: rgba(62, 208, 164, 0.16);
-}
-
-[data-mode='malam'] .kegiatan__opsi--salah {
-  background: rgba(239, 132, 120, 0.16);
 }
 
 .kegiatan__respons {

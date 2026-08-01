@@ -251,14 +251,14 @@ export function LaporanAkhir() {
               </div>
               <p className="teks-xs teks-lembut">
                 Dossier berisi identitas, skor, dan jejak seluruh keputusanmu — dosen memverifikasinya
-                dengan mereplay jejak di game yang sama (menu &ldquo;Verifikasi Dossier&rdquo; di layar judul).
-                Skor tidak bisa diubah lagi.
+                dengan memutar ulang jejak keputusanmu di aplikasi ini (menu &ldquo;Verifikasi
+                Dossier&rdquo; di layar judul). Skor tidak bisa diubah lagi.
               </p>
             </div>
 
             <div className="baris laporan__aksi">
               <button className="tombol" onClick={eksporArsip}>
-                Ekspor Arsip Save (JSON)
+                Unduh Arsip Permainan
               </button>
               <button className="tombol" onClick={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'rapor' })}>
                 Lihat Rapor Rinci

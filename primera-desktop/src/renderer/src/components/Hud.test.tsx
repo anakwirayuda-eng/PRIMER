@@ -153,4 +153,26 @@ describe('<Hud /> — aria-current tab aktif (CODEX audit UI/UX 2026-07-10, #16a
     expect(screen.getByRole('button', { name: /Meja Kerja/ })).toHaveAttribute('aria-current', 'page')
     expect(screen.getByRole('button', { name: /Klinik/ })).not.toHaveAttribute('aria-current')
   })
+
+  // S3 burnout-rapor (a): burnout kini kasat mata di HUD dengan tier warna
+  // yang mengikuti ambang mekanis 40/70 (reducer hariBaru).
+  it('chip burnout: angka + tier warna 0/45/72 mengikuti ambang mekanis', () => {
+    const state = pasangState()
+    const { unmount } = render(<Hud />)
+    const chip = document.querySelector('.hud__burnout')!
+    expect(chip.textContent).toContain('0')
+    expect(chip.classList.contains('chip--kunyit')).toBe(false)
+    expect(chip.classList.contains('chip--merah')).toBe(false)
+    expect(chip.getAttribute('data-tip')).toContain('stamina pagi')
+    unmount()
+
+    useGame.setState({ state: { ...state, burnout: 45 } })
+    const r45 = render(<Hud />)
+    expect(document.querySelector('.hud__burnout')!.classList.contains('chip--kunyit')).toBe(true)
+    r45.unmount()
+
+    useGame.setState({ state: { ...state, burnout: 72 } })
+    render(<Hud />)
+    expect(document.querySelector('.hud__burnout')!.classList.contains('chip--merah')).toBe(true)
+  })
 })

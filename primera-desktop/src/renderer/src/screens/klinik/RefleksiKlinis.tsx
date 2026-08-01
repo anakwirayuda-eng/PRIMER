@@ -72,6 +72,17 @@ function kasusDuelSudahDijumpai(duel: DuelDiagnosisPilot, dex: Dex): boolean {
   return duel.sisi.every((sisi) => (dex[sisi.kasusId]?.ditangani ?? 0) > 0)
 }
 
+/** S1-panelhasil: PanelHasil menghitung isi grup "Pelajari Lebih Dalam" —
+    aturan tampil duel/teach-back tetap SATU sumber di sini, jangan diduplikasi. */
+export function duelTersedia(kasusId: string, dex: Dex): boolean {
+  const duel = duelUntukKasus(kasusId)
+  return duel !== undefined && kasusDuelSudahDijumpai(duel, dex)
+}
+
+export function teachBackTersedia(kasusId: string): boolean {
+  return teachBackUntukKasus(kasusId) !== undefined
+}
+
 export function DuelDiagnosis({ kasusId, dex }: { kasusId: string; dex: Dex }) {
   const duel = duelUntukKasus(kasusId)
   const [pilihanId, setPilihanId] = useState<string | null>(null)

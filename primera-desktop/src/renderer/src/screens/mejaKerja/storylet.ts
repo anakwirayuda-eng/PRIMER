@@ -117,8 +117,20 @@ function temaVisualUntuk(id: string): TemaVisualStorylet {
 }
 
 /**
- * Rotasi deterministik tanpa pengulangan selama satu putaran pool bila konteks
- * tetap. Putaran berikutnya diacak ulang; boundary dicegah mengulang kalimat.
+ * Rotasi deterministik dengan FASE STABIL (S10-storylet-cycle).
+ *
+ * Dulu: siklus & indeks dihitung dari kandidat.length dan identitas pool ikut
+ * menyetir shuffle — setiap flag konteks yang menyala/padam di tengah run
+ * mengocok ulang SELURUH rotasi, sehingga kalimat bisa terulang jauh lebih
+ * cepat daripada periode pool nominal.
+ *
+ * Kini: prioritas tiap storylet diturunkan dari (seed run, putaran, id) —
+ * BUKAN dari komposisi pool — lalu kandidat diurutkan menurut prioritas itu.
+ * Flag konteks hanya MENYISIPKAN/MENCABUT butirnya sendiri ke dalam urutan;
+ * urutan relatif sisanya tidak berubah. Periode pengacakan ulang memakai
+ * panjang bank penuh (konstanta compile-time), bukan panjang kandidat yang
+ * bisa berubah. Konteks tetap => satu putaran penuh tanpa pengulangan; hari
+ * pertama putaran prioritas baru dijaga agar tidak mengulang kalimat kemarin.
  */
 export function storyletHariIniDetail(
   seed: number,
@@ -127,15 +139,29 @@ export function storyletHariIniDetail(
 ): StoryletHariIni {
   const kandidat = semua.filter((storylet) => storylet.boleh?.(konteks) ?? true)
   const nomorHari = Math.max(1, Math.floor(hari)) - 1
-  const siklus = Math.floor(nomorHari / kandidat.length)
-  const indeks = nomorHari % kandidat.length
-  const identitasPool = kandidat.map((storylet) => storylet.id).join(',')
-  const urutan = new Rng(seed, 'storylet-order', identitasPool, siklus).shuffle(kandidat)
+  const siklus = Math.floor(nomorHari / semua.length)
+  const urutanUntuk = (putaran: number): readonly Storylet[] =>
+    kandidat
+      .map((storylet) => ({
+        storylet,
+        prioritas: new Rng(seed, 'storylet-prio', putaran, storylet.id).float(),
+      }))
+      .sort(
+        (a, b) =>
+          a.prioritas - b.prioritas || (a.storylet.id < b.storylet.id ? -1 : 1),
+      )
+      .map((entri) => entri.storylet)
+  const urutan = urutanUntuk(siklus)
+  const indeks = nomorHari % urutan.length
   let terpilih = urutan[indeks]!
 
-  if (indeks === 0 && siklus > 0 && kandidat.length > 1) {
-    const sebelumnya = new Rng(seed, 'storylet-order', identitasPool, siklus - 1).shuffle(kandidat).at(-1)
-    if (sebelumnya?.id === terpilih.id) terpilih = urutan[1]!
+  // Hari pertama putaran prioritas baru: cegah mengulang kalimat kemarin.
+  // Kemarin DITAKSIR dengan konteks hari ini — tanpa state tambahan kita
+  // memang tidak tahu konteks kemarin (batasan yang sama ada di versi lama).
+  if (siklus > 0 && nomorHari % semua.length === 0 && urutan.length > 1) {
+    const urutanLama = urutanUntuk(siklus - 1)
+    const kemarin = urutanLama[(nomorHari - 1) % urutanLama.length]
+    if (kemarin?.id === terpilih.id) terpilih = urutan[(indeks + 1) % urutan.length]!
   }
   return { id: terpilih.id, teks: terpilih.teks, temaVisual: temaVisualUntuk(terpilih.id) }
 }

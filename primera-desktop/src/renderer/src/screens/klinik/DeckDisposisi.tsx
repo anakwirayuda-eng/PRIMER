@@ -281,7 +281,7 @@ export function DeckDisposisi({ enc, kasus, dispatch, tutorialAktif = false }: P
                     ? undefined
                     : alasanTanpaDiagnosis
               }
-              data-tip="Buka form rujukan SISRUTE (SBAR 4 kolom + pemilih RS)."
+              data-tip="Buka formulir rujukan SISRUTE: isi SBAR, lalu pilih rumah sakit tujuan."
             >
               RUJUK &rarr;
             </button>

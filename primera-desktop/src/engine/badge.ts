@@ -15,7 +15,9 @@ export interface Badge {
 }
 
 export const SEMUA_BADGE: Badge[] = [
-  { id: 'ptt_teladan', nama: 'PTT Teladan', deskripsi: 'Tamat stase dengan grade A.', ikon: '🏅' },
+  // Copy-audit 2026-08-01: "PTT" (Pegawai Tidak Tetap) = program yang sudah
+  // dihapus 2017 — id internal dipertahankan, nama tampil dipermanusiakan.
+  { id: 'ptt_teladan', nama: 'Dokter Teladan', deskripsi: 'Tamat stase dengan grade A.', ikon: '🏅' },
   { id: 'nol_kode_hitam', nama: 'Penjaga Nyawa', deskripsi: 'Menangani ≥2 pasien IGD tanpa satu pun Kode Hitam.', ikon: '⛑️' },
   { id: 'gerbang_kokoh', nama: 'Gerbang Kokoh', deskripsi: 'RRNS ≤5% dengan ≥5 rujukan — gatekeeper sejati.', ikon: '🚪' },
   { id: 'pencegah_takdir', nama: 'Pencegah Takdir', deskripsi: 'Mencegah ≥4 krisis keluarga (karma dibatalkan kunjungan).', ikon: '⏳' },

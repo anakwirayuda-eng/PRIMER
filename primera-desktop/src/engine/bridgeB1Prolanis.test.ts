@@ -197,7 +197,24 @@ describe('Bridge B1.4 - Prolanis multimorbid dan callback klinik', () => {
     ).toBe(true)
   })
 
-  it('pasien tanpa provenance atau encounter di bawah A tidak mengubah roster', () => {
+  it('grade B menulis balik setengah efek (kredit parsial — S5-iks-prolanis)', () => {
+    // resep kosong → skorTerapi 0 → nilaiTotal deterministik 80 = grade B
+    // (diagnosis benar tanpa cap; dm_tipe2 tak punya terapiKritis/konfirmasiWajib).
+    const awal = stateEncounterProlanis({ ...encounterDmProlanis('musa_dm'), resep: [] })
+    const akhir = run(awal, { type: 'DISPOSISI', jenis: 'pulang' })
+    const dm = akhir.prolanis.roster.find((p) => p.id === 'musa_dm')!
+
+    expect(akhir.klinik.selesaiHariIni.at(-1)?.grade).toBe('B')
+    // Setengah drift penuh (15..35 → round(×0.5) = 8..18): 190 turun ke 172..182.
+    expect(dm.param).toBeLessThan(190)
+    expect(dm.param).toBeGreaterThanOrEqual(172)
+    expect(dm.takTerkontrolBerturut).toBe(1)
+    expect(
+      akhir.inbox.some((surat) => surat.isi.includes('perbaikannya baru sebagian')),
+    ).toBe(true)
+  })
+
+  it('pasien tanpa provenance atau encounter di bawah B tidak mengubah roster', () => {
     const tanpaProvenance = run(
       stateEncounterProlanis(encounterDmProlanis(undefined)),
       { type: 'DISPOSISI', jenis: 'pulang' },

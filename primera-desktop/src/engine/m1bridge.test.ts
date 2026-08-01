@@ -349,7 +349,7 @@ describe('B1.3 — klinik membuka pemulihan keluarga setelah karma', () => {
       (episode) => episode.familyId === 'keluarga_prapto' && episode.problemId === 'demam_tifoid',
     )
     expect(episodeKlinis?.status).toBe('terverifikasi')
-    expect(episodeKlinis?.history.at(-1)?.label).toBe('Pemulihan keluarga menutup loop klinik')
+    expect(episodeKlinis?.history.at(-1)?.label).toBe('Pemulihan keluarga menuntaskan alur klinik')
   })
 
   it('kunjungan pemulihan hanya menutup episode klinis yang melahirkannya', () => {

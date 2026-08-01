@@ -95,13 +95,8 @@
   opacity: 1;
   filter: none;
   border-color: var(--kunyit-600);
-  background: var(--kunyit-100);
+  background: var(--wash-kunyit); /* token wash: malam otomatis benar */
   animation: laporan-masuk 0.4s var(--ease-keluar) both;
-}
-
-/* CODEX P2 audit 2026-07-04: --kunyit-100 tak diremap gelap — lihat Klinik.css. */
-[data-mode='malam'] .laporan__badge--raih {
-  background: rgba(234, 165, 79, 0.16);
 }
 
 .laporan__badge-ikon { font-size: var(--text-lg); }

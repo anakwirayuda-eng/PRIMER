@@ -8,7 +8,7 @@ import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import type { GameState } from './state'
 import type { Action } from './actions'
-import { advance, LEAD_TIME_OBAT, OPERASIONAL_BULANAN, AMBANG_TEGURAN_KAS } from './reducer'
+import { advance, LEAD_TIME_OBAT, OPERASIONAL_BULANAN, AMBANG_TEGURAN_KAS, TRUST_PLAFON_SILATURAHMI } from './reducer'
 import { buildInitialState } from './init'
 import { hitungSkor } from './scoring'
 import { buatPasienDariKasus } from './director'
@@ -299,22 +299,48 @@ describe('M4.21 — pemulihan akhir pekan & burnout menumpulkan insting', () => 
     expect(ev(s, { type: 'PEMULIHAN', jenis: 'istirahat' }).events.some((e) => e.type === 'ERROR_AKSI')).toBe(true)
   })
 
-  it('silaturahmi menaikkan trust keluarga binaan yang arc-nya masih hidup', () => {
+  it('silaturahmi hanya membangun rapport awal: binaan ber-arc hidup dengan trust < 4 yang naik', () => {
     let s = buildInitialState('Uji', SEED, PACK)
     s = sampaiHari(s, 7)
     s = run(s, { type: 'LANJUTKAN' })
     // asih & lastri: karma D20/D44 — arc masih hidup di D7 (wulan sudah
     // meletus D6 → arcSelesai gagal → sengaja DIKECUALIKAN dari efek trust).
+    // S6-degenerate: lastri diset trust 4 (= TRUST_PLAFON_SILATURAHMI) —
+    // sudah di plafon, silaturahmi TIDAK menaikkannya lagi; gerbang kejujuran
+    // dalam (ambangTrust ≥ 5) menuntut kunjungan sungguhan.
     s = {
       ...s,
-      desa: { ...s.desa, binaan: ['keluarga_asih', 'keluarga_lastri', 'keluarga_wulan'] },
+      desa: {
+        ...s.desa,
+        binaan: ['keluarga_asih', 'keluarga_lastri', 'keluarga_wulan'],
+        keluarga: {
+          ...s.desa.keluarga,
+          keluarga_lastri: { ...s.desa.keluarga['keluarga_lastri']!, trust: TRUST_PLAFON_SILATURAHMI },
+        },
+      },
     }
     const asihSebelum = s.desa.keluarga['keluarga_asih']!.trust
     const wulanSebelum = s.desa.keluarga['keluarga_wulan']!.trust
+    expect(asihSebelum).toBeLessThan(TRUST_PLAFON_SILATURAHMI) // premis: masih rapport awal
     s = run(s, { type: 'PEMULIHAN', jenis: 'keluarga' })
     expect(s.desa.keluarga['keluarga_asih']!.trust).toBe(Math.min(10, asihSebelum + 1))
-    expect(s.desa.keluarga['keluarga_lastri']!.trust).toBeGreaterThanOrEqual(3)
+    expect(s.desa.keluarga['keluarga_lastri']!.trust).toBe(TRUST_PLAFON_SILATURAHMI) // plafon — tak naik
     expect(s.desa.keluarga['keluarga_wulan']!.trust).toBe(wulanSebelum) // arc gagal → tak tersentuh
+  })
+
+  it('S6-degenerate: 4 akhir pekan silaturahmi tanpa satu kunjungan pun mentok di trust 4 — gerbang ambangTrust 5/6 tetap terkunci', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    // lastri: karma D44 — arc tetap hidup sepanjang uji (sampai D28).
+    s = { ...s, desa: { ...s.desa, binaan: ['keluarga_lastri'] } }
+    for (const target of [7, 14, 21, 28]) {
+      s = sampaiHari(s, target)
+      const r = ev(bereskanIgd(run(s, { type: 'LANJUTKAN' })), { type: 'PEMULIHAN', jenis: 'keluarga' })
+      expect(r.events.some((e) => e.type === 'PEMULIHAN_SELESAI'), `hari ${target}`).toBe(true)
+      s = r.state
+    }
+    // 2 → 3 → 4 → (mentok) → (mentok): tanpa kunjungan nyata, silaturahmi
+    // tidak pernah menembus ambangTrust 5/6.
+    expect(s.desa.keluarga['keluarga_lastri']!.trust).toBe(TRUST_PLAFON_SILATURAHMI)
   })
 
   it('burnout tinggi menaikkan porsi pasien auto-resolve yang bermasalah', () => {
@@ -331,5 +357,49 @@ describe('M4.21 — pemulihan akhir pekan & burnout menumpulkan insting', () => 
       totalTinggi += tinggi.klinik.autoHariIni.bermasalah
     }
     expect(totalTinggi).toBeGreaterThan(totalRendah)
+  })
+})
+
+// S3 burnout-rapor (b): surat ambang burnout dari Kapus — latch via flags,
+// re-arm di bawah ambang, peringatan keras 70 menekan surat ringan 40.
+describe('S3 — surat ambang burnout dari Kapus', () => {
+  const keSore = (s: GameState): GameState => ({ ...s, blok: 'sore', layar: 'meja' })
+  const suratJaga = (s: GameState) => s.inbox.filter((m) => m.judul === 'Jaga tenagamu, Dokter')
+  const suratPeringatan = (s: GameState) =>
+    s.inbox.filter((m) => m.judul.startsWith('PERINGATAN — kelelahanmu'))
+
+  it('melewati 40: satu surat teguran; pagi berikutnya (masih ≥40) TIDAK spam', () => {
+    let s = buildInitialState('Uji Burnout', SEED, PACK)
+    s = run(keSore({ ...s, burnout: 35, stamina: 0 }), { type: 'LANJUTKAN' })
+    expect(s.burnout).toBe(47)
+    expect(suratJaga(s)).toHaveLength(1)
+    expect(suratJaga(s)[0]!.jenis).toBe('teguran_kapus')
+    expect(s.flags['suratBurnout40']).toBe(true)
+
+    s = bereskanIgd(s)
+    s = run(keSore({ ...s, stamina: 0 }), { type: 'LANJUTKAN' }) // 47 → 59
+    expect(suratJaga(s)).toHaveLength(1) // latch menahan spam
+  })
+
+  it('re-arm: turun di bawah 40 melepas latch — episode berikutnya bersurat lagi', () => {
+    let s = buildInitialState('Uji Burnout', SEED, PACK)
+    s = run(keSore({ ...s, burnout: 35, stamina: 0 }), { type: 'LANJUTKAN' })
+    expect(suratJaga(s)).toHaveLength(1)
+    // Pulih: tidur bertenaga beberapa malam sampai burnout < 40.
+    s = bereskanIgd(s)
+    s = run(keSore({ ...s, burnout: 42, stamina: 3 }), { type: 'LANJUTKAN' }) // 42-6=36 < 40
+    expect(s.flags['suratBurnout40']).toBe(false)
+    s = bereskanIgd(s)
+    s = run(keSore({ ...s, burnout: 35, stamina: 0 }), { type: 'LANJUTKAN' }) // naik lagi ke 47
+    expect(suratJaga(s)).toHaveLength(2)
+  })
+
+  it('melewati 70 langsung: hanya PERINGATAN keras (surat 40 ditekan), kedua latch terpasang', () => {
+    let s = buildInitialState('Uji Burnout', SEED, PACK)
+    s = run(keSore({ ...s, burnout: 65, stamina: 0 }), { type: 'LANJUTKAN' }) // → 77
+    expect(suratPeringatan(s)).toHaveLength(1)
+    expect(suratJaga(s)).toHaveLength(0)
+    expect(s.flags['suratBurnout70']).toBe(true)
+    expect(s.flags['suratBurnout40']).toBe(true)
   })
 })

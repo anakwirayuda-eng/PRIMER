@@ -51,6 +51,34 @@ describe('storyletHariIni', () => {
     }
   })
 
+  it('S10: membuka storylet bersyarat tidak mengocok ulang urutan yang sudah berjalan', () => {
+    // Regresi S10-storylet-cycle: dulu siklus/indeks dihitung dari
+    // kandidat.length dan identitas pool ikut menyetir shuffle, sehingga flag
+    // yang menyala di tengah run (mis. Posyandu pertama) mengocok ulang
+    // seluruh rotasi dan kalimat bisa terulang jauh sebelum periode pool.
+    const dasar = Array.from({ length: 16 }, (_, i) => storyletHariIniDetail(7, i + 1).id)
+    const diperluas = Array.from({ length: 20 }, (_, i) =>
+      storyletHariIniDetail(7, i + 1, { pernahPosyandu: true }).id,
+    )
+    // Storylet Posyandu hanya DISISIPKAN: urutan relatif storylet lama utuh.
+    expect(diperluas.filter((id) => !id.startsWith('posy-'))).toEqual(dasar)
+    expect(diperluas.filter((id) => id.startsWith('posy-'))).toHaveLength(4)
+  })
+
+  it('S10: flip konteks di tengah putaran hanya menimbulkan ulangan terbatas', () => {
+    // Posyandu pertama menyala setelah hari ke-10: item lama yang tampil ulang
+    // dibatasi jumlah sisipan (maksimal 4), bukan hasil reshuffle penuh.
+    for (const seed of [3, 11, 17, 42]) {
+      const sebelum = new Set(
+        Array.from({ length: 10 }, (_, i) => storyletHariIniDetail(seed, i + 1).id),
+      )
+      const sesudah = Array.from({ length: 10 }, (_, i) =>
+        storyletHariIniDetail(seed, i + 11, { pernahPosyandu: true }).id,
+      )
+      expect(sesudah.filter((id) => sebelum.has(id)).length).toBeLessThanOrEqual(4)
+    }
+  })
+
   it('tanpa state pendukung tidak memalsukan program, binaan, episode, atau kabar rujukan', () => {
     const kandidat = kandidatStorylet()
     expect(kandidat.some((teks) => /Kabar rujukan/i.test(teks))).toBe(false)

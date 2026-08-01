@@ -193,12 +193,7 @@
 
 .igd__opsi--rjp {
   border-color: var(--daun-700);
-  background: var(--daun-50);
-}
-
-/* CODEX P2 audit 2026-07-04: --daun-50 tak diremap gelap — lihat Klinik.css. */
-[data-mode='malam'] .igd__opsi--rjp {
-  background: rgba(62, 208, 164, 0.16);
+  background: var(--wash-daun); /* token wash: malam otomatis benar */
 }
 
 .igd__respons {

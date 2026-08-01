@@ -74,7 +74,7 @@ export type Action =
   | { type: 'MULAI_PROLANIS' }
   | { type: 'MULAI_KLB'; rw: number; kasusId: string }
   | { type: 'JAWAB_KEGIATAN'; kartuId: string; pilihanId: string }
-  | { type: 'DELEGASI_KEGIATAN' } // sisa kartu dijawab kader (posyandu; error 20%)
+  | { type: 'DELEGASI_KEGIATAN' } // sisa kartu dijawab kader (posyandu; error ≈35% — lihat PELUANG_KADER_BENAR, kegiatan.ts)
   | { type: 'TETAPKAN_PROGRAM'; fokus: FokusProgram; rwFokus?: number }
   | { type: 'TUTUP_LOKMIN' }
 

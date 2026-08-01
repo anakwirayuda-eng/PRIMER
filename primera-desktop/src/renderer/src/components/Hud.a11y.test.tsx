@@ -10,6 +10,7 @@ import { buildInitialState } from '@engine/init'
 import { buatEncounter } from '@engine/clinic'
 import { useGame } from '../store'
 import { Hud } from './Hud'
+import { TooltipInstan } from './TooltipInstan'
 
 describe('Hud — nama-aksesibel tab & alasan disabled', () => {
   beforeEach(() => {
@@ -24,18 +25,23 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
   })
 
   it('tab Klinik menyebut pasien antre; tab Peta terkunci menyebut alasannya', () => {
-    render(<Hud />)
+    render(
+      <>
+        <Hud />
+        <TooltipInstan />
+      </>,
+    )
     expect(screen.getByRole('button', { name: /Klinik, \d+ pasien antre/ })).toBeInTheDocument()
     const peta = screen.getByRole('button', { name: /Peta Desa \(terkunci, terbuka besok\)/ })
     expect(peta).toHaveAttribute('aria-disabled', 'true')
     expect(peta).not.toBeDisabled()
     expect(peta).toHaveAccessibleDescription('Terbuka besok')
-    // Audit premium 2026-07-23: `title` native (delay ~1 dtk, tak muncul utk
-    // keyboard) diganti tooltip instan .hud__tip — tampil saat hover DAN fokus.
-    fireEvent.focus(peta)
-    expect(document.querySelector('.hud__tip')).toHaveTextContent('Terbuka besok')
-    fireEvent.blur(peta)
-    expect(document.querySelector('.hud__tip')).toBeNull()
+    // HUD kini menumpang TooltipInstan global via data-tip (hover DAN fokus
+    // keyboard) — state machine lokal .hud__tip dihapus.
+    fireEvent.focusIn(peta)
+    expect(document.querySelector('.tip-instan')).toHaveTextContent('Terbuka besok')
+    fireEvent.focusOut(peta)
+    expect(document.querySelector('.tip-instan')).toBeNull()
   })
 
   it('saat encounter klinik aktif, tab lain disabled DENGAN tooltip alasan', () => {
@@ -47,19 +53,24 @@ describe('Hud — nama-aksesibel tab & alasan disabled', () => {
         klinik: { ...awal.klinik, aktif: buatEncounter(awal.klinik.antrian[0]!) },
       },
     })
-    render(<Hud />)
+    render(
+      <>
+        <Hud />
+        <TooltipInstan />
+      </>,
+    )
     const meja = screen.getByRole('button', { name: /Meja Kerja/ })
     expect(meja).toHaveAttribute('aria-disabled', 'true')
     expect(meja).not.toBeDisabled()
     expect(meja).toHaveAccessibleDescription('Sedang memeriksa pasien — selesaikan dulu konsultasinya.')
     meja.click()
     expect(useGame.getState().state?.layar).toBe('klinik')
-    // Tooltip instan tampil saat pointer masuk (pengganti `title` native).
-    fireEvent.mouseEnter(meja)
-    expect(document.querySelector('.hud__tip')).toHaveTextContent(
+    // Tooltip instan global tampil saat pointer masuk (delegation mouseover).
+    fireEvent.mouseOver(meja)
+    expect(document.querySelector('.tip-instan')).toHaveTextContent(
       'Sedang memeriksa pasien — selesaikan dulu konsultasinya.',
     )
-    fireEvent.mouseLeave(meja)
-    expect(document.querySelector('.hud__tip')).toBeNull()
+    fireEvent.mouseOut(meja)
+    expect(document.querySelector('.tip-instan')).toBeNull()
   })
 })

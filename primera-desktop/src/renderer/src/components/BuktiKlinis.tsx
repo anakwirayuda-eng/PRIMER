@@ -51,11 +51,12 @@ export function BuktiKlinis({
             <details className="bukti-klinis__lapisan">
               <summary>Realita FKTP &amp; kesiapan sumber daya</summary>
               <TeksTerbaca teks={debrief.realitaFktp} batasKata={74} />
+              {/* Copy-audit 2026-08-01: "READY" (Inggris mentah) → bahasa pemain. */}
               <div className="bukti-klinis__resource-grid">
-                <ResourceGroup judul="READY DI SUKAMAJU" items={debrief.sumberDaya.ready} />
-                <ResourceGroup judul="MELALUI JEJARING" items={debrief.sumberDaya.melaluiJejaring} />
+                <ResourceGroup judul="TERSEDIA DI SUKAMAJU" items={debrief.sumberDaya.ready} />
+                <ResourceGroup judul="LEWAT JEJARING RUJUKAN" items={debrief.sumberDaya.melaluiJejaring} />
                 {debrief.sumberDaya.tidakReady?.length ? (
-                  <ResourceGroup judul="TIDAK READY" items={debrief.sumberDaya.tidakReady} />
+                  <ResourceGroup judul="TIDAK TERSEDIA" items={debrief.sumberDaya.tidakReady} />
                 ) : null}
               </div>
             </details>
@@ -83,7 +84,7 @@ export function BuktiKlinis({
                   : item.cakupan === 'terkait'
                     ? 'TERKAIT'
                     : item.cakupan === 'floor_umum'
-                      ? 'FLOOR UMUM'
+                      ? 'PEDOMAN DASAR'
                       : null
               return (
                 <li key={item.id}>
@@ -122,8 +123,9 @@ export function BuktiKlinis({
         </div>
 
         <p className="bukti-klinis__catatan">
-          Ringkasan adalah parafrasa pembelajaran. Label cakupan membedakan sumber
-          langsung, terkait, dan floor umum. Tautan membuka dokumen asli di browser bawaan.
+          Ringkasan adalah parafrasa pembelajaran. Label cakupan membedakan sumber yang
+          langsung membahas kasus ini, sumber terkait, dan pedoman dasar yang berlaku
+          umum. Tautan membuka dokumen asli di browser bawaan.
         </p>
       </div>
     </details>

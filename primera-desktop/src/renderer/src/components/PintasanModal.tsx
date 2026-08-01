@@ -9,6 +9,7 @@ import './PintasanModal.css'
 
 const DAFTAR: { tombol: string; aksi: string }[] = [
   { tombol: '1 – 5', aksi: 'Pindah layar: Meja Kerja · Klinik · Peta Desa · Buku Saku · Rapor' },
+  { tombol: 'L', aksi: 'Meja Kerja: jalankan tombol besar Langkah Berikutnya (Lanjutkan / Tidur)' },
   { tombol: '/ atau Ctrl+F', aksi: 'Fokus ke kolom pencarian (Buku Saku)' },
   { tombol: 'Esc', aksi: 'Tutup dialog · bersihkan kolom pencarian (dua tahap)' },
   { tombol: '← / →', aksi: 'Pindah tab Terapi (Resep · Edukasi · Tindakan)' },

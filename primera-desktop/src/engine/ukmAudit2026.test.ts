@@ -55,8 +55,8 @@ describe('#12 — Prolanis DM berskala GDP (kontrol RPPT <130 mg/dL)', () => {
   })
 
   it('GDP di bawah 130 sesudah intervensi tepat → terkontrol (counter reset)', () => {
-    // intervensi tepat menurunkan param 10-30; dari 140 pasti jatuh <130? tidak
-    // selalu (140-10=130 tepat ambang) — pakai 135: hasil 105..125, selalu <130.
+    // intervensi tepat menurunkan param 15-35 (S5-iks-prolanis); dari 135:
+    // hasil 100..120, selalu <130.
     const p = driftProlanis(peserta(135), true, new Rng(7, 'uji-gdp'))
     expect(p.param).toBeLessThan(130)
     expect(p.takTerkontrolBerturut).toBe(0)
@@ -260,6 +260,61 @@ describe('Bridge B1.2 - janji PIS-PK yang ingkar membuka kunjungan ulang', () =>
     const mulai = advance(siapKunjungan, { type: 'MULAI_KUNJUNGAN', keluargaId }, PACK)
     expect(mulai.events.some((event) => event.type === 'ERROR_AKSI')).toBe(false)
     expect(mulai.state.kunjungan?.skenarioId).toBe(skenarioTerakhir.id)
+  })
+
+  it('S7 — janji yang DITEPATI kini mendapat surat kabar hangat (bukan hening)', () => {
+    const keluargaId = 'keluarga_wulan'
+    const jadwalId = 'janji_s7_tepat'
+    const seed = Array.from({ length: 100 }, (_, i) => i).find(
+      (nilai) => new Rng(nilai, 'verifikasi-janji', jadwalId).chance(peluangJanjiDitepati(10)),
+    )!
+    expect(seed).toBeDefined()
+
+    let state = buildInitialState('S7 tepat', seed, PACK)
+    const kelAwal = state.desa.keluarga[keluargaId]!
+    state = {
+      ...state,
+      hari: 10,
+      blok: 'sore',
+      desa: {
+        ...state.desa,
+        binaan: Array.from(new Set([...state.desa.binaan, keluargaId])),
+        keluarga: {
+          ...state.desa.keluarga,
+          [keluargaId]: {
+            ...kelAwal,
+            trust: 10,
+            arcSelesai: 'berhasil',
+            indikator: {
+              ...kelAwal.indikator,
+              hipertensi_berobat: {
+                status: 'ya', statusSebenarnya: 'tidak', sumber: 'janji', hariData: 10,
+              },
+            },
+          },
+        },
+      },
+      jadwal: [{
+        id: jadwalId,
+        hari: 11,
+        jenis: 'verifikasi_pispk',
+        keluargaId,
+        indikatorJanji: ['hipertensi_berobat'],
+      }],
+    }
+
+    const hariBerikut = advance(state, { type: 'LANJUTKAN' }, PACK).state
+    expect(hariBerikut.hari).toBe(11)
+    expect(hariBerikut.desa.keluarga[keluargaId]!.indikator.hipertensi_berobat).toMatchObject({
+      status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: 11,
+    })
+    expect(hariBerikut.desa.keluarga[keluargaId]!.arcSelesai).toBe('berhasil')
+    const surat = hariBerikut.inbox.find((m) => m.judul.includes('janji yang ditepati'))
+    expect(surat).toBeDefined()
+    expect(surat!.jenis).toBe('kabar_warga')
+    expect(surat!.kaitKeluargaId).toBe(keluargaId)
+    expect(surat!.isi).toContain('hipertensi berobat')
+    expect(hariBerikut.inbox.some((m) => m.judul.includes('niat baik yang belum terwujud'))).toBe(false)
   })
 })
 

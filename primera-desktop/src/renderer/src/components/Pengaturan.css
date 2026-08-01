@@ -25,7 +25,7 @@
 }
 
 .set-gigi:hover { color: var(--tinta); border-color: var(--border-tegas); transform: translateY(-1px) rotate(30deg); }
-.set-gigi:focus-visible { outline: 2px solid var(--daun-600); outline-offset: 2px; }
+.set-gigi:focus-visible { outline: 2px solid var(--warna-fokus); outline-offset: 2px; }
 
 /* M10.a: varian dok — in-flow di bilah HUD, bukan melayang di atas konten. */
 .set-gigi--dok {

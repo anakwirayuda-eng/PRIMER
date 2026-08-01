@@ -76,14 +76,7 @@
 .hud__tab--aktif {
   color: var(--daun-800);
   border-bottom-color: var(--daun-700);
-  background: var(--daun-50);
-}
-
-/* CODEX P1/P2 audit 2026-07-04: --daun-50 & --kunyit-600 tak diremap gelap,
-   sedang teks/latar pasangannya (--daun-800, --kertas-050) sudah diremap
-   terang utk mode malam — kombinasinya jatuh drastis (~1.5:1 dan ~2:1). */
-[data-mode='malam'] .hud__tab--aktif {
-  background: rgba(62, 208, 164, 0.16);
+  background: var(--wash-daun); /* token wash: malam otomatis benar */
 }
 
 [data-mode='malam'] .hud__badge {
@@ -144,37 +137,8 @@
   display: none;
 }
 
-/* Tooltip instan HUD (audit premium 2026-07-23) — pengganti `title` native
-   yang delay ~1 dtk & tak muncul utk fokus keyboard. position:fixed: dirender
-   di koordinat viewport dari getBoundingClientRect, jadi TIDAK terpotong
-   .hud yang overflow-x:auto. pointer-events:none = tak pernah menelan klik. */
-.hud__tip {
-  position: fixed;
-  transform: translateX(-50%);
-  z-index: var(--z-modal);
-  max-width: 320px;
-  padding: var(--sp-2) var(--sp-3);
-  font-size: var(--text-xs);
-  font-weight: 600;
-  line-height: var(--baris-rapat);
-  color: var(--kertas-050);
-  background: var(--malam-800);
-  border: 1px solid var(--border-tinta);
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-kartu);
-  pointer-events: none;
-  animation: hud-tip-masuk var(--durasi-cepat) var(--ease-keluar) both;
-}
-
-[data-mode='malam'] .hud__tip {
-  color: var(--malam-900);
-  background: var(--kertas-100);
-}
-
-@keyframes hud-tip-masuk {
-  from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
-  to { opacity: 1; transform: translateX(-50%) translateY(0); }
-}
+/* Tooltip HUD kini menumpang TooltipInstan global via data-tip —
+   salinan .hud__tip + keyframes dihapus (duplikat byte-per-byte). */
 
 .hud__badge {
   position: absolute;
@@ -198,7 +162,7 @@
 }
 
 .hud__gembok {
-  margin-left: 4px;
+  margin-left: var(--sp-1);
   font-size: var(--text-xs);
 }
 
@@ -245,6 +209,14 @@
   font-size: var(--text-sm);
   font-weight: 600;
   color: var(--tinta-lembut);
+}
+
+/* Chip burnout (S3 burnout-rapor a): meter tersembunyi jadi kasat mata.
+   Warna dari kelas chip--kunyit/merah base.css (ambang mekanis 40/70);
+   flex-shrink 0 agar angka tak terpotong saat HUD memeras ruang. */
+.hud__burnout {
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
 }
 
 /* WCAG reflow pada skala teks 150-200%: satu baris tidak cukup untuk tiga

@@ -72,13 +72,15 @@
 .dexskdi__filter:hover {
   filter: brightness(1.06);
 }
+/* State TERPILIH memakai ring token (box-shadow), state FOKUS memakai outline
+   warna fokus bersama — dulu keduanya identik persis sehingga tab keyboard
+   ke chip non-aktif tampak "aktif" (ambigu di grid 144 entri). */
 .dexskdi__filter--aktif {
-  outline: 2px solid var(--daun-700);
-  outline-offset: 1px;
+  box-shadow: var(--ring-pilih);
 }
 .dexskdi__filter:focus-visible {
-  outline: 2px solid var(--daun-700);
-  outline-offset: 1px;
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
 }
 
 /* Layar sempit: header progres turun ke bawah judul, rata kiri, meter melebar. */
@@ -189,7 +191,7 @@
   color: var(--tinta-pudar);
 }
 .dexskdi__cari:focus-visible {
-  outline: 2px solid var(--daun-700);
+  outline: 2px solid var(--warna-fokus);
   outline-offset: 1px;
   border-color: var(--daun-700);
 }
@@ -253,9 +255,9 @@
 
 .dexskdi-kartu--aktif {
   border-color: var(--daun-700);
-  outline: 2px solid var(--daun-700);
-  outline-offset: 1px;
-  box-shadow: var(--shadow-kertas);
+  /* Ring token (bukan outline) — fokus keyboard tetap milik outline global
+     :focus-visible sehingga terpilih vs fokus terbedakan. */
+  box-shadow: var(--ring-pilih), var(--shadow-kertas);
 }
 
 /* Fix CODEX-25 #2/Q7: dijumpai-tapi-belum-tersertifikasi — dibedakan visual
@@ -390,14 +392,9 @@
 
 .dexskdi-detail__clue-teks {
   padding: var(--sp-3);
-  background: var(--kunyit-100);
+  background: var(--wash-kunyit); /* token wash: malam otomatis benar */
   border-radius: var(--radius-md);
   border: 1px solid var(--border-halus);
-}
-
-/* CODEX P1 audit 2026-07-04: --kunyit-100 tak diremap gelap — lihat Klinik.css. */
-[data-mode='malam'] .dexskdi-detail__clue-teks {
-  background: rgba(234, 165, 79, 0.16);
 }
 
 .dexskdi-detail__saran {
@@ -409,13 +406,38 @@
    selaras PanelHasil (Klinik.css): kunyit=waspada-EBM, daun=realita,
    tinta-biru=panduan resmi. Ketiganya lolos AA di --bg-sunken kedua mode. */
 .dexskdi-detail__lapisan {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sp-1);
   padding: var(--sp-2) var(--sp-3);
   background: var(--bg-sunken);
   border-radius: var(--radius-md);
   border-left: 4px solid var(--kunyit-700);
+}
+
+/* <details> terlipat (anti tembok-teks di kolom 320px). Marker default
+   disembunyikan; panah kecil dari ::before agar konsisten lintas platform. */
+.dexskdi-detail__lapisan-kepala {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+
+.dexskdi-detail__lapisan-kepala::-webkit-details-marker {
+  display: none;
+}
+
+.dexskdi-detail__lapisan-kepala::before {
+  content: '▸';
+  font-size: var(--text-xs);
+  color: var(--tinta-pudar);
+}
+
+.dexskdi-detail__lapisan[open] > .dexskdi-detail__lapisan-kepala {
+  margin-bottom: var(--sp-1);
+}
+
+.dexskdi-detail__lapisan[open] > .dexskdi-detail__lapisan-kepala::before {
+  content: '▾';
 }
 .dexskdi-detail__lapisan--realita {
   border-left-color: var(--daun-700);

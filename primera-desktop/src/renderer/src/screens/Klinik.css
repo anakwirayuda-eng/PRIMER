@@ -998,7 +998,68 @@ details[open].klinik-hasil__panduan > summary::before {
   color: var(--tinta-biru);
 }
 
+/* S1-panelhasil — grup "Pelajari Lebih Dalam": SATU <details> terlipat yang
+   memayungi seluruh lapisan pengayaan. Sengaja BUKAN .folder: anak-anaknya
+   sudah .folder ber-bg-sunken — sunken di atas sunken kehilangan kontras.
+   Marker ▸/▾ meniru pola folder pengayaan lama agar bahasanya konsisten. */
+.klinik-hasil__belajar > summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.klinik-hasil__belajar > summary::-webkit-details-marker {
+  display: none;
+}
+
+.klinik-hasil__belajar > summary::before {
+  content: '▸ ';
+}
+
+.klinik-hasil__belajar[open] > summary::before {
+  content: '▾ ';
+}
+
+.klinik-hasil__belajar > summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 3px;
+}
+
+/* Angka topik: keluar dari uppercase/letter-spacing .judul-seksi supaya
+   terbaca sebagai keterangan, bukan judul. */
+.klinik-hasil__belajar-jumlah {
+  margin-left: var(--sp-2);
+  color: var(--tinta-lembut);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.klinik-hasil__belajar-isi {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-4);
+  margin-top: var(--sp-3);
+}
+
+/* BuktiKlinis membawa margin-top sendiri (BuktiKlinis.css) — di dalam grup,
+   gap flex sudah memberi jarak; hilangkan supaya tak dobel. */
+.klinik-hasil__belajar-isi .bukti-klinis {
+  margin-top: 0;
+}
+
+/* S1-panelhasil: baris aksi LENGKET di dasar modal — CTA utama ("Pasien
+   Berikutnya") selalu terlihat tanpa scroll. .modal adalah scroll-container-nya
+   (base.css: max-height 88vh; overflow auto) → sticky bottom bekerja terhadap
+   scrollport itu. Margin negatif lama dipertahankan: saat scroll mentok, baris
+   tetap menempel rapat tepi dalam modal. --bg-panel sudah diremap gelap di
+   [data-mode='malam'] (tokens.css) — mode malam beres lewat token, tanpa blok
+   override tambahan. z-index memastikan konten yang lewat di bawahnya tak
+   menembus. */
 .klinik-hasil__aksi {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
   background: var(--bg-panel);
   margin: var(--sp-1) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
   padding: var(--sp-3) var(--sp-6) var(--sp-5);

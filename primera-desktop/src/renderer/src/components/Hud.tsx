@@ -3,7 +3,6 @@
  * Satu-satunya navigasi global. Ramping: 2 meter pemain saja (pilar anti-overload).
  */
 
-import { useState } from 'react'
 import { useGame } from '../store'
 import { musimDariHari, type LayarGame } from '@engine/state'
 import { HARI_BUKA_PETA, STAMINA_MAKS } from '@engine/reducer'
@@ -20,20 +19,10 @@ export function Hud() {
   const state = useGame((s) => s.state)
   const dispatch = useGame((s) => s.dispatch)
   const statusSimpan = useGame((s) => s.statusSimpan)
-  // Audit UI/UX premium 2026-07-23: tooltip instan menggantikan `title` native
-  // (delay ~1 dtk, tak muncul utk fokus keyboard, tak bisa distyle — terasa
-  // "web", bukan game). Satu state utk seluruh HUD; posisi diambil dari rect
-  // elemen pemicu saat hover/focus. aria-hidden: SR sudah dapat teks yang sama
-  // via aria-describedby (tab) / aria-label (stamina, dana) — tanpa dobel.
-  const [tip, setTip] = useState<{ teks: string; x: number; y: number } | null>(null)
+  // Tooltip HUD kini menumpang TooltipInstan global via data-tip (hover DAN
+  // fokus keyboard) — state machine lokal + CSS .hud__tip yang duplikat
+  // byte-per-byte dihapus. SR tetap dapat teks via aria-label/aria-describedby.
   if (!state) return null
-
-  const tampilkanTip = (el: HTMLElement, teks: string | undefined) => {
-    if (teks === undefined) return
-    const r = el.getBoundingClientRect()
-    setTip({ teks, x: r.left + r.width / 2, y: r.bottom + 6 })
-  }
-  const sembunyikanTip = () => setTip(null)
 
   const musim = musimDariHari(state.hari)
   const suratBaru = state.inbox.filter((m) => !m.dibaca).length
@@ -60,10 +49,7 @@ export function Hud() {
             <span
               className="chip chip--merah"
               aria-label={`Mode Ujian — ${state.paketUjian ?? 'paket'}; skor terkunci di hari ${HARI_STASE.ujian}.`}
-              onMouseEnter={(e) =>
-                tampilkanTip(e.currentTarget, `Mode Ujian — ${state.paketUjian ?? 'paket'}; skor terkunci di hari ${HARI_STASE.ujian}.`)
-              }
-              onMouseLeave={sembunyikanTip}
+              data-tip={`Mode Ujian — ${state.paketUjian ?? 'paket'}; skor terkunci di hari ${HARI_STASE.ujian}.`}
             >
               UJIAN
             </span>
@@ -76,13 +62,7 @@ export function Hud() {
               className="chip chip--merah"
               role="status"
               aria-label="Gagal menyimpan — autosave terakhir gagal tersimpan; periksa ruang disk atau izin folder save. Progresmu di sesi ini masih aman di memori, tapi belum aman bila aplikasi ditutup."
-              onMouseEnter={(e) =>
-                tampilkanTip(
-                  e.currentTarget,
-                  'Autosave terakhir gagal tersimpan — periksa ruang disk atau izin folder save. Progresmu di sesi ini masih aman di memori, tapi belum aman bila aplikasi ditutup.',
-                )
-              }
-              onMouseLeave={sembunyikanTip}
+              data-tip="Autosave terakhir gagal tersimpan — periksa ruang disk atau izin folder save. Progresmu di sesi ini masih aman di memori, tapi belum aman bila aplikasi ditutup."
             >
               ⚠ Gagal menyimpan
             </span>
@@ -123,10 +103,7 @@ export function Hud() {
               onClick={() => {
                 if (!nonaktif) dispatch({ type: 'PINDAH_LAYAR', layar: t.layar })
               }}
-              onMouseEnter={(e) => tampilkanTip(e.currentTarget, alasanNonaktif)}
-              onMouseLeave={sembunyikanTip}
-              onFocus={(e) => tampilkanTip(e.currentTarget, alasanNonaktif)}
-              onBlur={sembunyikanTip}
+              data-tip={alasanNonaktif}
             >
               <kbd className="hud__kbd" aria-hidden="true">{hotkey}</kbd>
               <span className="hud__tab-label">{t.label}</span>
@@ -151,13 +128,7 @@ export function Hud() {
           className="hud__stamina"
           role="img"
           aria-label={`Stamina ${state.stamina} dari ${STAMINA_MAKS}${state.stamina > STAMINA_MAKS ? ' (bonus olahraga)' : ''}`}
-          onMouseEnter={(e) =>
-            tampilkanTip(
-              e.currentTarget,
-              `Stamina ${state.stamina}/${STAMINA_MAKS}${state.stamina > STAMINA_MAKS ? ' — pip emas = tenaga ekstra hasil olahraga kemarin' : ' — setiap pasien/kunjungan memakai stamina'}`,
-            )
-          }
-          onMouseLeave={sembunyikanTip}
+          data-tip={`Stamina ${state.stamina}/${STAMINA_MAKS}${state.stamina > STAMINA_MAKS ? ' — pip emas = tenaga ekstra hasil olahraga kemarin' : ' — setiap pasien/kunjungan memakai stamina'}`}
         >
           {Array.from({ length: Math.max(STAMINA_MAKS, state.stamina) }, (_, i) => (
             <span
@@ -166,11 +137,23 @@ export function Hud() {
             />
           ))}
         </div>
+        {/* S3 burnout-rapor (a): burnout dulu meter tersembunyi — efeknya
+            (stamina pagi terpotong, insting menumpul) terasa tanpa pernah
+            terlihat. Ambang warna = ambang mekanis hariBaru (reducer.ts):
+            <40 tenang, 40-69 kunyit (waspada), >=70 merah (bahaya). */}
+        <span
+          className={`chip hud__burnout${state.burnout >= 70 ? ' chip--merah' : state.burnout >= 40 ? ' chip--kunyit' : ''}`}
+          role="img"
+          aria-label={`Burnout ${Math.round(state.burnout)} dari 100${state.burnout >= 70 ? ' — bahaya' : state.burnout >= 40 ? ' — waspada' : ''}`}
+          data-tip={`Burnout ${Math.round(state.burnout)}/100 — naik bila hari berakhir dengan stamina habis, turun bila tidur masih bersisa tenaga. Mulai 40: stamina pagi berkurang 1; mulai 70: berkurang 2 — dan makin tinggi burnout, makin sering pasien antrean yang diserahkan ke insting ternyata bermasalah. Pulihkan lewat slot pemulihan akhir pekan (tiap hari ke-7).`}
+        >
+          <span aria-hidden="true">🔥</span>
+          <span>{Math.round(state.burnout)}</span>
+        </span>
         <div
           className="hud__dana mono"
           aria-label={`Dana Puskesmas Rp ${Math.round(state.kapitasi / 1000).toLocaleString('id-ID')} ribu (kapitasi BPJS)`}
-          onMouseEnter={(e) => tampilkanTip(e.currentTarget, 'Dana Puskesmas (kapitasi BPJS)')}
-          onMouseLeave={sembunyikanTip}
+          data-tip="Dana Puskesmas (kapitasi BPJS)"
         >
           Rp {Math.round(state.kapitasi / 1000).toLocaleString('id-ID')}k
         </div>
@@ -182,14 +165,6 @@ export function Hud() {
         <Pengaturan dok />
       </div>
 
-      {/* Tooltip instan HUD — fixed di viewport (bukan absolute di dalam .hud
-          yang overflow-x:auto & akan memotongnya), pointer-events:none agar
-          tak pernah mencegat klik. */}
-      {tip !== null && (
-        <div className="hud__tip" style={{ left: tip.x, top: tip.y }} aria-hidden="true">
-          {tip.teks}
-        </div>
-      )}
     </header>
   )
 }

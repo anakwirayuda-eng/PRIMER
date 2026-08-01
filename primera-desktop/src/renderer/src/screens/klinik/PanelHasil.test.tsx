@@ -5,8 +5,8 @@
  * pembinaan" tampil walau pemain 100% mengikuti arahan. State SUDAH kebal
  * (reducer.ts), tapi tampilan debrief tetap terasa seperti kegagalan.
  */
-import { describe, it, expect } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { describe, it, expect, vi } from 'vitest'
+import { fireEvent, render, screen } from '@testing-library/react'
 import { PanelHasil } from './PanelHasil'
 import type { PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
@@ -84,7 +84,7 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
         onSelesai={() => {}}
       />,
     )
-    expect(screen.getByText('N/A')).toBeInTheDocument()
+    expect(screen.getByText('—')).toBeInTheDocument()
     expect(screen.getByLabelText('Terapi tidak dinilai pada kasus ini')).toBeInTheDocument()
   })
 
@@ -246,5 +246,71 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
       name: /CDC Clinical Care of Tetanus 2025; buka di browser bawaan/i,
     })).toHaveAttribute('href', 'https://www.cdc.gov/tetanus/hcp/clinical-care/index.html')
     expect(screen.queryByText('INTI KEPUTUSAN')).not.toBeInTheDocument()
+  })
+
+  // S1-panelhasil (2026-08-01): debrief hasil-dulu — lapisan pengayaan dilipat
+  // ke SATU grup "Pelajari Lebih Dalam"; CTA selalu terlihat (sticky) dan Enter
+  // aman (hanya saat fokus masih di kontainer dialog).
+  it('grup Pelajari Lebih Dalam default terlipat + hitungan topik jujur', () => {
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    const grup = screen.getByText('Pelajari Lebih Dalam').closest('details')
+    expect(grup).not.toBeNull()
+    expect(grup).not.toHaveAttribute('open')
+    expect(screen.getByText(/\d+ topik/)).toBeInTheDocument()
+  })
+
+  it('Panduan Resmi tetap default terbuka DI DALAM grup', () => {
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={() => {}} />,
+    )
+    expect(
+      screen.getByText('📜 Panduan Resmi Kemenkes').closest('details'),
+    ).toHaveAttribute('open')
+  })
+
+  it('Enter saat fokus di kontainer dialog = Pasien Berikutnya', () => {
+    const onSelesai = vi.fn()
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
+    )
+    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), { key: 'Enter' })
+    expect(onSelesai).toHaveBeenCalledWith(true)
+  })
+
+  it('Enter yang bubbling dari tombol Tutup TIDAK memicu shortcut dialog', () => {
+    const onSelesai = vi.fn()
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
+    )
+    fireEvent.keyDown(screen.getByRole('button', { name: 'Tutup' }), { key: 'Enter' })
+    expect(onSelesai).not.toHaveBeenCalled()
+  })
+
+  it('Enter repeat (tombol ditahan dari layar sebelumnya) diabaikan', () => {
+    const onSelesai = vi.fn()
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
+    )
+    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), {
+      key: 'Enter',
+      repeat: true,
+    })
+    expect(onSelesai).not.toHaveBeenCalled()
+  })
+
+  it('Enter diabaikan bila bolehPanggil=false', () => {
+    const onSelesai = vi.fn()
+    render(
+      <PanelHasil
+        hasil={HASIL_DASAR}
+        bolehPanggil={false}
+        alasanTutup="Antrian habis"
+        onSelesai={onSelesai}
+      />,
+    )
+    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), { key: 'Enter' })
+    expect(onSelesai).not.toHaveBeenCalled()
   })
 })

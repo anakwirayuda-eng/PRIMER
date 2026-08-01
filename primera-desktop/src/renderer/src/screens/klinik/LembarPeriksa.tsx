@@ -119,11 +119,11 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                 className={`chip ${kasus.reviewStatus === 'physician_approved' ? 'chip--biru' : 'chip--kunyit'}`}
                 data-tip={
                   kasus.reviewStatus === 'physician_approved'
-                    ? 'Kasus pilot Karier ini sudah melewati adjudikasi dokter.'
-                    : 'Kasus dapat dimainkan untuk belajar, tetapi belum melewati adjudikasi dokter dan tidak mengubah progres formal.'
+                    ? 'Kasus baru ini sudah ditinjau dan disetujui dokter penelaah.'
+                    : 'Kasus dapat dimainkan untuk belajar, tetapi belum ditinjau final oleh dokter penelaah dan tidak mengubah progres formal.'
                 }
               >
-                {kasus.reviewStatus === 'physician_approved' ? 'Pilot teradjudikasi' : 'Latihan formatif'}
+                {kasus.reviewStatus === 'physician_approved' ? 'Kasus baru — ditinjau dokter' : 'Latihan formatif'}
               </span>
             )}
           </div>

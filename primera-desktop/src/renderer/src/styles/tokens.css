@@ -7,10 +7,25 @@
 
 :root {
   /* -- Palet inti (dari keputusan dossier "Puskesmas Pagi") ---------------- */
+  /* Token mentah *-siang: nilai SIANG yang TIDAK pernah diremap mode malam —
+     dipakai blok "re-pin palet siang" (mis. kanvas .peta-svg) supaya
+     mereferensikan token, bukan menyalin hex yang bisa basi diam-diam
+     (pola sama --tinta-siang di bawah; PetaDesa.css dimigrasi 2026-08-01). */
+  --daun-800-siang: #0a5c47;
+  --daun-700-siang: #0d8465;
+  --daun-600-siang: #16a37f;
+  --kunyit-700-siang: #96500f;
+  --kunyit-600-siang: #d9822b;
+  --tinta-merah-siang: #b3382c;
+  --tinta-biru-siang: #2b5a8a;
+  --border-halus-siang: rgba(38, 49, 44, 0.12);
+  --border-tegas-siang: rgba(38, 49, 44, 0.28);
+  --border-tinta-siang: rgba(38, 49, 44, 0.55);
+
   --daun-900: #063f31;
-  --daun-800: #0a5c47;
-  --daun-700: #0d8465; /* primer — hijau daun (≥4.5:1 di bawah teks putih tombol) */
-  --daun-600: #16a37f;
+  --daun-800: var(--daun-800-siang);
+  --daun-700: var(--daun-700-siang); /* primer — hijau daun (≥4.5:1 di bawah teks putih tombol) */
+  --daun-600: var(--daun-600-siang);
   --daun-500: #2bbd96;
   --daun-100: #d7efe6;
   --daun-50: #eaf7f1;
@@ -22,8 +37,8 @@
   --kertas-400: #d9c9a8;
 
   --kunyit-800: #7a410c;
-  --kunyit-700: #96500f; /* teks/tombol kunyit — 4.9:1 di kunyit-100, 5.9:1 di bawah putih */
-  --kunyit-600: #d9822b; /* aksen kunyit — stempel, peringatan hangat (dekoratif, bukan teks kecil) */
+  --kunyit-700: var(--kunyit-700-siang); /* teks/tombol kunyit — 4.9:1 di kunyit-100, 5.9:1 di bawah putih */
+  --kunyit-600: var(--kunyit-600-siang); /* aksen kunyit — stempel, peringatan hangat (dekoratif, bukan teks kecil) */
   --kunyit-100: #f9e5cd;
 
   --malam-900: #0d1512;
@@ -47,8 +62,8 @@
   --tinta: var(--tinta-siang);
   --tinta-lembut: var(--tinta-lembut-siang);
   --tinta-pudar: var(--tinta-pudar-siang);
-  --tinta-merah: #b3382c; /* stempel merah — bahaya, alergi, gawat */
-  --tinta-biru: #2b5a8a; /* pulpen biru — catatan, link, info */
+  --tinta-merah: var(--tinta-merah-siang); /* stempel merah — bahaya, alergi, gawat */
+  --tinta-biru: var(--tinta-biru-siang); /* pulpen biru — catatan, link, info */
 
   /* -- Semantik klinis ------------------------------------------------------ */
   --vital-baik: var(--daun-700);
@@ -66,9 +81,9 @@
   --bg-sunken: var(--kertas-300);
   --bg-inverse: var(--malam-800);
 
-  --border-halus: rgba(38, 49, 44, 0.12);
-  --border-tegas: rgba(38, 49, 44, 0.28);
-  --border-tinta: rgba(38, 49, 44, 0.55);
+  --border-halus: var(--border-halus-siang);
+  --border-tegas: var(--border-tegas-siang);
+  --border-tinta: var(--border-tinta-siang);
 
   /* Wash/tint aksen lembut — dulu rgba/hex di-hardcode 19× di 9 file dan tiap
      situs butuh override malam manual (pernah LUPA → teks tak terbaca malam,

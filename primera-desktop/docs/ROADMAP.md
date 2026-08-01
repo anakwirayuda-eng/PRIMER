@@ -56,8 +56,8 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
 
 7. ✅ **Posyandu** (unlock D15, cooldown 30 hari/RW): 4 kartu — penimbangan/faltering,
    KMS, imunisasi (ISPA ringan bukan kontraindikasi + cold chain), penyuluhan. Sesi
-   berkualitas → bonus IKS RW persisten. Delegasi kader (80% benar/kartu) =
-   task-shifting yang mengajarkan supervisi.
+   berkualitas → bonus IKS RW persisten. Delegasi kader (65% benar/kartu,
+   S6-degenerate 2026-08-01) = task-shifting yang mengajarkan supervisi.
 8. ✅ **Prolanis** (unlock D30): roster HT/DM otomatis dari warga kronis, sesi
    bulanan, `driftProlanis` menaikkan/menurunkan param menurut ketepatan; 2 sesi
    tak-terkontrol berturut → komplikasi bernama muncul di poli (bridge UKM→UKP).
@@ -141,9 +141,10 @@ klinis, skor mengalir ke IKS/UKP (bukan angka telanjang). 7 test integrasi
     (+0.5) / MADYA (−1.5) — mengaudit rekam medis yang benar-benar kamu tulis.
 21. ✅ **Stamina/burnout lanjutan**: aksi `PEMULIHAN` tiap hari ke-7 (blok siang,
     memakai slot lapangan): istirahat total (burnout −12) / olahraga (−9 +
-    stamina +1 besok) / silaturahmi desa (−6, trust +1 semua binaan ber-arc
-    hidup); burnout kini menumpulkan insting auto-resolve (peluang pasien
-    terlewat bermasalah 0.25 → 0.45 pada burnout 100).
+    stamina +1 besok) / silaturahmi desa (−6, trust +1 binaan ber-arc hidup
+    dengan trust < 4 — rapport awal saja, S6-degenerate 2026-08-01); burnout
+    kini menumpulkan insting auto-resolve (peluang pasien terlewat bermasalah
+    0.25 → 0.45 pada burnout 100).
 
 ## M4.5 — Mode Ujian 30-Hari ✅ (selesai 2026-07-03; desain: docs/M45_MODE_UJIAN.md)
 

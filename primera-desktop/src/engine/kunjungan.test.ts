@@ -1039,7 +1039,7 @@ describe('prosesHarianKader (scout)', () => {
   // CODEX audit (2026-07-12, temuan #8 Bagian A): dulu `proporsiBaseline`
   // di-roll ULANG tiap hari (RNG reseed per-hari) walau kkTersurvei sudah
   // plateau (nol data baru) — iks RW hanyut ±0.02-0.03/hari murni dari
-  // noise, bisa melompati ambang pengali kapitasi 0.20/0.30 tanpa aksi
+  // noise, bisa melompati ambang pengali kapitasi 0.18/0.24 tanpa aksi
   // pemain. Test ini mengunci: begitu di-roll SEKALI, iks TIDAK berubah lagi
   // lintas hari selama kkTersurvei tak bertambah.
   it('CODEX #8: iks RW TIDAK hanyut lintas hari begitu survei statistik plateau (nol data baru)', () => {

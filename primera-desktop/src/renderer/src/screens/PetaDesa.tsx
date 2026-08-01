@@ -190,8 +190,13 @@ export function PetaDesa() {
           <span className="peta-legenda__item">
             <span className="peta-legenda__swatch" style={{ background: 'var(--tinta-merah)' }} /> tidak sehat
           </span>
+          <span className="peta-legenda__item">
+            <span className="peta-legenda__swatch peta-legenda__swatch--tipis" style={{ background: 'var(--daun-600)' }} /> warna pudar = data awal, belum representatif
+          </span>
           <span className="peta-legenda__pisah" />
-          <span className="mono" data-tip="Provenance data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
+          {/* Copy-audit 2026-08-01: "Provenance" = istilah internal — pakai
+              bahasa pemain; makna identik dgn tooltip KartuKeluarga. */}
+          <span className="mono" data-tip="Asal data indikator: hanya yang kamu verifikasi sendiri yang pasti benar.">
             ✓ dokter · ~ kader · ? belum ada data · ⧗ dijanjikan warga — menunggu verifikasi hasil
           </span>
         </div>
@@ -235,7 +240,7 @@ export function PetaDesa() {
                 ⌖
               </span>
               <p className="teks-lembut">
-                Klik salah satu petak RW pada peta untuk melihat keluarga binaan-kandidat di sana.
+                Klik salah satu petak RW pada peta untuk melihat keluarga yang bisa kamu bina di sana.
               </p>
               <p className="teks-xs teks-pudar-hint">
                 Warna petak dihitung dari data yang MASUK — RW abu-abu berarti kadernya belum menyurvei, bukan berarti
@@ -308,7 +313,7 @@ export function PetaDesa() {
             <div className="peta-daftar">
               {kandidat.length === 0 ? (
                 <p className="teks-kecil teks-lembut">
-                  Tidak ada keluarga binaan-kandidat bernama di RW ini — KK-nya dikelola agregat lewat sensus kader.
+                  Belum ada keluarga bernama yang bisa kamu bina di RW ini — sisanya terdata sebagai angka rekapitulasi dari survei kader.
                 </p>
               ) : (
                 kandidat.map((content) => {

@@ -91,6 +91,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
               className={`klinik-tinta-pilih__opsi${jenis === 'tegak' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('tegak')}
               disabled={tutorialAktif}
+              title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
             >
               <span className="stempel stempel--hijau">TEGAK</span>
               <span className="teks-xs teks-lembut">
@@ -103,6 +104,7 @@ export function DeckDiagnosis({ enc, kasus, dispatch, tutorialAktif = false }: P
               className={`klinik-tinta-pilih__opsi${jenis === 'suspek' ? ' klinik-tinta-pilih__opsi--aktif' : ''}`}
               onClick={() => setJenis('suspek')}
               disabled={tutorialAktif}
+              title={tutorialAktif ? 'Ikuti langkah tutorial yang disorot dulu.' : undefined}
             >
               <span className="stempel stempel--biru">SUSPEK</span>
               <span className="teks-xs teks-lembut">

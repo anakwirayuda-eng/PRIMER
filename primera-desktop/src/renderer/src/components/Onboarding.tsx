@@ -55,17 +55,17 @@ const KARTU: Kartu[] = [
   {
     ikon: '🌅',
     judul: 'Satu hari, tiga blok',
-    isi: 'PAGI di klinik memeriksa pasien. SIANG turun ke lapangan — kunjungan keluarga atau kegiatan. SORE di meja kerja: surat, laporan, refleksi. Tekan LANJUTKAN untuk mengalir dari satu blok ke blok berikutnya.',
+    isi: 'PAGI di klinik memeriksa pasien. SIANG turun ke lapangan — kunjungan keluarga atau kegiatan. SORE di meja kerja: surat, laporan, refleksi. Tombol besar di kanan bawah selalu membawamu ke langkah berikutnya.',
   },
   {
     ikon: '📋',
     judul: 'Di klinik: gali dulu, jangan menebak',
-    isi: 'Panggil pasien, tanyakan anamnesis, periksa fisik, pesan lab bila perlu. Perhatikan gauge KESABARAN pasien — bertanya berputar-putar atau tak relevan membuatnya jengkel dan berhenti bercerita.',
+    isi: 'Panggil pasien, tanyakan anamnesis, periksa fisik, pesan lab bila perlu. Perhatikan meter Sabar Pasien — bertanya berputar-putar atau tak relevan membuatnya jengkel dan berhenti bercerita.',
   },
   {
     ikon: '🔖',
     judul: 'TEGAK atau SUSPEK — jujurlah',
-    isi: 'Saat mendiagnosis: cap TEGAK bila kamu yakin, SUSPEK bila itu masih diagnosis kerja. Kejujuran epistemikmu ikut dinilai — menebak TEGAK asal-asalan lebih berisiko daripada mengakui ragu.',
+    isi: 'Saat mendiagnosis: cap TEGAK bila kamu yakin, SUSPEK bila itu masih diagnosis kerja. Kejujuranmu menilai tingkat keyakinanmu sendiri ikut dinilai — menebak TEGAK asal-asalan lebih berisiko daripada mengakui ragu.',
   },
   // Audit editorial 2026-07-23 (disetujui dr. Wirayuda): dua kalimat dasar
   // penilaian dipindah dari kartu 💊 ke kartu ⚖️ — prinsip "satu konsep per

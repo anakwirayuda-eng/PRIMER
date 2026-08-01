@@ -53,6 +53,18 @@
   filter: drop-shadow(0 3px 6px rgba(38, 49, 44, 0.3));
 }
 
+/* S9-peta-visual: cakupan survei < 30% (dataTipis, peta/petaUtil.ts) — isi
+   pudar + garis putus = "data awal, belum representatif". fill-opacity rendah
+   di atas kanvas kertas yang SELALU terang (lihat re-pin [data-mode='malam']
+   .peta-svg di bawah) otomatis melunakkan saturasi KETIGA warna kelas tanpa
+   token warna baru — benar di mode siang & malam sekaligus. Rule CSS ini
+   menang atas atribut fillOpacity inline; indikator fokus keyboard tetap
+   menang atas dasharray ini. */
+.peta-petak--tipis .peta-petak__bidang {
+  fill-opacity: 0.45;
+  stroke-dasharray: 5 4;
+}
+
 /* M10 §49 + §48#13: font-size teks SVG peta dipindah dari px absolut ke rem
    agar ikut skala Pengaturan ukuran teks 90-140% (App.tsx set root font-size;
    hanya rem/em yang ikut). rem di SVG <text> didukung browser modern &
@@ -160,6 +172,14 @@
   display: inline-block;
 }
 
+/* S9-peta-visual: swatch legenda "data tipis" — pudar + putus-putus, cermin
+   gaya petak. opacity ikut memudarkan border-nya: disengaja, itulah "pudar";
+   swatch murni dekoratif (teks legenda di sebelahnya yang membawa makna). */
+.peta-legenda__swatch--tipis {
+  border-style: dashed;
+  opacity: 0.45;
+}
+
 .peta-legenda__pisah {
   width: 1px;
   height: 14px;
@@ -210,12 +230,7 @@
 
 .peta-roster-item--aktif {
   border-color: var(--daun-700);
-  background: var(--daun-50);
-}
-
-/* CODEX P2 audit 2026-07-04: --daun-50 tak diremap gelap — lihat Klinik.css. */
-[data-mode='malam'] .peta-roster-item--aktif {
-  background: rgba(62, 208, 164, 0.16);
+  background: var(--wash-daun); /* token wash: malam otomatis benar */
 }
 
 /* User playtest 2026-07-06 (screenshot mode malam): kanvas peta SVG (kertas-
@@ -231,16 +246,16 @@
   --tinta: var(--tinta-siang);
   --tinta-lembut: var(--tinta-lembut-siang);
   --tinta-pudar: var(--tinta-pudar-siang);
-  --daun-600: #16a37f;
-  --daun-700: #0d8465;
-  --daun-800: #0a5c47;
-  --kunyit-600: #d9822b;
-  --kunyit-700: #96500f;
-  --tinta-merah: #b3382c;
-  --tinta-biru: #2b5a8a;
-  --border-halus: rgba(38, 49, 44, 0.12);
-  --border-tegas: rgba(38, 49, 44, 0.28);
-  --border-tinta: rgba(38, 49, 44, 0.55);
+  --daun-600: var(--daun-600-siang);
+  --daun-700: var(--daun-700-siang);
+  --daun-800: var(--daun-800-siang);
+  --kunyit-600: var(--kunyit-600-siang);
+  --kunyit-700: var(--kunyit-700-siang);
+  --tinta-merah: var(--tinta-merah-siang);
+  --tinta-biru: var(--tinta-biru-siang);
+  --border-halus: var(--border-halus-siang);
+  --border-tegas: var(--border-tegas-siang);
+  --border-tinta: var(--border-tinta-siang);
 }
 
 .peta-roster-item__nama {

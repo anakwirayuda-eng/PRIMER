@@ -398,7 +398,7 @@ const KANAL_PROLANIS: readonly ((narasi: string) => string)[] = [
   (n) => n,
   (n) =>
     `Sesi edukasi Klub Prolanis bulan ini dipandu Duta PROLANIS. ${n}`,
-  (n) => `Reminder SMS jadwal kontrol sudah terkirim minggu lalu. ${n}`,
+  (n) => `Pengingat jadwal kontrol lewat SMS sudah terkirim minggu lalu. ${n}`,
   (n) => `Kunjungan rumah bulan ini utk pemantauan lebih dekat. ${n}`,
 ]
 
@@ -761,15 +761,27 @@ export function jawabKegiatan(
 }
 
 /**
- * Delegasi sisa kartu ke kader (khusus posyandu): kader menjawab, tapi 20%
- * peluang salah per kartu — mengajarkan supervisi task-shifting.
+ * S6-degenerate (b), 2026-08-01 — peluang kader menjawab BENAR satu kartu saat
+ * delegasi Posyandu. Diturunkan 0.8 → 0.65: pada 0.8, delegasi penuh 4 kartu
+ * memberi P(skor≥0.66)=81.9% dan P(skor≥0.5)=97.3% — nyaris mendominasi main
+ * sendiri; pada 0.65 turun ke 56.3% / 87.4% (dan P(nada 'baik' skor≥0.8) =
+ * 17.9%) — delegasi tetap layak sebagai manajemen waktu, bukan otopilot.
+ * SATU-SATUNYA sumber angka ini; UI (Kegiatan.tsx) menurunkan teks risikonya
+ * dari konstanta yang sama agar janji UI tak bisa melenceng dari perilaku.
+ */
+export const PELUANG_KADER_BENAR = 0.65
+
+/**
+ * Delegasi sisa kartu ke kader (khusus posyandu): kader menjawab, tapi
+ * (1 − PELUANG_KADER_BENAR) ≈ 35% peluang salah per kartu — mengajarkan
+ * supervisi task-shifting sebagai tradeoff nyata.
  */
 export function delegasiKegiatan(kg: KegiatanState, rng: Rng): KegiatanState {
   let cur = kg
   while (cur.index < cur.kartu.length) {
     const kartu = cur.kartu[cur.index]
     if (!kartu) break
-    const kaderBenar = rng.chance(0.8)
+    const kaderBenar = rng.chance(PELUANG_KADER_BENAR)
     // Kader memilih jawaban benar bila "kaderBenar", selain itu pilihan salah pertama.
     const pilihan = kaderBenar
       ? kartu.pilihan.find((p) => p.benar) ?? kartu.pilihan[0]
@@ -798,13 +810,30 @@ export function nilaiKegiatan(kg: KegiatanState): HasilKegiatan {
   }
 }
 
-/** Drift parameter Prolanis antar-bulan: intervensi tepat menurunkan, lalai menaikkan. */
-export function driftProlanis(p: PesertaProlanis, intervensiTepat: boolean, rng: Rng): PesertaProlanis {
+/**
+ * Drift parameter Prolanis antar-bulan: intervensi tepat menurunkan, lalai
+ * menaikkan. `skala` (0..1, default 1) mengecilkan besaran langkah — dipakai
+ * jalur klinik untuk kredit parsial (grade B = 0.5); skala 1 identik perilaku
+ * lama (Math.round(besar) === besar) dan konsumsi RNG selalu tepat satu draw.
+ */
+export function driftProlanis(
+  p: PesertaProlanis,
+  intervensiTepat: boolean,
+  rng: Rng,
+  skala = 1,
+): PesertaProlanis {
   const arah = intervensiTepat ? -1 : 1
   // #12 (audit CODEX UKM 2026-07-16): skala DM kini GDP — ambang kontrol
   // RPPT <130 mg/dL (bukan GDS <200); langkah drift disesuaikan ke skala GDP.
-  const besar = p.jenis === 'ht' ? rng.int(6, 16) : rng.int(10, 30)
-  const param = Math.max(p.jenis === 'ht' ? 110 : 85, p.param + arah * besar)
+  // S5-iks-prolanis (2026-08-01, REVISI_ENGINE 62): langkah TURUN DM dinaikkan
+  // 15..35 (dulu 10..30). Aritmetika: enrolmen GDP rng.int(150,240) rata-rata
+  // 195; karier hanya memuat 3 sesi Prolanis (H30/60/90; Ujian H10/20/30) —
+  // rata-rata lama 3×20=60 → 195-60=135 ≥ 130: peserta rata-rata MUSTAHIL
+  // terkontrol walau semua jawaban benar. Kini 3×25=75 → 195-75=120 < 130.
+  // Langkah NAIK (lalai) SENGAJA tetap 10..30 — hukuman tidak ikut membesar.
+  const besar =
+    p.jenis === 'ht' ? rng.int(6, 16) : intervensiTepat ? rng.int(15, 35) : rng.int(10, 30)
+  const param = Math.max(p.jenis === 'ht' ? 110 : 85, p.param + arah * Math.round(besar * skala))
   const terkontrol = prolanisTerkendali(p.jenis, param)
   const takTerkontrolBerturut = terkontrol ? 0 : p.takTerkontrolBerturut + 1
   return { ...p, param, takTerkontrolBerturut }

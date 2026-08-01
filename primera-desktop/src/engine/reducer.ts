@@ -34,6 +34,7 @@ const INDIKATOR_KIA_POSYANDU: readonly IndikatorPisPk[] = [
 ]
 import {
   encounterArchetypeAktif,
+  kasusFormatif,
   ukmScenarioAktif,
   type ContentPack,
 } from '@content/pack'
@@ -134,6 +135,16 @@ export const AMBANG_TEGURAN_KAS = 8_000_000
 /** Fix #5b (audit CODEX 2026-07-11) — batas berapa kali hasil kunjungan
  * 'partial' boleh menunda karma keluarga sebelum jatuh tempo asli berlaku. */
 export const BATAS_PARTIAL_KARMA = 2
+/**
+ * S6-degenerate (a), 2026-08-01 — plafon trust dari silaturahmi akhir pekan.
+ * Dulu +1 ke SEMUA binaan ber-arc hidup: 4 akhir pekan membawa trust 2→6 dan
+ * menembus seluruh gerbang kejujuran (ambangTrust 4/5/6) tanpa satu kunjungan
+ * pun. Silaturahmi kini hanya membangun rapport AWAL (trust < 4 → +1, mentok
+ * di 4): gerbang ambang-4 masih terjangkau, gerbang dalam (≥5) menuntut kerja
+ * kunjungan sungguhan. Dipakai reducer (aturan) + MejaKerja.tsx (teks tooltip)
+ * + test — satu konstanta, teks UI tak bisa melenceng dari perilaku.
+ */
+export const TRUST_PLAFON_SILATURAHMI = 4
 
 /** Fix Q1/O-C (CODEX-31 §65, 2026-07-12) — hari pengumuman & visitasi
  * akreditasi M4.20, diskalakan proporsional per mode (dulu literal
@@ -300,13 +311,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         ...(episode.receipt.feedback ? { feedback: episode.receipt.feedback } : {}),
         nextAction: episode.familyId
           ? 'Pertahankan kontrol FKTP dan pemantauan keluarga melalui kader/PWS.'
-          : 'Laksanakan kontrol FKTP sesuai ringkasan RS dan safety-net pasien.',
+          : 'Laksanakan kontrol FKTP sesuai ringkasan RS dan tanda bahaya pasien.',
         dueDay: null,
         referral: {
           ...episode.referral,
           stage: 'acted',
         },
-        eventLabel: 'Umpan balik diadopsi ke care plan',
+        eventLabel: 'Umpan balik masuk ke rencana perawatan',
         eventDetail: `Dokter menetapkan ${rencana}.`,
       })
       return { state: { ...s, careEpisodes }, events: [] }
@@ -436,7 +447,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // Diagnosis wajib untuk SEMUA disposisi, termasuk rujuk (CODEX P1): "kenali
       // lalu rujuk" tak boleh diganti "rujuk tanpa bernalar" — confidence-tag di
       // bawah hanya bermakna bila pemain benar-benar sudah menegakkan sesuatu.
-      if (!enc.diagnosis) return err(s, 'Komit diagnosis dulu sebelum menentukan disposisi (termasuk rujuk).')
+      if (!enc.diagnosis) return err(s, 'Stempelkan diagnosismu dulu sebelum menentukan disposisi (termasuk rujuk).')
       // Phase-guard (CODEX audit 2026-07-04, temuan #2 §9): selaras dgn guard
       // di clinic.ts — DISPOSISI hanya sah di fase disposisi, walau diagnosis
       // sudah ada (mis. baru KOMIT_DIAGNOSIS, belum LANJUT_FASE dari terapi).
@@ -1131,12 +1142,16 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       }
 
       // Bridge B1.4: hasil klinik hanya menulis balik bila pasien benar-benar
-      // berasal dari satu enrolmen Prolanis dan tata laksananya mencapai A.
-      // Provenance per-masalah mencegah HT dan DM milik orang yang sama tertukar.
+      // berasal dari satu enrolmen Prolanis dan tata laksananya bermutu: grade A
+      // memberi efek penuh, grade B memberi kredit parsial (setengah besaran
+      // drift — S5-iks-prolanis 2026-08-01); di bawah B tetap nol, dan provenance
+      // per-masalah mencegah HT dan DM milik orang yang sama tertukar.
       let prolanisSetelahKlinik = s.prolanis
       let suratTindakLanjutProlanis: Surat | undefined
       const pesertaIdProlanis = encFinal.pasien.prolanisPesertaId
-      if (pesertaIdProlanis && penilaianFinal.grade === 'A') {
+      const kreditProlanisKlinik =
+        penilaianFinal.grade === 'A' ? 1 : penilaianFinal.grade === 'B' ? 0.5 : 0
+      if (pesertaIdProlanis && kreditProlanisKlinik > 0) {
         const peserta = s.prolanis.roster.find((p) => p.id === pesertaIdProlanis)
         if (peserta) {
           // Perawatan tepat memperbaiki parameter, tetapi tidak boleh memalsukan
@@ -1145,6 +1160,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             peserta,
             true,
             new Rng(s.seed, 'prolanis-klinik', s.hari, peserta.id, encFinal.pasien.id),
+            kreditProlanisKlinik,
           )
           prolanisSetelahKlinik = {
             ...s.prolanis,
@@ -1161,7 +1177,9 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             isi:
               `Penanganan klinis ${encFinal.pasien.nama} tercatat kembali ke masalah ${peserta.jenis.toUpperCase()}. ` +
               `${label} pemantauan bergerak dari ${peserta.param} menjadi ${pesertaBaru.param} ${satuan}; ` +
-              'evaluasi lagi pada sesi berikutnya.',
+              (kreditProlanisKlinik < 1
+                ? 'perbaikannya baru sebagian karena tata laksana belum sepenuhnya optimal — evaluasi lagi pada sesi berikutnya.'
+                : 'evaluasi lagi pada sesi berikutnya.'),
             dibaca: false,
             ...(peserta.keluargaId ? { kaitKeluargaId: peserta.keluargaId } : {}),
           }
@@ -1323,7 +1341,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         return err(s, 'Keluarga ini belum jadi binaanmu — daftarkan dulu di peta desa sebelum berkunjung.')
       if (kel.arcSelesai === 'gagal')
         return err(s, 'Krisis sudah terjadi — dampingi pemulihan keluarga ini lewat klinik.')
-      if (kel.arcSelesai === 'berhasil') return err(s, 'Arc keluarga ini sudah tuntas.')
+      if (kel.arcSelesai === 'berhasil') return err(s, 'Pendampingan keluarga ini sudah tuntas.')
       if (kel.followUpHari !== undefined && s.hari < kel.followUpHari)
         return err(s, `Kunjungan berikutnya dijadwalkan hari ke-${kel.followUpHari}.`)
       // Audit CODEX UKM 2026-07-16 #1: indeks arc berjalan atas daftar
@@ -1331,7 +1349,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // di tengah arc membuat arc buntu permanen di Ujian.
       const arcAktif = arcKunjunganAktif(pack, kelContent, s.mode, s.contentRelease)
       const skenario = arcAktif[kel.arcIndex]
-      if (!skenario) return err(s, 'Arc keluarga ini sudah selesai.')
+      if (!skenario) return err(s, 'Tidak ada kunjungan lanjutan yang tersisa untuk keluarga ini.')
       const rwProfil = pack.rw.find((r) => r.nomor === kelContent.rw)
       const biaya = BIAYA_STAMINA_KUNJUNGAN[rwProfil?.jarak ?? 'sedang']
       if (s.stamina < biaya) return err(s, `Butuh ${biaya} stamina untuk perjalanan ke RW ${kelContent.rw}.`)
@@ -1363,7 +1381,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const kel = s.desa.keluarga[kj.keluargaId]
       if (!kelContent || !kel) return err(s, 'Keluarga tidak dikenal.')
       const skenarioDasar = kelContent.arc.kunjungan.find((x) => x.id === kj.skenarioId)
-      if (!skenarioDasar) return err(s, 'Skenario hilang.')
+      if (!skenarioDasar) return err(s, 'Skenario kunjungan ini tidak ditemukan — tutup dan buka ulang Peta Desa.')
       const skenario = skenarioEfektif(skenarioDasar, kj.varianId)
 
       const hasilAksi = aksiKunjungan(kj, action, skenario, kel)
@@ -1603,7 +1621,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
               feedback: `${hasil.narasiPenutup} Hasil klinik dan pemulihan keluarga kini tersambung.`,
               nextAction: 'Pertahankan perubahan dan pantau melalui kader serta PWS keluarga.',
               dueDay: null,
-              eventLabel: 'Pemulihan keluarga menutup loop klinik',
+              eventLabel: 'Pemulihan keluarga menuntaskan alur klinik',
               eventDetail: `${kelContent.namaKeluarga} menyelesaikan kunjungan pemulihan setelah tindak lanjut klinis.`,
             })
           }
@@ -2071,13 +2089,23 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         narasi = 'Lari pagi keliling sawah sampai berkeringat. Besok badanmu punya tenaga ekstra.'
       } else {
         burnout = Math.max(0, burnout - 6)
-        // Silaturahmi: mampir tanpa agenda ke keluarga binaan — trust naik tipis.
+        // S6-degenerate (a): silaturahmi = rapport AWAL saja. Dulu +1 trust ke
+        // SEMUA binaan ber-arc hidup — 4 akhir pekan menembus semua gerbang
+        // kejujuran (ambangTrust 4/5/6) tanpa satu kunjungan pun. Kini hanya
+        // keluarga ber-trust < TRUST_PLAFON_SILATURAHMI (4) yang naik; gerbang
+        // dalam (≥5) tetap menuntut kunjungan sungguhan. Deterministik: tanpa rng.
         keluarga = { ...keluarga }
+        let adaYangLuluh = false
         for (const id of s.desa.binaan) {
           const kel = keluarga[id]
-          if (kel && !kel.arcSelesai) keluarga[id] = { ...kel, trust: Math.min(10, kel.trust + 1) }
+          if (kel && !kel.arcSelesai && kel.trust < TRUST_PLAFON_SILATURAHMI) {
+            keluarga[id] = { ...kel, trust: Math.min(10, kel.trust + 1) }
+            adaYangLuluh = true
+          }
         }
-        narasi = 'Keliling desa tanpa tas obat — cuma ngobrol dan minum teh. Warga melihatmu sebagai manusia, bukan seragam.'
+        narasi = adaYangLuluh
+          ? 'Keliling desa tanpa tas obat — cuma ngobrol dan minum teh. Keluarga yang masih sungkan mulai membukakan pintu; kepercayaan yang lebih dalam menunggu kunjunganmu.'
+          : 'Keliling desa tanpa tas obat — cuma ngobrol dan minum teh. Warga menyambutmu hangat seperti biasa; untuk melangkah lebih dalam, datanglah lewat kunjungan sungguhan.'
       }
       return {
         state: {
@@ -2371,6 +2399,16 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
       const rng = new Rng(s.seed, 'auto', s.hari)
       const rngKembali = new Rng(s.seed, 'auto-kembali', s.hari)
       for (let i = 0; i < sisa; i++) {
+        const pasienSkip = s.klinik.antrian[i]
+        // S4-formatif-slot (governance): pasien kasus formatif yang dilewatkan
+        // TIDAK ikut undian bermasalah — formatif tidak boleh menyentuh tally
+        // (autoBermasalah masuk denominator akurasi di scoring.ts) ataupun
+        // menjadwalkan konsekuensi, konsisten dgn jalur DISPOSISI yang
+        // membekukan tally/jadwal utk prototypeFormatif. CATATAN determinisme:
+        // pasien formatif tak lagi MENGONSUMSI draw rng 'auto' — urutan roll
+        // pasien resmi berikutnya pada antrian campuran bergeser (disengaja,
+        // REVISI_ENGINE 62).
+        if (kasusFormatif(pasienSkip ? pack.kasus[pasienSkip.kasusId] : undefined)) continue
         if (!rng.chance(pBermasalah)) continue
         bermasalah += 1
         // DeepThink #5 (moral hazard "ghosting"): dulu "bermasalah" cuma angka
@@ -2382,7 +2420,6 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
         // kasus.konsekuensi (kembaliHariMin/Max + kondisiKembali), gated sama
         // spt jalur DISPOSISI (kasus tanpa konsekuensi = tak ada arc memburuk
         // utk diwujudkan; tetap kena penalti statistik autoBermasalah saja).
-        const pasienSkip = s.klinik.antrian[i]
         const kasusSkip = pasienSkip ? pack.kasus[pasienSkip.kasusId] : undefined
         if (pasienSkip && kasusSkip?.konsekuensi) {
           const jatuhTempo =
@@ -2639,7 +2676,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           signal: completed.receipt.signal,
           ...(completed.receipt.decision ? { decision: completed.receipt.decision } : {}),
           ...(completed.receipt.feedback ? { feedback: completed.receipt.feedback } : {}),
-          nextAction: 'Baca ringkasan RS dan masukkan hasilnya ke care plan FKTP.',
+          nextAction: 'Baca ringkasan RS dan masukkan hasilnya ke rencana perawatan FKTP.',
           dueDay: hari,
           referral: { ...(completed.referral ?? { stage: 'feedback' }), stage: 'feedback', hospitalName: rs?.nama },
           eventLabel: 'Umpan balik kembali ke FKTP',
@@ -2650,7 +2687,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
             jenis: 'kabar_warga',
             dari: rs?.nama ?? 'RS rujukan',
             judul: `Umpan balik rujukan - ${j.nama ?? episode.subjectName}`,
-            isi: `${j.feedbackRujukan ?? `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan ${kasus.nama}.`} Baca ringkasan ini untuk memasukkannya ke rencana tindak lanjut FKTP dan menutup loop rujukan.`,
+            isi: `${j.feedbackRujukan ?? `${rs?.nama ?? 'RS rujukan'} menyelesaikan pelayanan ${kasus.nama}.`} Baca ringkasan ini untuk memasukkannya ke rencana perawatan FKTP dan menuntaskan rujukan.`,
             ...(j.keluargaId ? { kaitKeluargaId: j.keluargaId } : {}),
             episodeId: episode.id,
           }),
@@ -2803,7 +2840,7 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           feedback: j.prb
             ? `Resume dan rencana PRB kembali bersama ${j.nama ?? episode.subjectName}.`
             : j.catatan ?? 'Pasien kembali untuk evaluasi klinis.',
-          nextAction: `Tangani ${j.nama ?? episode.subjectName} di poli hari ini dan perbarui care plan.`,
+          nextAction: `Tangani ${j.nama ?? episode.subjectName} di poli hari ini dan perbarui rencana perawatan.`,
           dueDay: hari,
           ...(j.prb
             ? { referral: { ...(episode.referral ?? { stage: 'feedback' as const }), stage: 'feedback' as const } }
@@ -2983,6 +3020,24 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
               kaitKeluargaId: j.keluargaId,
             }),
           )
+        } else {
+          // S7-surat-closure: keberhasilan mendapat penutup yang sama dengan
+          // kegagalan. `janjiTepat` bisa memuat indikator yang keburu
+          // diverifikasi dokter langsung sebagai 'tidak' (loop di atas men-skip
+          // sumber !== 'janji') — saring ke yang statusnya kini 'ya' supaya
+          // surat hangat tak pernah memuji perubahan yang tidak terjadi.
+          const terwujud = janjiTepat.filter((ind) => indikator[ind].status === 'ya')
+          if (terwujud.length > 0) {
+            suratBaru.push(
+              buatSuratHarian(hari, suratBaru.length, {
+                jenis: 'kabar_warga',
+                dari: `Kader RW ${kelContent.rw}`,
+                judul: `${kelContent.namaKeluarga} — janji yang ditepati`,
+                isi: `Kabar baik, Dok: ${terwujud.map((id) => id.replace(/_/g, ' ')).join(', ')} di keluarga ${kelContent.namaKeluarga} kini benar-benar berjalan — bukan lagi sekadar janji. Pendampinganmu berbuah. Kader akan terus memantau supaya kebiasaan baik ini tidak kendur.`,
+                kaitKeluargaId: j.keluargaId,
+              }),
+            )
+          }
         }
       }
     }
@@ -3171,9 +3226,17 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
     // bahkan dgn seluruh keluarga binaan 'sehat' + bonusIks maks di SETIAP RW
     // cuma ~0.50, dan throughput nyata (kunci TETAPKAN_PROGRAM 1 RW/bulan)
     // membuat ceiling praktis karier ~0.25. Diverifikasi soak 15-seed: 0 dari
-    // 3600 hari sampel pernah lolos dari tingkat 0.8x. Ambang baru (0.20/0.30)
-    // digrounding perhitungan ceiling riil tsb — 3 tingkat genuinely reachable.
-    const pengali = iksDesa >= 0.3 ? 1.3 : iksDesa >= 0.2 ? 1.0 : 0.8
+    // 3600 hari sampel pernah lolos dari tingkat 0.8x. Ambang 0.20/0.30 hasil
+    // kalibrasi itu masih meleset di tingkat atas — S5-iks-prolanis (2026-08-01,
+    // REVISI_ENGINE 62): dihitung ulang dari konten aktual (totalKk per RW
+    // 28/27/26/25/24/26/22/22; baseline sehat 0.2/0.12/0.06; 2 binaan/RW):
+    // tanpa usaha iksDesa ≈ 0.125; SEMUA 16 binaan 'sehat' tanpa bonus ≈ 0.205;
+    // ceiling praktis + bonus posyandu/KLB/kalender rutin ≈ 0.24-0.26 — jadi
+    // 1.3x di ambang 0.30 nyaris mustahil. Ambang baru: 0.8x di bawah 0.18
+    // (malas tetap terhukum), 1.0x mulai 0.18 (permainan baik, ≥12 binaan
+    // sehat), 1.3x mulai 0.24 (binaan nyaris tuntas + UKM lapangan konsisten —
+    // tercapai dengan permainan kuat, tapi tidak gratis).
+    const pengali = iksDesa >= 0.24 ? 1.3 : iksDesa >= 0.18 ? 1.0 : 0.8
     const masukan = Math.round(6_000_000 * pengali)
     kapitasi += masukan - OPERASIONAL_BULANAN
     suratBaru.push(
@@ -3184,8 +3247,10 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         // label sebelumnya menyiratkan ini formula KBK BPJS riil (3-indikator:
         // AK/RRNS/RPPT) padahal murni proksi rata-rata IKS desa (PIS-PK) —
         // teks-saja, TAK menyentuh matematika pengali/masukan.
-        judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (proksi PIS-PK ×${pengali})`,
-        isi: `Pembayaran kapitasi diterima. Pengali proksi IKS-PIS-PK bulan ini ×${pengali} — ditentukan IKS desa binaanmu (${(iksDesa * 100).toFixed(0)}%), BUKAN formula KBK BPJS riil (Angka Kontak/Rasio Rujukan/Rasio Prolanis). ${pengali < 1 ? 'IKS di bawah 0,2 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,3 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa di atas 0,3 untuk pengali 1,3.'}`,
+        // Copy-audit 2026-08-01: disclaimer kejujuran desain dipindah ke catatan
+        // penutup (bukan di tengah kalimat bersuara BPJS), akronim dieja penuh.
+        judul: `Kapitasi bulan ini: Rp ${masukan.toLocaleString('id-ID')} (pengali kinerja ×${pengali})`,
+        isi: `Pembayaran kapitasi diterima. Pengali bulan ini ×${pengali}, ditentukan oleh rata-rata Indeks Keluarga Sehat desa binaanmu (${(iksDesa * 100).toFixed(0)}%). ${pengali < 1 ? 'IKS di bawah 0,18 memangkas pendapatan Puskesmas — kerja preventif di lapangan adalah kerja finansial juga.' : pengali > 1 ? 'IKS di atas 0,24 memberi bonus komitmen. Pertahankan.' : 'Naikkan IKS desa ke 0,24 atau lebih untuk pengali 1,3.'} — Catatan simulasi: pengali di sini disederhanakan memakai IKS PIS-PK; formula pembayaran berbasis kinerja BPJS yang sebenarnya memakai Angka Kontak, Rasio Rujukan Non-Spesialistik, dan Rasio Peserta Prolanis Terkendali.`,
       }),
     )
     suratBaru.push(
@@ -3304,8 +3369,8 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           judul: `Program Prolanis dibuka — ${jumlahPeserta} peserta, ${rosterKanonik.length} masalah aktif`,
           isi:
             `Peserta hipertensi & diabetes terdaftar untuk pemantauan rutin bulanan. ` +
-            `${jumlahKomorbid} enrolmen adalah komorbid pada orang yang sama, sehingga tiap masalah dipantau terpisah tanpa menggandakan orang. ` +
-            'Gelar sesi Prolanis di blok siang; kontrol buruk berulang akan berujung ke poli dan hasil kliniknya kembali ke roster.',
+            `Sebagian peserta punya lebih dari satu penyakit kronis, jadi ${jumlahKomorbid} pendaftaran di antaranya milik orang yang sama — tiap penyakit dipantau terpisah, tetapi jumlah orangnya tidak berlipat. ` +
+            'Gelar sesi Prolanis di blok siang; kontrol buruk berulang akan berujung ke poli dan hasil kliniknya kembali ke daftar pemantauan.',
         }),
       )
     } else {
@@ -3381,12 +3446,36 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   )
   const antrian = [...antrianKembali, ...antrianDirector]
 
-  if (hari === HARI_BUKA_PETA) flags['petaBaruTerbuka'] = true
-  if (hari === HARI_BUKA_KUNJUNGAN) flags['kunjunganBaruTerbuka'] = true
+  // S7-surat-closure (2026-08-01): lima flag `*BaruTerbuka` DIHAPUS — ditulis
+  // tiap unlock tapi tak pernah dibaca siapa pun (UI gating memakai
+  // `hari >= HARI_BUKA_*` langsung; satu-satunya kemunculan lain adalah data
+  // fixture round-trip di director.test.ts). `rekapSlice` TETAP: dibaca
+  // MejaKerja.tsx (modal rekap) dan aksi TUTUP_REKAP. Pengganti yang bermakna:
+  // Posyandu & Respons KLB kini DIUMUMKAN lewat surat pada hari bukanya —
+  // pola sama dengan surat pembukaan Prolanis. Peta & Kunjungan tidak
+  // butuh surat: agendaBesok (mejaKerja/agendaBesok.ts) sudah mengumumkannya
+  // semalam sebelumnya, dan surat tutorial hari 1 menyebut Peta terbuka besok.
   if (hari === HARI_REKAP_SLICE) flags['rekapSlice'] = true
-  if (hari === HARI_BUKA_POSYANDU[s.mode]) flags['posyanduBaruTerbuka'] = true
-  if (hari === HARI_BUKA_PROLANIS[s.mode]) flags['prolanisBaruTerbuka'] = true
-  if (hari === HARI_BUKA_KLB[s.mode]) flags['klbBaruTerbuka'] = true
+  if (hari === HARI_BUKA_POSYANDU[s.mode]) {
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'Koordinator Kader Posyandu',
+        judul: 'Posyandu dibuka — layanan bulanan per RW dimulai',
+        isi: `Meja, timbangan, dan buku KIA sudah kami siapkan, Dok. Mulai hari ini Posyandu bisa digelar di tiap RW: buka Peta Desa, pilih RW-nya, lalu tekan "Gelar Posyandu" di blok siang. Satu RW bisa digelar lagi setiap ${COOLDOWN_POSYANDU[s.mode]} hari. Di meja Posyandu kamu memantau balita, ibu hamil, sampai lansia — menangkap masalah tumbuh kembang dan gizi sebelum sempat menjadi pasien poli. Bila harimu padat, sesi bisa didelegasikan ke kader; tetap berjalan, walau tidak seteliti tanganmu sendiri.`,
+      }),
+    )
+  }
+  if (hari === HARI_BUKA_KLB[s.mode]) {
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'sistem',
+        dari: 'dr. Harsono, Kepala Puskesmas',
+        judul: 'Respons KLB dibuka — sinyal kluster kini bisa ditindak',
+        isi: 'Dokter, mulai hari ini modul Respons KLB aktif. Bila beberapa kasus penyakit yang sama datang dari satu RW dalam 14 hari, Petugas Surveilans mengirim surat sinyal dan penanda KLUSTER merah menyala di RW itu pada Peta Desa. Kini kamu bisa menindaknya: buka RW tersebut lalu tekan "Verifikasi & Respons Sinyal KLB" di blok siang — pastikan dulu sinyalnya nyata, lalu pilih pengendalian sesuai cara penularannya. Poli mengobati satu per satu; yang menghentikan penularan adalah tindakan di wilayah. Jangan biarkan sinyal menua di peta.',
+      }),
+    )
+  }
 
   // IGD interrupt (M3.14): sesekali pasien gawat tiba subuh — HARUS ditangani
   // sebelum poli buka. Maks 1/hari, mulai hari 4, jeda minimal 4 hari.
@@ -3445,6 +3534,43 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         bonusIks: Math.min(0.3, r.bonusIks + eventKalender.bonusIksSemua!),
       }))
     }
+  }
+
+  // S3 burnout-rapor (b) — surat ambang burnout dari Kapus: efek mekanis
+  // burnout (>=40: stamina pagi -1; >=70: -2, dan insting auto-resolve makin
+  // tumpul — lihat pBermasalah di LANJUTKAN pagi) dulu terjadi TANPA sinyal
+  // in-world. Latch via flags (pola `suratStokMenipis`) agar tak spam tiap
+  // pagi; latch dilepas kembali begitu burnout pagi turun ke bawah ambangnya,
+  // sehingga episode burnout berikutnya melahirkan surat baru. Level-latch
+  // (bukan banding kemarin-vs-hari-ini) SENGAJA: lonjakan intra-hari (Kode
+  // Hitam +15) bisa melewati ambang tanpa pernah "menyeberang" antar-pagi.
+  // Blok ini ditempatkan SETELAH semua surat harian lain: id `surat_H_seq`
+  // surat yang sudah ada tak pernah bergeser (kompat replay dossier — jejak
+  // lama BACA_SURAT/ADOPSI_UMPAN_BALIK tetap resolve; lihat REVISI_ENGINE 62).
+  // Deterministik penuh — tanpa rng.
+  if (burnout < 70 && flags['suratBurnout70'] === true) flags['suratBurnout70'] = false
+  if (burnout < 40 && flags['suratBurnout40'] === true) flags['suratBurnout40'] = false
+  if (burnout >= 70 && flags['suratBurnout70'] !== true) {
+    flags['suratBurnout70'] = true
+    flags['suratBurnout40'] = true // peringatan keras sudah mencakup yang ringan
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'teguran_kapus',
+        dari: 'dr. Harsono, Kepala Puskesmas',
+        judul: 'PERINGATAN — kelelahanmu sudah membebani pasien',
+        isi: `Dokter, ini bukan lagi pengingat. Kelelahanmu menyentuh ${burnout} dari 100 — dan di tahap ini pelayananlah yang membayar harganya: staminamu berangkat berkurang dua setiap pagi, dan pasien antrean yang tak sempat kamu periksa — yang kamu serahkan ke insting — makin sering pulang membawa masalah yang terlewat. Nilai ketahananmu di rapor ikut tergerus. Saya pernah melihat dokter memaksakan diri sampai pasiennya yang menanggung akibatnya; saya tidak mau melihatnya lagi di puskesmas ini. Kosongkan slot siang akhir pekan terdekat untuk pemulihan — anggap ini instruksi kepala puskesmas, bukan saran.`,
+      }),
+    )
+  } else if (burnout >= 40 && flags['suratBurnout40'] !== true) {
+    flags['suratBurnout40'] = true
+    suratBaru.push(
+      buatSuratHarian(hari, suratBaru.length, {
+        jenis: 'teguran_kapus',
+        dari: 'dr. Harsono, Kepala Puskesmas',
+        judul: 'Jaga tenagamu, Dokter',
+        isi: `Dokter, sebentar saja. Saya perhatikan lampu ruanganmu belakangan padam paling akhir. Kelelahanmu menyentuh ${burnout} dari 100, dan tubuhmu mulai menagih: mulai pagi ini staminamu berangkat berkurang satu. Ini belum gawat — tapi jangan menunggu gawat. Tiap hari ke-7, slot siang bisa dipakai pemulihan: tidur siang panjang, olahraga keliling sawah, atau silaturahmi tanpa tas obat. Pakai itu. Dokter yang menjaga dirinya sendiri sedang menjaga pasiennya juga.`,
+      }),
+    )
   }
 
   for (const m of suratBaru) events.push({ type: 'SURAT_MASUK', surat: m })

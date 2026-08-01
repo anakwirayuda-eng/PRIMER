@@ -58,9 +58,9 @@ describe('<BuktiKlinis />', () => {
     expect(details).toHaveAttribute('open')
     expect(screen.getByText('INTI KEPUTUSAN')).toBeVisible()
     expect(screen.getByText(/INDONESIA.*LANGSUNG.*2025/)).toBeVisible()
-    expect(screen.getByText(/EBM.*FLOOR UMUM.*2026/)).toBeVisible()
+    expect(screen.getByText(/EBM.*PEDOMAN DASAR.*2026/)).toBeVisible()
     expect(screen.getByText(/Dokumen ini menjadi floor umum/)).toBeVisible()
-    expect(screen.getByText(/Label cakupan membedakan sumber langsung/)).toBeVisible()
+    expect(screen.getByText(/Label cakupan membedakan sumber yang/)).toBeVisible()
 
     const links = screen.getAllByRole('link')
     expect(links).toHaveLength(2)
@@ -114,9 +114,9 @@ describe('<BuktiKlinis />', () => {
 
     await user.click(screen.getByText('Realita FKTP & kesiapan sumber daya'))
     expect(realita).toHaveAttribute('open')
-    expect(screen.getByText('READY DI SUKAMAJU')).toBeVisible()
-    expect(screen.getByText('MELALUI JEJARING')).toBeVisible()
-    expect(screen.getByText('TIDAK READY')).toBeVisible()
+    expect(screen.getByText('TERSEDIA DI SUKAMAJU')).toBeVisible()
+    expect(screen.getByText('LEWAT JEJARING RUJUKAN')).toBeVisible()
+    expect(screen.getByText('TIDAK TERSEDIA')).toBeVisible()
 
     await user.click(screen.getByText('Kelanjutan perawatan'))
     await user.click(screen.getByText('Dari Pasien ke Perbaikan Sistem'))

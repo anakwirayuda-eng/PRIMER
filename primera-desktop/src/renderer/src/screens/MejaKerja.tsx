@@ -24,6 +24,8 @@ import {
   BIAYA_STAMINA_KEGIATAN,
   TARGET_KASUS_PROGRAM,
   SIKLUS_LAPORAN_BULANAN,
+  TRUST_PLAFON_SILATURAHMI,
+  STAMINA_MAKS,
 } from '@engine/reducer'
 import type { FokusProgram } from '@engine/state'
 import { clusterAktif } from '@engine/surveilans'
@@ -38,6 +40,7 @@ import { JejakPerawatan } from './JejakPerawatan'
 import { BuktiKlinis } from '../components/BuktiKlinis'
 import { DialogGame } from '../components/DialogGame'
 import { personaAnamnesis } from './klinik/util'
+import { sedangMengetik } from '../utils/navigasiHud'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -304,7 +307,7 @@ export function MejaKerja() {
           sekunder: {
             label: `Serahkan ${antrianN} pasien ke insting, lanjut ke siang`,
             aksi: () => dispatch({ type: 'LANJUTKAN' }),
-            keterangan: 'Pasien yang dilewati di-auto-resolve — hasil buruknya bisa kembali lewat surat.',
+            keterangan: 'Pasien yang dilewati ditangani mengikuti instingmu — bila hasilnya buruk, kabarnya kembali lewat surat.',
           },
         }
       }
@@ -354,6 +357,32 @@ export function MejaKerja() {
       aksi: tidur,
     }
   })()
+
+  // S2-mejakerja-sore (d): hotkey "L" menjalankan tombol CTA besar — tombol
+  // paling sering diklik sepanjang game. Pagar identik dgn hotkey angka 1-5
+  // (useHotkeyNavigasi.ts): abaikan saat ada modifier, saat pemain mengetik,
+  // dan saat modal [role="dialog"] mana pun terbuka (termasuk rekap slice,
+  // Lokmin, dan DialogGame di layar ini — ketiganya role="dialog").
+  // Gate alasanTabNonaktif tidak diperlukan: komponen ini hanya ter-mount
+  // saat state.layar === 'meja' (routing App.tsx), dan listener ikut lepas
+  // saat unmount — tak mungkin menembus layar lain. Ref menjaga aksi CTA
+  // selalu versi render terakhir tanpa bongkar-pasang listener tiap render.
+  const ctaAksiRef = useRef(cta.aksi)
+  useEffect(() => {
+    ctaAksiRef.current = cta.aksi
+  })
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.defaultPrevented || e.ctrlKey || e.altKey || e.metaKey) return
+      if (e.key !== 'l' && e.key !== 'L') return
+      if (sedangMengetik(document.activeElement)) return
+      if (document.querySelector('[role="dialog"]') !== null) return
+      e.preventDefault()
+      ctaAksiRef.current()
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [])
 
   /* -- Debrief sore & rekap slice ------------------------------------------------ */
 
@@ -458,14 +487,14 @@ export function MejaKerja() {
               )}
               {feedbackMenunggu && (
                 <section className="mk__surat-tindak" aria-labelledby="judul-tindak-lanjut-rs">
-                  <h4 id="judul-tindak-lanjut-rs">Masukkan umpan balik ke care plan</h4>
+                  <h4 id="judul-tindak-lanjut-rs">Masukkan umpan balik ke rencana perawatan</h4>
                   <p className="teks-kecil teks-lembut">
-                    Membaca surat belum menutup loop. Pastikan tindak lanjut RS benar-benar diteruskan di FKTP.
+                    Membaca surat saja belum menuntaskan rujukan. Pastikan tindak lanjut RS benar-benar diteruskan di FKTP.
                   </p>
                   <div className="mk__surat-checklist">
                     {([
                       ['rekonsiliasi', 'Rekonsiliasi terapi dan instruksi RS'],
-                      ['kontrol', 'Tetapkan kontrol dan safety-net FKTP'],
+                      ['kontrol', 'Tetapkan jadwal kontrol dan tanda bahaya yang mengharuskan pasien kembali'],
                       ...(episodeSurat?.familyId
                         ? [['pemantauan_keluarga', 'Hubungkan pemantauan keluarga/kader']]
                         : []),
@@ -489,6 +518,7 @@ export function MejaKerja() {
                   <button
                     className="tombol tombol--utama"
                     disabled={!rencanaUmpanBalikLengkap}
+                    title={!rencanaUmpanBalikLengkap ? 'Centang seluruh langkah rencana dulu sebelum diterapkan.' : undefined}
                     onClick={() =>
                       dispatch({
                         type: 'ADOPSI_UMPAN_BALIK',
@@ -503,7 +533,7 @@ export function MejaKerja() {
               )}
               {episodeSurat?.referral?.stage === 'acted' && (
                 <p className="mk__surat-tertutup" role="status">
-                  Umpan balik sudah diadopsi ke care plan FKTP.
+                  Umpan balik sudah masuk ke rencana perawatan FKTP.
                 </p>
               )}
               {suratTerbuka.kaitKeluargaId && (
@@ -561,8 +591,8 @@ export function MejaKerja() {
             {antrianN === 0 ? (
               <p className="mk__kosong teks-lembut teks-kecil">
                 {state.klinik.selesaiHariIni.length > 0
-                  ? 'Semua pasien playable sudah kamu tangani. Kerja bagus.'
-                  : 'Belum ada pasien playable pagi ini.'}
+                  ? 'Semua pasien yang perlu kamu periksa hari ini sudah selesai. Kerja bagus.'
+                  : 'Pagi ini belum ada pasien yang perlu kamu periksa.'}
               </p>
             ) : (
               <div className="kolom mk__antrian">
@@ -820,21 +850,21 @@ export function MejaKerja() {
                 <div className="baris mk__program-opsi">
                   <button
                     className="tombol"
-                    data-tip="Burnout −12."
+                    data-tip="Menurunkan burnout 12 poin."
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'istirahat' })}
                   >
                     😴 Istirahat total
                   </button>
                   <button
                     className="tombol"
-                    data-tip="Burnout −9, besok stamina +1."
+                    data-tip="Menurunkan burnout 9 poin; besok stamina bertambah 1."
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'olahraga' })}
                   >
                     🏃 Olahraga
                   </button>
                   <button
                     className="tombol"
-                    data-tip="Burnout −6, trust seluruh keluarga binaan +1."
+                    data-tip={`Menurunkan burnout 6 poin; kepercayaan naik 1 untuk keluarga binaan yang belum akrab (di bawah ${TRUST_PLAFON_SILATURAHMI}). Kepercayaan yang lebih dalam hanya tumbuh lewat kunjungan sungguhan.`}
                     onClick={() => dispatch({ type: 'PEMULIHAN', jenis: 'keluarga' })}
                   >
                     ☕ Silaturahmi desa
@@ -855,9 +885,9 @@ export function MejaKerja() {
               </span>
               <div className="kolom mk__debrief-tally">
                 <span className="teks-kecil">
-                  Encounter selesai: <strong className="mono">{state.klinik.selesaiHariIni.length}</strong>
+                  Pasien selesai diperiksa: <strong className="mono">{state.klinik.selesaiHariIni.length}</strong>
                   {state.klinik.autoHariIni.jumlah > 0 && (
-                    <span className="teks-lembut"> (+{state.klinik.autoHariIni.jumlah} auto)</span>
+                    <span className="teks-lembut"> (+{state.klinik.autoHariIni.jumlah} dilewati, ditangani instingmu)</span>
                   )}
                 </span>
                 {state.klinik.selesaiHariIni.length > 0 && (
@@ -989,64 +1019,6 @@ export function MejaKerja() {
               )
             })()}
 
-            {/* M5.25 — arsip manual: 3 slot di samping autosave. */}
-            <h3 className="mk__sub-judul mono">ARSIP MANUAL</h3>
-            <div className="baris mk__program-opsi">
-              {(['slot1', 'slot2', 'slot3'] as const).map((slot) => {
-                const info = slots.find((x) => x.slot === slot)
-                return (
-                  <button
-                    key={slot}
-                    className="tombol"
-                    data-tip={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
-                    onClick={() => {
-                      // CODEX audit UI/UX 2026-07-10 (#3): dulu tombol slot
-                      // langsung menimpa arsip lama di slot itu tanpa jeda —
-                      // title tooltip saja tak mencegah klik.
-                      const simpan = () => {
-                        setStatusSlot((s) => ({ ...s, [slot]: 'menyimpan' }))
-                        void simpanKeSlot(slot).then((ok) => {
-                          if (!ok) {
-                            setStatusSlot((s) => ({ ...s, [slot]: undefined }))
-                            setDialogArsip({
-                              judul: 'Gagal Menyimpan',
-                              pesan: 'Gagal menyimpan — periksa ruang disk atau izin folder save.',
-                            })
-                            return
-                          }
-                          setStatusSlot((s) => ({ ...s, [slot]: 'tersimpan' }))
-                          // Audit Q6 (2026-07-23): timer tunggal + clear per-slot
-                          // dulu bocor — simpan slot1 lalu slot2 cepat membatalkan
-                          // timer slot1, badge "✓ tersimpan" slot1 nyangkut
-                          // permanen. Timeout kini mereset SELURUH status (badge
-                          // transient, reset total 1,6 dtk setelah simpan terakhir).
-                          if (timerSlotRef.current !== null) clearTimeout(timerSlotRef.current)
-                          timerSlotRef.current = setTimeout(() => setStatusSlot({}), 1600)
-                        })
-                      }
-                      if (info) {
-                        setDialogArsip({
-                          judul: `Timpa ${slot.replace('slot', 'Slot ')}?`,
-                          pesan: `Timpa ${slot} (dr. ${info.namaDokter} · Hari ${info.hari})? Arsip lama di slot ini akan hilang.`,
-                          labelYa: 'Timpa Slot',
-                          bahaya: true,
-                          aksi: simpan,
-                        })
-                        return
-                      }
-                      simpan()
-                    }}
-                  >
-                    {statusSlot[slot] === 'menyimpan'
-                      ? `⏳ ${slot.replace('slot', 'Slot ')} — menyimpan…`
-                      : statusSlot[slot] === 'tersimpan'
-                        ? `✓ ${slot.replace('slot', 'Slot ')} — tersimpan`
-                        : `💾 ${slot.replace('slot', 'Slot ')}${info ? ` (H${info.hari})` : ''}`}
-                  </button>
-                )
-              })}
-            </div>
-
             <h3 className="mk__sub-judul mono">REFLEKSI HARI INI</h3>
             <textarea
               className="mk__refleksi tulis-tangan"
@@ -1057,6 +1029,71 @@ export function MejaKerja() {
               placeholder="Apa yang kamu pelajari hari ini? Tulis dengan jujur — catatan ini untukmu sendiri."
               spellCheck={false}
             />
+
+            {/* M5.25 — arsip manual: 3 slot di samping autosave.
+                S2-mejakerja-sore: dipindah ke urutan paling akhir & dilipat
+                <details> tertutup — urusan sistem tidak lagi menyela alur
+                diegetis debrief → refleksi → tidur. Konten <details> tertutup
+                tetap ter-mount di React, jadi status transient
+                "menyimpan…/tersimpan" (statusSlot) bekerja tanpa perubahan. */}
+            <details className="mk__arsip">
+              <summary className="mk__sub-judul mono">Arsip Manual — simpan ke slot</summary>
+              <div className="baris mk__program-opsi">
+                {(['slot1', 'slot2', 'slot3'] as const).map((slot) => {
+                  const info = slots.find((x) => x.slot === slot)
+                  return (
+                    <button
+                      key={slot}
+                      className="tombol"
+                      data-tip={info ? `Timpa ${slot} (dr. ${info.namaDokter} · H${info.hari}).` : `Simpan ke ${slot}.`}
+                      onClick={() => {
+                        // CODEX audit UI/UX 2026-07-10 (#3): dulu tombol slot
+                        // langsung menimpa arsip lama di slot itu tanpa jeda —
+                        // title tooltip saja tak mencegah klik.
+                        const simpan = () => {
+                          setStatusSlot((s) => ({ ...s, [slot]: 'menyimpan' }))
+                          void simpanKeSlot(slot).then((ok) => {
+                            if (!ok) {
+                              setStatusSlot((s) => ({ ...s, [slot]: undefined }))
+                              setDialogArsip({
+                                judul: 'Gagal Menyimpan',
+                                pesan: 'Gagal menyimpan — periksa ruang disk atau izin folder save.',
+                              })
+                              return
+                            }
+                            setStatusSlot((s) => ({ ...s, [slot]: 'tersimpan' }))
+                            // Audit Q6 (2026-07-23): timer tunggal + clear per-slot
+                            // dulu bocor — simpan slot1 lalu slot2 cepat membatalkan
+                            // timer slot1, badge "✓ tersimpan" slot1 nyangkut
+                            // permanen. Timeout kini mereset SELURUH status (badge
+                            // transient, reset total 1,6 dtk setelah simpan terakhir).
+                            if (timerSlotRef.current !== null) clearTimeout(timerSlotRef.current)
+                            timerSlotRef.current = setTimeout(() => setStatusSlot({}), 1600)
+                          })
+                        }
+                        if (info) {
+                          setDialogArsip({
+                            judul: `Timpa ${slot.replace('slot', 'Slot ')}?`,
+                            pesan: `Timpa ${slot} (dr. ${info.namaDokter} · Hari ${info.hari})? Arsip lama di slot ini akan hilang.`,
+                            labelYa: 'Timpa Slot',
+                            bahaya: true,
+                            aksi: simpan,
+                          })
+                          return
+                        }
+                        simpan()
+                      }}
+                    >
+                      {statusSlot[slot] === 'menyimpan'
+                        ? `⏳ ${slot.replace('slot', 'Slot ')} — menyimpan…`
+                        : statusSlot[slot] === 'tersimpan'
+                          ? `✓ ${slot.replace('slot', 'Slot ')} — tersimpan`
+                          : `💾 ${slot.replace('slot', 'Slot ')}${info ? ` (H${info.hari})` : ''}`}
+                    </button>
+                  )
+                })}
+              </div>
+            </details>
           </div>
         )}
       </section>
@@ -1069,7 +1106,9 @@ export function MejaKerja() {
           <dl className="mk__status mono">
             <div className="baris baris--antara">
               <dt>Stamina</dt>
-              <dd>{state.stamina}/6</dd>
+              {/* Copy-audit 2026-08-01 (sistemik H): dulu "/6" hardcode —
+                  bonus olahraga bisa membuat 7/6 sementara HUD sudah benar. */}
+              <dd>{state.stamina}/{STAMINA_MAKS}</dd>
             </div>
             <div className="baris baris--antara">
               <dt>Antrian poli</dt>
@@ -1096,7 +1135,11 @@ export function MejaKerja() {
           />
 
           <p className="mk__cta-sub teks-kecil teks-lembut">{cta.sub}</p>
-          <button className="tombol tombol--utama tombol--besar mk__cta" onClick={cta.aksi}>
+          <button
+            className="tombol tombol--utama tombol--besar mk__cta"
+            onClick={cta.aksi}
+            aria-keyshortcuts="l"
+          >
             {cta.label}
           </button>
           {cta.sekunder && (

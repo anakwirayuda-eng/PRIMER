@@ -58,6 +58,14 @@ describe('invarian lapisan UI (M10.a)', () => {
     expect(baca('../components/Toaster.tsx')).toMatch(/toast--keluar/)
   })
 
+  it('.klinik-hasil__aksi sticky di dasar modal — CTA "Pasien Berikutnya" selalu terlihat (S1-panelhasil)', () => {
+    const isi = blok(baca('../screens/Klinik.css'), '.klinik-hasil__aksi')
+    expect(isi).toMatch(/position:\s*sticky/)
+    expect(isi).toMatch(/bottom:\s*0/)
+    // Latar wajib token panel (diremap malam) — sticky transparan = teks tumpuk.
+    expect(isi).toMatch(/background:\s*var\(--bg-panel\)/)
+  })
+
   it('kartu temuan kunjungan adalah SIBLING panggung, bukan overlay absolute', () => {
     // Sapuan UI/UX 2026-07-16 (P0): dulu .kunjungan-temuan position:absolute
     // menutupi 34% scene dan hotspot butuh z-index workaround supaya tembus
