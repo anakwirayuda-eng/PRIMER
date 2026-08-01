@@ -112,4 +112,35 @@ describe('<Rapor />', () => {
     render(<Rapor />)
     expect(screen.getByText(/Belum ada catatan/)).toBeInTheDocument()
   })
+
+  // Permukaan progres badge (2026-08-01): badge dulu HANYA terungkap di
+  // LaporanAkhir pasca-tamat — pemain baru tahu "kurang satu lagi" ketika
+  // skor sudah beku. Kini progresnya terlihat selagi masih bisa dikejar.
+  it('Pencapaian: menghitung yang diraih dan menyebut apa yang menghalangi', () => {
+    const dasar = buildInitialState('Uji Rapor', 1, PACK)
+    useGame.setState({
+      state: {
+        ...dasar,
+        hari: 40,
+        tally: {
+          ...dasar.tally,
+          karmaDicegah: 5, // pencegah_takdir: TERPENUHI (≥4)
+          igdStabil: 3,
+          igdMeninggal: 1, // nol_kode_hitam: TERKUNCI permanen
+          rujukanTotal: 6,
+          rujukanNonSpesialistik: 3, // gerbang_kokoh: tertahan RRNS 50%
+        },
+      },
+    })
+    render(<Rapor />)
+
+    expect(screen.getByText(/Pencapaian — \d+\/9 diraih/)).toBeInTheDocument()
+    expect(screen.getByText('Pencegah Takdir')).toBeInTheDocument()
+    // Yang terkunci menyebut ALASANNYA, bukan sekadar angka yang tak tercapai.
+    expect(screen.getByText(/1 Kode Hitam sudah terjadi/)).toBeInTheDocument()
+    // Yang masih bisa dikejar dibedakan dari yang terkunci.
+    expect(screen.getByText(/RRNS berjalan 50%/)).toBeInTheDocument()
+    expect(screen.getAllByText('DIRAIH').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('TERKUNCI').length).toBeGreaterThan(0)
+  })
 })

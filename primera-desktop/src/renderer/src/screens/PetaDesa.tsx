@@ -30,7 +30,14 @@ import { kartuIntervensiBenar } from '@content/ukmEvidence'
 import { TautanSumber } from '../components/TautanSumber'
 import { PetaSvg } from './peta/PetaSvg'
 import { KartuKeluarga } from './peta/KartuKeluarga'
-import { formatIks, karmaTerlihat, LABEL_JARAK, LABEL_KLASIFIKASI } from './peta/petaUtil'
+import {
+  AMBANG_DATA_TIPIS,
+  dataTipis,
+  formatIks,
+  karmaTerlihat,
+  LABEL_JARAK,
+  LABEL_KLASIFIKASI,
+} from './peta/petaUtil'
 import { clusterAktif } from '@engine/surveilans'
 import { useFocusTrap } from '../useFocusTrap'
 import './PetaDesa.css'
@@ -265,10 +272,26 @@ export function PetaDesa() {
                 <span>
                   KK tersurvei {rwAktif.kkTersurvei}/{rwAktif.totalKk}
                 </span>
+                {/* S9-peta-visual dituntaskan 2026-08-01: petak peta SUDAH
+                    dipudarkan saat cakupan <30% (dataTipis), tapi chip detail
+                    ini masih memberi warna klasifikasi penuh ("Sehat" hijau)
+                    pada 1-dari-28 KK — persis kesan "desa sudah terpotret"
+                    yang dicegah di peta. Warna klasifikasi kini ditahan sampai
+                    cakupan memadai; angkanya tetap ditampilkan apa adanya
+                    (bukan disembunyikan) + caveat, pola sama KartuKeluarga. */}
                 {rwAktif.kkTersurvei > 0 ? (
-                  <span className={`chip ${LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].chip}`}>
-                    IKS agregat {formatIks(rwAktif.iks)} · {LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].label}
-                  </span>
+                  dataTipis(rwAktif) ? (
+                    <span
+                      className="chip"
+                      data-tip={`Baru ${rwAktif.kkTersurvei} dari ${rwAktif.totalKk} KK tersurvei (di bawah ${Math.round(AMBANG_DATA_TIPIS * 100)}%). Angka ini data awal — klasifikasinya ditahan sampai cakupan survei memadai.`}
+                    >
+                      IKS agregat {formatIks(rwAktif.iks)} · data awal, belum representatif
+                    </span>
+                  ) : (
+                    <span className={`chip ${LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].chip}`}>
+                      IKS agregat {formatIks(rwAktif.iks)} · {LABEL_KLASIFIKASI[klasifikasiIks(rwAktif.iks)].label}
+                    </span>
+                  )
                 ) : (
                   <span className="chip">belum ada data — kader belum sampai ke sini</span>
                 )}

@@ -76,10 +76,23 @@ const KARTU: Kartu[] = [
     judul: 'Tuntas di sini, atau rujuk',
     isi: 'Beri terapi yang tepat dan pilih maksimal tiga topik edukasi yang paling penting. Kenali kasus di luar kompetensi FKTP, stabilkan bila perlu, lalu rujuk dengan benar. Merujuk tepat waktu adalah keputusan yang matang, bukan kekalahan.',
   },
+  // Audit lanjutan 2026-08-01: kartu ⚖️ dulu memuat TIGA konsep sekaligus
+  // (empat dimensi rapor + dasar penilaian + nasihat provenance) lalu ditutup
+  // salam perpisahan — satu-satunya kartu yang melanggar "satu konsep per
+  // kartu" yang dipulihkan audit 2026-07-23 di atas. Dipecah dua; kalimat
+  // dasar penilaian Kemenkes tetap VERBATIM (bersanding dgn PanelHasil §3b),
+  // dan nasihat provenance naik jadi kartunya sendiri karena itu bukan
+  // pelengkap melainkan pilar mekanik desa (data kader bisa keliru — lihat
+  // chip provenance di Peta Desa).
   {
     ikon: '⚖️',
     judul: 'Yang dinilai adalah caramu berpikir',
-    isi: 'Rapormu punya empat dimensi: klinik, desa, manajemen, ketahanan diri. Panduan resmi Kemenkes menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat. Satu nasihat dari saya: angka yang tidak kamu periksa sendiri adalah angka yang belum ada. Pasien pertamamu sudah menunggu — semoga lancar, Dokter.',
+    isi: 'Rapormu punya empat dimensi: klinik, desa, manajemen, ketahanan diri. Panduan resmi Kemenkes menjadi acuan utama penilaian. Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat.',
+  },
+  {
+    ikon: '🔍',
+    judul: 'Angka yang belum kamu periksa, belum ada',
+    isi: 'Satu nasihat dari saya: angka yang tidak kamu periksa sendiri adalah angka yang belum ada. Data yang disetor kader bisa keliru, dan peta desa sengaja menandai mana yang sudah kamu verifikasi sendiri dan mana yang masih kabar. Pasien pertamamu sudah menunggu — semoga lancar, Dokter.',
   },
 ]
 

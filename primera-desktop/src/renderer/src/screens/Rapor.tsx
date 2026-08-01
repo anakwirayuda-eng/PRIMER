@@ -9,6 +9,7 @@ import { useGame } from '../store'
 import { hitungSkor } from '@engine/director'
 import { MIN_RUJUKAN_GUILLOTINE } from '@engine/scoring'
 import { HARI_STASE } from '@engine/paketUjian'
+import { adaAktivitasTernilai, progresBadge } from '@engine/badge'
 import type { Musim } from '@engine/state'
 import './Rapor.css'
 
@@ -131,20 +132,24 @@ export function Rapor() {
     .filter((e) => e.teks !== '')
     .sort((a, b) => b.hari - a.hari)
 
+  // Badge progress surface (deferred sejak beta.4, dituntaskan 2026-08-01):
+  // urut yang sudah diraih dulu, lalu yang masih terkejar, lalu yang sudah
+  // terkunci — pemain melihat "yang masih bisa dikejar" berkumpul di tengah.
+  const badges = progresBadge(state)
+  const badgeUrut = [...badges].sort((a, b) => {
+    const peringkat = (x: (typeof badges)[number]): number => (x.raih ? 0 : x.gagal ? 2 : 1)
+    return peringkat(a) - peringkat(b)
+  })
+  const badgeDiraih = badges.filter((b) => b.raih).length
+
   // CODEX audit UI/UX 2026-07-10 (#23): gradeDariTotal menstempel A-D tanpa
   // syarat "ada cukup data" — Hari 1 pagi (tally nol) tapi manajemen/resiliensi
   // mulai dari default tinggi (kapitasi awal, burnout=0) → total bisa jatuh ke
   // 'D — Perlu Pembinaan' walau belum ada aktivitas sama sekali.
-  const punyaAktivitas =
-    t.totalPasien > 0 ||
-    t.kunjunganTotal > 0 ||
-    t.posyanduSesi > 0 ||
-    t.prolanisSesi > 0 ||
-    t.klbTuntas > 0 ||
-    t.igdStabil > 0 ||
-    t.igdSalahDisposisi > 0 ||
-    t.igdMeninggal > 0 ||
-    t.autoBermasalah > 0
+  // 2026-08-01: definisinya dinaikkan ke engine (adaAktivitasTernilai) supaya
+  // stempel di sini dan progres badge di bawah tak memakai dua salinan yang
+  // bisa menyimpang — dulu sempat berbeda & badge berbunyi "Grade berjalan D".
+  const punyaAktivitas = adaAktivitasTernilai(state)
 
   const barisTally: BarisRincian[] = [
     { label: 'Pasien ditangani', nilai: `${t.totalPasien}` },
@@ -405,6 +410,58 @@ export function Rapor() {
             </section>
           )}
         </div>
+
+        {/* Pencapaian — permukaan progres badge (dituntaskan 2026-08-01).
+            <details> tertutup default, sama alasan dgn Jurnal Refleksi di
+            bawah: ini bahan kejar-mengejar opsional, bukan angka rapor yang
+            wajib dibaca — dasbor utama tak boleh bertambah padat. */}
+        <details className="kartu rapor-badge">
+          <summary className="judul-seksi rapor-badge__summary">
+            Pencapaian — {badgeDiraih}/{badges.length} diraih
+          </summary>
+          <p className="teks-xs teks-lembut rapor-badge__intro">
+            Pencapaian tidak menambah nilai rapor. Semuanya dihitung ulang dari keadaan terkini,
+            jadi angka di sini ikut bergerak selama stase masih berjalan.
+          </p>
+          <ul className="rapor-badge__daftar">
+            {badgeUrut.map((b) => (
+              <li
+                key={b.id}
+                className={`rapor-badge__entri${b.raih ? ' rapor-badge__entri--raih' : ''}${
+                  b.gagal ? ' rapor-badge__entri--gagal' : ''
+                }`}
+              >
+                <span className="rapor-badge__ikon" aria-hidden="true">
+                  {b.ikon}
+                </span>
+                <div className="rapor-badge__isi">
+                  <div className="baris baris--antara rapor-badge__kepala">
+                    <span className="rapor-badge__nama">{b.nama}</span>
+                    {b.raih ? (
+                      <span className="chip chip--daun">DIRAIH</span>
+                    ) : b.gagal ? (
+                      <span className="chip chip--merah">TERKUNCI</span>
+                    ) : (
+                      <span className="mono teks-xs rapor-badge__angka">
+                        {Math.min(b.kini, b.target)}/{b.target}
+                      </span>
+                    )}
+                  </div>
+                  <p className="teks-xs teks-lembut">{b.deskripsi}</p>
+                  {/* Alasan terkunci/tertahan lebih berguna drpd bar kosong:
+                      pemain perlu tahu APA yang menghalangi, bukan sekadar
+                      bahwa ia belum sampai. */}
+                  {!b.raih && b.gagal && (
+                    <p className="teks-xs rapor-badge__gagal">{b.gagal}</p>
+                  )}
+                  {!b.raih && !b.gagal && b.tertahan && (
+                    <p className="teks-xs teks-lembut rapor-badge__tertahan">{b.tertahan}</p>
+                  )}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </details>
 
         {/* S3 burnout-rapor (d): jurnal refleksi — read-back tulisan pemain.
             <details> tertutup default: ini arsip pribadi, bukan dasbor angka. */}

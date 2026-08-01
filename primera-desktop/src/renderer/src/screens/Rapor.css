@@ -231,6 +231,83 @@
   padding-top: var(--sp-2);
 }
 
+/* -- Pencapaian / progres badge (2026-08-01) --------------------------------- */
+.rapor-badge__summary {
+  cursor: pointer;
+}
+
+.rapor-badge__summary:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 2px;
+}
+
+.rapor-badge__intro {
+  margin-top: var(--sp-2);
+}
+
+.rapor-badge__daftar {
+  list-style: none;
+  margin-top: var(--sp-3);
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: var(--sp-3);
+}
+
+.rapor-badge__entri {
+  display: flex;
+  gap: var(--sp-2);
+  align-items: flex-start;
+  padding: var(--sp-2);
+  border: 1px dashed var(--border-halus);
+  border-radius: var(--radius-md);
+  /* Belum diraih = redup tapi TETAP terbaca (kontras teks tak diturunkan,
+     hanya latarnya) — daftar ini harus bisa dipindai, bukan ditebak. */
+  background: transparent;
+}
+
+.rapor-badge__entri--raih {
+  border-style: solid;
+  border-color: var(--daun-600);
+  /* --wash-daun (BUKAN --daun-100): hanya wash yang diremap gelap-transparan
+     di mode malam; daun-100 tetap hijau muda → teks tinta terang di atasnya
+     runtuh kontrasnya. Pola sama dipakai chip/stempel di base.css. */
+  background: var(--wash-daun);
+}
+
+.rapor-badge__entri--gagal {
+  border-color: var(--border-halus);
+  opacity: 0.72;
+}
+
+.rapor-badge__ikon {
+  font-size: 1.35rem;
+  line-height: 1.2;
+}
+
+.rapor-badge__isi {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-05);
+}
+
+.rapor-badge__kepala {
+  gap: var(--sp-2);
+}
+
+.rapor-badge__nama {
+  font-weight: 600;
+}
+
+.rapor-badge__angka {
+  white-space: nowrap;
+}
+
+.rapor-badge__gagal {
+  color: var(--tinta-merah);
+}
+
 /* -- Jurnal Refleksi (S3 burnout-rapor d) ------------------------------------ */
 .rapor-refleksi__summary {
   cursor: pointer;

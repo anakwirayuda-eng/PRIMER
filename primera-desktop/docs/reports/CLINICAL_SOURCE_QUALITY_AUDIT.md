@@ -1,6 +1,6 @@
 # Audit Mutu Sumber Klinis PRIMERA
 
-Dihasilkan: 2026-08-01T04:20:00.795Z
+Dihasilkan: 2026-08-01T12:16:18.223Z
 
 ## Ringkasan
 
@@ -41,7 +41,7 @@ belum memiliki pengganti yang lebih kuat untuk keputusan yang sama.
 | Sepsis-3 International Consensus Definitions | 2016 | Definisi konsensus fondasional; keputusan tata laksana akut juga ditopang PNPK dan Surviving Sepsis Campaign yang lebih baru. | igd:igd_syok_sepsis |
 | WHO mhGAP Intervention Guide v2 - Bodily Distress Complaints | 2016 | Masih menjadi panduan operasional nonspesialis yang diagnosis-spesifik; dibaca bersama ICD-11 CDDR 2024 dan bukti komunikasi 2022. | poli:lab_gangguan_somatoform |
 | WHO SEARO Guidelines for Management of Snakebites | 2016 | Pedoman klinis WHO SEARO edisi kedua yang tetap paling langsung untuk konteks regional Indonesia. | igd:igd_gigitan_ular_berbisa |
-| WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience (2016) | 2016 | Dokumen ANC standalone WHO yang masih aktif dgn amandemen tempel s/d 2022 (vit D, zink, USG). Catatan kebijakan: WHO juga menerbitkan compendium "Recommendations on maternal health" 2025 yang mengonsolidasi sebagian rekomendasi individual — tim boleh meninjau ulang preferensi standalone vs konsolidasi pada review berikutnya. | poli:kia_anc_kehamilan_normal |
+| WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience (2016) | 2016 | Dokumen ANC standalone WHO yang masih aktif dgn amandemen tempel s/d 2022 (vit D 2020, mikronutrien 2020, zink 2021, USG <24 minggu 2022). KEBIJAKAN DIPUTUSKAN 2026-08-01 (pertanyaan standalone-vs-konsolidasi ditutup): TETAP memakai dokumen ANC standalone ini, TIDAK pindah ke compendium "Recommendations on maternal health" 2025. Dua alasan: (1) halaman resmi WHO utk dokumen ini diverifikasi ulang 2026-08-01 — berstatus aktif, tanpa notis "superseded by", masih dirawat lewat portal ANC-PNC; (2) seluruh inisiatif mutu sumber ini menuntut sumber diagnosis-spesifik (cakupan "langsung") — compendium maternal-health lintas-topik justru MEMPERLUAS cakupan, arah berlawanan. Bandingkan WHO consolidated TB Module 3/4 yang tetap dipakai: itu konsolidasi per-MODUL yang tetap sempit (diagnosis saja / treatment saja), bukan payung lintas-topik. Tinjau ulang HANYA bila WHO menerbitkan pengganti ANC-spesifik atau menandai dokumen ini superseded. | poli:kia_anc_kehamilan_normal |
 | AAO-HNSF Guideline - Benign Paroxysmal Positional Vertigo | 2017 | Update AAO-HNSF yang masih aktif dan diagnosis-spesifik untuk BPPV. | poli:saraf_vertigo_bppv |
 | AAO-HNSF - Clinical Practice Guideline: Cerumen Impaction | 2017 | Guideline diagnosis-spesifik AAO-HNSF yang masih aktif untuk impaksi serumen. | poli:tht_serumen_prop |
 | BSACI Guideline for the Diagnosis and Management of Allergic and Non-allergic Rhinitis | 2017 | Tetap paling langsung untuk rinitis nonalergi/vasomotor; update ARIA yang lebih baru berfokus pada rinitis alergi. | poli:lab_rinitis_vasomotor |

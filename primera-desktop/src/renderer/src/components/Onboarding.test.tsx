@@ -26,6 +26,55 @@ describe('resetOnboarding', () => {
   })
 })
 
+/**
+ * Kartu ⚖️ dulu memuat TIGA konsep + salam penutup sekaligus — satu-satunya
+ * yang melanggar "satu konsep per kartu" (audit 2026-07-23). Dipecah dua pada
+ * 2026-08-01; dua kalimat dasar penilaian Kemenkes WAJIB tetap verbatim karena
+ * bersanding dgn catatan medikolegal PanelHasil §3b.
+ */
+describe('<Onboarding /> — pemecahan kartu penutup (2026-08-01)', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
+
+  function bacaSemuaKartu(): string[] {
+    const { unmount } = render(<Onboarding onSelesai={() => {}} />)
+    const isi: string[] = []
+    for (;;) {
+      isi.push(document.querySelector('.onb-kartu')?.textContent ?? '')
+      const lanjut = screen.queryByRole('button', { name: 'Lanjut' })
+      if (!lanjut) break
+      fireEvent.click(lanjut)
+    }
+    unmount()
+    return isi
+  }
+
+  it('dasar penilaian Kemenkes dan nasihat provenance kini di kartu BERBEDA', () => {
+    const kartu = bacaSemuaKartu()
+    const iDasar = kartu.findIndex((t) => t.includes('Panduan resmi Kemenkes menjadi acuan utama penilaian.'))
+    const iProvenance = kartu.findIndex((t) =>
+      t.includes('angka yang tidak kamu periksa sendiri adalah angka yang belum ada'),
+    )
+    expect(iDasar).toBeGreaterThanOrEqual(0)
+    expect(iProvenance).toBeGreaterThanOrEqual(0)
+    expect(iProvenance).not.toBe(iDasar)
+  })
+
+  it('dua kalimat dasar penilaian tetap VERBATIM (bersanding PanelHasil §3b)', () => {
+    const gabungan = bacaSemuaKartu().join(' ')
+    expect(gabungan).toContain('Panduan resmi Kemenkes menjadi acuan utama penilaian.')
+    expect(gabungan).toContain(
+      'Penyimpangan tetap dapat dibenarkan bila didukung alasan klinis yang kuat.',
+    )
+  })
+
+  it('salam penutup tetap ada, dan tetap di kartu TERAKHIR', () => {
+    const kartu = bacaSemuaKartu()
+    expect(kartu.at(-1)).toContain('Pasien pertamamu sudah menunggu')
+  })
+})
+
 describe('<Onboarding /> — fokus awal (CODEX audit UI/UX 2026-07-10, #24b)', () => {
   beforeEach(() => {
     window.localStorage.clear()
