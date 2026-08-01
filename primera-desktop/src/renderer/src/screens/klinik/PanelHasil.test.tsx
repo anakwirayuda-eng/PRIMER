@@ -270,21 +270,42 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     ).toHaveAttribute('open')
   })
 
-  it('Enter saat fokus di kontainer dialog = Pasien Berikutnya', () => {
+  // REGRESI playtest dr. Wirayuda 2026-08-01: versi pertama pintasan Enter
+  // memasang handler DI ELEMEN modal dan menuntut fokus persis di kontainer.
+  // Test lama menembakkan keydown langsung ke elemen dialog sehingga selalu
+  // hijau, padahal di permainan nyata fokus hampir selalu sudah pindah (klik)
+  // dan keydown pada <body> tak pernah melewati elemen modal → pintasan mati.
+  // Test kini menembak lewat jalur yang benar-benar dilalui papan ketik.
+  it('Enter memicu Pasien Berikutnya walau fokus sudah jatuh ke body (kasus pemain nyata)', () => {
     const onSelesai = vi.fn()
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
     )
-    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), { key: 'Enter' })
+    ;(document.activeElement as HTMLElement | null)?.blur()
+    expect(document.activeElement).toBe(document.body)
+    fireEvent.keyDown(document.body, { key: 'Enter' })
     expect(onSelesai).toHaveBeenCalledWith(true)
   })
 
-  it('Enter yang bubbling dari tombol Tutup TIDAK memicu shortcut dialog', () => {
+  it('Enter saat fokus di tombol dibiarkan milik tombol itu (tanpa dobel-aksi)', () => {
     const onSelesai = vi.fn()
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
     )
-    fireEvent.keyDown(screen.getByRole('button', { name: 'Tutup' }), { key: 'Enter' })
+    const tutup = screen.getByRole('button', { name: 'Tutup' })
+    tutup.focus()
+    fireEvent.keyDown(tutup, { key: 'Enter' })
+    expect(onSelesai).not.toHaveBeenCalled()
+  })
+
+  it('Enter saat fokus di summary grup dibiarkan membuka/menutup lipatan', () => {
+    const onSelesai = vi.fn()
+    render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
+    )
+    const summary = screen.getByText('Pelajari Lebih Dalam').closest('summary')!
+    summary.focus()
+    fireEvent.keyDown(summary, { key: 'Enter' })
     expect(onSelesai).not.toHaveBeenCalled()
   })
 
@@ -293,14 +314,11 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
     render(
       <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
     )
-    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), {
-      key: 'Enter',
-      repeat: true,
-    })
+    fireEvent.keyDown(document.body, { key: 'Enter', repeat: true })
     expect(onSelesai).not.toHaveBeenCalled()
   })
 
-  it('Enter diabaikan bila bolehPanggil=false', () => {
+  it('Enter diabaikan bila bolehPanggil=false (antrian habis)', () => {
     const onSelesai = vi.fn()
     render(
       <PanelHasil
@@ -310,7 +328,17 @@ describe('<PanelHasil /> — encounter tutorial vs normal', () => {
         onSelesai={onSelesai}
       />,
     )
-    fireEvent.keyDown(screen.getByRole('dialog', { name: 'Hasil konsultasi' }), { key: 'Enter' })
+    fireEvent.keyDown(document.body, { key: 'Enter' })
+    expect(onSelesai).not.toHaveBeenCalled()
+  })
+
+  it('listener Enter dilepas saat modal ditutup — tak ada sisa pintasan liar', () => {
+    const onSelesai = vi.fn()
+    const { unmount } = render(
+      <PanelHasil hasil={HASIL_DASAR} bolehPanggil={true} alasanTutup="" onSelesai={onSelesai} />,
+    )
+    unmount()
+    fireEvent.keyDown(document.body, { key: 'Enter' })
     expect(onSelesai).not.toHaveBeenCalled()
   })
 })

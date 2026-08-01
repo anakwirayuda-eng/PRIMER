@@ -3,9 +3,11 @@
  * bendera pedagogis, dan mutiara klinis (clue EBM) dari kasus.
  */
 
+import { useEffect, useRef } from 'react'
 import type { DexEntry, PenilaianEncounter } from '@engine/state'
 import { PACK } from '@content/index'
 import { useFocusTrap } from '../../useFocusTrap'
+import { sedangMengetik } from '../../utils/navigasiHud'
 import { BuktiKlinis } from '../../components/BuktiKlinis'
 import { TeksTerbaca } from '../../components/TeksTerbaca'
 import { DuelDiagnosis, TeachBack, duelTersedia, teachBackTersedia } from './RefleksiKlinis'
@@ -117,6 +119,39 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
   // terbuka tak sengaja menutup debrief tanpa dibaca.
   const ref = useFocusTrap<HTMLDivElement>(true, () => onSelesai(false), { fokusKontainer: true })
 
+  // Perbaikan playtest dr. Wirayuda 2026-08-01: versi pertama memasang handler
+  // Enter pada elemen modal dan menuntut fokus PERSIS di kontainer
+  // (target === currentTarget). Di permainan nyata itu nyaris tak pernah
+  // terpenuhi: begitu pemain mengklik apa pun, fokus pindah ke elemen lain atau
+  // jatuh ke <body> — dan keydown pada <body> TIDAK PERNAH melewati elemen
+  // modal, jadi handler-nya bahkan tak terpanggil. Pintasan terasa mati.
+  // Kini listener di tingkat dokumen selama modal hidup, dengan pagar:
+  //  - abaikan saat mengetik (textarea refleksi/SBAR) & saat ada modifier;
+  //  - abaikan bila fokus sedang di kontrol yang menangani Enter sendiri
+  //    (tombol, tautan, summary, select) supaya tak dobel-aksi;
+  //  - abaikan e.repeat: Enter yang masih ditahan dari layar sebelumnya.
+  // Ref menjaga aksi selalu versi render terakhir tanpa memasang ulang listener.
+  const bolehPanggilRef = useRef(bolehPanggil)
+  const onSelesaiRef = useRef(onSelesai)
+  useEffect(() => {
+    bolehPanggilRef.current = bolehPanggil
+    onSelesaiRef.current = onSelesai
+  })
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key !== 'Enter' || e.repeat || e.defaultPrevented) return
+      if (e.shiftKey || e.ctrlKey || e.altKey || e.metaKey) return
+      const aktif = document.activeElement
+      if (sedangMengetik(aktif)) return
+      if (aktif instanceof HTMLElement && aktif.closest('button, a[href], summary, select')) return
+      if (!bolehPanggilRef.current) return
+      e.preventDefault()
+      onSelesaiRef.current(true)
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [])
+
   return (
     <div className="overlay" onClick={() => onSelesai(false)}>
       <div
@@ -127,25 +162,6 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         aria-modal="true"
         aria-label="Hasil konsultasi"
         onClick={(e) => e.stopPropagation()}
-        // S1-panelhasil: Enter = "Pasien Berikutnya", HANYA bila fokus masih di
-        // kontainer dialog itu sendiri (target === currentTarget — kondisi awal
-        // useFocusTrap fokusKontainer, M14 #14b). Bila fokus di tombol/summary/
-        // tautan/input, event ini cuma bubbling (target ≠ currentTarget) — Enter
-        // milik elemen itu, jangan dobel-aksi. !e.repeat menepis Enter yang
-        // masih tertahan dari layar sebelumnya (keydown pemicunya terjadi
-        // SEBELUM modal ini mount, repeat berikutnya ber-flag repeat=true).
-        onKeyDown={(e) => {
-          if (
-            e.key === 'Enter' &&
-            !e.repeat &&
-            e.target === e.currentTarget &&
-            !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey &&
-            bolehPanggil
-          ) {
-            e.preventDefault()
-            onSelesai(true)
-          }
-        }}
       >
         <div className="klinik-hasil__atas">
           {/* CODEX: pasien tutorial dituntun lewat jalur MINIMAL (1 pertanyaan,
@@ -400,7 +416,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
               className="tombol tombol--utama tombol--besar"
               onClick={() => onSelesai(true)}
               aria-keyshortcuts="Enter"
-              data-tip="Pintasan: Enter (saat fokus masih di dialog)"
+              data-tip="Pintasan: tekan Enter"
             >
               Pasien Berikutnya &rarr;
             </button>
