@@ -1,10 +1,10 @@
 {
   "schema": "primera.m13-14-igd-adjudication.v2",
-  "generatedAt": "2026-07-31T22:10:11.355Z",
-  "sourceCommit": "aeb769492018+working-tree",
+  "generatedAt": "2026-08-01T03:14:03.395Z",
+  "sourceCommit": "c0001720d339+working-tree",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 62,
-  "packFingerprint": "2b073677",
+  "packFingerprint": "77117e46",
   "artifactFingerprint": "00c223adb7fc256f5acdf154bfe173945291bfb92ec6e5b9a5fd44742da73334",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",

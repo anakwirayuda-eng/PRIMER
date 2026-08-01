@@ -581,6 +581,110 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2025,
     'evidence_internasional',
   ),
+  // S-provenance (2026-08-01): 14 sumber diagnosis-spesifik pengganti EBM yang
+  // sebelumnya 'terkait'/floor (who-icope-eye-2025, who-skin-primary-2026, dkk
+  // dipakai lintas-diagnosis sbg kerangka umum, bukan sumber langsung per
+  // kondisi). Tiap URL diverifikasi hidup via WebFetch ganda (peneliti +
+  // reviewer skeptis independen) sebelum masuk registry — lihat audit mutu
+  // scripts/audit-clinical-source-quality.ts.
+  'aao-conjunctivitis-ppp-2023': sumber(
+    'aao-conjunctivitis-ppp-2023',
+    'AAO Preferred Practice Pattern: Conjunctivitis 2023 (bakterial, viral, alergi)',
+    'https://www.aao.org/education/preferred-practice-pattern/conjunctivitis-ppp-2023',
+    2023,
+    'evidence_internasional',
+  ),
+  'kyoto-consensus-hpylori-gastritis-2015': sumber(
+    'kyoto-consensus-hpylori-gastritis-2015',
+    'Kyoto Global Consensus Report on Helicobacter pylori Gastritis (Gut, mirror PMC/NIH)',
+    'https://pmc.ncbi.nlm.nih.gov/articles/PMC4552923/',
+    2015,
+    'evidence_internasional',
+  ),
+  'aaaai-contact-dermatitis-2015': sumber(
+    'aaaai-contact-dermatitis-2015',
+    'AAAAI/ACAAI/JCAAI Practice Parameter Update: Contact Dermatitis (2015)',
+    'https://www.aaaai.org/Aaaai/media/Media-Library-PDFs/Allergist%20Resources/Statements%20and%20Practice%20Parameters/Contact-dermatitis-2015.pdf',
+    2015,
+    'evidence_internasional',
+  ),
+  'csd-cutaneous-warts-2022': sumber(
+    'csd-cutaneous-warts-2022',
+    'Clinical Guideline for the Diagnosis and Treatment of Cutaneous Warts (2022)',
+    'https://pmc.ncbi.nlm.nih.gov/articles/PMC9825897/',
+    2022,
+    'evidence_internasional',
+  ),
+  'cochrane-hordeolum-2017': sumber(
+    'cochrane-hordeolum-2017',
+    'Cochrane Review: Interventions for an Acute Internal Hordeolum',
+    'https://www.cochrane.org/evidence/CD007742_interventions-acute-internal-hordeolum',
+    2017,
+    'evidence_internasional',
+  ),
+  'aao-ppp-angle-closure-2025': sumber(
+    'aao-ppp-angle-closure-2025',
+    'AAO Preferred Practice Pattern: Primary Angle-Closure Disease (2025)',
+    'https://www.aao.org/education/preferred-practice-pattern/primary-angle-closure-disease-ppp',
+    2025,
+    'evidence_internasional',
+  ),
+  'cochrane-doms-cold-water-immersion-2022': sumber(
+    'cochrane-doms-cold-water-immersion-2022',
+    'Cochrane Review: Cold-Water Immersion for Preventing and Treating Muscle Soreness after Exercise',
+    'https://www.cochrane.org/evidence/CD008262_cold-water-immersion-preventing-and-treating-muscle-soreness-after-exercise',
+    2022,
+    'evidence_internasional',
+  ),
+  'who-anc-positive-pregnancy-2016': sumber(
+    'who-anc-positive-pregnancy-2016',
+    'WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience (2016)',
+    'https://www.who.int/publications/i/item/9789241549912',
+    2016,
+    'evidence_internasional',
+  ),
+  'acog-uti-pregnancy-2023': sumber(
+    'acog-uti-pregnancy-2023',
+    'ACOG Clinical Consensus No. 4: Urinary Tract Infection in Pregnant Individuals (2023)',
+    'https://www.acog.org/clinical/clinical-guidance/clinical-consensus/articles/2023/08/urinary-tract-infections-in-pregnant-individuals',
+    2023,
+    'evidence_internasional',
+  ),
+  'aafp-soft-tissue-masses-2022': sumber(
+    'aafp-soft-tissue-masses-2022',
+    'AAFP: Evaluation and Management of Soft Tissue Masses in Primary Care (2022)',
+    'https://www.aafp.org/pubs/afp/issues/2022/0600/p602.html',
+    2022,
+    'evidence_internasional',
+  ),
+  'cochrane-systemic-ras-2012': sumber(
+    'cochrane-systemic-ras-2012',
+    'Cochrane Review: Systemic Interventions for Recurrent Aphthous Stomatitis',
+    'https://www.cochrane.org/evidence/CD005411_systemic-interventions-recurrent-aphthous-stomatitis-mouth-ulcers',
+    2012,
+    'evidence_internasional',
+  ),
+  'cochrane-acute-laryngitis-antibiotics-2015': sumber(
+    'cochrane-acute-laryngitis-antibiotics-2015',
+    'Cochrane Review: Antibiotics for Acute Laryngitis in Adults',
+    'https://www.cochrane.org/evidence/CD004783_antibiotics-treat-adults-acute-laryngitis',
+    2015,
+    'evidence_internasional',
+  ),
+  'rch-cervical-lymphadenitis-2021': sumber(
+    'rch-cervical-lymphadenitis-2021',
+    "Royal Children's Hospital Melbourne — Clinical Practice Guideline: Cervical Lymphadenopathy",
+    'https://www.rch.org.au/clinicalguide/guideline_index/cervical_lymphadenopathy/',
+    2021,
+    'evidence_internasional',
+  ),
+  'acog-vulvar-skin-disorders-2020': sumber(
+    'acog-vulvar-skin-disorders-2020',
+    'ACOG Practice Bulletin No. 224: Diagnosis and Management of Vulvar Skin Disorders (2020)',
+    'https://pubmed.ncbi.nlm.nih.gov/32590724/',
+    2020,
+    'evidence_internasional',
+  ),
 }
 
 const A = (
@@ -618,7 +722,7 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   dm_tipe2: [A('pnpk-dm2-2026'), A('ada-diabetes-2026-type1')],
   faringitis_akut: [PPK_DIRECT, A('cdc-strep-throat-2025')],
   fraktur_terbuka_tibia_stabil: [A('pnpk_trauma_2017', 'terkait'), A('acs-orthopaedic-trauma-2022')],
-  gastritis: [PPK_DIRECT, A('bsg-functional-dyspepsia-2022', 'terkait')],
+  gastritis: [PPK_DIRECT, A('kyoto-consensus-hpylori-gastritis-2015')],
   gerd: [PPK_DIRECT, A('acg-gerd-2022')],
   hemoroid_grade1: [PPK_DIRECT, A('aga-hemorrhoids-2026')],
   hipertensi_esensial: [A('pnpk-hipertensi-2026'), A('esc-hypertension-2024')],
@@ -629,13 +733,22 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   jiwa_insomnia: [PPK_DIRECT, A('esrs-insomnia-2023')],
   jiwa_skizofrenia: [PPK_DIRECT, A('who-mhgap-2023')],
   kia_abortus_iminens: [PPK_DIRECT, A('cochrane-threatened-miscarriage-2021')],
-  kia_anc_kehamilan_normal: [A('pmk-spm-2024'), A('who-postnatal-2022', 'terkait')],
-  kia_isk_kehamilan: [A('pnpk-isk-2025'), A('eau-urological-infections-2026', 'terkait')],
+  // S-provenance (2026-08-01): who-postnatal-2022 salah-periode (pasca-salin,
+  // bukan antenatal) — diganti WHO ANC 2016 yang genuinely membahas kehamilan.
+  kia_anc_kehamilan_normal: [A('pmk-spm-2024'), A('who-anc-positive-pregnancy-2016')],
+  kia_isk_kehamilan: [
+    A('pnpk-isk-2025'),
+    A(
+      'acog-uti-pregnancy-2023',
+      'langsung',
+      'Errata terminologi Desember 2024 (PMID 39601712) tidak mengubah rekomendasi inti.',
+    ),
+  ],
   kia_kb_konseling: [A('permenkes-kespro-2025'), A('who-mec-2025')],
   kia_malaria_falsiparum: [A('kemenkes-malaria-2024'), A('who-malaria-2025')],
   kia_preeklampsia_berat: [A('pnpk_pregnancy_complications_2017'), A('who_preeclampsia_2025')],
-  konjungtivitis_bakterial: [PPK_DIRECT, A('who-icope-eye-2025', 'terkait')],
-  kulit_dermatitis_kontak: [PPK_DIRECT, A('who-skin-primary-2026', 'terkait')],
+  konjungtivitis_bakterial: [PPK_DIRECT, A('aao-conjunctivitis-ppp-2023')],
+  kulit_dermatitis_kontak: [PPK_DIRECT, A('aaaai-contact-dermatitis-2015')],
   kulit_herpes_zoster: [PPK_DIRECT, A('cdc-shingles-2024')],
   kulit_kandidiasis_kutis: [PPK_DIRECT, A('who-candidiasis-2025')],
   kulit_morbili: [PPK_DIRECT, A('cdc-measles-2025')],
@@ -644,10 +757,17 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   kulit_tinea_korporis: [PPK_DIRECT, A('who-ringworm-2025')],
   kulit_urtikaria_akut: [PPK_DIRECT, A('eaaci-urticaria-2022')],
   kulit_varisela: [PPK_DIRECT, A('cdc-varicella-2024')],
-  kulit_veruka_vulgaris: [PPK_DIRECT, A('who-skin-primary-2026', 'terkait')],
-  mata_glaukoma_akut: [PPK_DIRECT, A('who-icope-eye-2025', 'terkait')],
-  mata_hordeolum: [PPK_DIRECT, A('who-icope-eye-2025', 'terkait')],
-  mata_konjungtivitis_alergi: [PPK_DIRECT, A('who-icope-eye-2025', 'terkait')],
+  kulit_veruka_vulgaris: [PPK_DIRECT, A('csd-cutaneous-warts-2022')],
+  mata_glaukoma_akut: [PPK_DIRECT, A('aao-ppp-angle-closure-2025')],
+  mata_hordeolum: [
+    PPK_DIRECT,
+    A(
+      'cochrane-hordeolum-2017',
+      'langsung',
+      'Cakupan review terbatas pada hordeolum internum (bukan eksternum); temuan adalah ketiadaan bukti RCT yang memadai, bukan rekomendasi efikasi positif — dasar status tata laksana opsional, bukan wajib.',
+    ),
+  ],
+  mata_konjungtivitis_alergi: [PPK_DIRECT, A('aao-conjunctivitis-ppp-2023')],
   mm_artritis_reumatoid: [PPK_DIRECT, A('eular-ra-2025')],
   mm_dislipidemia: [PPK_DIRECT, A('esc-dyslipidaemia-2025')],
   mm_gagal_jantung_kongestif: [PPK_DIRECT, A('esc-heart-failure-2021')],
@@ -655,7 +775,7 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   mm_hipertensi_urgensi: [A('pnpk-hipertensi-2026'), A('esc-hypertension-2024')],
   mm_isk_bawah: [A('pnpk-isk-2025'), A('eau-urological-infections-2026')],
   mm_low_back_pain: [PPK_FLOOR, A('who-low-back-pain-2023')],
-  mm_mialgia: [PPK_FLOOR, A('who-low-back-pain-2023', 'terkait')],
+  mm_mialgia: [PPK_FLOOR, A('cochrane-doms-cold-water-immersion-2022')],
   mm_obesitas: [PPK_DIRECT, A('vadod-obesity-2025')],
   mm_osteoartritis_lutut: [PPK_DIRECT, A('vadod-osteoarthritis-2026')],
   otitis_eksterna_akut_ringan: [PPK_DIRECT, A('aao-hns-otitis-externa-2014')],
@@ -738,7 +858,7 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
   ],
   'tif-thalassaemia-2021': ['lab_talasemia_beta_mayor_anak'],
   'rcht-paediatric-forearm-fracture-2025': ['lab_fraktur_tertutup_antebrachii_anak'],
-  'who-skin-primary-2026:related': ['lab_lipoma_lengan'],
+  'aafp-soft-tissue-masses-2022': ['lab_lipoma_lengan'],
   'esvs-venous-2022': ['lab_ulkus_tungkai_vena'],
   'eaaci-food-allergy-2024': ['lab_alergi_makanan_ringan'],
   'niddk-lactose-intolerance-2018': ['lab_intoleransi_makanan_laktosa'],
@@ -746,16 +866,23 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
   'who-food-safety-2024': ['lab_keracunan_makanan_ringan'],
   'wses-cholecystitis-2020': ['lab_kolesistitis_akut'],
   'eau-urolithiasis-2026': ['lab_kolik_ureter_obstruksi'],
-  'who-oral-health-2022:related': ['lab_stomatitis_aftosa'],
+  'cochrane-systemic-ras-2012': ['lab_stomatitis_aftosa'],
   'who-influenza-2024': ['lab_influenza_tanpa_komplikasi'],
-  'cdc-adult-outpatient-2024:related': ['lab_laringitis_akut'],
+  'cochrane-acute-laryngitis-antibiotics-2015': ['lab_laringitis_akut'],
   'ats-idsa-cap-2019': ['lab_pneumonia_komunitas_dewasa'],
   'rch-febrile-seizure-2026': ['lab_kejang_demam_sederhana'],
   'bsaci-rhinitis-2017': ['lab_rinitis_vasomotor'],
-  'who-skin-primary-2026:infection-related': [
-    'lab_limfadenitis_servikal_akut',
-    'lab_vulvitis_iritan',
-  ],
+  'rch-cervical-lymphadenitis-2021': ['lab_limfadenitis_servikal_akut'],
+  'acog-vulvar-skin-disorders-2020': ['lab_vulvitis_iritan'],
+}
+
+// S-provenance (2026-08-01): catatan batas-interpretasi utk assignment lab_*
+// yang datang lewat fallbackMap (fallbackMap tak punya slot catatan bawaan
+// spt BASELINE_ASSIGNMENTS/A() 3-argumen). Dipisah di sini agar tak diam-diam
+// overclaim — lihat SumberKlinis.catatan di types.ts.
+const LAB_FALLBACK_CATATAN: Record<string, string> = {
+  lab_stomatitis_aftosa:
+    'Tinjauan ini menilai HANYA intervensi sistemik (kortikosteroid oral, colchicine, pentoxifylline, dll) untuk RAS — tidak mencakup kortikosteroid topikal (mis. triamsinolon asetonid orabase) yang menjadi tata laksana PPK pada kasus ini; dipakai sbg rujukan diagnosis/epidemiologi RAS, bukan pembenaran regimen topikal.',
 }
 
 function fallbackMap(): Map<string, Assignment> {
@@ -765,7 +892,7 @@ function fallbackMap(): Map<string, Assignment> {
     const cakupan: Coverage = qualifier ? 'terkait' : 'langsung'
     for (const caseId of caseIds) {
       if (result.has(caseId)) throw new Error(`Fallback provenance lab duplikat: ${caseId}`)
-      result.set(caseId, A(sourceId!, cakupan))
+      result.set(caseId, A(sourceId!, cakupan, LAB_FALLBACK_CATATAN[caseId]))
     }
   }
   return result

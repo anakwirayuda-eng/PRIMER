@@ -10,11 +10,32 @@ interface SourceAssignment {
 }
 
 export const CLINICAL_SOURCE_REGISTRY = {
+  "aaaai-contact-dermatitis-2015": {
+    "id": "aaaai-contact-dermatitis-2015",
+    "label": "AAAAI/ACAAI/JCAAI Practice Parameter Update: Contact Dermatitis (2015)",
+    "url": "https://www.aaaai.org/Aaaai/media/Media-Library-PDFs/Allergist%20Resources/Statements%20and%20Practice%20Parameters/Contact-dermatitis-2015.pdf",
+    "tahun": 2015,
+    "jenis": "evidence_internasional"
+  },
   "aad-acne-2024": {
     "id": "aad-acne-2024",
     "label": "American Academy of Dermatology - Acne Clinical Guideline",
     "url": "https://www.aad.org/member/clinical-quality/guidelines/acne",
     "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
+  "aafp-soft-tissue-masses-2022": {
+    "id": "aafp-soft-tissue-masses-2022",
+    "label": "AAFP: Evaluation and Management of Soft Tissue Masses in Primary Care (2022)",
+    "url": "https://www.aafp.org/pubs/afp/issues/2022/0600/p602.html",
+    "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
+  "aao-conjunctivitis-ppp-2023": {
+    "id": "aao-conjunctivitis-ppp-2023",
+    "label": "AAO Preferred Practice Pattern: Conjunctivitis 2023 (bakterial, viral, alergi)",
+    "url": "https://www.aao.org/education/preferred-practice-pattern/conjunctivitis-ppp-2023",
+    "tahun": 2023,
     "jenis": "evidence_internasional"
   },
   "aao-hns-bell-palsy-2013": {
@@ -52,6 +73,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2014,
     "jenis": "evidence_internasional"
   },
+  "aao-ppp-angle-closure-2025": {
+    "id": "aao-ppp-angle-closure-2025",
+    "label": "AAO Preferred Practice Pattern: Primary Angle-Closure Disease (2025)",
+    "url": "https://www.aao.org/education/preferred-practice-pattern/primary-angle-closure-disease-ppp",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
   "aao-pvd-retinal-breaks-2024": {
     "id": "aao-pvd-retinal-breaks-2024",
     "label": "American Academy of Ophthalmology - Posterior Vitreous Detachment, Retinal Breaks, and Lattice Degeneration Preferred Practice Pattern",
@@ -85,6 +113,20 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "NSW Agency for Clinical Innovation, Statewide Burn Injury Service - Burn Patient Management - Clinical Practice Guide, 5th Edition",
     "url": "https://aci.health.nsw.gov.au/__data/assets/pdf_file/0009/250020/ACI-Burn-Patient-Management-Clinical-Practice-Guide.pdf",
     "tahun": 2026,
+    "jenis": "evidence_internasional"
+  },
+  "acog-uti-pregnancy-2023": {
+    "id": "acog-uti-pregnancy-2023",
+    "label": "ACOG Clinical Consensus No. 4: Urinary Tract Infection in Pregnant Individuals (2023)",
+    "url": "https://www.acog.org/clinical/clinical-guidance/clinical-consensus/articles/2023/08/urinary-tract-infections-in-pregnant-individuals",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "acog-vulvar-skin-disorders-2020": {
+    "id": "acog-vulvar-skin-disorders-2020",
+    "label": "ACOG Practice Bulletin No. 224: Diagnosis and Management of Vulvar Skin Disorders (2020)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/32590724/",
+    "tahun": 2020,
     "jenis": "evidence_internasional"
   },
   "acr-gout-2020": {
@@ -339,6 +381,34 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2025,
     "jenis": "evidence_internasional"
   },
+  "cochrane-acute-laryngitis-antibiotics-2015": {
+    "id": "cochrane-acute-laryngitis-antibiotics-2015",
+    "label": "Cochrane Review: Antibiotics for Acute Laryngitis in Adults",
+    "url": "https://www.cochrane.org/evidence/CD004783_antibiotics-treat-adults-acute-laryngitis",
+    "tahun": 2015,
+    "jenis": "evidence_internasional"
+  },
+  "cochrane-doms-cold-water-immersion-2022": {
+    "id": "cochrane-doms-cold-water-immersion-2022",
+    "label": "Cochrane Review: Cold-Water Immersion for Preventing and Treating Muscle Soreness after Exercise",
+    "url": "https://www.cochrane.org/evidence/CD008262_cold-water-immersion-preventing-and-treating-muscle-soreness-after-exercise",
+    "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
+  "cochrane-hordeolum-2017": {
+    "id": "cochrane-hordeolum-2017",
+    "label": "Cochrane Review: Interventions for an Acute Internal Hordeolum",
+    "url": "https://www.cochrane.org/evidence/CD007742_interventions-acute-internal-hordeolum",
+    "tahun": 2017,
+    "jenis": "evidence_internasional"
+  },
+  "cochrane-systemic-ras-2012": {
+    "id": "cochrane-systemic-ras-2012",
+    "label": "Cochrane Review: Systemic Interventions for Recurrent Aphthous Stomatitis",
+    "url": "https://www.cochrane.org/evidence/CD005411_systemic-interventions-recurrent-aphthous-stomatitis-mouth-ulcers",
+    "tahun": 2012,
+    "jenis": "evidence_internasional"
+  },
   "cochrane-threatened-miscarriage-2021": {
     "id": "cochrane-threatened-miscarriage-2021",
     "label": "Cochrane - Progestogens for Preventing Miscarriage: Network Meta-analysis",
@@ -351,6 +421,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "Canadian Paediatric Society - Acute Otitis Media (reaffirmed 2024)",
     "url": "https://cps.ca/en/documents/position/acute-otitis-media",
     "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
+  "csd-cutaneous-warts-2022": {
+    "id": "csd-cutaneous-warts-2022",
+    "label": "Clinical Guideline for the Diagnosis and Treatment of Cutaneous Warts (2022)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9825897/",
+    "tahun": 2022,
     "jenis": "evidence_internasional"
   },
   "eaaci-food-allergy-2024": {
@@ -618,6 +695,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "url": "https://p2.kemkes.go.id/juknis-tb-so/",
     "tahun": 2025,
     "jenis": "pedoman_indonesia"
+  },
+  "kyoto-consensus-hpylori-gastritis-2015": {
+    "id": "kyoto-consensus-hpylori-gastritis-2015",
+    "label": "Kyoto Global Consensus Report on Helicobacter pylori Gastritis (Gut, mirror PMC/NIH)",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4552923/",
+    "tahun": 2015,
+    "jenis": "evidence_internasional"
   },
   "merck-nasal-infections-2025": {
     "id": "merck-nasal-infections-2025",
@@ -955,6 +1039,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
+  "rch-cervical-lymphadenitis-2021": {
+    "id": "rch-cervical-lymphadenitis-2021",
+    "label": "Royal Children's Hospital Melbourne — Clinical Practice Guideline: Cervical Lymphadenopathy",
+    "url": "https://www.rch.org.au/clinicalguide/guideline_index/cervical_lymphadenopathy/",
+    "tahun": 2021,
+    "jenis": "evidence_internasional"
+  },
   "rch-febrile-seizure-2026": {
     "id": "rch-febrile-seizure-2026",
     "label": "Royal Children Hospital Melbourne - Febrile Seizure Guideline",
@@ -1044,6 +1135,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "WHO - Abortion Care Guideline, second edition",
     "url": "https://www.who.int/publications/i/item/9789240104204",
     "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "who-anc-positive-pregnancy-2016": {
+    "id": "who-anc-positive-pregnancy-2016",
+    "label": "WHO Recommendations on Antenatal Care for a Positive Pregnancy Experience (2016)",
+    "url": "https://www.who.int/publications/i/item/9789241549912",
+    "tahun": 2016,
     "jenis": "evidence_internasional"
   },
   "who-bronchiolitis-2026": {
@@ -1184,13 +1282,6 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "WHO mhGAP Guideline, third edition",
     "url": "https://www.who.int/publications/i/item/9789240084278",
     "tahun": 2023,
-    "jenis": "evidence_internasional"
-  },
-  "who-oral-health-2022": {
-    "id": "who-oral-health-2022",
-    "label": "WHO Global Oral Health Status Report",
-    "url": "https://www.who.int/publications/i/item/9789240061484",
-    "tahun": 2022,
     "jenis": "evidence_internasional"
   },
   "who-postnatal-2022": {
@@ -1483,8 +1574,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "bsg-functional-dyspepsia-2022",
-      "cakupan": "terkait"
+      "sourceId": "kyoto-consensus-hpylori-gastritis-2015",
+      "cakupan": "langsung"
     }
   ],
   "gerd": [
@@ -1594,8 +1685,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-postnatal-2022",
-      "cakupan": "terkait"
+      "sourceId": "who-anc-positive-pregnancy-2016",
+      "cakupan": "langsung"
     }
   ],
   "kia_isk_kehamilan": [
@@ -1604,8 +1695,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "eau-urological-infections-2026",
-      "cakupan": "terkait"
+      "sourceId": "acog-uti-pregnancy-2023",
+      "cakupan": "langsung",
+      "catatan": "Errata terminologi Desember 2024 (PMID 39601712) tidak mengubah rekomendasi inti."
     }
   ],
   "kia_kb_konseling": [
@@ -1644,8 +1736,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-conjunctivitis-ppp-2023",
+      "cakupan": "langsung"
     }
   ],
   "kulit_dermatitis_kontak": [
@@ -1654,8 +1746,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-skin-primary-2026",
-      "cakupan": "terkait"
+      "sourceId": "aaaai-contact-dermatitis-2015",
+      "cakupan": "langsung"
     }
   ],
   "kulit_herpes_zoster": [
@@ -1744,8 +1836,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-skin-primary-2026",
-      "cakupan": "terkait"
+      "sourceId": "csd-cutaneous-warts-2022",
+      "cakupan": "langsung"
     }
   ],
   "lab_ablasio_retina": [
@@ -2551,8 +2643,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "cdc-adult-outpatient-2024",
-      "cakupan": "terkait"
+      "sourceId": "cochrane-acute-laryngitis-antibiotics-2015",
+      "cakupan": "langsung"
     }
   ],
   "lab_leptospirosis_tanpa_komplikasi": [
@@ -2575,8 +2667,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-skin-primary-2026",
-      "cakupan": "terkait"
+      "sourceId": "rch-cervical-lymphadenitis-2021",
+      "cakupan": "langsung"
     }
   ],
   "lab_lipoma_lengan": [
@@ -2585,8 +2677,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-skin-primary-2026",
-      "cakupan": "terkait"
+      "sourceId": "aafp-soft-tissue-masses-2022",
+      "cakupan": "langsung"
     }
   ],
   "lab_luka_bakar_derajat2_dangkal": [
@@ -3116,8 +3208,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-oral-health-2022",
-      "cakupan": "terkait"
+      "sourceId": "cochrane-systemic-ras-2012",
+      "cakupan": "langsung",
+      "catatan": "Tinjauan ini menilai HANYA intervensi sistemik (kortikosteroid oral, colchicine, pentoxifylline, dll) untuk RAS — tidak mencakup kortikosteroid topikal (mis. triamsinolon asetonid orabase) yang menjadi tata laksana PPK pada kasus ini; dipakai sbg rujukan diagnosis/epidemiologi RAS, bukan pembenaran regimen topikal."
     }
   ],
   "lab_strongiloidiasis": [
@@ -3356,8 +3449,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-skin-primary-2026",
-      "cakupan": "terkait"
+      "sourceId": "acog-vulvar-skin-disorders-2020",
+      "cakupan": "langsung"
     }
   ],
   "mata_glaukoma_akut": [
@@ -3366,8 +3459,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-ppp-angle-closure-2025",
+      "cakupan": "langsung"
     }
   ],
   "mata_hordeolum": [
@@ -3376,8 +3469,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "cochrane-hordeolum-2017",
+      "cakupan": "langsung",
+      "catatan": "Cakupan review terbatas pada hordeolum internum (bukan eksternum); temuan adalah ketiadaan bukti RCT yang memadai, bukan rekomendasi efikasi positif — dasar status tata laksana opsional, bukan wajib."
     }
   ],
   "mata_konjungtivitis_alergi": [
@@ -3386,8 +3480,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-conjunctivitis-ppp-2023",
+      "cakupan": "langsung"
     }
   ],
   "mm_artritis_reumatoid": [
@@ -3468,8 +3562,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Tidak ada bab diagnosis yang dipetakan langsung; dokumen ini hanya menjadi batas bawah praktik FKTP."
     },
     {
-      "sourceId": "who-low-back-pain-2023",
-      "cakupan": "terkait"
+      "sourceId": "cochrane-doms-cold-water-immersion-2022",
+      "cakupan": "langsung"
     }
   ],
   "mm_obesitas": [

@@ -89,6 +89,24 @@ const RETAINED_OLDER_EVIDENCE: Record<string, string> = {
     'Guideline diagnosis-spesifik AAO-HNSF yang masih aktif untuk impaksi serumen.',
   'idsa-ssti-2014':
     'Guideline IDSA yang masih aktif untuk SSTI; dipakai pada simpul source-control yang spesifik.',
+  // S-provenance (2026-08-01): 7 sumber baru dari batch penguatan cakupan poli
+  // yang usianya >6 tahun tapi tetap edisi teraktif tanpa pengganti — tiap
+  // klaim "tidak ada versi lebih baru" diverifikasi via WebSearch silang saat
+  // riset, bukan asumsi.
+  'cochrane-systemic-ras-2012':
+    'Tinjauan sistemik RAS pub2 (2012), tidak ditemukan pub3/penarikan; hanya mencakup intervensi sistemik (lihat catatan pada assignment), bukan kortikosteroid topikal yang dipakai kasus.',
+  'aaaai-contact-dermatitis-2015':
+    'Practice parameter AAAAI/ACAAI/JCAAI masih menjadi rujukan aktif utk patch testing dan diferensiasi ACD/ICD; tidak ditemukan update penuh yang menggantikannya.',
+  'cochrane-acute-laryngitis-antibiotics-2015':
+    'Update pub5 (23 Mei 2015) dari review 2005; tidak ditemukan pub6. Diagnosis-spesifik "acute laryngitis" — lebih tepat drpd guideline umbrella "hoarseness/dysphonia" yang lebih baru tapi tidak eksplisit membahas laringitis akut.',
+  'kyoto-consensus-hpylori-gastritis-2015':
+    'Konsensus fondasional (Sugano dkk, Gut 2015) yang masih dikutip aktif di literatur 2023-2024 sbg klasifikasi gastritis kronis berbasis etiologi; tidak ada revisi resmi fakultas yang sama.',
+  'who-anc-positive-pregnancy-2016':
+    'Dokumen ANC standalone WHO yang masih aktif dgn amandemen tempel s/d 2022 (vit D, zink, USG). Catatan kebijakan: WHO juga menerbitkan compendium "Recommendations on maternal health" 2025 yang mengonsolidasi sebagian rekomendasi individual — tim boleh meninjau ulang preferensi standalone vs konsolidasi pada review berikutnya.',
+  'cochrane-hordeolum-2017':
+    'Update pub4 (2017) dari seri 2009/2010/2013; tidak ada pub5. Review menyimpulkan ketiadaan RCT memadai, dipakai sbg dasar status opsional (bukan wajib) pada tata laksana kasus.',
+  'acog-vulvar-skin-disorders-2020':
+    'Practice Bulletin No. 224 (2020) untuk kelainan kulit vulva termasuk vulvitis kontak/iritan; tidak ditemukan nomor bulletin pengganti per Agustus 2026.',
 }
 
 function collectUses(): SourceUse[] {
