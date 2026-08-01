@@ -613,7 +613,10 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'miliaria',
     spec: {
-      id: 'lab_miliaria_rubra', nama: 'Miliaria Rubra', icd10: 'L74.3', kategori: 'kulit', prevalensi: 'tinggi',
+      // Bug hunt 2026-08-01: L74.3 "Miliaria, tidak spesifik" diganti L74.0
+      // (kode WHO ICD-10 spesifik utk Miliaria Rubra) — nama kasus sendiri
+      // sudah definitif, tidak seharusnya memakai kode subtipe-tak-diketahui.
+      id: 'lab_miliaria_rubra', nama: 'Miliaria Rubra', icd10: 'L74.0', kategori: 'kulit', prevalensi: 'tinggi',
       keluhanUtama: 'Leher dan punggung muncul bintil merah pedih saat cuaca panas.', usia: [5, 65], vital: NORMAL,
       pembuka: ['Kapan bintil muncul dan apa pemicunya?', 'Muncul setelah beberapa hari sangat panas dan berkeringat, terutama di area tertutup pakaian.'],
       pertanyaan: [
@@ -622,7 +625,7 @@ const DEFINITIONS: LabDefinition[] = [
         ['q_oklusi', 'sosial', 'Pakaian tebal/ketat atau banyak krim berminyak?', 'Sering memakai pakaian kerja tebal.', true],
       ],
       fisik: [['kulit', 'Papul-vesikel eritem kecil nonfolikular di leher dan punggung atas pada area oklusi, tanpa pustul.'], ['umum', 'Afebris dan tampak baik.', false]],
-      diagnosisBanding: ['L74.3', 'L73.9', 'L27.0'],
+      diagnosisBanding: ['L74.0', 'L73.9', 'L27.0'],
       tatalaksana: { obatBenar: ['kalamin_losion'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Papul kecil pada area panas/oklusi tanpa gejala sistemik mendukung miliaria rubra. Pendinginan lingkungan, pakaian longgar, menjaga kulit kering, dan losio penenang cukup; antibiotik atau steroid kuat tidak rutin.',
       panduanResmi: PPK,

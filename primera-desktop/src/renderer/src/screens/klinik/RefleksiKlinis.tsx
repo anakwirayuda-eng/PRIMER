@@ -7,22 +7,41 @@ import {
   type PilihanFormatif,
   type SumberPedagogis,
 } from '@content/pedagogyPilots'
+import { urlSumberAman } from '../../components/TautanSumber'
 import './RefleksiKlinis.css'
 
 type Dex = Record<string, DexEntry>
 
+// Bug hunt 2026-08-01 (sedang, keamanan): satu-satunya renderer sumber yang
+// masih membuka <a href> tanpa gerbang urlSumberAman() (bandingkan
+// TautanSumber.tsx & BuktiKlinis.tsx) — kasus lab bisa mencantumkan URL
+// non-HTTPS/kredensial yang lolos tanpa terblokir.
 function SumberRingkas({ sumber }: { sumber: readonly SumberPedagogis[] }) {
   return (
     <p className="refleksi__sumber teks-xs teks-lembut">
       Landasan:{' '}
-      {sumber.map((item, index) => (
-        <span key={item.id}>
-          {index > 0 && ' | '}
-          <a href={item.url} target="_blank" rel="noreferrer">
-            {item.label} ({item.tahun})
-          </a>
-        </span>
-      ))}
+      {sumber.map((item, index) => {
+        const aman = urlSumberAman(item.url)
+        return (
+          <span key={item.id}>
+            {index > 0 && ' | '}
+            {aman ? (
+              <a
+                href={item.url}
+                target="_blank"
+                rel="noreferrer"
+                aria-label={`${item.label}; buka di browser bawaan`}
+              >
+                {item.label} ({item.tahun})
+              </a>
+            ) : (
+              <span title="Tautan non-HTTPS atau tidak valid diblokir">
+                {item.label} ({item.tahun})
+              </span>
+            )}
+          </span>
+        )
+      })}
     </p>
   )
 }

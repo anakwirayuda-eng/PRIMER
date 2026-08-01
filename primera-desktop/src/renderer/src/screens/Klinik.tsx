@@ -6,7 +6,7 @@
  * Event ENCOUNTER_SELESAI → panel hasil dengan grade stempel + clue EBM.
  */
 
-import { useEffect, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
 import type { PenilaianEncounter } from '@engine/state'
@@ -26,7 +26,11 @@ export function Klinik() {
 
   const [hasil, setHasil] = useState<PenilaianEncounter | null>(null)
 
-  useEffect(() => {
+  // Bug hunt 2026-08-01 (sedang): reducer mengosongkan state.klinik.aktif pada
+  // commit yang sama dgn event ENCOUNTER_SELESAI, tapi useEffect biasa baru
+  // jalan setelah paint — satu frame ruang tunggu kosong sempat tampil sebelum
+  // PanelHasil keburu terisi. useLayoutEffect jalan sebelum browser paint.
+  useLayoutEffect(() => {
     for (const e of lastEvents) {
       if (e.type === 'ENCOUNTER_SELESAI') setHasil(e.penilaian)
     }

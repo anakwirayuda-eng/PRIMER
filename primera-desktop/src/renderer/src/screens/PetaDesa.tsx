@@ -5,7 +5,7 @@
  * dari engine — UI hanya mencerminkan alasannya di tombol yang dinonaktifkan.
  */
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { hitungIksKeluarga, klasifikasiIks } from '@engine/pispk'
 import {
@@ -53,7 +53,11 @@ export function PetaDesa() {
   const refHasilKunjungan = useFocusTrap<HTMLDivElement>(hasilKunjungan !== null, () => setHasilKunjungan(null))
 
   // Kunjungan selesai → reducer memindah layar ke sini; sambut dengan kartu hasil.
-  useEffect(() => {
+  // Bug hunt 2026-08-01 (sedang, lebih parah krn <ErrorBoundary key={state.layar}>
+  // di App.tsx me-remount layar ini): useEffect biasa baru jalan setelah paint,
+  // jadi peta "telanjang" tanpa kartu hasil sempat tampil sesaat pada mount
+  // pertama. useLayoutEffect jalan sebelum browser paint, menutup celahnya.
+  useLayoutEffect(() => {
     if (tickTerproses.current === eventTick) return
     tickTerproses.current = eventTick
     for (const e of lastEvents) {

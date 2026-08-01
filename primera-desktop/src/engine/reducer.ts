@@ -527,7 +527,15 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           }
         } else {
           kapitasi += o.hargaJual
-          if (!adaStok) kapitasi -= o.hargaBeli // umum pun butuh unit fisik
+          // Bug hunt 2026-08-01: cabang BPJS di atas mencatat pembelian darurat
+          // ke belanjaObat ("buku kas: hanya pembelian darurat"), tapi cabang
+          // umum ini dulu cuma memotong kapitasi tanpa ikut mencatatnya —
+          // laporan bulanan (baris 3263-an) jadi understate belanja darurat
+          // riil tiap kali pasien umum (bukan BPJS) memicu stok kosong.
+          if (!adaStok) {
+            kapitasi -= o.hargaBeli // umum pun butuh unit fisik
+            belanjaObat += o.hargaBeli
+          }
         }
         if (stokBaru[obatId] !== undefined) stokBaru[obatId] = Math.max(0, stokBaru[obatId]! - 1)
       }
@@ -619,9 +627,22 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // nonPrimer; konsekuensi kini ikut: HANYA `kontraindikasi` (bahaya nyawa
       // nyata, mis. NSAID pada dengue) yang memburukkan pasien. Default
       // (bahaya hilang) = nonPrimer → tidak memicu konsekuensi.
-      const resepBerbahaya = (kasus.tatalaksana.obatSalahUmum ?? []).some(
-        (o) => o.bahaya === 'kontraindikasi' && encFinal.resep.includes(o.id),
-      )
+      // Bug hunt 2026-08-01: resepBerbahaya dulu HANYA membaca obatSalahUmum,
+      // padahal clinic.ts (nilai.obatBerbahaya, Tier-1 #7) sudah menghitung
+      // obat terlarang interaksi (mis. nitrat+PDE5-inhibitor → hipotensi berat/
+      // kolaps) sbg berbahaya juga. Akibatnya nilai turun (obatBerbahaya=true)
+      // tapi "pasien kembali memburuk" TIDAK terpicu — konsekuensi narasi lebih
+      // ringan dari kontraindikasi obatSalahUmum biasa, padahal bahayanya SAMA
+      // atau lebih nyata secara farmakologis. Disamakan dgn clinic.ts.
+      const pasienKenaInteraksiObat =
+        kasus.interaksiTrap !== undefined && encFinal.pasien.faktorRisiko.includes(kasus.interaksiTrap.faktor)
+      const resepBerbahaya =
+        (kasus.tatalaksana.obatSalahUmum ?? []).some(
+          (o) => o.bahaya === 'kontraindikasi' && encFinal.resep.includes(o.id),
+        ) ||
+        (pasienKenaInteraksiObat && kasus.interaksiTrap
+          ? kasus.interaksiTrap.obatTerlarang.some((id) => encFinal.resep.includes(id))
+          : false)
       // WAJIB lab itu RELEVAN dgn kasus (DeepThink #1, sinkron dgn clinic.ts) —
       // tanpa ini "observasi" bisa dipakai sbg kedok memesan lab apa saja lalu
       // dikecualikan dari konsekuensi tanpa alasan klinis nyata.
@@ -2515,6 +2536,37 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           const { karmaAktif: _lewat, ...kelGagal } = kel
           keluargaFlush = { ...keluargaFlush, [j.keluargaId]: { ...kelGagal, arcSelesai: 'gagal' } }
           tallyFlush = { ...tallyFlush, karmaTerjadi: tallyFlush.karmaTerjadi + 1 }
+          continue
+        }
+      }
+      // Bug hunt 2026-08-01: verifikasi_pispk yang masih PENDING saat stase
+      // tamat punya bug PERSIS sama seperti karma_igd di atas (M10.5 #12) —
+      // early return ini mendahului blok "Proses jadwal jatuh tempo" normal,
+      // jadi janji indikator warga yang belum jatuh tempo lolos tanpa pernah
+      // diverifikasi, membeku permanen dgn sumber:'janji' (IKS optimis yang
+      // tak pernah dikoreksi/dikonfirmasi). Force-evaluate dgn RNG turunan
+      // yang SAMA (seed+id jadwal, bukan bergantung hari) — hasilnya identik
+      // dgn seandainya diproses persis di hari jatuh temponya. Tanpa surat,
+      // sama seperti karma_igd (tak ada lagi waktu bermain utk memprosesnya).
+      if (j.jenis === 'verifikasi_pispk' && j.keluargaId && j.indikatorJanji) {
+        const kelContent = pack.keluarga[j.keluargaId]
+        const kel = keluargaFlush[j.keluargaId]
+        if (kelContent && kel) {
+          const rngJanji = new Rng(s.seed, 'verifikasi-janji', j.id)
+          const indikator = { ...kel.indikator }
+          for (const ind of j.indikatorJanji) {
+            const nilai = indikator[ind]
+            if (nilai.sumber !== 'janji') continue
+            indikator[ind] = rngJanji.chance(peluangJanjiDitepati(kel.trust))
+              ? { status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: s.hari }
+              : {
+                  status: nilai.statusSebenarnya,
+                  statusSebenarnya: nilai.statusSebenarnya,
+                  sumber: 'dokter',
+                  hariData: s.hari,
+                }
+          }
+          keluargaFlush = { ...keluargaFlush, [j.keluargaId]: { ...kel, indikator } }
           continue
         }
       }

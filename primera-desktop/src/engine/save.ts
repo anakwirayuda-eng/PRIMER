@@ -90,7 +90,21 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // reading 'bintang'") krn `Object.entries(dex)` mengiterasi nilai apa
   // adanya. Sama pola desa.rw di bawah — tolak seluruh save bila ada entri
   // korup, bukan backfill parsial.
-  if (Object.values(st['dex'] as Record<string, unknown>).some((e) => !objek(e))) return null
+  // Bug hunt 2026-08-01: objek-check barusan tak menjamin field NUMERIK di
+  // dalamnya. `bintang: NaN` (mis. save diedit tangan) lolos, lalu
+  // `Math.min(3, lama.bintang + 1)` (reducer.ts) meracuninya jadi NaN
+  // PERMANEN — bintang penguasaan tak pernah bisa naik/luntur lagi (DexSkdi.tsx
+  // `dex.bintang >= 3` tak pernah benar walau sudah dilatih berkali-kali).
+  if (
+    Object.values(st['dex'] as Record<string, unknown>).some((e) => {
+      if (!objek(e)) return true
+      for (const kunci of ['ditangani', 'benar', 'bintang', 'terakhirHari'] as const) {
+        if (typeof e[kunci] !== 'number' || !Number.isFinite(e[kunci])) return true
+      }
+      return false
+    })
+  )
+    return null
   if (!Array.isArray(st['inbox'])) return null
   // Entri inbox non-objek (CODEX M14 #7): `inbox:[null]` lolos array-check di atas
   // lalu Hud.tsx (`.filter(m => !m.dibaca)`) THROW — dan karena <Hud/> dirender
@@ -438,9 +452,23 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // primitif dilarang. rw array tak boleh sebagian valid (kode lain berasumsi
   // korespondensi RW 1..N lengkap) — entri korup apa pun = seluruh save ditolak.
   if ((desa['rw'] as unknown[]).some((r) => !objek(r))) return null
+  // Bug hunt 2026-08-01: `jarak` tak pernah divalidasi. kader.ts membaca
+  // `PROPORSI_SEHAT_JARAK[wilayah.jarak]` ('dekat'/'sedang'/'terpencil' saja)
+  // utk roll `proporsiBaselineRoll` SEKALI lalu MENYIMPANNYA PERMANEN di
+  // RwState (CODEX audit 2026-07-12 #8A, anti-noise-harian) — `jarak` korup
+  // lolos jadi lookup undefined, NaN meracuni proporsiBaselineRoll SELAMANYA
+  // (tak pernah re-roll krn cache `=== undefined` sudah terisi), menjatuhkan
+  // IKS RW itu permanen sepanjang playthrough. Tolak seluruh save, konsisten
+  // dgn kebijakan rw di atas (entri korup = seluruh save ditolak).
+  const JARAK_SAH = new Set(['dekat', 'sedang', 'terpencil'])
+  if ((desa['rw'] as Record<string, unknown>[]).some((r) => !JARAK_SAH.has(r['jarak'] as string))) return null
   // Migrasi-lite M2: bonusIks per RW + state program/prolanis/lapangan.
+  // Bug hunt 2026-08-01: `typeof NaN === 'number'` tetap true, jadi bonusIks
+  // korup (mis. save diedit tangan) lolos check lama tanpa dibackfill lalu
+  // meracuni aritmetika skor IKS. Tambahkan Number.isFinite, konsisten dgn
+  // sanitasi numerik lain di file ini (stok/keuanganBulan/dsb).
   for (const r of desa['rw'] as Record<string, unknown>[]) {
-    if (typeof r['bonusIks'] !== 'number') r['bonusIks'] = 0
+    if (typeof r['bonusIks'] !== 'number' || !Number.isFinite(r['bonusIks'])) r['bonusIks'] = 0
   }
 
   if (typeof st['lapanganTerpakai'] !== 'boolean') st['lapanganTerpakai'] = false
@@ -470,6 +498,16 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (typeof st['posyanduRwTerakhir'] !== 'object' || st['posyanduRwTerakhir'] === null) {
     st['posyanduRwTerakhir'] = {}
   }
+  // Bug hunt 2026-08-01: nilai korup (non-finite) lolos container-check di atas.
+  // reducer.ts (MULAI_POSYANDU) membaca `s.hari - terakhir < COOLDOWN_POSYANDU` —
+  // bila `terakhir` NaN, hasilnya NaN dan `NaN < COOLDOWN` SELALU false, jadi
+  // gerbang cooldown bulanan gagal TERBUKA (Posyandu RW itu bisa digelar tiap
+  // hari via save yang dimodifikasi). Buang entri korup — kosong berarti belum
+  // pernah digelar, bukan penyimpangan berbahaya.
+  const posyanduRwSt = st['posyanduRwTerakhir'] as Record<string, unknown>
+  for (const [rw, nilai] of Object.entries(posyanduRwSt)) {
+    if (typeof nilai !== 'number' || !Number.isFinite(nilai)) delete posyanduRwSt[rw]
+  }
   if (typeof st['program'] !== 'object' || st['program'] === null) st['program'] = {}
   // program.fokus (CODEX ronde-baru #3): fokus tak dikenal + surveilans aktif →
   // TARGET_KASUS_PROGRAM[fokus] undefined lalu `.includes` THROW di day-advance.
@@ -478,6 +516,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (programSt['fokus'] !== undefined && !['psn', 'phbs', 'skrining'].includes(programSt['fokus'] as string)) {
     delete programSt['fokus']
     delete programSt['rwFokus']
+  }
+  // Bug hunt 2026-08-01: rwFokus/periodeDitetapkan tak pernah divalidasi
+  // tipenya di sini. Nilai korup (string/NaN) lolos, lalu perbandingan `===`
+  // di reducer.ts (kunci program bulanan, kasus TETAPKAN_PROGRAM) SELALU tak
+  // cocok — kunci gagal TERBUKA, pemain via save yang dimodifikasi bisa
+  // mengganti fokus/RW program tiap hari, merusak esensi "kunci sebulan,
+  // korbankan RW lain" (DeepThink ronde-2).
+  if (
+    programSt['rwFokus'] !== undefined &&
+    (typeof programSt['rwFokus'] !== 'number' || !Number.isFinite(programSt['rwFokus']))
+  ) {
+    delete programSt['rwFokus']
+  }
+  if (
+    programSt['periodeDitetapkan'] !== undefined &&
+    (typeof programSt['periodeDitetapkan'] !== 'number' || !Number.isFinite(programSt['periodeDitetapkan']))
+  ) {
+    delete programSt['periodeDitetapkan']
   }
   // klinik nested (CODEX ronde-baru #3): `klinik = {}` / `antrian = null` lolos
   // objek check di atas tapi LANJUTKAN & debrief THROW saat mengiterasi antrian/
@@ -500,8 +556,12 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     if (!Array.isArray(aktif['ditanyaKetus'])) aktif['ditanyaKetus'] = []
   }
   // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
+  // Bug hunt 2026-08-01: `typeof NaN === 'number'` tetap true, jadi `rw` korup
+  // lolos tanpa dibackfill lalu ikut terbawa ke event surveilans/KLB
+  // (`cluster_${kasusId}_rwNaN`) — pasien dgn rw korup berbeda-beda malah
+  // digabung jadi SATU kluster palsu krn kuncinya sama-sama "rwNaN".
   for (const p of klinik['antrian'] as unknown[]) {
-    if (objek(p) && typeof p['rw'] !== 'number') p['rw'] = 1
+    if (objek(p) && (typeof p['rw'] !== 'number' || !Number.isFinite(p['rw']))) p['rw'] = 1
   }
 
   // Backfill gudang M4 utk save lama: stok kosong diisi baseline 12/obat agar

@@ -472,6 +472,17 @@ export function validasiPack(pack: ContentPack): string[] {
     if (k.varianPresentasi?.length) {
       const idAnamnesisAda = new Set(k.anamnesis.map((q) => q.id))
       const regionAda = new Set(k.pemeriksaanFisik.map((f) => f.region))
+      // Bug hunt 2026-08-01: kasusEfektif() (clinic.ts) menimpa TEMUAN via
+      // `pemeriksaanFisik.map(f => temuanBerubah[f.region] ? ... : f)` — bila
+      // SATU kasus punya >1 entri pemeriksaanFisik dgn region yang SAMA (pola
+      // umum & sah, mis. dua temuan 'kulit' berbeda), varian yang menimpa
+      // region itu diam-diam menimpa SEMUA entri region itu sekaligus, bukan
+      // cuma satu yang dimaksud penulis. Set existence-check di atas tak
+      // menangkap ini (cuma cek region ADA, bukan UNIK) — hitung kemunculannya.
+      const regionHitungan = new Map<string, number>()
+      for (const f of k.pemeriksaanFisik) {
+        regionHitungan.set(f.region, (regionHitungan.get(f.region) ?? 0) + 1)
+      }
       const idVarianTerpakai = new Set<string>()
       for (const v of k.varianPresentasi) {
         if (v.id === '_dasar') {
@@ -489,6 +500,8 @@ export function validasiPack(pack: ContentPack): string[] {
         for (const region of Object.keys(v.temuanBerubah ?? {})) {
           if (!regionAda.has(region as (typeof k.pemeriksaanFisik)[number]['region'])) {
             masalah.push(`Kasus ${k.id}: varian '${v.id}' temuanBerubah mengacu region '${region}' yang tak ada di pemeriksaanFisik dasar`)
+          } else if ((regionHitungan.get(region) ?? 0) > 1) {
+            masalah.push(`Kasus ${k.id}: varian '${v.id}' temuanBerubah mengacu region '${region}' yang MUNCUL >1 kali di pemeriksaanFisik dasar — kasusEfektif() akan menimpa SEMUA entri region itu sekaligus, bukan cuma satu`)
           }
         }
         if (!v.vital && !v.keluhanUtama && !v.jawabanBerubah && !v.temuanBerubah) {

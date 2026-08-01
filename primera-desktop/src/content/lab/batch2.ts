@@ -826,7 +826,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_limfadenitis_servikal_akut', nama: 'Limfadenitis Servikal Akut Bakterial', icd10: 'I88', kategori: 'infeksi',
+    // Bug hunt 2026-08-01: I88 (bab sirkulasi, subkategori I88.1 justru berarti
+    // KRONIK) diganti L04.0 — bab WHO ICD-10 "Acute lymphadenitis", spesifik
+    // utk wajah/kepala/leher, cocok dgn nama & presentasi akut kasus ini.
+    id: 'lab_limfadenitis_servikal_akut', nama: 'Limfadenitis Servikal Akut Bakterial', icd10: 'L04.0', kategori: 'infeksi',
     keluhanUtama: 'Anak saya mengalami benjolan nyeri di leher setelah sakit gigi dan demam ringan.', keluhanUtamaOlehPendamping: true, usia: [8, 12], vital: { td: '104/66', nadi: 92, rr: 20, suhu: 38.0, spo2: 99 },
     pembuka: ['Benjolan muncul kapan dan adakah sumber infeksi di sekitar kepala-leher?', 'Tiga hari setelah gigi geraham sakit; benjolan satu sisi dan nyeri.'],
     pertanyaan: [
@@ -835,7 +838,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_kucing', 'sosial', 'Ada cakaran kucing atau luka kulit?', 'Tidak ada.', false],
     ],
     fisik: [['kepala_leher', 'KGB submandibula kanan 2 cm, nyeri, mobile, hangat; tidak fluktuatif. Gigi molar karies.'], ['tht_mulut', 'Tidak ada abses peritonsil atau obstruksi jalan napas.', true]],
-    diagnosisBanding: ['I88', 'A18.2', 'C77.0'],
+    diagnosisBanding: ['L04.0', 'A18.2', 'C77.0'],
     tatalaksana: { obatBenar: ['cefadroxil_sirup_125'], obatOpsional: ['paracetamol_sirup'], edukasi: ['kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'] },
     clue: 'KGB akut unilateral nyeri dengan fokus infeksi lokal mendukung limfadenitis bakterial. Tata sumber infeksi dan antibiotik yang sesuai; evaluasi ulang. Kronik, keras/fiksasi, supraklavikula, gejala TB/keganasan, fluktuasi, atau gagal respons memerlukan pemeriksaan lanjut.',
     panduanResmi: `${PPK} Limfadenitis harus dibedakan dari TB kelenjar, keganasan, dan abses.`,

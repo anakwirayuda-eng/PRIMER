@@ -188,14 +188,20 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // surat janji-ditepati, surat ambang burnout 40/70 (reducer); hitungSkor
   // mengekspos rincian.rasioProlanisTerkontrol opsional (scoring/state);
   // verifikasi.ts ikut karena REVISI_ENGINE. Rincian di verifikasi.ts rev 62.
-  'reducer.ts': '78007a9a749a0167e3d75a67c179787964b3aed028bf00fdb9ae60d3ed9da5ae',
+  // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): belanjaObat kini
+  // ikut tercatat utk pembelian darurat pasien umum; resepBerbahaya ikut
+  // interaksiTrap; verifikasi_pispk pending ikut force-evaluate di akhir
+  // stase. Rincian di verifikasi.ts rev 63.
+  'reducer.ts': '24abfd9693c0d053f63ea9bd3cc47bd1489fadaf5df1d025b78073d48ae009be',
   'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
   'scoring.ts': '9d1568e7a8b0801400b99da68dc680087f42828ac6d584be1d7320d658a1ca0a',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
-  'director.ts': '9d1031feb28f246686ee4ab58b172bb358f9785ee0463fd17f925fcc2a7c3c9a',
+  // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): cap paparan
+  // rujukan tak lagi bisa menimpa slot jaminan kurikulum 4A pity-timer.
+  'director.ts': '37039d94fca76f1db7616d9ac3ba82a27992b7d1468d78c1950ff27a3065b939',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
@@ -206,7 +212,10 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-07-23 (M13-137-04, REVISI_ENGINE 57 -> 58): suspek
   // meningokokus mendapat pola notifikasi, kontak erat, dan profilaksis
   // terkoordinasi sendiri alih-alih jatuh ke droplet generik.
-  'kegiatan.ts': '5c104088ead096f10fa9c5fbf54854ffa9e291fdfe6288fc4df72938e3a9520d',
+  // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): jargon desain
+  // "guillotine" yang bocor ke teks respons kartu Prolanis HT diganti bahasa
+  // pemain (skor tak berubah, murni copy).
+  'kegiatan.ts': 'cce87688fdf4148102efc1d326c8c414fe50b6d8c9a22a6b1b6b8e9aefbeea66',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
@@ -214,9 +223,14 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
-  'verifikasi.ts': '4df72b68a11035971d24c8958b3c3738027f6040a78168ad7b6b5e0b33200528',
+  // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): REVISI_ENGINE
+  // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
+  'verifikasi.ts': '5259f243a991535d942ef4e7240c1fb0df57e5bed0b9db57bb6283dd26c41330',
   'state.ts': '5eff0197fe1e671edffd7d7c97ea261ef55c8289255abb09cf27db6644bf8db6',
-  'save.ts': '365c8cec83b3697bc2cae05387c272c82ff567478334e533ddbcb8bac10dcf04',
+  // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): enam validasi baru
+  // menutup celah NaN/tipe-salah (dex.bintang, desa.rw.bonusIks & jarak,
+  // posyanduRwTerakhir, program.rwFokus/periodeDitetapkan, antrian[].rw).
+  'save.ts': '9c4f487bedf99fbdf4f688d7df377f0d4615afff0a54450b2ddf638a5975aec2',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',

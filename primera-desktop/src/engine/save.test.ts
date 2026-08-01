@@ -493,6 +493,65 @@ describe('deserialize — kunci tally hilang & entri nested null (CODEX ronde-13
   })
 })
 
+describe('deserialize — bug hunt 2026-08-01 (NaN non-finite lolos check `typeof === number` lama)', () => {
+  it('dex.x.bintang = NaN ditolak, bukan lolos lalu meracuni pelunturan bintang jadi NaN permanen', () => {
+    let s = buildInitialState('Uji', SEED, PACK)
+    s = {
+      ...s,
+      dex: {
+        ...s.dex,
+        kasus_hantu: { kasusId: 'kasus_hantu', ditangani: 1, benar: 1, bintang: NaN, terakhirHari: 1 },
+      },
+    }
+    expect(deserialize(serialize(s), PACK)).toBeNull()
+  })
+
+  it('desa.rw[i].bonusIks = NaN dibackfill ke 0, bukan lolos diam-diam meracuni skor IKS', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const rw = (st['desa'] as Record<string, unknown>)['rw'] as Record<string, unknown>[]
+      rw[0]!['bonusIks'] = NaN
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.desa.rw[0]!.bonusIks).toBe(0)
+  })
+
+  it('posyanduRwTerakhir korup (NaN) dibuang, bukan lolos membuat gerbang cooldown gagal terbuka', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['posyanduRwTerakhir'] = { '1': NaN, '2': 5 }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.posyanduRwTerakhir['1']).toBeUndefined()
+    expect(hasil.posyanduRwTerakhir['2']).toBe(5)
+  })
+
+  it('program.rwFokus non-finite dibuang, bukan lolos membuat kunci program bulanan gagal terbuka', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['program'] = { fokus: 'psn', rwFokus: NaN, periodeDitetapkan: NaN }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.program.fokus).toBe('psn')
+    expect(hasil.program.rwFokus).toBeUndefined()
+    expect(hasil.program.periodeDitetapkan).toBeUndefined()
+  })
+
+  it('klinik.antrian[i].rw = NaN dibackfill ke 1, bukan lolos menggabung pasien ke kluster "rwNaN" palsu', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      const klinik = st['klinik'] as Record<string, unknown>
+      klinik['antrian'] = [{ id: 'p1', nama: 'Pasien Uji', rw: NaN }]
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect((hasil.klinik.antrian[0] as { rw: number }).rw).toBe(1)
+  })
+})
+
 describe('deserialize — CODEX audit pasca-GM (2026-07-13, temuan #12): tallyTermigrasi', () => {
   it('kunci tally hilang (save versi lama) dibackfill 0 DAN dicatat di tallyTermigrasi', () => {
     const s = buildInitialState('Uji', SEED, PACK)

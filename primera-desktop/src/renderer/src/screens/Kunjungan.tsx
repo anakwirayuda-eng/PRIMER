@@ -8,7 +8,7 @@
  * Semua logika (trust, diusir, gerbang) milik engine; layar ini hanya panggung.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { BabakKunjunganFase } from '@engine/state'
 import type { Hambatan, PilihanDialog } from '@content/types'
@@ -178,7 +178,12 @@ export function Kunjungan() {
 
   // Tangkap ucapan warga dari event engine. Respons bohong TIDAK dibedakan —
   // sengaja: field `bohong` tidak pernah dibaca di layar ini.
-  useEffect(() => {
+  // Bug hunt 2026-08-01 (tinggi): dispatch() menaikkan kj.dialogIndex secara
+  // SINKRON pada commit yang sama dgn event ini, tapi useEffect biasa baru
+  // jalan SETELAH paint — satu frame nodeAktif (dialog berikutnya) sempat
+  // tampil sebelum responsAktif keburu terisi (bocor spoiler alur cerita).
+  // useLayoutEffect jalan sebelum browser paint, menutup celahnya.
+  useLayoutEffect(() => {
     if (tickTerproses.current === eventTick) return
     tickTerproses.current = eventTick
     for (const e of lastEvents) {

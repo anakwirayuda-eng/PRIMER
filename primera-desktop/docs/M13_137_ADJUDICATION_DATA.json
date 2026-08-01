@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-01T03:13:58.749Z",
-  "sourceCommit": "c0001720d3392cba5fdd94a0d21f5fab4476ffcb+dirty",
-  "artifactFingerprint": "36e862a36ef2f515e0d3836ce2fbf23121b7f9005ffcbb3f8bd0450a57fbd798",
-  "packFingerprint": "77117e46",
+  "generatedAt": "2026-08-01T04:17:59.524Z",
+  "sourceCommit": "662c390dbab0ec6e393191d32b7cd9e12547cd9e+dirty",
+  "artifactFingerprint": "d2ded7dbac3fe7e8118b36d30fa7bfcec5fc97b1a7c45a7510bdf26e1c113418",
+  "packFingerprint": "20bba8a7",
   "contentRelease": "gameplay-comfort-2026-08-01",
-  "engineRevision": 62,
+  "engineRevision": 63,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -2533,7 +2533,7 @@
       "ordinal": 13,
       "id": "lab_limfadenitis_servikal_akut",
       "name": "Limfadenitis Servikal Akut Bakterial",
-      "icd10": "I88",
+      "icd10": "L04.0",
       "skdi": "4A",
       "category": "infeksi",
       "mustRefer": false,
@@ -2642,7 +2642,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "I88",
+          "L04.0",
           "A18.2",
           "C77.0"
         ],
@@ -11233,7 +11233,7 @@
       "ordinal": 57,
       "id": "lab_miliaria_rubra",
       "name": "Miliaria Rubra",
-      "icd10": "L74.3",
+      "icd10": "L74.0",
       "skdi": "4A",
       "category": "kulit",
       "mustRefer": false,
@@ -11298,7 +11298,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "L74.3",
+          "L74.0",
           "L73.9",
           "L27.0"
         ],

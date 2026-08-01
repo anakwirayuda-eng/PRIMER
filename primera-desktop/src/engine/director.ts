@@ -377,6 +377,14 @@ export function susunAntrianHarian(
       (k) => !k.harusDirujuk && !terpilih.some((t) => t.id === k.id),
     )
     for (let i = terpilih.length - 1; i >= 0 && rujukTerpilih.length > 1; i--) {
+      // Bug hunt 2026-08-01: slot jaminan kurikulum (indeks terakhir, ditulis
+      // blok pity-timer 4A di atas) sudah dilindungi dari ditimpa UNDIAN
+      // FORMATIF (baris di bawah, via slotJaminanDiganti), tapi cap rujukan
+      // ini berjalan SEBELUM blok formatif dan ikut mundur dari indeks
+      // terakhir — bisa DIGANTI di sini, mengalahkan jaminan cakupan
+      // kurikulum demi guardrail paparan rujukan yang prioritasnya lebih
+      // rendah drpd jaminan kurikulum itu sendiri.
+      if (slotJaminanDiganti && i === terpilih.length - 1) continue
       const k = terpilih[i]
       if (!k?.harusDirujuk) continue
       const pengganti =

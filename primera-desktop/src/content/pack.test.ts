@@ -84,9 +84,27 @@ describe('PACK — validasi silang id konten', () => {
       // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
       // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.
       'hyperuricemia', // E79.0 vs kasus mm_gout_artritis_akut M10.9 — kompetensi gabungan resmi
+      // Bug hunt 2026-08-01: kasus lab_limfadenitis_servikal_akut & lab_miliaria_rubra
+      // diberi ICD-10 lebih spesifik (L04.0, L74.0) menggantikan kode salah-bab/tak-spesifik
+      // lama (I88, L74.3) — lihat komentar di batch2.ts/batch3.ts. Entri katalog SKDI-144 ini
+      // sengaja tetap memakai kode kompetensi tak-spesifik resminya.
+      'lymphadenitis', // I88 (nonspesifik) vs kasus lab_limfadenitis_servikal_akut L04.0 (akut spesifik)
+      'miliaria', // L74.3 (tak spesifik) vs kasus lab_miliaria_rubra L74.0 (subtipe rubra spesifik)
     ])
-    const mismatch = PACK.skdi144
-      .filter((e): e is typeof e & { kasusId: string } => e.kasusId !== undefined)
+    const berkasusId = PACK.skdi144.filter(
+      (e): e is typeof e & { kasusId: string } => e.kasusId !== undefined,
+    )
+    // Bug hunt 2026-08-01: filter mismatch di bawah diam-diam meloloskan
+    // kasusId yang MENGGANTUNG (PACK.kasus[e.kasusId] undefined) karena syarat
+    // `k !== undefined` membuatnya jatuh ke false, bukan flag sebagai temuan.
+    // Kasus gantung (mis. typo id, atau kasus lab yang diganti nama/dihapus)
+    // wajib gagal terpisah dari perbandingan ICD-10.
+    const gantung = berkasusId
+      .filter((e) => PACK.kasus[e.kasusId] === undefined)
+      .map((e) => `${e.id}: kasusId '${e.kasusId}' tidak ada di PACK.kasus`)
+    expect(gantung).toEqual([])
+
+    const mismatch = berkasusId
       .filter((e) => !GENERIK_SENGAJA.has(e.id))
       .filter((e) => {
         const k = PACK.kasus[e.kasusId]
@@ -797,6 +815,22 @@ describe('validasiPack — varianPresentasi Tingkat A (CODEX-kelas: guard id/reg
       kasusFixture({ varianPresentasi: [{ id: 'salah', temuanBerubah: { abdomen: 'Nyeri tekan.' } }] }),
     )
     expect(validasiPack(pack).some((m) => m.includes("region 'abdomen' yang tak ada"))).toBe(true)
+  })
+
+  it('temuanBerubah mengacu region yang MUNCUL >1 kali di pemeriksaanFisik dasar — ditolak (bug hunt 2026-08-01)', () => {
+    // kasusEfektif() (clinic.ts) menimpa via .map(f => temuanBerubah[f.region]
+    // ? ... : f) — dua entri ber-region SAMA berarti override menimpa KEDUANYA
+    // sekaligus, bukan cuma satu yang dimaksud penulis varian.
+    const pack = packDenganKasus(
+      kasusFixture({
+        pemeriksaanFisik: [
+          { region: 'kulit', temuan: 'Lesi merah di lengan.', relevan: true },
+          { region: 'kulit', temuan: 'Turgor kulit normal.', relevan: false },
+        ],
+        varianPresentasi: [{ id: 'berat', temuanBerubah: { kulit: 'Lesi menyebar luas.' } }],
+      }),
+    )
+    expect(validasiPack(pack).some((m) => m.includes("region 'kulit' yang MUNCUL >1 kali"))).toBe(true)
   })
 
   it("id varian '_dasar' — ditolak (bentrok dgn presentasi dasar implisit)", () => {

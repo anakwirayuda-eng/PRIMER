@@ -680,7 +680,25 @@ function fnv1a(teks: string): string {
 // (opsional). Semua mengubah komposisi antrian/inbox/flags/skor replay —
 // replay dossier build lama melenceng → wajib jatuh ke
 // "tidak_dapat_diverifikasi", bukan divonis tidak sah palsu.
-export const REVISI_ENGINE = 62
+// 63 (2026-08-01 - bug hunt: validasi save + integritas skor/kurikulum):
+// reducer.ts — (a) pembelian obat darurat pasien UMUM (stok kosong) kini ikut
+// tercatat di keuanganBulan.belanjaObat, dulu hanya cabang BPJS yang tercatat
+// (laporan bulanan understate belanja darurat riil); (b) resepBerbahaya kini
+// ikut menghitung obat terlarang interaksi (interaksiTrap, mis. nitrat+PDE5-
+// inhibitor) sbg pemicu "pasien kembali memburuk", sinkron dgn nilai.obat-
+// Berbahaya (clinic.ts) yang sudah menghitungnya duluan; (c) verifikasi_pispk
+// yang masih pending saat stase tamat kini ikut force-evaluate (persis pola
+// karma_igd yang sudah ada), tak lagi lolos senyap dgn IKS optimis permanen.
+// director.ts — cap paparan rujukan (maks 1/hari) tak lagi bisa menimpa slot
+// jaminan kurikulum 4A pity-timer; guardrail rujukan kini eksplisit kalah
+// prioritas drpd jaminan cakupan kurikulum. save.ts — enam validasi baru
+// menutup celah NaN/tipe-salah yang lolos check lama (dex.bintang, desa.rw.
+// bonusIks & jarak, posyanduRwTerakhir, program.rwFokus/periodeDitetapkan,
+// klinik.antrian[].rw) yang masing-masing bisa meracuni skor/kurikulum
+// permanen via save yang dimodifikasi tangan. Semua mengubah skor/state
+// replay pada jalur yang sebelumnya lolos senyap → wajib jatuh ke
+// "tidak_dapat_diverifikasi" utk dossier build lama, bukan divonis tidak sah.
+export const REVISI_ENGINE = 63
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

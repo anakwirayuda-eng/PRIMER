@@ -455,7 +455,10 @@ export function kartuProlanis(peserta: PesertaProlanis[], rng: Rng): KartuKegiat
                 id: 'c',
                 label: 'Langsung rujuk ke spesialis',
                 benar: false,
-                respons: 'HT esensial adalah kompetensi FKTP (4A). Rujuk dini = RRNS naik, guillotine mengintai.',
+                // Copy-audit bug hunt 2026-08-01: "guillotine mengintai" — jargon Inggris
+                // dramatis yang tak jelas maksudnya bagi pemain — diganti konsekuensi
+                // konkret & konsisten dgn frasa RRNS di scoring.ts.
+                respons: 'HT esensial adalah kompetensi FKTP (4A). Rujuk dini menaikkan RRNS-mu dan mengunci nilai encounter ini.',
               },
             ],
       }

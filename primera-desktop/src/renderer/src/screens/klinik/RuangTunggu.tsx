@@ -10,6 +10,7 @@ import type { GameState } from '@engine/state'
 import { kasusEfektif } from '@engine/clinic'
 import type { Action } from '@engine/actions'
 import { formatUsia } from '@engine/usia'
+import { STAMINA_MAKS } from '@engine/reducer'
 import { labelJk } from './util'
 import { PotretPasien } from './PotretPasien'
 
@@ -44,7 +45,7 @@ export function RuangTunggu({ state, dispatch }: Props) {
           </div>
         </div>
         <div className="klinik-tunggu__stamina teks-kecil teks-lembut">
-          Stamina <span className="mono">{state.stamina}/6</span> &middot; 1 pip per pasien
+          Stamina <span className="mono">{state.stamina}/{STAMINA_MAKS}</span> &middot; 1 pip per pasien
         </div>
       </header>
 
