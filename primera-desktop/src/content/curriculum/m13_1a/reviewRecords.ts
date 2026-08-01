@@ -28,7 +28,9 @@ export const M13_1A_REVIEW_HASHES: Record<string, string> = {
   'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': '7c7ad727638d083253bfd7b0cefc3412a15a9d2c85e92e8ae3a20d88f706edd0',
   'm13-1a-review-clinic-benda_asing_hidung_anak': '3d684ef2da6606685568b3a051f251915a6990bfc10b31f584b64ecb6a3d497f',
   'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'de4c265f093d6d303be9aac966e6fdf88f066f560b7ea660ae2b230130da2411',
-  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': '59716bc25f10783fdf30ca69a301e75ecd096abf0086bc4f12d083863e0f5e24',
+  // Refresh 2026-07-28: provenance player-facing berpindah dari domain NICE
+  // yang memberi 403 ke ACS/BOAST; keputusan klinis F1 tidak berubah.
+  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': 'f5faf0d79418ea53d029f08e742d2e2f94f6720a27fc7facfe8c63f54e4f1550',
   'm13-1a-review-igd-igd_stemi_anterior_hipoksemik': 'fcb978e12e49f9e955bc6203b9e6d4845dea07537801e0640a28040fd1be4f02',
   'm13-1a-review-ukm-keluarga_gunawan-gunawan_k2': '4a36c4ff0a0ef1296fc6e2609948228381bfd0c30c8e794f4030d4c87249e922',
 }
@@ -105,7 +107,7 @@ export const M13_1A_REVIEW_RECORDS: ContentReviewRecord[] = [
     clinicReviewId('fraktur_terbuka_tibia_stabil'),
     { kind: 'clinic', id: 'fraktur_terbuka_tibia_stabil' },
     ['narrative', 'anamnesis', 'assessment', 'regimen', 'dose', 'formulary', 'disposition', 'pedagogy', 'dangerous-path', 'mode-release'],
-    'Draft memakai no-mini-washout tetapi mempertahankan konflik PNPK versus NICE/BOAST; antibiotik, tetanus, dan realitas resource FKTP perlu adjudikasi dokter.',
+    'Draft memakai no-mini-washout tetapi mempertahankan konflik PNPK versus ACS/BOAST; antibiotik, tetanus, dan realitas resource FKTP perlu adjudikasi dokter.',
   ),
   baseRecord(
     igdReviewId('igd_stemi_anterior_hipoksemik'),

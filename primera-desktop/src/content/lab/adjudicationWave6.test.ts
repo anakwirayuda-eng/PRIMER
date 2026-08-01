@@ -64,11 +64,10 @@ describe('M13-137 adjudication wave 6: stabilisasi time-critical', () => {
     expect(PACK.edukasi.puasa_sambil_rujuk?.nama).toMatch(/Rujukan akut/i)
     expect(PACK.edukasi.hentikan_nsaid_perdarahan_gi?.nama).toMatch(/NSAID non-aspirin.*antiplatelet.*antikoagulan/i)
     expect(kasus.clue).toMatch(/instabilitas hemodinamik.*SpO2 92%.*jangan menunggu Hb.*bilas lambung/is)
-    expect(kasus.panduanResmi).toMatch(/PNPK.*2162\/2023.*NICE CG141.*ACG 2021.*ESGE 2021.*bilas lambung/is)
-    expect(kasus.catatanRealita).toMatch(/PNPK.*PPI.*NICE.*tidak.*bukan crossmatch.*tetap berangkat/is)
+    expect(kasus.panduanResmi).toMatch(/PNPK.*2162\/2023.*ACG.*ESGE 2021.*bilas lambung/is)
+    expect(kasus.catatanRealita).toMatch(/PNPK.*PPI.*tidak.*bukan crossmatch.*tetap berangkat/is)
     expect(kasus.mutiaraEbm).toMatch(/Hb awal.*Glasgow-Blatchford.*bukan kelompok rawat jalan/is)
     expect(audit.evidence.ebm.sources.map((source) => source.sourceId)).toEqual([
-      'nice-ugib-cg141',
       'acg-ugib-2021',
       'esge-ugib-2021',
     ])

@@ -91,7 +91,7 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
     expect(kasus.tatalaksana.prosedur).toEqual(['pemantauan_ketat_vital'])
     expect(kasus.clue).toMatch(/source control/i)
     expect(kasus.clue).toMatch(/bukan aspirasi buta di FKTP/i)
-    expect(kasus.panduanResmi).toMatch(/NICE NG84.*dirujuk ke rumah sakit/is)
+    expect(kasus.panduanResmi).toMatch(/CHOP.*2025.*jejaring rumah sakit/is)
     expect(kasus.catatanRealita).toMatch(/jangan memaksa obat oral/i)
   })
 

@@ -123,12 +123,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Bronkitis akut pada dewasa sehat >90% viral & self-limiting; antibiotik tidak mempercepat sembuh dan memicu resistensi (PPK IDI; Kemenkes PPRA).', bahaya: 'nonPrimer' },
         { id: 'azitromisin_500', alasan: 'Makrolida bukan indikasi bronkitis akut viral tanpa tanda pneumonia; peresepan rutin justru mendorong resistensi.', bahaya: 'nonPrimer' },
-        { id: 'ambroxol_30', alasan: 'NICE NG120 tidak menganjurkan mukolitik untuk batuk akut atau bronkitis akut. Edukasi perjalanan penyakit dan terapi gejala seperlunya lebih tepat daripada resep mukolitik rutin.', bahaya: 'nonPrimer' },
+        { id: 'ambroxol_30', alasan: 'Mukolitik bukan terapi rutin bronkitis akut tanpa penyakit jalan napas dasar. Edukasi perjalanan penyakit dan terapi gejala seperlunya lebih tepat daripada resep tambahan tanpa manfaat yang jelas.', bahaya: 'nonPrimer' },
       ],
       edukasi: ['etika_batuk', 'istirahat_cukup', 'minum_air_cukup', 'tanda_bahaya'],
     },
     clue: 'Bronkitis akut = batuk (kadang sampai 3 minggu) pasca-ISPA, tanpa sesak/ronki menetap/tanda pneumonia. VIRAL & self-limiting → simtomatik saja, TANPA antibiotik (PPK IDI). Red flag ke pneumonia/TB: demam tinggi menetap, sesak, ronki fokal menetap, batuk >3 minggu, hemoptisis, BB turun.',
-    panduanResmi: 'PPK 1186/2022 tidak memuat jalur bronkitis akut tersendiri; floor FKTP adalah menyingkirkan pneumonia, TB, dan kegawatan lalu menghindari antibiotik tanpa indikasi sesuai stewardship Kemenkes. NICE NG120 menambahkan bahwa mukolitik, bronkodilator, dan kortikosteroid tidak ditawarkan rutin pada bronkitis akut tanpa penyakit jalan napas dasar.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur bronkitis akut tersendiri; floor FKTP adalah menyingkirkan pneumonia, TB, dan kegawatan lalu menghindari antibiotik tanpa indikasi sesuai stewardship Kemenkes. CDC 2024 menegaskan bahwa pneumonia harus disingkirkan secara klinis dan antibiotik rutin tidak bermanfaat pada bronkitis akut tanpa komplikasi; terapi tambahan dipilih hanya bila ada indikasi spesifik.',
     konsekuensi: {
       narasi: 'Peresepan antibiotik sia-sia menormalisasi harapan pasien akan antibiotik dan berisiko efek samping (diare, alergi) tanpa manfaat.',
       kembaliHariMin: 7,
@@ -775,7 +775,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['diet_lambung', 'manajemen_stres', 'tanda_bahaya', 'higiene_tidur'],
     },
     clue: 'Dispepsia fungsional membutuhkan pola kronik: gejala sedikitnya 3 bulan dengan onset sedikitnya 6 bulan sebelumnya, berupa nyeri/bakar epigastrium, cepat kenyang, atau penuh pascamakan, TANPA tanda alarm. Tata laksana primer: telaah NSAID, H. pylori test-and-treat bila tersedia/terindikasi, atau PPI empiris 4 minggu, disertai pola makan dan manajemen stres. Endoskopi tidak rutin tanpa alarm atau kegagalan terapi.',
-    panduanResmi: 'PPK 1186/2022 tidak memiliki entri dispepsia fungsional terpisah; kasus ini memakai prinsip tata laksana dispepsia tanpa alarm dan jejaring bila alarm/gagal terapi. NICE CG184 mendukung PPI dosis penuh 4 minggu atau H. pylori test-and-treat, dengan washout PPI 2 minggu sebelum uji napas atau antigen feses.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki entri dispepsia fungsional terpisah; kasus ini memakai prinsip tata laksana dispepsia tanpa alarm dan jejaring bila alarm atau gagal terapi. BSG 2022 memberi kerangka diagnosis berbasis gejala, pengujian H. pylori dan terapi eradikasi bila positif, uji PPI bila sesuai, serta eskalasi selektif saat ada alarm atau respons buruk.',
     konsekuensi: {
       narasi: 'Bila NSAID diteruskan dan pola makan tidak diperbaiki, dapat berkembang menjadi ulkus peptikum; sebaliknya endoskopi dini tanpa alarm membebani pasien tanpa mengubah terapi awal.',
       kembaliHariMin: 14,

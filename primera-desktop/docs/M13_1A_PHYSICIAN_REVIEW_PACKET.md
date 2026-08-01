@@ -202,16 +202,17 @@ Dangerous path yang dikunci: manipulasi fragmen, membuka balutan berulang,
 antibiotik oral sebagai substitusi, atau transfer tanpa imobilisasi.
 
 PNPK Fraktur 270/2019 dan PPK 1186/2022 mendukung pembersihan/irigasi sepintas
-kontaminan tampak sebelum debridement definitif. NICE NG37 (diperbarui 2022)
-dan BOAST melarang irigasi/mini-washout di luar kamar operasi. Draf mengikuti
-no-mini-washout dan mempertahankan jejak konflik tersebut di evidence audit.
+kontaminan tampak sebelum debridement definitif. ACS Best Practices Orthopaedic
+Trauma (2022) dan BOAST melarang irigasi/mini-washout di luar kamar operasi.
+Draf mengikuti no-mini-washout dan mempertahankan jejak konflik tersebut di
+evidence audit.
 Fornas mencantumkan sefazolin dengan restriksi profilaksis bedah;
 Fornas, KFA, atau ASPAK tidak sendirian membuktikan indikasi maupun stok rutin
 FKTP. Alternatif antibiotik tidak boleh diimprovisasi tanpa sumber atau SOP
 jejaring yang terverifikasi.
 
 **Keputusan F1 (teks kanonik):**
-> Fraktur terbuka: adjudikasi no-mini-washout terhadap konflik PNPK 270/2019 vs NICE/BOAST, balut lembap-oklusif, analgesia, antibiotik/tetanus, dan deklarasi resource FKTP/jejaring.
+> Fraktur terbuka: adjudikasi no-mini-washout terhadap konflik PNPK 270/2019 vs ACS/BOAST, balut lembap-oklusif, analgesia, antibiotik/tetanus, dan deklarasi resource FKTP/jejaring.
 
 ### G. IGD STEMI anterior dengan hipoksemia
 
@@ -322,7 +323,7 @@ Sumber inti:
 - [Queensland Paediatric Asthma v5](https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/asthma)
 - [Fornas KMK 1199/2025](https://e-fornas.kemkes.go.id/api/download?column=pustaka&filename=KMK%20No.%20HK.01.07-MENKES-1199-2025%20ttg%20Formularium%20Nasional.pdf)
 - [PNPK Fraktur KMK 270/2019](https://www.kemkes.go.id/app_asset/file_content_download/17001196726555c478e59fc5.31771765.pdf)
-- [NICE NG37 Complex Fractures](https://www.nice.org.uk/guidance/ng37/chapter/recommendations)
+- [ACS Best Practices Orthopaedic Trauma 2022](https://www.facs.org/media/mkbnhqtw/ortho_guidelines.pdf)
 - [BOAST Open Fractures](https://www.boa.ac.uk/resource/boast-4-pdf.html)
 - [ASPAK Kemenkes](https://aspak.kemkes.go.id/aplikasi/infoboard)
 - [KFA SATUSEHAT API](https://satusehat.kemkes.go.id/platform/docs/id/master-data/kfa/rest-api-kfa/apis/api-kfa-v2/)

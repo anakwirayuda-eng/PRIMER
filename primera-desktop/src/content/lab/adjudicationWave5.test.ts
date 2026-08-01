@@ -41,7 +41,7 @@ describe('M13-137 adjudication wave 5: kegawatan kardiorespirasi dan TIA', () =>
       'akses_iv_tanpa_bolus',
     ])
     expect(kasus.clue).toMatch(/furosemid intravena.*ISDN sublingual hanya opsi/is)
-    expect(kasus.panduanResmi).toMatch(/NICE CG187.*nitrat tidak diberikan rutin/is)
+    expect(kasus.panduanResmi).toMatch(/ESC 2021.*2023.*vasodilator.*terpilih/is)
   })
 
   it('gagal jantung tidak bergantung rontgen dan membedakan beta-blocker lama dari inisiasi baru', () => {
@@ -49,7 +49,7 @@ describe('M13-137 adjudication wave 5: kegawatan kardiorespirasi dan TIA', () =>
     expect(kasus.lab.some((item) => item.id === 'foto_toraks')).toBe(false)
     expect(kasus.tatalaksana.prosedur).toContain('akses_iv_tanpa_bolus')
     expect(kasus.stabilisasiWajib).toContain('akses_iv_tanpa_bolus')
-    expect(kasus.panduanResmi).toMatch(/NICE CG187.*kelanjutan beta-blocker lama/is)
+    expect(kasus.panduanResmi).toMatch(/ESC 2021.*2023.*terapi kronik.*stabilitas hemodinamik/is)
     expect(kasus.catatanRealita).toMatch(/jangan menyatakan furosemid oral setara/i)
   })
 
@@ -75,14 +75,13 @@ describe('M13-137 adjudication wave 5: kegawatan kardiorespirasi dan TIA', () =>
     expect(kasus.tatalaksana.edukasiKritis).toContain('tia_fa_antikoagulasi')
     expect(kasus.clue).toMatch(/empat tablet.*80 mg.*berangkat sekarang.*jangan memakai ABCD2/is)
     expect(kasus.clue).toMatch(/Aspirin.*bukan.*jangka panjang.*AF/is)
-    expect(kasus.panduanResmi).toMatch(/NICE NG128.*aspirin 300 mg segera/is)
+    expect(kasus.panduanResmi).toMatch(/AHA 2023.*gejala yang telah menghilang.*emergensi/is)
     expect(kasus.panduanResmi).toMatch(/AHA\/ASA 2021.*ESC AF 2024/is)
     expect(kasus.catatanRealita).toMatch(/Fornas 1199\/2025.*surat rujuk balik/is)
     expect(kasus.catatanRealita?.trim()).not.toMatch(/(?:—|-)$/)
     expect(kasus.mutiaraEbm).toMatch(/CT tanpa kontras.*DWI-MRI.*tidak membatalkan/is)
     expect(PACK.edukasi.tia_fa_antikoagulasi?.nama).toMatch(/Aspirin awal.*antikoagulasi/i)
     expect(bukti.map((item) => item.sourceId)).toEqual([
-      'nice-tia-ng128',
       'aha-tia-2023',
       'aha-stroke-prevention-2021',
       'esc-af-2024',

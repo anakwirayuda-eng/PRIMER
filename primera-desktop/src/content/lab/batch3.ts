@@ -772,7 +772,7 @@ const DEFINITIONS: LabDefinition[] = [
         edukasiKritis: ['tanda_bahaya_cedera_kepala', 'pengawasan_24_jam_cedera_kepala'],
       },
       clue: 'Benturan energi rendah dengan hematoma kecil, nyeri hanya saat ditekan, GCS E4 V5 M6, dan tanpa gejala neurologis mendukung cedera superfisial kulit kepala, bukan otomatis konkusi. Ulangi GCS per komponen, pupil, gejala, dan defisit sebelum pulang. Parasetamol boleh diberikan bila perlu, tetapi bukan syarat kelulusan. Jangan lakukan foto polos kepala atau CT rutin pada pasien yang benar-benar berisiko rendah. Rujuk untuk evaluasi CT bila GCS menurun, muncul muntah, kejang, defisit, tanda fraktur, sakit kepala menetap atau dominan, amnesia atau pingsan, koagulopati, antikoagulan/antiplatelet bermakna, intoksikasi, mekanisme berbahaya, atau observasi dan akses kembali tidak aman.',
-      panduanResmi: `${PNPK_COT_2022} PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. NICE NG232 lebih konservatif di layanan komunitas: sakit kepala persisten, setiap muntah, pingsan/amnesia, antikoagulan atau antiplatelet tertentu, dan ketidakamanan pengawasan memicu evaluasi rumah sakit. Kasus dewasa ini sengaja tidak memiliki satu pun fitur tersebut; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.`,
+      panduanResmi: `${PNPK_COT_2022} PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. ACEP 2023 mendukung penggunaan alat keputusan tervalidasi untuk CT selektif dan kehati-hatian khusus pada antikoagulan atau antiplatelet. Kasus dewasa ini sengaja tidak memiliki fitur risiko; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.`,
       catatanRealita: 'Sukamaju mampu melakukan observasi serial neurologis tetapi tidak memiliki CT. Pasien tanpa indikasi imaging dapat pulang setelah kondisi stabil dan pengawasan rumah dipastikan. Bila satu red flag muncul, observasi berkepanjangan di FKTP bukan pengganti CT atau evaluasi rumah sakit.',
       mutiaraEbm: 'GCS 15 tidak sendirian membuktikan aman; keputusan lahir dari mekanisme, gejala, obat, komorbid, pemeriksaan serial, dan keamanan pulang. Sebaliknya, benturan kepala tidak otomatis berarti konkusi atau membutuhkan CT. Pasien tanpa gejala konkusi tidak memerlukan bed rest berkepanjangan, tetapi sebaiknya menghindari berkendara dan aktivitas berisiko benturan ulang pada hari kejadian. Bila gejala konkusi muncul, gunakan istirahat relatif singkat selama satu sampai dua hari lalu naikkan aktivitas secara bertahap sesuai toleransi.',
       observasi: {
@@ -796,9 +796,9 @@ const DEFINITIONS: LabDefinition[] = [
           jenis: 'pedoman_indonesia',
         },
         {
-          id: 'nice_head_injury_2023',
-          label: 'NICE NG232 - Head Injury: Assessment and Early Management',
-          url: 'https://www.nice.org.uk/guidance/NG232/chapter/recommendations',
+          id: 'acep_mtbi_2023',
+          label: 'ACEP 2023 - Clinical Policy for Mild Traumatic Brain Injury',
+          url: 'https://www.acep.org/siteassets/new-pdfs/clinical-policies/mtbi2023.pdf',
           tahun: 2023,
           jenis: 'evidence_internasional',
         },

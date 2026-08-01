@@ -22,6 +22,7 @@ interface UrlResult {
 
 const CONCURRENCY = 6
 const TIMEOUT_MS = 20_000
+const PLAYER_BLOCKED_DOMAINS = new Set(['www.nice.org.uk'])
 
 function collectUrls(): Map<string, SourceUse[]> {
   const urls = new Map<string, Map<string, SourceUse>>()
@@ -94,6 +95,17 @@ function collectUrls(): Map<string, SourceUse[]> {
 }
 
 async function checkUrl(url: string, uses: SourceUse[]): Promise<UrlResult> {
+  const domain = new URL(url).hostname.toLowerCase()
+  if (PLAYER_BLOCKED_DOMAINS.has(domain)) {
+    return {
+      url,
+      status: 403,
+      outcome: 'broken',
+      detail: 'Browser pemain terverifikasi menerima halaman 403 Forbidden',
+      uses,
+    }
+  }
+
   const classify = async (response: Response): Promise<UrlResult> => {
     const status = response.status
     await response.body?.cancel()

@@ -114,7 +114,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     ],
     diagnosisBanding: ['J00', 'J06.9', 'J02.9'],
     tatalaksana: {
-      // Pasien eksplisit belum batuk. NICE NG120 juga tidak menganjurkan
+      // Pasien eksplisit belum batuk. CDC outpatient guidance tidak menganjurkan
       // mukolitik untuk batuk akut/bronkitis, sehingga ambroksol bukan opsi
       // netral pada common cold tanpa sekret bronkus.
       obatBenar: ['paracetamol_500', 'ctm_4'],
@@ -125,7 +125,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasi: ['istirahat_cukup', 'etika_batuk', 'cuci_tangan', 'kompres_demam'],
     },
     clue: 'ISPA viral self-limiting 5–7 hari (Kemenkes). Sekret hidung serosa + demam ringan TANPA sesak/mengi → simtomatik saja, TIDAK perlu antibiotik.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Rinitis Akut menempatkan common cold sebagai diagnosis klinis yang umumnya swasirna: terapi simtomatik, edukasi, dan kembali bila memburuk. Antibiotik tidak diberikan tanpa bukti komplikasi bakterial; NICE NG120 memperkuat bahwa mukolitik tidak ditawarkan rutin pada batuk akut.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 bab Rinitis Akut menempatkan common cold sebagai diagnosis klinis yang umumnya swasirna: terapi simtomatik, edukasi, dan kembali bila memburuk. CDC 2024 menegaskan bahwa terapi berfokus pada pereda gejala dan safety-netting; antibiotik tidak diberikan tanpa bukti komplikasi bakterial.',
     konsekuensi: {
       narasi: 'Pemberian antibiotik sia-sia bisa memicu diare akibat gangguan flora usus dan menormalisasi harapan pasien akan antibiotik pada kunjungan berikutnya.',
       kembaliHariMin: 5,

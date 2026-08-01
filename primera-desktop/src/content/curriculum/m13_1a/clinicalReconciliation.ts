@@ -55,7 +55,7 @@ export const M13_1A_CLINICAL_RECONCILIATION = {
       conflict: 'Floor lokal menyebut pembersihan awal, tetapi EBM trauma mutakhir melarang irigasi/mini-washout di luar kamar operasi.',
       resolution:
         'No-mini-washout diterapkan; antibiotik parenteral dinilai sebagai protokol jejaring, bukan satu vial universal; irigasi FKTP menjadi tindakan berbahaya.',
-      basis: ['PPK 1186/2022', 'PNPK Fraktur 270/2019', 'NICE NG37', 'BOAST Open Fractures'],
+      basis: ['PPK 1186/2022', 'PNPK Fraktur 270/2019', 'ACS Orthopaedic Trauma', 'BOAST Open Fractures'],
     },
     {
       id: 'I1-reperfusion-routing',

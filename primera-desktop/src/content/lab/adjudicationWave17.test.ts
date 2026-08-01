@@ -107,6 +107,6 @@ describe('M13-137 adjudication wave 17: continuity DM-PRB, gizi Posyandu, dan an
     expect(EBM_GUIDELINE_SOURCES['kemenkes-pmt-lokal-2025']?.year).toBe(2025)
     expect(EBM_GUIDELINE_SOURCES['aga-ida-2024']?.year).toBe(2024)
     expect(EBM_GUIDELINE_SOURCES['bsg-ida-2021']?.year).toBe(2021)
-    expect(EBM_GUIDELINE_SOURCES['nice-hmb-ng88']?.year).toBe(2025)
+    expect(EBM_GUIDELINE_SOURCES['acog-aub-2013']?.officialUrl).toMatch(/acog\.org/)
   })
 })

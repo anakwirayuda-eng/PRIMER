@@ -345,13 +345,13 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with confirmed or suspected iron deficiency anaemia',
     facilityScope: 'Initial oral dosing, early haemoglobin-response monitoring, duration after Hb normalization, and investigation of the cause.',
   },
-  'nice-hmb-ng88': {
-    title: 'Heavy menstrual bleeding: assessment and management (NG88)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2025,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng88/chapter/Recommendations',
-    population: 'Women and people who menstruate with heavy menstrual bleeding',
-    facilityScope: 'History, full blood count, cause-oriented assessment, treatment choices, and referral pathways.',
+  'acog-aub-2013': {
+    title: 'Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women',
+    authority: 'American College of Obstetricians and Gynecologists',
+    year: 2013,
+    officialUrl: 'https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women',
+    population: 'Nonpregnant reproductive-aged patients with acute abnormal uterine bleeding',
+    facilityScope: 'Initial stability assessment, cause-oriented history and testing, medical treatment, and criteria for procedural or specialist escalation.',
   },
   'who-bronchiolitis-2026': {
     title: 'WHO consolidated guidelines for the management of common childhood illness: asthma and bronchiolitis',
@@ -360,14 +360,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.who.int/publications/b/82992',
     population: 'Infants and children under 2 years with suspected or confirmed bronchiolitis',
     facilityScope: 'Diagnosis, admission criteria, imaging, oxygen escalation, and supportive care across primary and referral settings.',
-  },
-  'nice-bronchiolitis-ng9': {
-    title: 'Bronchiolitis in children: diagnosis and management (NG9)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2021,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng9/chapter/Recommendations',
-    population: 'Babies and children under 2 years with bronchiolitis',
-    facilityScope: 'Primary-care referral and hospital management thresholds are stated separately.',
   },
   'who-meningitis-2025': {
     title: 'WHO guidelines on meningitis diagnosis, treatment and care',
@@ -416,14 +408,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.aaaai.org/Aaaai/media/Media-Library-PDFs/Allergist%20Resources/Statements%20and%20Practice%20Parameters/Anaphylaxis-Practice-Paramaters-2023.pdf',
     population: 'Children and adults with anaphylaxis or risk of recurrence',
     facilityScope: 'Post-event risk assessment, epinephrine autoinjector planning, action plans, education, and specialist follow-up.',
-  },
-  'nice-ugib-cg141': {
-    title: 'Acute upper gastrointestinal bleeding in over 16s: management (CG141)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2016,
-    officialUrl: 'https://www.nice.org.uk/guidance/cg141',
-    population: 'People aged 16 years and older with acute upper gastrointestinal bleeding',
-    facilityScope: 'Risk assessment, resuscitation, transfusion strategy, endoscopy timing, and hospital management.',
   },
   'acg-ugib-2021': {
     title: 'ACG Clinical Guideline: Upper Gastrointestinal and Ulcer Bleeding',
@@ -545,13 +529,13 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Suspected, epidemiologically linked, and laboratory-confirmed pertussis across all ages',
     facilityScope: 'Case definitions, specimen timing, notification, contact tracing, and outbreak surveillance.',
   },
-  'nice-ectopic-ng126-2026': {
-    title: 'Ectopic pregnancy and miscarriage: diagnosis and initial management (NG126)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2026,
-    officialUrl: 'https://www.nice.org.uk/guidance/NG126/chapter/symptoms-and-signs-of-ectopic-pregnancy-and-initial-assessment',
-    population: 'People with pain, bleeding, or other possible complications in early pregnancy',
-    facilityScope: 'Initial assessment, immediate referral, pregnancy testing, and specialist early-pregnancy pathways.',
+  'hse-ectopic-pregnancy-2024': {
+    title: 'National Clinical Practice Guideline: Diagnosis and Management of Ectopic Pregnancy',
+    authority: 'Health Service Executive Ireland and Institute of Obstetricians and Gynaecologists',
+    year: 2024,
+    officialUrl: 'https://www.hse.ie/eng/about/who/acute-hospitals-division/woman-infants/clinical-guidelines/the-diagnosis-and-management-of-ectopic-pregnancy-2024-.pdf',
+    population: 'People with suspected or confirmed ectopic pregnancy',
+    facilityScope: 'Recognition, diagnostic pathways, immediate stabilization, transfer, and definitive specialist management.',
   },
   'who-basic-emergency-care-2018': {
     title: 'WHO-ICRC Basic Emergency Care: approach to the acutely ill and injured',
@@ -568,14 +552,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.rcog.org.uk/guidance/browse-all-guidance/green-top-guidelines/placenta-praevia-and-placenta-accreta-diagnosis-and-management-green-top-guideline-no-27a/',
     population: 'Pregnancies complicated by placenta praevia or placenta accreta spectrum',
     facilityScope: 'Diagnostic imaging and specialist obstetric management; FKTP use is recognition, stabilization, and referral.',
-  },
-  'nice-antenatal-ng201': {
-    title: 'Antenatal care (NG201)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2021,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng201/chapter/Recommendations',
-    population: 'Pregnant women receiving routine or additional antenatal care',
-    facilityScope: 'Antenatal assessment, placental localization, referral, and communication across care settings.',
   },
   'figo-gtd-2025': {
     title: 'Diagnosis and management of gestational trophoblastic disease: 2025 update',
@@ -609,13 +585,13 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with cirrhosis complicated by ascites, spontaneous bacterial peritonitis, or hepatorenal syndrome',
     facilityScope: 'Diagnostic evaluation, monitored ascites treatment, complication recognition, and escalation to specialist liver care.',
   },
-  'nice-acute-heart-failure-cg187': {
-    title: 'Acute heart failure: diagnosis and management (CG187)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2021,
-    officialUrl: 'https://www.nice.org.uk/guidance/cg187/chapter/recommendations',
+  'esc-heart-failure-2023': {
+    title: '2021 Heart Failure Guideline with 2023 Focused Update',
+    authority: 'European Society of Cardiology',
+    year: 2023,
+    officialUrl: 'https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/focused-update-on-heart-failure/',
     population: 'Adults with suspected or confirmed acute heart failure',
-    facilityScope: 'Hospital acute care; used with the Indonesian FKTP floor to define pre-referral treatment and what requires monitored specialist care.',
+    facilityScope: 'Acute and chronic heart-failure care; used with the Indonesian FKTP floor to define pre-referral treatment and monitored specialist care.',
   },
   'gold-copd-2026': {
     title: 'Global Strategy for Prevention, Diagnosis and Management of COPD: 2026 Report',
@@ -624,14 +600,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://goldcopd.org/wp-content/uploads/2026/01/GOLD-REPORT-2026-v1.3-8Dec2025_WMV2.pdf',
     population: 'Adults with COPD, including moderate or severe exacerbations',
     facilityScope: 'Initial bronchodilation, controlled oxygen, systemic corticosteroids, antibiotics when indicated, ventilatory support, and referral.',
-  },
-  'nice-tia-ng128': {
-    title: 'Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128; reviewed 2026)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2022,
-    officialUrl: 'https://www.nice.org.uk/guidance/NG128/chapter/recommendations',
-    population: 'People aged over 16 years with suspected or confirmed TIA or acute stroke',
-    facilityScope: 'First recognition, immediate aspirin for suspected TIA, urgent specialist assessment, and imaging pathways.',
   },
   'aha-tia-2023': {
     title: 'Diagnosis, Workup, Risk Reduction of Transient Ischemic Attack in the Emergency Department Setting',
@@ -737,13 +705,13 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with anorectal abscess or fistula-in-ano',
     facilityScope: 'Clinical evaluation, selective imaging, prompt drainage, selective antibiotics, and criteria for concomitant fistulotomy.',
   },
-  'nice-head-injury-ng232': {
-    title: 'Head injury: assessment and early management (NG232)',
-    authority: 'National Institute for Health and Care Excellence',
+  'acep-mtbi-2023': {
+    title: 'Clinical Policy: Mild Traumatic Brain Injury',
+    authority: 'American College of Emergency Physicians',
     year: 2023,
-    officialUrl: 'https://www.nice.org.uk/guidance/NG232/chapter/recommendations',
-    population: 'Babies, children, young people, and adults with head injury',
-    facilityScope: 'Community referral thresholds, adult CT criteria, serial neurological assessment, safe discharge, 24-hour supervision, written advice, and return to activity.',
+    officialUrl: 'https://www.acep.org/siteassets/new-pdfs/clinical-policies/mtbi2023.pdf',
+    population: 'Adults presenting to emergency care with mild traumatic brain injury',
+    facilityScope: 'Risk stratification, selective CT, anticoagulant and antiplatelet considerations, safe discharge, written advice, and follow-up.',
   },
   'cdc-mild-tbi-2025': {
     title: 'Mild TBI Management Guideline',
@@ -785,14 +753,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults with major traumatic bleeding or risk of significant traumatic bleeding',
     facilityScope: 'Rapid transfer and bleeding control, physiologic assessment, restrictive crystalloid resuscitation, TXA, temperature management, imaging, and limits of a single haemoglobin value.',
   },
-  'nice-major-trauma-ng39': {
-    title: 'Major trauma: assessment and initial management (NG39)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2016,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng39/chapter/Recommendations',
-    population: 'Children, young people, and adults with major trauma',
-    facilityScope: 'Pre-hospital and emergency assessment, TXA, haemorrhage control, restrictive imaging in instability, transfer, and definitive care.',
-  },
   'anzcor-oxygen-emergencies-2026': {
     title: 'Guideline 9.2.10 - The Use of Oxygen in Emergencies',
     authority: 'Australian and New Zealand Committee on Resuscitation',
@@ -800,14 +760,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.anzcor.org/home/first-aid/guideline-9-2-10-the-use-of-oxygen-in-emergencies',
     population: 'People requiring emergency oxygen, including shock from major injury',
     facilityScope: 'Pulse-oximetry-guided oxygen with an explicit exception for shock due to major injury regardless of the initial saturation reading.',
-  },
-  'nice-sore-throat-ng84': {
-    title: 'Sore throat (acute): antimicrobial prescribing (NG84)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2018,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng84/chapter/Recommendations',
-    population: 'Children, young people, and adults with acute sore throat or a serious suppurative complication',
-    facilityScope: 'First-contact recognition, antimicrobial prescribing, safety-netting, and hospital referral for quinsy or deep-neck complications.',
   },
   'chop-peritonsillar-abscess-2025': {
     title: 'Suspected Pharyngitis or Peritonsillar Abscess Clinical Pathway',
@@ -881,12 +833,12 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'Adults and children with suspected or confirmed chronic kidney disease',
     facilityScope: 'Definition and proof of chronicity, cause-GFR-albuminuria classification, kidney-protective treatment, monitoring, risk prediction, and specialist-referral criteria.',
   },
-  'nice-thyroid-ng145-2023': {
-    title: 'Thyroid disease: assessment and management (NG145)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2023,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng145/chapter/Recommendations',
-    population: 'Adults, children, and young people with suspected or confirmed primary thyroid disease; pregnancy is outside scope',
+  'ata-hyperthyroidism-2016': {
+    title: 'Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis',
+    authority: 'American Thyroid Association',
+    year: 2016,
+    officialUrl: 'https://www.thyroid.org/professionals/ata-professional-guidelines/',
+    population: 'Adults with suspected or confirmed hyperthyroidism or thyrotoxicosis; pregnancy requires separate guidance',
     facilityScope: 'Primary/non-specialist testing and initial treatment, etiologic confirmation, definitive-care options, and monitoring.',
   },
   'who-haemoglobin-cutoffs-2024': {
@@ -904,14 +856,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://doi.org/10.1001/jama.2023.12914',
     population: 'Hospitalized adults and children being considered for red-cell transfusion',
     facilityScope: 'Restrictive transfusion thresholds plus individualized clinical-context assessment; transfusion is delivered in capable hospital/blood-service settings.',
-  },
-  'nice-heavy-menstrual-bleeding-ng88': {
-    title: 'Heavy menstrual bleeding: assessment and management (NG88)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2021,
-    officialUrl: 'https://www.nice.org.uk/guidance/ng88/chapter/Recommendations',
-    population: 'Women of reproductive age with heavy menstrual bleeding',
-    facilityScope: 'History, full blood count, selective testing, cause-directed investigation, treatment choices, and specialist referral.',
   },
   'who-tb-diagnosis-2025': {
     title: 'WHO consolidated guidelines on tuberculosis: Module 3 - diagnosis',
@@ -976,14 +920,6 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.who.int/publications/i/item/9789240119468',
     population: 'Adults, adolescents, children, and pregnant or breastfeeding people living with HIV',
     facilityScope: 'Optimized antiretroviral regimens, vertical-transmission prevention, and tuberculosis prevention within public-health HIV programmes.',
-  },
-  'who-hiv-dtg-all-populations-2019': {
-    title: 'WHO recommends dolutegravir as preferred HIV treatment option in all populations',
-    authority: 'World Health Organization',
-    year: 2019,
-    officialUrl: 'https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations',
-    population: 'People living with HIV, including pregnant women and women of childbearing potential',
-    facilityScope: 'Preferred first- and second-line dolutegravir use with informed discussion of benefits and potential risks.',
   },
   'who-hiv-service-2026': {
     title: 'Consolidated HIV guidelines: service delivery',
@@ -1241,13 +1177,13 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     population: 'People at risk of riboflavin inadequacy or deficiency',
     facilityScope: 'Dietary-risk assessment, oral and mucocutaneous manifestations, co-deficiency, and nutrition-focused management.',
   },
-  'nice-acute-retention-cg97': {
-    title: 'Lower urinary tract symptoms in men: management (CG97)',
-    authority: 'National Institute for Health and Care Excellence',
-    year: 2015,
-    officialUrl: 'https://www.nice.org.uk/guidance/cg97/chapter/recommendations',
+  'eau-male-luts-2026': {
+    title: 'Guidelines on the Management of Non-neurogenic Male Lower Urinary Tract Symptoms',
+    authority: 'European Association of Urology',
+    year: 2026,
+    officialUrl: 'https://uroweb.org/guidelines/management-of-non-neurogenic-male-luts',
     population: 'Adult men with lower urinary tract symptoms, including acute urinary retention',
-    facilityScope: 'Immediate catheterisation, alpha-blocker before catheter removal, and specialist management of the cause.',
+    facilityScope: 'Diagnostic evaluation, timely bladder drainage, treatment of obstruction, and specialist management of recurrent or refractory retention.',
   },
   'idsa-ssti-2014': {
     title: 'Practice Guidelines for the Diagnosis and Management of Skin and Soft Tissue Infections',
@@ -1292,9 +1228,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Riboflavin Deficiency section: angular stomatitis, cheilosis and glossitis are compatible findings, but people commonly have other nutrient deficiencies that can produce overlapping manifestations.',
   }],
   lab_retensio_urin_akut: [{
-    sourceId: 'nice-acute-retention-cg97',
+    sourceId: 'eau-male-luts-2026',
     relation: 'direct',
-    locator: 'Recommendations 1.7.1-1.7.2: immediately catheterise men with acute retention and offer an alpha blocker before removal of the catheter.',
+    locator: 'Diagnostic and disease-management sections: relieve clinically important retention with bladder drainage, assess obstruction and complications, and escalate recurrent or refractory retention for specialist management.',
   }],
   lab_vaginosis_bakterialis: [{
     sourceId: 'cdc-bv-2021',
@@ -1349,9 +1285,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     relation: 'direct',
     locator: 'Treatment recommendations: one tablet daily, alternate-day dosing when not tolerated, monitor Hb response within the first four weeks, and continue around three months after Hb normalizes.',
   }, {
-    sourceId: 'nice-hmb-ng88',
+    sourceId: 'acog-aub-2013',
     relation: 'related',
-    locator: 'Recommendations 1.2.1-1.2.7: characterize heavy menstrual bleeding, obtain a full blood count, and investigate or treat the bleeding cause in parallel with anaemia care.',
+    locator: 'Evaluation sections: characterize abnormal uterine bleeding, assess haemodynamic stability and anaemia, classify likely causes, and investigate or treat the bleeding source in parallel with iron replacement.',
   }],
   lab_gizi_buruk_komplikasi: [{
     sourceId: 'kemenkes-gizi-buruk-2020',
@@ -1366,10 +1302,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'who-bronchiolitis-2026',
     relation: 'direct',
     locator: 'Sections 6.1-6.6: good-practice statements for diagnosis and admission; Recommendation 1 on selective chest X-ray; Recommendation 2 remarks on standard low-flow oxygen first; Recommendation 3 on a conditional hypertonic-saline trial.',
-  }, {
-    sourceId: 'nice-bronchiolitis-ng9',
-    relation: 'direct',
-    locator: 'Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.12: referral, oxygen thresholds, treatments not used routinely, selective suction, and enteral/IV fluid support.',
   }],
   lab_meningitis_bakterial_suspek: [{
     sourceId: 'who-meningitis-2025',
@@ -1402,10 +1334,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Recommendations 23-30: risk-based epinephrine autoinjector prescription, anaphylaxis action planning, education on prompt epinephrine use, and allergy follow-up after the event.',
   }],
   lab_perdarahan_gi_atas: [{
-    sourceId: 'nice-ugib-cg141',
-    relation: 'direct',
-    locator: 'Resuscitation and timing-of-endoscopy recommendations: unstable severe bleeding receives endoscopy immediately after optimal resuscitation.',
-  }, {
     sourceId: 'acg-ugib-2021',
     relation: 'direct',
     locator: 'Risk assessment, resuscitation, restrictive transfusion strategy, pre-endoscopic management, and endoscopy within 24 hours for hospitalized upper-GI bleeding.',
@@ -1489,10 +1417,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     relation: 'direct',
     locator: 'Recommendations 1, 5, 8, 9, 13, 15, 18, and 23: minimise time to haemorrhage control; integrate physiology, anatomy, mechanism, and response; do not let ultrasound delay transport; use serial rather than isolated Hb; apply restrictive warmed crystalloid, prevent hypothermia, and give TXA within three hours.',
   }, {
-    sourceId: 'nice-major-trauma-ng39',
-    relation: 'direct',
-    locator: 'Recommendations on haemorrhage protocols, early TXA for active or suspected active bleeding, minimum imaging in haemodynamic instability, and immediate transfer to a major-trauma service.',
-  }, {
     sourceId: 'anzcor-oxygen-emergencies-2026',
     relation: 'related',
     locator: 'Section 3.1: shock from major injury is an exception in which oxygen is given irrespective of the initial pulse-oximetry value, with ongoing assessment.',
@@ -1513,9 +1437,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     rationale: 'Supports the tetanus branch only; it is not a burn wound-care guideline.',
   }],
   lab_trauma_tumpul_kepala_ringan: [{
-    sourceId: 'nice-head-injury-ng232',
+    sourceId: 'acep-mtbi-2023',
     relation: 'direct',
-    locator: 'Recommendations 1.2.4, 1.5.8-1.5.13, and 1.10.1-1.10.11: community referral and CT thresholds, anticoagulant/antiplatelet nuance, serial assessment, competent home supervision for 24 hours, written danger signs, and return-to-activity advice.',
+    locator: 'Adult mTBI recommendations: use validated decision tools for selective CT, account for anticoagulant or antiplatelet therapy, and provide written danger signs plus follow-up instructions at discharge.',
   }, {
     sourceId: 'cdc-mild-tbi-2025',
     relation: 'related',
@@ -1523,10 +1447,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     rationale: 'Supports conditional recovery advice if concussion symptoms emerge; the vignette itself is a superficial scalp injury without current mTBI symptoms.',
   }],
   lab_abses_peritonsil: [{
-    sourceId: 'nice-sore-throat-ng84',
-    relation: 'direct',
-    locator: 'Recommendation 1.1.13: quinsy/peritonsillar abscess is a severe suppurative complication requiring hospital referral.',
-  }, {
     sourceId: 'chop-peritonsillar-abscess-2025',
     relation: 'direct',
     locator: 'Clinical-PTA branch: assess complications and drainage tolerance, involve ENT for controlled drainage, and base disposition on oral intake, pain control, sepsis, and airway risk.',
@@ -1571,9 +1491,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Practice Points 1.1.3.1-1.1.3.3, Recommendations 3.6.1-3.6.4, Practice Point 3.6.2, and Figure 48: prove chronicity, classify with eGFR plus ACR, monitor RAS inhibition, and refer according to risk, cause, progression, or complications.',
   }],
   lab_hipertiroid_graves: [{
-    sourceId: 'nice-thyroid-ng145-2023',
+    sourceId: 'ata-hyperthyroidism-2016',
     relation: 'direct',
-    locator: 'Recommendations 1.2.8, 1.6.1, 1.6.5-1.6.6, and 1.6.21: cascade a low TSH to FT4/FT3, use TRAb to confirm Graves, provide safe initial symptom control, and obtain FBC/LFT before antithyroid treatment.',
+    locator: 'Diagnostic and Graves-disease recommendations: confirm biochemical thyrotoxicosis, establish etiology, use beta blockade for appropriate symptom control, and perform baseline safety assessment before antithyroid treatment.',
   }],
   lab_anemia_berat_perlu_transfusi: [{
     sourceId: 'who-haemoglobin-cutoffs-2024',
@@ -1584,9 +1504,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     relation: 'direct',
     locator: 'Recommendation 1 and good-practice statement: for hemodynamically stable hospitalized adults, consider transfusion below 7 g/dL while incorporating symptoms, comorbidity, alternatives, and overall context.',
   }, {
-    sourceId: 'nice-heavy-menstrual-bleeding-ng88',
+    sourceId: 'acog-aub-2013',
     relation: 'direct',
-    locator: 'Recommendations 1.2.1-1.2.10 and 1.3: assess bleeding impact and cause, obtain a full blood count, avoid routine ferritin testing, and select further investigation/referral from history, examination, severity, and patient goals.',
+    locator: 'Initial assessment and management: determine haemodynamic stability, evaluate anaemia and bleeding cause, and choose medical, procedural, or specialist treatment according to severity, contraindications, and patient goals.',
   }],
   lab_tb_paru_putus_obat_suspek_mdr: [{
     sourceId: 'who-tb-diagnosis-2025',
@@ -1635,10 +1555,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'who-hiv-clinical-2025',
     relation: 'direct',
     locator: 'Updated clinical-management recommendations retain optimized dolutegravir-based ART and integrate tuberculosis prevention and reproductive considerations within longitudinal HIV care.',
-  }, {
-    sourceId: 'who-hiv-dtg-all-populations-2019',
-    relation: 'direct',
-    locator: 'WHO explicitly recommends dolutegravir as preferred first- and second-line treatment for all populations, including pregnant women and women of childbearing potential, with informed choice.',
   }, {
     sourceId: 'who-hiv-service-2026',
     relation: 'direct',
@@ -1841,9 +1757,9 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Case definitions and investigation sections: suspected-case criteria, laboratory or epidemiological confirmation, notification, contact tracing, and avoidance of high-risk contacts.',
   }],
   lab_kehamilan_ektopik_terganggu_suspek: [{
-    sourceId: 'nice-ectopic-ng126-2026',
+    sourceId: 'hse-ectopic-pregnancy-2024',
     relation: 'direct',
-    locator: 'Recommendations 1.4.1 and 1.4.5-1.4.7: immediate transfer when unstable; pregnancy testing and immediate specialist assessment for a positive test with pain/tenderness.',
+    locator: 'Recognition and emergency-management sections: assess stability immediately, consider ectopic pregnancy in early-pregnancy pain or bleeding, begin resuscitation when needed, and arrange urgent specialist transfer.',
   }, {
     sourceId: 'who-basic-emergency-care-2018',
     relation: 'related',
@@ -1853,10 +1769,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     sourceId: 'rcog-placenta-praevia-27a-2026',
     relation: 'direct',
     locator: 'Diagnosis and management of placenta praevia, antepartum haemorrhage risk, placental localization, and specialist obstetric care.',
-  }, {
-    sourceId: 'nice-antenatal-ng201',
-    relation: 'related',
-    locator: 'Recommendations 1.2.15 and 1.4.23-1.4.24: placental localization and secondary-care review for unexplained bleeding after 13 weeks.',
   }],
   lab_mola_hidatidosa: [{
     sourceId: 'figo-gtd-2025',
@@ -1878,14 +1790,14 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Guidance on ascites, spontaneous bacterial peritonitis, and hepatorenal syndrome supports monitored evaluation and specialist escalation rather than unmonitored first-contact diuretic titration.',
   }],
   lab_edema_paru_akut_hipertensif: [{
-    sourceId: 'nice-acute-heart-failure-cg187',
+    sourceId: 'esc-heart-failure-2023',
     relation: 'direct',
-    locator: 'Recommendations 1.3.2-1.3.8: avoid routine opiates, give intravenous diuretic therapy, monitor response, and reserve nitrates for selected monitored circumstances such as severe hypertension.',
+    locator: 'Acute heart-failure pathway in the 2021 guideline, read with the 2023 update: oxygen only for hypoxaemia, intravenous loop diuretic for congestion, vasodilator in selected hypertensive presentations, close monitoring, and urgent escalation.',
   }],
   lab_gagal_jantung_dekompensasi: [{
-    sourceId: 'nice-acute-heart-failure-cg187',
+    sourceId: 'esc-heart-failure-2023',
     relation: 'direct',
-    locator: 'Recommendations 1.3.3-1.3.5 and 1.5.1-1.5.3: intravenous diuresis with monitoring; continue established beta-blocker unless specific instability exists, but start or restart only after stabilization.',
+    locator: 'Acute heart-failure pathway in the 2021 guideline, read with the 2023 update: treat congestion with monitored intravenous diuresis, identify precipitants, and individualize continuation or temporary interruption of chronic therapy according to haemodynamic stability.',
   }],
   lab_ppok_eksaserbasi_berat: [{
     sourceId: 'gold-copd-2026',
@@ -1893,11 +1805,6 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Chapter 4 key points: inhaled SABA with or without short-acting anticholinergic, systemic corticosteroid up to 5 days, antibiotic for purulent sputum/high-risk infection, respiratory support, and hospital care for severe exacerbation.',
   }],
   lab_tia_serangan_iskemik_sesaat: [
-    {
-      sourceId: 'nice-tia-ng128',
-      relation: 'direct',
-      locator: 'Recommendations 1.1.2 and 1.1.4-1.1.6: exclude hypoglycaemia, start aspirin 300 mg immediately unless contraindicated, refer immediately for assessment within 24 hours, and do not use ABCD2 to set urgency.',
-    },
     {
       sourceId: 'aha-tia-2023',
       relation: 'direct',

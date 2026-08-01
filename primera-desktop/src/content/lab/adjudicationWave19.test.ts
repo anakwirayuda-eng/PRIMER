@@ -40,7 +40,7 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
     expect(EBM_GUIDELINE_SOURCES['cdc-motion-sickness-2026']?.year).toBe(2026)
     expect(EBM_GUIDELINE_SOURCES['nih-zinc-2026']?.year).toBe(2026)
     expect(EBM_GUIDELINE_SOURCES['nih-riboflavin-2022']?.year).toBe(2022)
-    expect(EBM_GUIDELINE_SOURCES['nice-acute-retention-cg97']?.officialUrl).toMatch(/nice\.org\.uk/)
+    expect(EBM_GUIDELINE_SOURCES['eau-male-luts-2026']?.year).toBe(2026)
     expect(EBM_GUIDELINE_SOURCES['idsa-ssti-2014']?.officialUrl).toMatch(/idsociety\.org/)
     expect(EBM_GUIDELINE_SOURCES['cdc-bv-2021']?.officialUrl).toMatch(/cdc\.gov/)
     expect(EBM_GUIDELINE_SOURCES['aga-hemorrhoids-2026']?.year).toBe(2026)
@@ -68,7 +68,7 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
     expect(kasus.stabilisasiWajib).toEqual(['pemasangan_kateter_urin'])
     expect(kasus.clue).toMatch(/satu upaya kateterisasi lembut.*berhenti dan transfer/is)
     expect(kasus.catatanRealita).toMatch(/alat\/operator tidak ready.*tanpa manipulasi berulang/is)
-    expect(kasus.panduanResmi).toMatch(/PPK 1186\/2022 tidak mempunyai.*NICE CG97/is)
+    expect(kasus.panduanResmi).toMatch(/PPK 1186\/2022 tidak mempunyai.*EAU 2026/is)
     expect(record('lab_retensio_urin_akut').evidence.aspak).toMatchObject({
       status: 'cocok',
       unresolvedResourceIds: [],

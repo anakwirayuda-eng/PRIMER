@@ -23,7 +23,7 @@ describe('M13-137 adjudication wave 25: cedera superfisial kepala risiko rendah'
     expect(PNPK_CROSSWALK[ID]).toEqual([{ slug: 'cedera-otak-traumatik-2022', relation: 'direct' }])
     expect(record().evidence.pnpk.status).toBe('cocok')
     expect(EBM_GUIDELINE_CROSSWALK[ID]?.map((item) => [item.sourceId, item.relation])).toEqual([
-      ['nice-head-injury-ng232', 'direct'],
+      ['acep-mtbi-2023', 'direct'],
       ['cdc-mild-tbi-2025', 'related'],
     ])
     expect(record().evidence.ebm.status).toBe('cocok')
@@ -140,7 +140,7 @@ describe('M13-137 adjudication wave 25: cedera superfisial kepala risiko rendah'
     const kasus = PACK.kasus[ID]!
     expect(kasus.sumber?.map((item) => item.id)).toEqual([
       'pnpk_cot_2022',
-      'nice_head_injury_2023',
+      'acep_mtbi_2023',
       'cdc_mild_tbi_2025',
     ])
     expect(kasus.sumber?.every((item) => item.url.startsWith('https://'))).toBe(true)

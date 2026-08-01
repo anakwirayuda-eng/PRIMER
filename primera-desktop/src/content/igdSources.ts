@@ -58,11 +58,11 @@ export const SUMBER_IGD = {
     tahun: 2018,
     jenis: 'evidence_internasional',
   },
-  wao_anaphylaxis_2020: {
-    id: 'wao_anaphylaxis_2020',
-    label: 'World Allergy Organization Anaphylaxis Guidance 2020',
-    url: 'https://www.worldallergyorganizationjournal.org/article/S1939-4551%2820%2930375-6/fulltext',
-    tahun: 2020,
+  rcuk_anaphylaxis_2025: {
+    id: 'rcuk_anaphylaxis_2025',
+    label: 'Resuscitation Council UK - Anaphylaxis Guideline 2025',
+    url: 'https://www.resus.org.uk/library/2025-resuscitation-guidelines/special-circumstances-guidelines',
+    tahun: 2025,
     jenis: 'evidence_internasional',
   },
   gina_2026: {
@@ -91,13 +91,6 @@ export const SUMBER_IGD = {
     label: 'ILAE Definition and Classification of Status Epilepticus',
     url: 'https://www.ilae.org/guidelines/definition-and-classification/status-epilepticus-2015',
     tahun: 2015,
-    jenis: 'evidence_internasional',
-  },
-  nice_head_injury_2023: {
-    id: 'nice_head_injury_2023',
-    label: 'NICE NG232 - Head Injury: Assessment and Early Management',
-    url: 'https://www.nice.org.uk/guidance/NG232/chapter/recommendations',
-    tahun: 2023,
     jenis: 'evidence_internasional',
   },
   hyperglycemic_crises_2024: {
@@ -163,13 +156,6 @@ export const SUMBER_IGD = {
     tahun: 2025,
     jenis: 'evidence_internasional',
   },
-  nice_major_trauma: {
-    id: 'nice_major_trauma',
-    label: 'NICE NG39 - Major Trauma: Assessment and Initial Management',
-    url: 'https://www.nice.org.uk/guidance/ng39/chapter/Recommendations',
-    tahun: 2016,
-    jenis: 'evidence_internasional',
-  },
   acc_aha_acs_2025: {
     id: 'acc_aha_acs_2025',
     label: 'ACC/AHA Guideline for Acute Coronary Syndromes 2025',
@@ -203,13 +189,6 @@ export const SUMBER_IGD = {
     label: 'ACS Best Practices Guidelines - Traumatic Brain Injury 2024',
     url: 'https://www.facs.org/media/vgfgjpfk/best-practices-guidelines-traumatic-brain-injury.pdf',
     tahun: 2024,
-    jenis: 'evidence_internasional',
-  },
-  nice_hypertension_pregnancy: {
-    id: 'nice_hypertension_pregnancy',
-    label: 'NICE NG133 - Hypertension in Pregnancy',
-    url: 'https://www.nice.org.uk/guidance/ng133/chapter/recommendations',
-    tahun: 2023,
     jenis: 'evidence_internasional',
   },
   bkpk_snakebite_2025: {
@@ -310,13 +289,6 @@ export const SUMBER_IGD = {
     tahun: 2023,
     jenis: 'evidence_internasional',
   },
-  nice_epilepsy_2025: {
-    id: 'nice_epilepsy_2025',
-    label: 'NICE NG217 - Treating Status Epilepticus, updated 2025',
-    url: 'https://www.nice.org.uk/guidance/ng217/chapter/7-Treating-status-epilepticus-repeated-or-cluster-seizures-and-prolonged-seizures',
-    tahun: 2025,
-    jenis: 'evidence_internasional',
-  },
   queensland_fbao_2025: {
     id: 'queensland_fbao_2025',
     label: 'Queensland Paediatric Guideline - Inhaled Foreign Body 2025',
@@ -371,7 +343,7 @@ interface GroundingIgd {
 const GROUNDING_IGD: Record<string, GroundingIgd> = {
   igd_syok_anafilaksis: {
     panduanResmi: 'Di FKTP, utamakan ABC dan adrenalin IM paha anterolateral segera; antihistamin dan steroid tidak boleh menunda terapi penyelamat nyawa. Observasi ketat dan rujuk setelah stabil.',
-    sumberIds: ['ppk_fktp_2022', 'wao_anaphylaxis_2020'],
+    sumberIds: ['ppk_fktp_2022', 'rcuk_anaphylaxis_2025'],
   },
   igd_kejang_demam: {
     panduanResmi: 'Kejang aktif lebih dari 5 menit ditangani sebagai kegawatan: amankan ABC, cek glukosa, berikan benzodiazepin sesuai rute yang tersedia, lalu rujuk bila kompleks, berulang, fokal, atau pemulihan tidak wajar.',
@@ -391,11 +363,11 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
   },
   igd_status_epileptikus: {
     panduanResmi: 'PNPK Epilepsi Dewasa 2026 menjadi floor: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.',
-    sumberIds: ['pnpk_epilepsi_2026', 'ilae_status_2015', 'who_status_epilepticus_2023', 'nice_epilepsy_2025', 'fornas_2025', 'permenkes_rujukan_2024'],
+    sumberIds: ['pnpk_epilepsi_2026', 'ilae_status_2015', 'who_status_epilepticus_2023', 'fornas_2025', 'permenkes_rujukan_2024'],
   },
   igd_cedera_kepala_sedang: {
     panduanResmi: 'Cedera kepala sedang memakai GCS 9-12. Prioritas FKTP adalah ABC dengan pembatasan gerak servikal, target SpO2 >=94%, serta GCS dan pupil serial sebagai pemantauan neurologis dasar, bukan pengukuran ICP. Hindari hiperventilasi atau manitol rutin dan transfer terpantau ke RS dengan CT serta kemampuan trauma-neurosurgical.',
-    sumberIds: ['ppk_fktp_2022', 'acs_tbi_2024', 'nice_head_injury_2023', 'permenkes_rujukan_2024'],
+    sumberIds: ['ppk_fktp_2022', 'acs_tbi_2024', 'permenkes_rujukan_2024'],
   },
   igd_luka_bakar_luas: {
     panduanResmi: 'PNPK Luka Bakar dan PPK FKTP menjadi floor. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.',
@@ -435,7 +407,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
   },
   igd_eklampsia: {
     panduanResmi: 'Amankan ibu, posisi lateral kiri, jaga airway, dan berikan MgSO4 loading yang diencerkan serta diberikan perlahan. Sebelum dosis lanjut, pastikan refleks patela, RR >=16/menit, dan diuresis memadai; siapkan kalsium glukonas. Tangani hipertensi berat tanpa normalisasi mendadak, stabilkan ibu, lalu rujuk ke obstetri emergensi dan perawatan neonatus.',
-    sumberIds: ['ppk_fktp_2022', 'who_preeclampsia_2025', 'nice_hypertension_pregnancy', 'permenkes_rujukan_2024'],
+    sumberIds: ['ppk_fktp_2022', 'who_preeclampsia_2025', 'permenkes_rujukan_2024'],
   },
   igd_sumbatan_jalan_napas_anak: {
     panduanResmi: 'Pada anak tiga tahun dengan FBAO berat, aktifkan bantuan dan lakukan 5 back blows diikuti 5 abdominal thrusts. Bila tidak responsif mulai CPR tanpa menunda pulse check, lihat mulut saat membuka airway, dan ambil hanya benda yang tampak. Batuk atau bunyi napas menetap setelah benda keluar memerlukan transfer ke kemampuan airway pediatrik dan bronkoskopi.',
@@ -443,7 +415,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
   },
   igd_pneumotoraks_tension_trauma: {
     panduanResmi: 'PNPK Trauma dan PPK FKTP menjadi floor. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.',
-    sumberIds: ['pnpk_trauma_2017', 'ppk_fktp_2022', 'who_bec', 'nice_major_trauma', 'wses_thoracic_trauma_2025', 'permenkes_rujukan_2024'],
+    sumberIds: ['pnpk_trauma_2017', 'ppk_fktp_2022', 'who_bec', 'wses_thoracic_trauma_2025', 'permenkes_rujukan_2024'],
   },
   igd_stemi_anterior_hipoksemik: {
     panduanResmi: 'Rekam EKG dalam 10 menit, berikan aspirin kunyah bila tidak kontraindikasi, oksigen hanya karena kasus ini hipoksemik, dan aktifkan jejaring reperfusi tanpa menunggu troponin. Tujuan rujukan harus mampu menjalankan strategi reperfusi.',

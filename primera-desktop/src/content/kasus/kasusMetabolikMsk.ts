@@ -533,8 +533,8 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       ],
       edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang', 'postur_ergonomi'],
     },
-    clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat saat aktivitas, mereda saat istirahat) + kaku pagi singkat (<30 menit) + krepitasi + usia >45 tahun, tanpa tanda inflamasi sistemik. Inti terapi adalah edukasi, latihan penguatan kuadrisep, aktivitas aerobik, dan penurunan berat badan. NICE NG226 (2022) memprioritaskan NSAID topikal bila aman; parasetamol tidak rutin, tetapi pada pasien ini alergi NSAID membuat pemakaian sesekali untuk nyeri jangka pendek masuk akal. Rontgen tidak rutin diperlukan.',
-    panduanResmi: 'PPK 1186/2022 mencantumkan analgesik topikal dan NSAID serta rujukan bila terapi gagal atau ada komplikasi. NICE NG226 (2022) menempatkan latihan terapeutik dan manajemen berat badan sebagai terapi inti, menawarkan NSAID topikal untuk OA lutut, dan membatasi parasetamol pada pemakaian singkat saat pilihan lain kontraindikasi, tidak ditoleransi, atau gagal. Jadi parasetamol kasus ini adalah keputusan individual karena alergi NSAID, bukan aturan lini pertama universal.',
+    clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat saat aktivitas, mereda saat istirahat) + kaku pagi singkat (<30 menit) + krepitasi + usia >45 tahun, tanpa tanda inflamasi sistemik. Inti terapi adalah edukasi, latihan penguatan kuadrisep, aktivitas aerobik, dan penurunan berat badan. Analgesik dipilih individual menurut manfaat, alergi, komorbid, dan risiko. Rontgen tidak rutin diperlukan pada gambaran klinis yang khas tanpa tanda bahaya.',
+    panduanResmi: 'PPK 1186/2022 mencantumkan analgesik topikal dan NSAID serta rujukan bila terapi gagal atau ada komplikasi. VA/DoD 2026 menempatkan evaluasi terstruktur, latihan terapeutik, aktivitas fisik, dan pengelolaan berat badan sebagai inti tata laksana non-bedah; obat dipilih menurut risiko dan preferensi pasien. Pada kasus ini, parasetamol sesekali adalah keputusan individual karena alergi NSAID, bukan aturan lini pertama universal.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat tanpa latihan & turunkan berat badan, kekuatan otot paha terus menurun, nyeri berulang, dan sendi makin cepat rusak.',
       kembaliHariMin: 21,
@@ -655,7 +655,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
     ],
     diagnosisBanding: ['M54.5', 'M51.1', 'M54.4'],
     tatalaksana: {
-      // NICE NG59/QS155: parasetamol tunggal tidak efektif untuk LBP tanpa
+      // WHO 2023: parasetamol tunggal tidak efektif untuk LBP tanpa
       // sciatica. NSAID dosis efektif terendah dan sesingkat mungkin menjadi
       // pilihan farmakologis; edukasi tetap aktif adalah inti tata laksana.
       obatBenar: ['natrium_diklofenak_50'],
@@ -666,13 +666,13 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['postur_ergonomi', 'aktivitas_fisik', 'peregangan_sendi'],
     },
     clue: 'Low back pain mekanik akut tanpa red flag → yakinkan, dorong tetap aktif, beri panduan kembali bekerja/ergonomi, dan hindari tirah baring total. Bila obat diperlukan, gunakan NSAID pada dosis efektif terendah selama sesingkat mungkin setelah menilai risiko gastrointestinal, ginjal, dan kardiovaskular; parasetamol tunggal tidak dianjurkan. Jangan lakukan pencitraan rutin tanpa kecurigaan patologi serius.',
-    panduanResmi: 'PPK 1186/2022 tidak memuat jalur low back pain nonspesifik tersendiri. WHO 2023 dan NICE NG59 yang masih aktif menempatkan edukasi, aktivitas, dan intervensi nonfarmakologis sebagai inti; NICE melarang parasetamol tunggal serta imaging rutin dan membatasi NSAID pada dosis terendah untuk durasi tersingkat setelah skrining risiko.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur low back pain nonspesifik tersendiri. WHO 2023 menempatkan edukasi, tetap aktif, latihan, dan intervensi nonfarmakologis sebagai inti; pencitraan tidak dilakukan rutin tanpa red flag, sedangkan obat dipilih secara hati-hati menurut risiko dan manfaat.',
     konsekuensi: {
       narasi: 'Rontgen & rujukan rutin tanpa red flag membuang biaya, meningkatkan kecemasan ("takut tulang rusak"), dan mendorong tirah baring berlebih yang justru memperlambat pemulihan.',
       kembaliHariMin: 7,
       kembaliHariMax: 21,
       kondisiKembali: 'Pasien kembali karena terlalu takut bergerak akibat nasihat keliru, otot makin kaku dan nyeri berkepanjangan (fear-avoidance).',
-      guideline: 'PPK LBP / NICE NG59 — hindari pencitraan rutin, tetap aktif, terapi konservatif.',
+      guideline: 'PPK FKTP / WHO 2023 — hindari pencitraan rutin tanpa red flag, tetap aktif, dan utamakan terapi konservatif.',
     },
   },
 

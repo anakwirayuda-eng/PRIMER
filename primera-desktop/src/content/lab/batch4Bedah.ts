@@ -383,7 +383,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['pemasangan_kateter_urin'],
     clue: 'Tidak bisa berkemih sejak semalam + buli teraba dan pekak suprapubik + riwayat pancaran melemah, mengejan, menetes, dan nokturia = retensi urin akut pada pembesaran prostat, kemungkinan dipicu obat flu antikolinergik. Bila alat dan operator siap serta tidak ada dugaan cedera uretra, lakukan satu upaya kateterisasi lembut untuk dekompresi, catat volume awal, lalu pantau diuresis dan rujuk penyebabnya. Mulai tamsulosin untuk meningkatkan peluang pelepasan kateter dan hentikan pencetus. Resistensi, darah di meatus, riwayat trauma pelvis/uretra, atau upaya gagal berarti berhenti dan transfer — bukan mengulang secara traumatik.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. NICE CG97 rekomendasi 1.7.1-1.7.2 meminta kateterisasi segera pada retensi akut dan penghambat alfa sebelum pelepasan kateter; penyebab tetap memerlukan penilaian spesialis.`,
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. EAU 2026 menempatkan drainase kandung kemih tepat waktu, penilaian obstruksi dan komplikasi, serta tindak lanjut penyebab sebagai inti; retensi berulang atau refrakter memerlukan jejaring urologi.`,
     catatanRealita: 'Untuk encounter ini Sukamaju menyatakan kateter Foley ukuran sesuai, jeli steril, urine bag, dan operator terlatih siap. Kesiapan itu bukan asumsi universal: bila alat/operator tidak ready atau satu upaya lembut gagal, dokumentasikan dan transfer tanpa manipulasi berulang. USG dan kreatinin tidak dijadikan prasyarat dekompresi atau rujuk.',
     mutiaraEbm: 'Dua ajaran klasik yang menyesatkan di sini. Pertama: "kalau masih ada urine menetes berarti bukan retensi" — justru sebaliknya, buli yang terlalu penuh sering merembes sedikit-sedikit (overflow), sehingga laporan "masih keluar sedikit" tidak menyingkirkan apa pun; buli yang teraba dan pekak suprapubik jauh lebih dapat dipercaya. Kedua: "kosongkan buli bertahap, jangan lebih dari 500 mL sekaligus, nanti terjadi perdarahan dan syok" — ini tidak didukung bukti. Pengosongan lengkap sekaligus terbukti sama amannya, dan menjepit kateter berkala hanya menunda pemulihan serta menambah risiko sumbatan. Yang benar-benar perlu dipantau adalah diuresis pasca-sumbatan (urine mengalir sangat banyak setelah kateter terpasang) pada retensi yang sudah kronis.',
     konsekuensi: {
@@ -391,7 +391,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       kembaliHariMin: 1,
       kembaliHariMax: 3,
       kondisiKembali: 'Pasien kembali dengan perut bawah sangat menggembung, mual, lemas, dan bengkak — kreatinin melonjak dengan hidronefrosis bilateral akibat sumbatan yang tak pernah dibebaskan.',
-      guideline: 'NICE CG97 rekomendasi 1.7.1-1.7.2: kateterisasi segera pada retensi urin akut dan penghambat alfa sebelum trial without catheter; evaluasi penyebab melalui jejaring urologi.',
+      guideline: 'EAU Male LUTS 2026: lakukan drainase kandung kemih pada retensi bermakna, nilai penyebab dan komplikasi, lalu koordinasikan trial without catheter serta evaluasi urologi sesuai konteks.',
     },
   }),
 
@@ -676,7 +676,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['resusitasi_restriktif_trauma', 'oksigen', 'cegah_hipotermia_trauma', 'pemantauan_ketat_vital'],
     clue: 'Jejas setang, defans, nyeri bahu kiri tanpa cedera bahu, takikardia, hipotensi, dan perfusi buruk menunjukkan trauma abdomen tumpul dengan perdarahan internal. Jalankan <C>ABCDE sambil mengaktifkan rujukan. Beri oksigen terkontrol karena ada syok meski SpO2 awal 97%. Pasang satu akses IV besar; tambah akses kedua hanya bila tidak menunda keberangkatan. Beri kristaloid hangat 250 mL lalu nilai ulang. Tanpa bukti cedera otak atau spinal, jangan mengejar normotensi; sasaran sementara SBP sekitar 80-90 mmHg. Berikan asam traneksamat 1 g IV selama 10 menit, yaitu dua ampul 500 mg, secepatnya dan dalam tiga jam; dosis lanjutan diteruskan jejaring. Puasakan, cegah hipotermia, pantau serial, pra-notifikasi, dan transfer segera. FAST, Hb serial, dan golongan darah boleh dikerjakan paralel bila siap, tetapi tidak mendapat skor dan tidak boleh menjadi prasyarat atau menahan ambulans.',
-    panduanResmi: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detail menjadi kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal, TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, serta pencegahan hipotermia. NICE NG39 menegaskan imaging minimum pada pasien tidak stabil dan TXA dini tanpa menunda transfer.',
+    panduanResmi: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detailnya: kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal. Selain itu: TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, pencegahan hipotermia, serta pemeriksaan minimum yang tidak menunda kendali perdarahan.',
     catatanRealita: 'Profil Sukamaju menyediakan oksigen, oksimeter nadi, akses IV, kristaloid hangat, TXA 1 g (dua ampul 500 mg), selimut, termometer, dan ambulans. FAST dengan operator, Hb cepat, golongan darah ABO, produk darah, dan kendali sumber tidak diasumsikan tersedia; semuanya BUKAN prasyarat transfer. Karena skema belum mengenal pemeriksaan opsional, FAST/Hb/ABO tidak menjadi tombol bernilai atau alasan menahan transport.',
     mutiaraEbm: 'Nilai perdarahan trauma dari gabungan fisiologi, pola cedera, mekanisme, dan respons terhadap tindakan, bukan satu kelas syok atau satu angka. Shock index pasien ini sekitar 1,33 dan mendukung risiko tinggi, tetapi bukan pengganti penilaian klinis. Hb awal dapat tetap normal pada perdarahan bermakna, sedangkan satu Hb rendah dipengaruhi nilai dasar, perpindahan cairan, dan resusitasi; ia tidak mengukur volume atau kecepatan perdarahan sendirian. FAST berspesifisitas tinggi tetapi sensitivitasnya terbatas: hasil negatif tidak menyingkirkan cedera atau hemoperitoneum. Pada pasien tidak stabil, pemeriksaan hanya bernilai bila berjalan paralel dan langsung membantu kendali perdarahan tanpa menunda transfer.',
     sumber: [
@@ -695,13 +695,6 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
         jenis: 'evidence_internasional',
       },
       {
-        id: 'nice_major_trauma_ng39',
-        label: 'NICE NG39 - Major Trauma: Assessment and Initial Management',
-        url: 'https://www.nice.org.uk/guidance/ng39/chapter/Recommendations',
-        tahun: 2016,
-        jenis: 'evidence_internasional',
-      },
-      {
         id: 'anzcor_oxygen_2026',
         label: 'ANZCOR 2026 - Oxygen in Emergencies',
         url: 'https://www.anzcor.org/home/first-aid/guideline-9-2-10-the-use-of-oxygen-in-emergencies',
@@ -714,7 +707,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Pasien memburuk dalam perjalanan atau kembali dalam syok berat: kesadaran menurun, nadi tak teraba di radialis, tekanan darah tak terukur, perut makin distensi — perdarahan intraabdomen masif yang tak terkendali.',
-      guideline: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017: survei primer ABCDE, resusitasi, dan transfer tanpa menunda kendali sumber. European guideline 2023: resusitasi restriktif, normotermia, dan TXA secepatnya dalam tiga jam; NICE NG39 tidak menganjurkan TXA setelah tiga jam kecuali terdapat bukti hiperfibrinolisis.',
+      guideline: 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017: survei primer ABCDE, resusitasi, dan transfer tanpa menunda kendali sumber. European guideline 2023: resusitasi restriktif, normotermia, dan TXA secepatnya dalam tiga jam; pemberian setelah tiga jam hanya dipertimbangkan bila ada bukti hiperfibrinolisis.',
     },
   }),
 ]

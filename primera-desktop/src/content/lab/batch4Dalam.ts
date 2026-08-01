@@ -328,7 +328,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
     // (SpO2 92%) yang sengaja TIDAK memasang gerbang oksigen.
     stabilisasiWajib: ['oksigen', 'posisi_semifowler', 'akses_iv_tanpa_bolus'],
     clue: 'GAGAL JANTUNG DEKOMPENSASI AKUT (SKDI 3B - RUJUK): sesak progresif, ortopnea tiga bantal, paroxysmal nocturnal dyspnoea, kenaikan berat 4 kg, JVP meningkat, gallop S3, ronki basal, hepatomegali, dan edema perifer sudah cukup menegakkan kongesti secara klinis. Pencetusnya adalah penghentian diuretik dan beban garam. Di FKTP: posisikan setengah duduk, titrasi oksigen karena SpO2 89%, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, monitor, dan rujuk. Jangan memulai beta-blocker baru sebelum stabil; jangan pula menghentikan terapi beta-blocker lama secara otomatis tanpa syok, bradikardia berat, atau blok.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 memerinci oksigen, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. NICE CG187 rekomendasi 1.3.3-1.3.5 menguatkan diuretik intravena dengan pemantauan fungsi ginjal, berat, dan diuresis; rekomendasi 1.5.1-1.5.3 membedakan kelanjutan beta-blocker lama dari inisiasi atau restart setelah stabil.`,
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 memerinci oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. ESC 2021 dengan focused update 2023 menguatkan diuretik intravena untuk kongesti, pemantauan respons dan fungsi ginjal, pencarian pencetus, serta penyesuaian terapi kronik menurut stabilitas hemodinamik.`,
     catatanRealita: 'Vignette menyatakan oksigen, pulse oximeter, EKG, furosemid injeksi, akses IV, monitoring, dan transport ready. Rontgen tidak tersedia onsite; diagnosis klinis, stabilisasi, dan transfer tidak menunggu foto. Bila injeksi kosong, jangan menyatakan furosemid oral setara atau mengarang substitusi: kerjakan stabilisasi yang feasible, komunikasikan keterbatasan, dan percepat transfer.',
     mutiaraEbm: 'Kenaikan berat badan 4 kg dalam seminggu adalah tanda kongesti paling awal dan paling murah — muncul jauh sebelum sesak, dan hanya butuh timbangan. Sebaliknya, tungkai yang "tidak terlalu bengkak" menyesatkan: pasien bisa menahan 4-5 liter cairan sebelum edema tampak nyata, sehingga edema ringan tidak berarti kongesti ringan.',
     konsekuensi: {
@@ -336,7 +336,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       kembaliHariMin: 1,
       kembaliHariMax: 3,
       kondisiKembali: 'Pasien dibawa kembali dalam kondisi sesak hebat, sama sekali tidak bisa dibaringkan, berkeringat dingin dan batuk berbusa kemerahan — edema paru akut yang mengancam jiwa.',
-      guideline: 'PPK 1186/2022 / NICE CG187 — diuretik loop intravena, oksigen bila hipoksemik, monitoring, dan rujuk; inisiasi beta-blocker menunggu stabilisasi.',
+      guideline: 'PPK 1186/2022 / ESC Heart Failure 2021 + update 2023 — diuretik loop intravena, oksigen bila hipoksemik, monitoring, dan rujuk; terapi kronik disesuaikan menurut stabilitas.',
     },
   }),
 
@@ -478,7 +478,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       edukasiKritis: ['rencana_tirotoksikosis_rujuk'],
     },
     clue: 'SUSPEK PENYAKIT GRAVES DENGAN TIROTOKSIKOSIS (SKDI 3A - RUJUK): berat turun meski makan bertambah, berdebar, tremor, intoleransi panas, tekanan nadi lebar, gondok difus dengan bruit, dan tanda mata tiroid membuat Graves sangat mungkin. Namun diagnosis biokimia tidak boleh dikunci oleh gejala atau TSH tunggal: TSH rendah perlu FT4/FT3, lalu TRAb membantu mengonfirmasi Graves. Di FKTP, propranolol dapat meredakan gejala adrenergik setelah memastikan tidak ada asma/mengi, bradikardia, atau kontraindikasi lain. Jangan memulai PTU secara ad hoc tanpa menilai kehamilan, hitung darah/fungsi hati, dosis, monitoring, dan jalur tindak lanjut. Rujuk untuk konfirmasi serta pemilihan terapi; penurunan visus/warna, diplopia baru, nyeri gerak mata, aritmia, gagal jantung, atau demam-bingung mempercepat urgensi.',
-    panduanResmi: 'PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi floor terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. NICE NG145 (diperbarui 2023, ditinjau 2025) memperjelas bahwa TSH rendah harus diikuti FT4 dan FT3, TRAb dipakai untuk mengonfirmasi Graves, dan hitung darah serta fungsi hati diperiksa sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi floor terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. ATA 2016 tetap menjadi guideline aktif untuk menegakkan tirotoksikosis, memastikan etiologi Graves, mengendalikan gejala secara aman, dan menilai keamanan sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.',
     catatanRealita: 'Profil Sukamaju tidak mengasumsikan TSH/FT4/FT3 siap di tempat; hasil hormon dan TRAb diperoleh lewat jejaring. Ketiadaan tes hari itu tidak menghalangi pengenalan klinis, skrining kontraindikasi propranolol, konseling tanda bahaya, dan rujukan. Obat antitiroid baru dimulai melalui protokol yang menjamin pemeriksaan awal serta tindak lanjut.',
     mutiaraEbm: 'Berdebar, gelisah, tremor, dan berat turun mudah dilabeli gangguan cemas. Gondok difus dengan bruit dan tanda mata tiroid menggeser probabilitas kuat ke Graves, tetapi tetap tidak menggantikan FT4/FT3 dan penetapan etiologi. GDS normal sewaktu juga tidak “menyingkirkan diabetes”; karena itu tes tersebut tidak lagi dijadikan pengunci diagnosis di kasus ini.',
     konsekuensi: {
@@ -486,7 +486,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       kembaliHariMin: 45,
       kembaliHariMax: 120,
       kondisiKembali: 'Dalam cabang simulasi tanpa tindak lanjut, pasien kembali dengan nadi sangat cepat tidak teratur, sesak, dan edema — suspek fibrilasi atrium dengan gagal jantung yang memerlukan perawatan akut.',
-      guideline: 'PPK 1186/2022 bab tirotoksikosis / NICE NG145 — kendalikan gejala dengan aman, konfirmasi TSH-FT4/FT3 dan etiologi, lalu pilih terapi definitif melalui jejaring.',
+      guideline: 'PPK 1186/2022 bab tirotoksikosis / ATA Hyperthyroidism Guideline — kendalikan gejala dengan aman, konfirmasi TSH-FT4/FT3 dan etiologi, lalu pilih terapi definitif melalui jejaring.',
     },
   }),
 
@@ -768,7 +768,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       edukasiKritis: ['rencana_anemia_berat_rujuk'],
     },
     clue: 'ANEMIA DEFISIENSI BESI BERAT SIMPTOMATIK AKIBAT PERDARAHAN KRONIK (SKDI 3B - RUJUK): Hb 5,8 g/dL disertai sesak aktivitas minimal, takikardia, presinkop, pika, koilonikia, dan haid sangat banyak membuat defisiensi besi akibat perdarahan uterus kronik sangat mungkin. Tes kehamilan tetap wajib; perdarahan tidak membuktikan seseorang tidak hamil. PPK menetapkan Hb <7 g/dL sebagai indikasi transfusi dan gejala sebagai alasan rujuk tanpa menunggu ambang. Di Sukamaju, rujuk hari yang sama untuk penilaian transfusi dan penyebab perdarahan. Tablet Fe dapat dimulai bila tidak menunda transfer, tetapi tidak menggantikan darah bila tim RS menilainya perlu dan tidak menutup sumber perdarahan.',
-    panduanResmi: 'PPK 1186/2022 bab anemia defisiensi besi adalah floor langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. NICE NG88 meminta hitung darah lengkap pada heavy menstrual bleeding tetapi tidak menganjurkan ferritin rutin; evaluasi penyebab dan pilihan terapi mengikuti stabilitas, preferensi, kontrasepsi, serta kebutuhan fertilitas.',
+    panduanResmi: 'PPK 1186/2022 bab anemia defisiensi besi adalah floor langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. ACOG menempatkan stabilitas hemodinamik, derajat anemia, pola perdarahan, dan etiologi sebagai dasar evaluasi serta pilihan terapi perdarahan uterus abnormal.',
     catatanRealita: 'Sukamaju dapat mengulang Hb dan tes kehamilan; darah lengkap terjadwal, sedangkan ferritin/retikulosit memakai jejaring. Hb 5,8 dengan gejala tidak menunggu pemeriksaan lanjutan itu. Rujukan harus membawa pola perdarahan, kontrasepsi, tanda vital, Hb, hasil tes kehamilan, dan terapi yang sudah diberikan.',
     mutiaraEbm: 'Pasien masih bisa berjalan sendiri ke Puskesmas dan tekanan darahnya normal — dua hal yang membuat Hb 5,8 terasa "tidak segawat angkanya". Itu jebakan adaptasi anemia kronik: tubuh menaikkan curah jantung dan menggeser kurva disosiasi oksigen selama berbulan-bulan, sehingga tanda vital tetap tenang sampai cadangan itu habis mendadak. Perhatikan juga SpO2 98% yang tampak menenangkan — saturasi hanya mengukur PERSEN hemoglobin yang terisi oksigen, bukan berapa banyak hemoglobin yang ada. Pada Hb 5,8, saturasi 98% berarti hampir seluruh dari sangat sedikit itu terisi penuh, dan pasien tetap kekurangan oksigen.',
     konsekuensi: {
@@ -776,7 +776,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       kembaliHariMin: 5,
       kembaliHariMax: 14,
       kondisiKembali: 'Dalam cabang tanpa rujukan, pasien kembali setelah perdarahan berlanjut dengan sesak saat istirahat, nyeri dada, dan presinkop — anemia memburuk yang memerlukan penanganan rumah sakit segera.',
-      guideline: 'PPK 1186/2022 / WHO 2024 / AABB 2023 / NICE NG88 — rujuk anemia berat bergejala, pertimbangkan transfusi berdasarkan Hb dan konteks, serta cari dan atasi sumber perdarahan.',
+      guideline: 'PPK 1186/2022 / WHO 2024 / AABB 2023 / ACOG AUB — rujuk anemia berat bergejala, pertimbangkan transfusi berdasarkan Hb dan konteks, serta cari dan atasi sumber perdarahan.',
     },
   }),
 

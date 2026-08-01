@@ -10,6 +10,13 @@ interface SourceAssignment {
 }
 
 export const CLINICAL_SOURCE_REGISTRY = {
+  "aad-acne-2024": {
+    "id": "aad-acne-2024",
+    "label": "American Academy of Dermatology - Acne Clinical Guideline",
+    "url": "https://www.aad.org/member/clinical-quality/guidelines/acne",
+    "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
   "aao-hns-bell-palsy-2013": {
     "id": "aao-hns-bell-palsy-2013",
     "label": "AAO-HNSF Guideline - Bell Palsy",
@@ -21,6 +28,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "id": "aao-hns-bppv-2017",
     "label": "AAO-HNSF Guideline - Benign Paroxysmal Positional Vertigo",
     "url": "https://www.entnet.org/quality-practice/quality-products/clinical-practice-guidelines/bppv/",
+    "tahun": 2017,
+    "jenis": "evidence_internasional"
+  },
+  "aao-hns-cerumen-2017": {
+    "id": "aao-hns-cerumen-2017",
+    "label": "AAO-HNSF - Clinical Practice Guideline: Cerumen Impaction",
+    "url": "https://www.entnet.org/quality-practice/quality-products/clinical-practice-guidelines/cerumen-impaction/",
     "tahun": 2017,
     "jenis": "evidence_internasional"
   },
@@ -45,11 +59,11 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2024,
     "jenis": "evidence_internasional"
   },
-  "aap-otitis-media-2013": {
-    "id": "aap-otitis-media-2013",
-    "label": "AAP Guideline - Diagnosis and Management of Acute Otitis Media",
-    "url": "https://publications.aap.org/pediatrics/article/131/3/e964/30912/The-Diagnosis-and-Management-of-Acute-Otitis",
-    "tahun": 2013,
+  "acep-mtbi-2023": {
+    "id": "acep-mtbi-2023",
+    "label": "American College of Emergency Physicians - Clinical Policy: Mild Traumatic Brain Injury",
+    "url": "https://www.acep.org/siteassets/new-pdfs/clinical-policies/mtbi2023.pdf",
+    "tahun": 2023,
     "jenis": "evidence_internasional"
   },
   "acg-gerd-2022": {
@@ -57,6 +71,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "ACG Clinical Guideline for GERD",
     "url": "https://journals.lww.com/ajg/fulltext/2022/01000/acg_clinical_guideline_for_the_diagnosis_and.14.aspx",
     "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
+  "acg-ugib-2021": {
+    "id": "acg-ugib-2021",
+    "label": "American College of Gastroenterology - ACG Clinical Guideline: Upper Gastrointestinal and Ulcer Bleeding",
+    "url": "https://doi.org/10.14309/ajg.0000000000001245",
+    "tahun": 2021,
     "jenis": "evidence_internasional"
   },
   "aci-burn-management-2026": {
@@ -71,6 +92,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "American College of Rheumatology Guideline for Gout",
     "url": "https://rheumatology.org/gout-guideline",
     "tahun": 2020,
+    "jenis": "evidence_internasional"
+  },
+  "acs-orthopaedic-trauma-2022": {
+    "id": "acs-orthopaedic-trauma-2022",
+    "label": "American College of Surgeons - Best Practices in Orthopaedic Trauma",
+    "url": "https://www.facs.org/media/mkbnhqtw/ortho_guidelines.pdf",
+    "tahun": 2022,
     "jenis": "evidence_internasional"
   },
   "ada_hypoglycemia_2026": {
@@ -115,6 +143,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
+  "aha-tia-2023": {
+    "id": "aha-tia-2023",
+    "label": "American Heart Association - Diagnosis, Workup, Risk Reduction of Transient Ischemic Attack in the Emergency Department Setting",
+    "url": "https://professional.heart.org/en/science-news/diagnosis-workup-risk-reduction-of-transient-ischemic-attack-in-the-emergency-department-setting",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
   "aria-rhinitis-2024": {
     "id": "aria-rhinitis-2024",
     "label": "ARIA-EAACI Care Pathways for Allergic Rhinitis",
@@ -127,6 +162,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "American Society of Colon and Rectal Surgeons - Clinical Practice Guidelines for the Management of Anorectal Abscess, Fistula-in-Ano, and Rectovaginal Fistula",
     "url": "https://doi.org/10.1097/DCR.0000000000002473",
     "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
+  "ata-hyperthyroidism-2016": {
+    "id": "ata-hyperthyroidism-2016",
+    "label": "American Thyroid Association - Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+    "url": "https://www.thyroid.org/professionals/ata-professional-guidelines/",
+    "tahun": 2016,
     "jenis": "evidence_internasional"
   },
   "ats-idsa-cap-2019": {
@@ -143,6 +185,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2017,
     "jenis": "evidence_internasional"
   },
+  "bsg-functional-dyspepsia-2022": {
+    "id": "bsg-functional-dyspepsia-2022",
+    "label": "British Society of Gastroenterology - Functional Dyspepsia Guideline",
+    "url": "https://www.bsg.org.uk/clinical-resource/bsg-guidelines-on-the-management-of-functional-dys",
+    "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
   "bts-pleural-procedures-2023": {
     "id": "bts-pleural-procedures-2023",
     "label": "British Thoracic Society - BTS Clinical Statement on Pleural Procedures",
@@ -155,6 +204,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "British Thoracic Society - British Thoracic Society Guideline for Pleural Disease: Spontaneous Pneumothorax",
     "url": "https://www.brit-thoracic.org.uk/document-library/guidelines/pleural-disease/pleural-disease-full-supplement/",
     "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "cdc-adult-outpatient-2024": {
+    "id": "cdc-adult-outpatient-2024",
+    "label": "CDC - Outpatient Clinical Care for Adults: Common Cold and Acute Bronchitis",
+    "url": "https://www.cdc.gov/antibiotic-use/hcp/clinical-care/adult-outpatient.html",
+    "tahun": 2024,
     "jenis": "evidence_internasional"
   },
   "cdc-bv-2021": {
@@ -276,6 +332,27 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
+  "chop-peritonsillar-abscess-2025": {
+    "id": "chop-peritonsillar-abscess-2025",
+    "label": "Children's Hospital of Philadelphia - Suspected Pharyngitis or Peritonsillar Abscess Clinical Pathway",
+    "url": "https://www.chop.edu/clinical-pathway/pharyngitis-clinical-pathway",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "cochrane-threatened-miscarriage-2021": {
+    "id": "cochrane-threatened-miscarriage-2021",
+    "label": "Cochrane - Progestogens for Preventing Miscarriage: Network Meta-analysis",
+    "url": "https://www.cochrane.org/evidence/CD013792_are-progestogen-treatments-effective-preventing-miscarriage",
+    "tahun": 2021,
+    "jenis": "evidence_internasional"
+  },
+  "cps-otitis-media-2024": {
+    "id": "cps-otitis-media-2024",
+    "label": "Canadian Paediatric Society - Acute Otitis Media (reaffirmed 2024)",
+    "url": "https://cps.ca/en/documents/position/acute-otitis-media",
+    "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
   "eaaci-food-allergy-2024": {
     "id": "eaaci-food-allergy-2024",
     "label": "EAACI Guideline on Management of IgE-mediated Food Allergy",
@@ -297,6 +374,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2018,
     "jenis": "evidence_internasional"
   },
+  "eau-male-luts-2026": {
+    "id": "eau-male-luts-2026",
+    "label": "European Association of Urology - Guidelines on the Management of Non-neurogenic Male Lower Urinary Tract Symptoms",
+    "url": "https://uroweb.org/guidelines/management-of-non-neurogenic-male-luts",
+    "tahun": 2026,
+    "jenis": "evidence_internasional"
+  },
   "eau-paediatric-urology-2026": {
     "id": "eau-paediatric-urology-2026",
     "label": "EAU Guidelines on Paediatric Urology 2026",
@@ -311,11 +395,11 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
-  "eau-urological-infections-2025": {
-    "id": "eau-urological-infections-2025",
-    "label": "EAU Guidelines on Urological Infections",
+  "eau-urological-infections-2026": {
+    "id": "eau-urological-infections-2026",
+    "label": "EAU Guidelines on Urological Infections 2026",
     "url": "https://uroweb.org/guidelines/urological-infections",
-    "tahun": 2025,
+    "tahun": 2026,
     "jenis": "evidence_internasional"
   },
   "epos-rhinosinusitis-2020": {
@@ -337,6 +421,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "ESC Guidelines for Acute and Chronic Heart Failure",
     "url": "https://www.escardio.org/Guidelines/Clinical-Practice-Guidelines/Acute-and-Chronic-Heart-Failure",
     "tahun": 2021,
+    "jenis": "evidence_internasional"
+  },
+  "esc-heart-failure-2023": {
+    "id": "esc-heart-failure-2023",
+    "label": "European Society of Cardiology - 2021 Heart Failure Guideline with 2023 Focused Update",
+    "url": "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/focused-update-on-heart-failure/",
+    "tahun": 2023,
     "jenis": "evidence_internasional"
   },
   "esc-hypertension-2024": {
@@ -395,6 +486,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
+  "hse-ectopic-pregnancy-2024": {
+    "id": "hse-ectopic-pregnancy-2024",
+    "label": "Health Service Executive Ireland and Institute of Obstetricians and Gynaecologists - National Clinical Practice Guideline: Diagnosis and Management of Ectopic Pregnancy",
+    "url": "https://www.hse.ie/eng/about/who/acute-hospitals-division/woman-infants/clinical-guidelines/the-diagnosis-and-management-of-ectopic-pregnancy-2024-.pdf",
+    "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
   "idsa-ssti-2014": {
     "id": "idsa-ssti-2014",
     "label": "Infectious Diseases Society of America - Practice Guidelines for the Diagnosis and Management of Skin and Soft Tissue Infections",
@@ -402,11 +500,25 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2014,
     "jenis": "evidence_internasional"
   },
+  "ihs-migraine-2024": {
+    "id": "ihs-migraine-2024",
+    "label": "International Headache Society - Global Practice Recommendations for Migraine",
+    "url": "https://ihs-headache.org/en/resources/guidelines/",
+    "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
   "iwgdf-idsa-dfi-2023": {
     "id": "iwgdf-idsa-dfi-2023",
     "label": "International Working Group on the Diabetic Foot and Infectious Diseases Society of America - IWGDF/IDSA Guidelines on the Diagnosis and Treatment of Diabetes-Related Foot Infections",
     "url": "https://www.idsociety.org/practice-guideline/diabetic-foot-infections/",
     "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "jhs-headache-2025": {
+    "id": "jhs-headache-2025",
+    "label": "Japanese Headache Society - Clinical Practice Guideline for Headache Disorders",
+    "url": "https://onlinelibrary.wiley.com/doi/full/10.1111/ncn3.70042",
+    "tahun": 2025,
     "jenis": "evidence_internasional"
   },
   "kdigo-ckd-2024": {
@@ -512,153 +624,6 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "Merck Manual Professional Edition - Bacterial Nasal Infections",
     "url": "https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/nose-and-paranasal-sinus-disorders/bacterial-nasal-infections",
     "tahun": 2025,
-    "jenis": "evidence_internasional"
-  },
-  "nice_epilepsy_2025": {
-    "id": "nice_epilepsy_2025",
-    "label": "NICE NG217 - Treating Status Epilepticus, updated 2025",
-    "url": "https://www.nice.org.uk/guidance/ng217/chapter/7-Treating-status-epilepticus-repeated-or-cluster-seizures-and-prolonged-seizures",
-    "tahun": 2025,
-    "jenis": "evidence_internasional"
-  },
-  "nice-acne-ng198-2026": {
-    "id": "nice-acne-ng198-2026",
-    "label": "NICE NG198 - Acne Vulgaris: Management",
-    "url": "https://www.nice.org.uk/guidance/ng198/chapter/Recommendations",
-    "tahun": 2026,
-    "jenis": "evidence_internasional"
-  },
-  "nice-acute-cough-ng120": {
-    "id": "nice-acute-cough-ng120",
-    "label": "NICE NG120 - Cough (Acute): Antimicrobial Prescribing",
-    "url": "https://www.nice.org.uk/guidance/ng120/chapter/Recommendations",
-    "tahun": 2019,
-    "jenis": "evidence_internasional"
-  },
-  "nice-acute-heart-failure-cg187": {
-    "id": "nice-acute-heart-failure-cg187",
-    "label": "National Institute for Health and Care Excellence - Acute heart failure: diagnosis and management (CG187)",
-    "url": "https://www.nice.org.uk/guidance/cg187/chapter/recommendations",
-    "tahun": 2021,
-    "jenis": "evidence_internasional"
-  },
-  "nice-acute-retention-cg97": {
-    "id": "nice-acute-retention-cg97",
-    "label": "National Institute for Health and Care Excellence - Lower urinary tract symptoms in men: management (CG97)",
-    "url": "https://www.nice.org.uk/guidance/cg97/chapter/recommendations",
-    "tahun": 2015,
-    "jenis": "evidence_internasional"
-  },
-  "nice-dyspepsia-cg184": {
-    "id": "nice-dyspepsia-cg184",
-    "label": "NICE CG184 - Dyspepsia and GORD",
-    "url": "https://www.nice.org.uk/guidance/cg184/chapter/Recommendations",
-    "tahun": 2019,
-    "jenis": "evidence_internasional"
-  },
-  "nice-ectopic-ng126-2026": {
-    "id": "nice-ectopic-ng126-2026",
-    "label": "National Institute for Health and Care Excellence - Ectopic pregnancy and miscarriage: diagnosis and initial management (NG126)",
-    "url": "https://www.nice.org.uk/guidance/NG126/chapter/symptoms-and-signs-of-ectopic-pregnancy-and-initial-assessment",
-    "tahun": 2026,
-    "jenis": "evidence_internasional"
-  },
-  "nice-fever-under5-ng143": {
-    "id": "nice-fever-under5-ng143",
-    "label": "NICE NG143 - Fever in Under 5s",
-    "url": "https://www.nice.org.uk/guidance/ng143/chapter/recommendations",
-    "tahun": 2021,
-    "jenis": "evidence_internasional"
-  },
-  "nice-fractures-ng38": {
-    "id": "nice-fractures-ng38",
-    "label": "NICE NG38 - Fractures (Non-complex)",
-    "url": "https://www.nice.org.uk/guidance/ng38/chapter/recommendations",
-    "tahun": 2022,
-    "jenis": "evidence_internasional"
-  },
-  "nice-head-injury-ng232": {
-    "id": "nice-head-injury-ng232",
-    "label": "National Institute for Health and Care Excellence - Head injury: assessment and early management (NG232)",
-    "url": "https://www.nice.org.uk/guidance/NG232/chapter/recommendations",
-    "tahun": 2023,
-    "jenis": "evidence_internasional"
-  },
-  "nice-headache-cg150-2025": {
-    "id": "nice-headache-cg150-2025",
-    "label": "NICE CG150 - Headaches in Over 12s",
-    "url": "https://www.nice.org.uk/guidance/cg150/chapter/recommendations",
-    "tahun": 2025,
-    "jenis": "evidence_internasional"
-  },
-  "nice-hearing-loss-ng98": {
-    "id": "nice-hearing-loss-ng98",
-    "label": "NICE NG98 - Hearing Loss in Adults: Earwax Removal",
-    "url": "https://www.nice.org.uk/guidance/ng98/chapter/recommendations",
-    "tahun": 2023,
-    "jenis": "evidence_internasional"
-  },
-  "nice-miscarriage-ng126-2026": {
-    "id": "nice-miscarriage-ng126-2026",
-    "label": "NICE NG126 - Ectopic Pregnancy and Miscarriage",
-    "url": "https://www.nice.org.uk/guidance/ng126",
-    "tahun": 2026,
-    "jenis": "evidence_internasional"
-  },
-  "nice-open-fractures-ng37": {
-    "id": "nice-open-fractures-ng37",
-    "label": "NICE NG37 - Fractures (Complex): Open-fracture Care",
-    "url": "https://www.nice.org.uk/guidance/ng37/chapter/recommendations",
-    "tahun": 2022,
-    "jenis": "evidence_internasional"
-  },
-  "nice-osteoarthritis-ng226": {
-    "id": "nice-osteoarthritis-ng226",
-    "label": "NICE NG226 - Osteoarthritis in Over 16s",
-    "url": "https://www.nice.org.uk/guidance/ng226/chapter/Recommendations",
-    "tahun": 2022,
-    "jenis": "evidence_internasional"
-  },
-  "nice-overweight-ng246-2025": {
-    "id": "nice-overweight-ng246-2025",
-    "label": "NICE NG246 - Overweight and Obesity Management",
-    "url": "https://www.nice.org.uk/guidance/ng246/chapter/Recommendations",
-    "tahun": 2025,
-    "jenis": "evidence_internasional"
-  },
-  "nice-pyelonephritis-ng111": {
-    "id": "nice-pyelonephritis-ng111",
-    "label": "NICE NG111 - Acute Pyelonephritis",
-    "url": "https://www.nice.org.uk/guidance/ng111/chapter/recommendations",
-    "tahun": 2024,
-    "jenis": "evidence_internasional"
-  },
-  "nice-sore-throat-ng84": {
-    "id": "nice-sore-throat-ng84",
-    "label": "National Institute for Health and Care Excellence - Sore throat (acute): antimicrobial prescribing (NG84)",
-    "url": "https://www.nice.org.uk/guidance/ng84/chapter/Recommendations",
-    "tahun": 2018,
-    "jenis": "evidence_internasional"
-  },
-  "nice-thyroid-ng145-2023": {
-    "id": "nice-thyroid-ng145-2023",
-    "label": "National Institute for Health and Care Excellence - Thyroid disease: assessment and management (NG145)",
-    "url": "https://www.nice.org.uk/guidance/ng145/chapter/Recommendations",
-    "tahun": 2023,
-    "jenis": "evidence_internasional"
-  },
-  "nice-tia-ng128": {
-    "id": "nice-tia-ng128",
-    "label": "National Institute for Health and Care Excellence - Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128; reviewed 2026)",
-    "url": "https://www.nice.org.uk/guidance/NG128/chapter/recommendations",
-    "tahun": 2022,
-    "jenis": "evidence_internasional"
-  },
-  "nice-ugib-cg141": {
-    "id": "nice-ugib-cg141",
-    "label": "National Institute for Health and Care Excellence - Acute upper gastrointestinal bleeding in over 16s: management (CG141)",
-    "url": "https://www.nice.org.uk/guidance/cg141",
-    "tahun": 2016,
     "jenis": "evidence_internasional"
   },
   "niddk-lactose-intolerance-2018": {
@@ -990,6 +955,20 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
+  "rch-febrile-seizure-2026": {
+    "id": "rch-febrile-seizure-2026",
+    "label": "Royal Children Hospital Melbourne - Febrile Seizure Guideline",
+    "url": "https://www.rch.org.au/clinicalguide/guideline_index/Febrile_seizure/",
+    "tahun": 2026,
+    "jenis": "evidence_internasional"
+  },
+  "rcht-paediatric-forearm-fracture-2025": {
+    "id": "rcht-paediatric-forearm-fracture-2025",
+    "label": "Royal Cornwall Hospitals - Early Management of Paediatric Forearm Fractures",
+    "url": "https://doclibrary-rcht.cornwall.nhs.uk/DocumentsLibrary/RoyalCornwallHospitalsTrust/Clinical/EmergencyDepartment/EarlyManagementofPaediatricForearmFracturesintheEmergencyDepartmentClinicalGuideline.pdf",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
   "rcog-hyperemesis-69-2024": {
     "id": "rcog-hyperemesis-69-2024",
     "label": "Royal College of Obstetricians and Gynaecologists - The Management of Nausea and Vomiting in Pregnancy and Hyperemesis Gravidarum (Green-top Guideline No. 69)",
@@ -1025,6 +1004,20 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2021,
     "jenis": "evidence_internasional"
   },
+  "vadod-obesity-2025": {
+    "id": "vadod-obesity-2025",
+    "label": "VA/DoD - Management of Adult Overweight and Obesity",
+    "url": "https://www.healthquality.va.gov/guidelines/CD/obesity/",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "vadod-osteoarthritis-2026": {
+    "id": "vadod-osteoarthritis-2026",
+    "label": "VA/DoD - Non-Surgical Management of Hip and Knee Osteoarthritis",
+    "url": "https://www.healthquality.va.gov/guidelines/CD/OA/index.asp",
+    "tahun": 2026,
+    "jenis": "evidence_internasional"
+  },
   "who_arboviral_2025": {
     "id": "who_arboviral_2025",
     "label": "WHO Guidelines for Clinical Management of Arboviral Diseases 2025",
@@ -1043,6 +1036,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "id": "who_preeclampsia_2025",
     "label": "WHO Pre-eclampsia Fact Sheet and Recommendations 2025",
     "url": "https://www.who.int/news-room/fact-sheets/detail/pre-eclampsia",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "who-abortion-care-2025": {
+    "id": "who-abortion-care-2025",
+    "label": "WHO - Abortion Care Guideline, second edition",
+    "url": "https://www.who.int/publications/i/item/9789240104204",
     "tahun": 2025,
     "jenis": "evidence_internasional"
   },
@@ -1137,13 +1137,6 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2024,
     "jenis": "evidence_internasional"
   },
-  "who-iron-pregnancy-2012": {
-    "id": "who-iron-pregnancy-2012",
-    "label": "WHO - Daily Iron and Folic Acid in Pregnant Women",
-    "url": "https://www.who.int/publications/i/item/9789241501996",
-    "tahun": 2012,
-    "jenis": "evidence_internasional"
-  },
   "who-leprosy-2018": {
     "id": "who-leprosy-2018",
     "label": "World Health Organization - Guidelines for the diagnosis, treatment and prevention of leprosy",
@@ -1162,6 +1155,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "id": "who-malaria-2025",
     "label": "WHO Guidelines for Malaria",
     "url": "https://www.who.int/publications/i/item/guidelines-for-malaria",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "who-maternal-health-2025": {
+    "id": "who-maternal-health-2025",
+    "label": "WHO - Recommendations on Maternal Health, second edition",
+    "url": "https://www.who.int/publications/i/item/9789240080591",
     "tahun": 2025,
     "jenis": "evidence_internasional"
   },
@@ -1321,7 +1321,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-iron-pregnancy-2012",
+      "sourceId": "who-maternal-health-2025",
       "cakupan": "langsung"
     }
   ],
@@ -1382,7 +1382,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Tidak ada bab diagnosis yang dipetakan langsung; dokumen ini hanya menjadi batas bawah praktik FKTP."
     },
     {
-      "sourceId": "nice-acute-cough-ng120",
+      "sourceId": "cdc-adult-outpatient-2024",
       "cakupan": "langsung"
     }
   ],
@@ -1443,7 +1443,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Tidak ada bab diagnosis yang dipetakan langsung; dokumen ini hanya menjadi batas bawah praktik FKTP."
     },
     {
-      "sourceId": "nice-dyspepsia-cg184",
+      "sourceId": "bsg-functional-dyspepsia-2022",
       "cakupan": "langsung"
     }
   ],
@@ -1473,7 +1473,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "terkait"
     },
     {
-      "sourceId": "nice-open-fractures-ng37",
+      "sourceId": "acs-orthopaedic-trauma-2022",
       "cakupan": "langsung"
     }
   ],
@@ -1483,7 +1483,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-dyspepsia-cg184",
+      "sourceId": "bsg-functional-dyspepsia-2022",
       "cakupan": "terkait"
     }
   ],
@@ -1533,8 +1533,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-acute-cough-ng120",
-      "cakupan": "terkait"
+      "sourceId": "cdc-adult-outpatient-2024",
+      "cakupan": "langsung"
     }
   ],
   "jiwa_depresi_ringan": [
@@ -1584,7 +1584,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-miscarriage-ng126-2026",
+      "sourceId": "cochrane-threatened-miscarriage-2021",
       "cakupan": "langsung"
     }
   ],
@@ -1604,7 +1604,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-pyelonephritis-ng111",
+      "sourceId": "eau-urological-infections-2026",
       "cakupan": "terkait"
     }
   ],
@@ -1769,7 +1769,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-miscarriage-ng126-2026",
+      "sourceId": "who-abortion-care-2025",
       "cakupan": "langsung"
     }
   ],
@@ -1807,7 +1807,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Bab PPK terkait, bukan padanan diagnosis yang identik."
     },
     {
-      "sourceId": "nice-sore-throat-ng84",
+      "sourceId": "chop-peritonsillar-abscess-2025",
       "cakupan": "langsung"
     }
   ],
@@ -1817,7 +1817,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-acne-ng198-2026",
+      "sourceId": "aad-acne-2024",
       "cakupan": "langsung"
     }
   ],
@@ -2065,7 +2065,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Bab PPK terkait, bukan padanan diagnosis yang identik."
     },
     {
-      "sourceId": "nice-acute-heart-failure-cg187",
+      "sourceId": "esc-heart-failure-2023",
       "cakupan": "langsung"
     }
   ],
@@ -2176,7 +2176,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-fractures-ng38",
+      "sourceId": "rcht-paediatric-forearm-fracture-2025",
       "cakupan": "langsung"
     }
   ],
@@ -2212,7 +2212,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-acute-heart-failure-cg187",
+      "sourceId": "esc-heart-failure-2023",
       "cakupan": "langsung"
     }
   ],
@@ -2358,7 +2358,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Bab PPK terkait, bukan padanan diagnosis yang identik."
     },
     {
-      "sourceId": "nice-thyroid-ng145-2023",
+      "sourceId": "ata-hyperthyroidism-2016",
       "cakupan": "langsung"
     }
   ],
@@ -2478,7 +2478,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Audit tidak menemukan bab PPK/PNPK diagnosis-spesifik; dokumen ini hanya menjadi batas bawah kewenangan FKTP."
     },
     {
-      "sourceId": "nice-ectopic-ng126-2026",
+      "sourceId": "hse-ectopic-pregnancy-2024",
       "cakupan": "langsung"
     }
   ],
@@ -2493,8 +2493,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-fever-under5-ng143",
-      "cakupan": "terkait"
+      "sourceId": "rch-febrile-seizure-2026",
+      "cakupan": "langsung"
     }
   ],
   "lab_keracunan_makanan_ringan": [
@@ -2551,7 +2551,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-acute-cough-ng120",
+      "sourceId": "cdc-adult-outpatient-2024",
       "cakupan": "terkait"
     }
   ],
@@ -2800,7 +2800,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-ugib-cg141",
+      "sourceId": "acg-ugib-2021",
       "cakupan": "langsung"
     }
   ],
@@ -2849,7 +2849,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-pyelonephritis-ng111",
+      "sourceId": "eau-urological-infections-2026",
       "cakupan": "langsung"
     }
   ],
@@ -2984,7 +2984,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Audit tidak menemukan bab PPK/PNPK diagnosis-spesifik; dokumen ini hanya menjadi batas bawah kewenangan FKTP."
     },
     {
-      "sourceId": "nice-acute-retention-cg97",
+      "sourceId": "eau-male-luts-2026",
       "cakupan": "langsung"
     }
   ],
@@ -3191,7 +3191,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-tia-ng128",
+      "sourceId": "aha-tia-2023",
       "cakupan": "langsung"
     }
   ],
@@ -3291,7 +3291,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-head-injury-ng232",
+      "sourceId": "acep-mtbi-2023",
       "cakupan": "langsung"
     }
   ],
@@ -3446,7 +3446,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "eau-urological-infections-2025",
+      "sourceId": "eau-urological-infections-2026",
       "cakupan": "langsung"
     }
   ],
@@ -3478,7 +3478,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-overweight-ng246-2025",
+      "sourceId": "vadod-obesity-2025",
       "cakupan": "langsung"
     }
   ],
@@ -3488,7 +3488,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-osteoarthritis-ng226",
+      "sourceId": "vadod-osteoarthritis-2026",
       "cakupan": "langsung"
     }
   ],
@@ -3508,7 +3508,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "aap-otitis-media-2013",
+      "sourceId": "cps-otitis-media-2024",
       "cakupan": "langsung"
     }
   ],
@@ -3558,7 +3558,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice_epilepsy_2025",
+      "sourceId": "who-mhgap-2023",
       "cakupan": "langsung"
     }
   ],
@@ -3568,7 +3568,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-headache-cg150-2025",
+      "sourceId": "ihs-migraine-2024",
       "cakupan": "langsung"
     }
   ],
@@ -3578,7 +3578,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-headache-cg150-2025",
+      "sourceId": "jhs-headache-2025",
       "cakupan": "langsung"
     }
   ],
@@ -3649,8 +3649,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "nice-hearing-loss-ng98",
-      "cakupan": "terkait"
+      "sourceId": "aao-hns-cerumen-2017",
+      "cakupan": "langsung"
     }
   ],
   "tonsilitis_akut": [

@@ -4,6 +4,7 @@ import { CLINICAL_SOURCE_ASSIGNMENTS } from './clinicalSourceAssignments.generat
 import { sidikJariPack } from '../engine/verifikasi'
 
 const kasus = Object.values(PACK.kasus)
+const DOMAIN_DIBLOKIR_DI_BROWSER_PEMAIN = new Set(['www.nice.org.uk'])
 
 describe('clinical provenance', () => {
   it('covers every playable poli encounter with an explicit assignment', () => {
@@ -54,6 +55,31 @@ describe('clinical provenance', () => {
         if (!source.cakupan) masalah.push(`${item.id}: cakupan kosong ${source.id}`)
         if (source.cakupan === 'floor_umum' && !source.catatan?.trim()) {
           masalah.push(`${item.id}: floor umum tanpa catatan ${source.id}`)
+        }
+      }
+    }
+
+    expect(masalah).toEqual([])
+  })
+
+  it('does not ship player-facing citations from browser-blocked domains', () => {
+    const masalah: string[] = []
+    const encounters = [
+      ...Object.values(PACK.kasus).map((item) => ({
+        id: `poli:${item.id}`,
+        sumber: item.sumber ?? [],
+      })),
+      ...Object.values(PACK.kasusIgd).map((item) => ({
+        id: `igd:${item.id}`,
+        sumber: item.sumber,
+      })),
+    ]
+
+    for (const encounter of encounters) {
+      for (const source of encounter.sumber) {
+        const domain = new URL(source.url).hostname.toLowerCase()
+        if (DOMAIN_DIBLOKIR_DI_BROWSER_PEMAIN.has(domain)) {
+          masalah.push(`${encounter.id}: ${source.id} -> ${domain}`)
         }
       }
     }

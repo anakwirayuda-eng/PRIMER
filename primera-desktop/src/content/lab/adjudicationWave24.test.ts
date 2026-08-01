@@ -23,7 +23,6 @@ describe('M13-137 adjudication wave 24: trauma abdomen tumpul dengan syok hemora
     expect(record().evidence.pnpk.status).toBe('cocok')
     expect(EBM_GUIDELINE_CROSSWALK[ID]?.map((item) => [item.sourceId, item.relation])).toEqual([
       ['european-trauma-bleeding-2023', 'direct'],
-      ['nice-major-trauma-ng39', 'direct'],
       ['anzcor-oxygen-emergencies-2026', 'related'],
     ])
     expect(record().evidence.ebm.status).toBe('cocok')
@@ -99,12 +98,11 @@ describe('M13-137 adjudication wave 24: trauma abdomen tumpul dengan syok hemora
     expect(`${transfusi?.alasan} ${kasus.konsekuensi?.narasi}`).not.toMatch(/satu-satunya.*kamar operasi/is)
   })
 
-  it('menampilkan empat sumber klikabel dan merekonsiliasi resource', () => {
+  it('menampilkan tiga sumber klikabel dan merekonsiliasi resource', () => {
     const kasus = PACK.kasus[ID]!
     expect(kasus.sumber?.map((item) => item.id)).toEqual([
       'pnpk_trauma_2017',
       'european_trauma_bleeding_2023',
-      'nice_major_trauma_ng39',
       'anzcor_oxygen_2026',
     ])
     expect(kasus.sumber?.every((item) => item.url.startsWith('https://'))).toBe(true)

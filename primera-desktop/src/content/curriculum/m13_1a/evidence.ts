@@ -427,8 +427,8 @@ const M13_1A_EVIDENCE_DRAFTS: EvidenceBinding[] = [
     id: 'm13-1a:fracture-no-mini-washout',
     subject: { kind: 'encounter_archetype', id: 'clinic:fraktur_terbuka_tibia_stabil' },
     facet: 'regimen',
-    source: 'nice:ng37-fractures-complex-2022',
-    locator: 'Recommendations 1.1.8-1.1.10 and 1.2.20-1.2.22: do not irrigate before wound excision; use saline-soaked occlusive dressing and immediate IV antibiotics',
+    source: 'acs:orthopaedic-trauma-2022',
+    locator: 'Open-fracture best practices: cover the wound, avoid non-definitive wound exploration or debridement, give early systemic antibiotics, immobilise, and transfer for formal operative care',
     population: 'Dewasa dengan fraktur terbuka tulang panjang sebelum debridement formal',
     reviewStatus: PENDING,
     audit: {
@@ -466,8 +466,8 @@ const M13_1A_EVIDENCE_DRAFTS: EvidenceBinding[] = [
       ],
       supersedingSources: [
         {
-          source: 'nice:ng37-fractures-complex-2022',
-          locator: 'Jangan irigasi sebelum wound excision; balut saline-soaked occlusive dan berikan antibiotik IV segera.',
+          source: 'acs:orthopaedic-trauma-2022',
+          locator: 'Hindari eksplorasi atau debridement non-definitif; tutup luka, berikan antibiotik sistemik dini, imobilisasi, dan transfer untuk tata laksana operatif formal.',
         },
         {
           source: 'boast:open-fractures-2017',

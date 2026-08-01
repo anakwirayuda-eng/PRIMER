@@ -231,7 +231,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['akses_iv_resusitasi'],
     clue: 'Perempuan usia reproduktif dengan nyeri perut/panggul harus dinilai kemungkinan hamil meski gejalanya tidak khas. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, hipotensi, takikardia, dan tanda peritoneal berarti suspek kehamilan ektopik terganggu dengan syok. Tugas FKTP: panggil jejaring emergensi, lakukan ABCDE, pasang akses intravena dan berikan kristaloid terukur sambil menilai respons, puasakan, pantau ketat, lalu transfer segera ke fasilitas bedah-obstetri. Jangan menunggu USG atau beta-hCG serial pada pasien tidak stabil. Oksigen diberikan terkontrol bila hipoksemia atau gangguan respirasi muncul; SpO2 98% udara ruangan bukan alasan menjadikannya tindakan wajib.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. NICE NG126 (diperbarui 2026) menjadi sumber langsung: pasien tidak stabil atau dengan kekhawatiran bermakna atas nyeri/perdarahan dirujuk langsung; setiap layanan yang menilai perempuan usia reproduktif perlu akses tes kehamilan. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. HSE National Clinical Practice Guideline 2024 menjadi sumber langsung untuk pengenalan, penilaian stabilitas, jalur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.',
     catatanRealita: 'Di Sukamaju, tes kehamilan dan kristaloid adalah sumber daya inti, sedangkan USG obstetri bersifat terjadwal/berbagi dan ambulans dapat sedang bertugas. Keterbatasan itu tidak mengubah keputusan: gambaran syok dengan tes kehamilan positif memicu stabilisasi paralel dan transfer, bukan antrean USG atau pemeriksaan tambahan yang menunda.',
     mutiaraEbm: 'Bercak darah yang sedikit dapat menipu karena perdarahan utama pada ektopik terganggu dapat tersembunyi di rongga perut. Tes kehamilan positif juga tidak membuktikan lokasi intrauterin, dan struktur intrauterin dapat berupa kantong semu. Tes urine negatif menurunkan kemungkinan kehamilan yang sedang berlangsung, tetapi hasil tunggal tidak boleh mengalahkan penilaian syok atau kecurigaan klinis sangat tinggi; fokus pedagogisnya adalah selalu mempertimbangkan dan menguji kehamilan, lalu bertindak menurut stabilitas pasien.',
     konsekuensi: {
@@ -239,7 +239,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Dibawa kembali beberapa jam kemudian dalam keadaan tidak sadar, nadi hanya teraba di lipat paha, akral dingin, dan perut membuncit penuh darah — kini kehilangan waktu emas untuk laparotomi.',
-      guideline: 'NICE NG126 (updated 2026), recommendations 1.4.1 dan 1.4.5-1.4.7; WHO-ICRC Basic Emergency Care (ABCDE, shock, transfer, handover).',
+      guideline: 'HSE National Clinical Practice Guideline: Ectopic Pregnancy 2024; WHO-ICRC Basic Emergency Care (ABCDE, shock, transfer, handover).',
     },
   }),
 
@@ -431,7 +431,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['pasang_infus'],
     clue: 'Perdarahan jalan lahir merah segar, mendadak, dan tanpa nyeri pada kehamilan lanjut dengan riwayat seksio berulang sangat mencurigakan plasenta previa. Jangan lakukan vaginal toucher digital sebelum previa disingkirkan dengan pencitraan. Pemeriksaan spekulum berbeda: oleh klinisi terlatih dapat membantu menilai jumlah/sumber perdarahan traktus bawah dan tidak dilarang secara kategoris, tetapi tidak boleh dipaksakan atau menunda transfer. Tugas FKTP pada episode ini ialah menilai ABC, pasang akses intravena, pantau ibu dan denyut jantung janin, hubungi RS, dan rujuk dengan dokumentasi bahwa VT digital tidak dilakukan. USG bermanfaat bila segera tersedia, bukan prasyarat untuk merujuk perdarahan antepartum.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik plasenta previa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat tata laksana previa. RCOG Green-top 27a edisi kelima 2026 menjadi sumber diagnosis/manajemen langsung; NICE NG201 mendukung pelokalan plasenta dan penilaian sekunder untuk perdarahan tidak terjelaskan setelah 13 minggu. Larangan utamanya ialah vaginal toucher digital sampai previa disingkirkan, bukan larangan universal terhadap spekulum.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik plasenta previa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat tata laksana previa. RCOG Green-top 27a edisi kelima 2026 menjadi sumber diagnosis dan manajemen langsung, termasuk pelokalan plasenta serta tata laksana perdarahan. Larangan utamanya ialah vaginal toucher digital sampai previa disingkirkan, bukan larangan universal terhadap spekulum.',
     catatanRealita: 'Pada profil Sukamaju, USG obstetri adalah layanan terjadwal/berbagi, bukan kemampuan yang diasumsikan selalu siap. Bila perdarahan datang saat alat atau operator tidak tersedia, keputusan aman tetap stabilisasi dan transfer berdasarkan gambaran klinis; pencitraan lokal tidak boleh menjadi antrean wajib.',
     mutiaraEbm: 'Perdarahan tanpa nyeri tidak menenangkan; pola itu justru mendukung plasenta previa. Sebaliknya, solusio plasenta lebih sering menimbulkan nyeri dan uterus tegang. Pada solusio, darah dapat tertahan di belakang plasenta sehingga perdarahan yang tampak sedikit tidak mencerminkan beratnya syok. Karena itu, jangan menilai keparahan hanya dari isi pembalut. Plasenta letak rendah pada trimester dua memang sering bergeser ke atas, tetapi riwayat seksio berulang meningkatkan risiko previa menetap dan perlekatan abnormal. Temuan tersebut mengubah perencanaan persalinan dan perlu dinilai di layanan obstetri.',
     konsekuensi: {
@@ -439,7 +439,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       kembaliHariMin: 0,
       kembaliHariMax: 1,
       kondisiKembali: 'Perdarahan menjadi masif segera setelah pemeriksaan dalam: ibu pucat, tekanan darah tak terukur, denyut jantung janin melambat menjadi 80x/menit, dan ambulans baru berangkat saat ibu sudah tidak sadar.',
-      guideline: 'RCOG Green-top Guideline No. 27a, fifth edition 2026; NICE NG201 antenatal care recommendations on placental localization and unexplained bleeding.',
+      guideline: 'RCOG Green-top Guideline No. 27a, fifth edition 2026: placental localization, antepartum bleeding, and specialist management.',
     },
   }),
 

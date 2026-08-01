@@ -128,7 +128,7 @@ export const DUEL_DIAGNOSIS_PILOTS: readonly DuelDiagnosisPilot[] = [
       { id: 'disuria', label: 'Nyeri saat berkemih', benar: false, respons: 'Disuria terjadi pada sistitis maupun pielonefritis.' },
       { id: 'frekuensi', label: 'Frekuensi berkemih meningkat', benar: false, respons: 'Frekuensi adalah gejala kemih bawah dan bukan pembeda utama.' },
     ],
-    sumber: [{ id: 'nice-pyelonephritis-ng111', label: 'NICE Acute Pyelonephritis Guideline NG111', url: 'https://www.nice.org.uk/guidance/ng111/chapter/Recommendations', tahun: 2018 }],
+    sumber: [{ id: 'eau-urological-infections-2026', label: 'EAU Guidelines on Urological Infections 2026', url: 'https://uroweb.org/guidelines/urological-infections', tahun: 2026 }],
   },
   {
     id: 'duel-vaginitis',
@@ -162,7 +162,7 @@ export const DUEL_DIAGNOSIS_PILOTS: readonly DuelDiagnosisPilot[] = [
     ],
     sumber: [
       { id: 'acr-gout-2020', label: 'American College of Rheumatology Gout Guideline', url: 'https://rheumatology.org/gout-guideline', tahun: 2020 },
-      { id: 'nice-oa-ng226', label: 'NICE Osteoarthritis Guideline NG226', url: 'https://www.nice.org.uk/guidance/ng226/chapter/Recommendations', tahun: 2022 },
+      { id: 'vadod-oa-2026', label: 'VA/DoD Hip and Knee Osteoarthritis Guideline 2026', url: 'https://www.healthquality.va.gov/guidelines/CD/OA/index.asp', tahun: 2026 },
     ],
   },
   {
@@ -179,7 +179,7 @@ export const DUEL_DIAGNOSIS_PILOTS: readonly DuelDiagnosisPilot[] = [
       { id: 'mual', label: 'Keluhan mual', benar: false, respons: 'Mual dapat muncul pada banyak gangguan saluran cerna atas.' },
       { id: 'epigastrium', label: 'Cepat kenyang dan penuh pascamakan tanpa regurgitasi', benar: false, respons: 'Pola ini lebih mendukung sindrom dispepsia.' },
     ],
-    sumber: [{ id: 'nice-dyspepsia-cg184', label: 'NICE GORD and Dyspepsia Guideline CG184', url: 'https://www.nice.org.uk/guidance/cg184/chapter/Recommendations', tahun: 2019 }],
+    sumber: [{ id: 'bsg-functional-dyspepsia-2022', label: 'BSG Functional Dyspepsia Guideline', url: 'https://www.bsg.org.uk/clinical-resource/bsg-guidelines-on-the-management-of-functional-dys', tahun: 2022 }],
   },
 ]
 

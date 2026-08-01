@@ -45,15 +45,12 @@ describe('M13-137 adjudication wave 2: kegawatan anak dan pra-rujuk', () => {
     expect(kasus.keluhanUtama).toMatch(/pilek dan batuk/i)
     expect(kasus.anamnesis.find((item) => item.id === 'q_wheezing_sebelumnya')?.jawab).toMatch(/belum pernah/i)
     expect(kasus.clue).toMatch(/WHO 2026|bronkiolitis berat/i)
-    expect(kasus.panduanResmi).toMatch(/WHO 2026.*NICE NG9/is)
+    expect(kasus.panduanResmi).toMatch(/WHO 2026/is)
     expect(kasus.panduanResmi).toMatch(/salin hipertonik.*kondisional.*bukti rendah.*bukan kewajiban/is)
     expect(kasus.catatanRealita).toMatch(/NG-OG.*IV isotonik.*bukan izin bolus rutin/is)
     expect(PACK.tindakan.suction_hidung_bronkiolitis_selektif?.nama).toMatch(/bila sekret/i)
     expect(PACK.edukasi.rujuk_bronkiolitis_bayi?.nama).toMatch(/rujuk sekarang/i)
-    expect(bukti.map((item) => item.sourceId)).toEqual([
-      'who-bronchiolitis-2026',
-      'nice-bronchiolitis-ng9',
-    ])
+    expect(bukti.map((item) => item.sourceId)).toEqual(['who-bronchiolitis-2026'])
     expect(record('lab_bronkiolitis_berat').compiler.suggestion).toBe('cocok')
   })
 

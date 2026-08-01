@@ -10,7 +10,7 @@ export const M13_1A_PHYSICIAN_DECISION_BY_REVIEW_ID: Record<string, string> = {
   'm13-1a-review-clinic-otitis_eksterna_akut_ringan':
     'Otitis eksterna: adjudikasi asam asetat 2%, dosis 5 tetes 3-4 kali/hari, durasi lokal, dan posisi opsi ini terhadap agen yang disebut PPK.',
   'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil':
-    'Fraktur terbuka: adjudikasi no-mini-washout terhadap konflik PNPK 270/2019 vs NICE/BOAST, balut lembap-oklusif, analgesia, antibiotik/tetanus, dan deklarasi resource FKTP/jejaring.',
+    'Fraktur terbuka: adjudikasi no-mini-washout terhadap konflik PNPK 270/2019 vs ACS/BOAST, balut lembap-oklusif, analgesia, antibiotik/tetanus, dan deklarasi resource FKTP/jejaring.',
   'm13-1a-review-igd-igd_stemi_anterior_hipoksemik':
     'STEMI: setujui bundel aspirin/oksigen/EKG/transfer serta putuskan apakah P2Y12, antikoagulan, nitrat, dan strategi PCI/fibrinolisis sengaja di luar scope.',
   'm13-1a-review-ukm-keluarga_gunawan-gunawan_k2':

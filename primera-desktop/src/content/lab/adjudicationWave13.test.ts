@@ -80,7 +80,6 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
       'kemenkes-hiv-ims-2022',
       'kemenkes-puskesmas-hiv-2024',
       'who-hiv-clinical-2025',
-      'who-hiv-dtg-all-populations-2019',
       'who-hiv-service-2026',
     ])
     expect(kasus.sumber?.map((item) => item.id)).toEqual([
@@ -90,7 +89,6 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
       'lampiran_hiv_ims_2022',
       'pedoman_puskesmas_klaster3_2024',
       'who_hiv_clinical_2025',
-      'who_hiv_dtg_all_populations_2019',
       'who_hiv_service_2026',
     ])
     expect(kasus.panduanResmi).toMatch(/mencabut sebagian besar.*Pasal 41 dan Lampirannya tetap berlaku/is)

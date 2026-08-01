@@ -163,13 +163,6 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
         jenis: 'evidence_internasional',
       },
       {
-        id: 'who_hiv_dtg_all_populations_2019',
-        label: 'WHO 2019 - Dolutegravir Preferred in All Populations',
-        url: 'https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations',
-        tahun: 2019,
-        jenis: 'evidence_internasional',
-      },
-      {
         id: 'who_hiv_service_2026',
         label: 'WHO Consolidated HIV Service Delivery 2026',
         url: 'https://www.who.int/publications/i/item/9789240124233',
@@ -828,7 +821,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     diagnosisBanding: ['D50', 'D56.3', 'D63.8'],
     tatalaksana: { obatBenar: ['tablet_fe'], edukasi: ['terapi_besi_terukur', 'telusuri_sumber_anemia', 'kontrol_hb_anemia'], edukasiKritis: ['telusuri_sumber_anemia', 'kontrol_hb_anemia'] },
     clue: 'Anemia mikrositik-hipokrom dengan RDW meningkat dan haid banyak sangat mendukung defisiensi besi, tetapi terapi tidak boleh berhenti pada tablet Fe. Beri sekitar 60 mg besi elemental sekali sehari; bila tidak toleran, regimen selang sehari dapat dipertimbangkan. Nilai kenaikan Hb dalam 2-4 minggu dan lanjutkan sekitar tiga bulan setelah Hb normal untuk mengisi cadangan, sambil menilai serta menangani penyebab haid banyak. Rujuk bila tidak respons, anemia berat/gejala tidak stabil, perdarahan mencurigakan, atau perlu evaluasi ginekologi lanjut.',
-    panduanResmi: 'PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. NICE NG88 menguatkan bahwa haid banyak perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.',
+    panduanResmi: 'PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. ACOG menegaskan bahwa perdarahan uterus abnormal perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.',
     catatanRealita: 'Ferritin tidak dijadikan tombol wajib karena tidak selalu tersedia di Puskesmas. CBC dan pola klinis memulai tata laksana; ferritin atau pemeriksaan lain diatur melalui jejaring bila diagnosis meragukan atau respons tidak memadai. Episode baru selesai bila sumber perdarahan, toleransi obat, dan kenaikan Hb ikut ditindaklanjuti.',
   }),
 
