@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-07-28T09:45:56.878Z",
-  "sourceCommit": "320979516a55e94916a25d0157c2c1058180a688",
-  "artifactFingerprint": "aeef67707e680414e1dbf3020f95ba5078ee09486c762b4320ecbc29647b6f2c",
-  "packFingerprint": "541d47bf",
-  "contentRelease": "clinical-provenance-2026-07-28",
-  "engineRevision": 61,
+  "generatedAt": "2026-08-01T01:09:21.401Z",
+  "sourceCommit": "aeb76949201879994c3332a3cd010de92cb1e7ba+dirty",
+  "artifactFingerprint": "8deb31078dd0231bc55a01c89d6cc503c11486b66488c5618c391ed0c2c212ca",
+  "packFingerprint": "2b073677",
+  "contentRelease": "gameplay-comfort-2026-08-01",
+  "engineRevision": 62,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -150,7 +150,7 @@
       },
       "currentEditorial": {
         "clue": "Benturan energi rendah dengan hematoma kecil, nyeri hanya saat ditekan, GCS E4 V5 M6, dan tanpa gejala neurologis mendukung cedera superfisial kulit kepala, bukan otomatis konkusi. Ulangi GCS per komponen, pupil, gejala, dan defisit sebelum pulang. Parasetamol boleh diberikan bila perlu, tetapi bukan syarat kelulusan. Jangan lakukan foto polos kepala atau CT rutin pada pasien yang benar-benar berisiko rendah. Rujuk untuk evaluasi CT bila GCS menurun, muncul muntah, kejang, defisit, tanda fraktur, sakit kepala menetap atau dominan, amnesia atau pingsan, koagulopati, antikoagulan/antiplatelet bermakna, intoksikasi, mekanisme berbahaya, atau observasi dan akses kembali tidak aman.",
-        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala. PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. NICE NG232 lebih konservatif di layanan komunitas: sakit kepala persisten, setiap muntah, pingsan/amnesia, antikoagulan atau antiplatelet tertentu, dan ketidakamanan pengawasan memicu evaluasi rumah sakit. Kasus dewasa ini sengaja tidak memiliki satu pun fitur tersebut; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.",
+        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala. PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. ACEP 2023 mendukung penggunaan alat keputusan tervalidasi untuk CT selektif dan kehati-hatian khusus pada antikoagulan atau antiplatelet. Kasus dewasa ini sengaja tidak memiliki fitur risiko; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.",
         "realityNote": "Sukamaju mampu melakukan observasi serial neurologis tetapi tidak memiliki CT. Pasien tanpa indikasi imaging dapat pulang setelah kondisi stabil dan pengawasan rumah dipastikan. Bila satu red flag muncul, observasi berkepanjangan di FKTP bukan pengganti CT atau evaluasi rumah sakit.",
         "ebmPearl": "GCS 15 tidak sendirian membuktikan aman; keputusan lahir dari mekanisme, gejala, obat, komorbid, pemeriksaan serial, dan keamanan pulang. Sebaliknya, benturan kepala tidak otomatis berarti konkusi atau membutuhkan CT. Pasien tanpa gejala konkusi tidak memerlukan bed rest berkepanjangan, tetapi sebaiknya menghindari berkendara dan aktivitas berisiko benturan ulang pada hari kejadian. Bila gejala konkusi muncul, gunakan istirahat relatif singkat selama satu sampai dua hari lalu naikkan aktivitas secara bertahap sesuai toleransi."
       },
@@ -181,15 +181,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-head-injury-ng232",
+              "sourceId": "acep-mtbi-2023",
               "relation": "direct",
-              "title": "Head injury: assessment and early management (NG232)",
-              "authority": "National Institute for Health and Care Excellence",
+              "title": "Clinical Policy: Mild Traumatic Brain Injury",
+              "authority": "American College of Emergency Physicians",
               "year": 2023,
-              "officialUrl": "https://www.nice.org.uk/guidance/NG232/chapter/recommendations",
-              "population": "Babies, children, young people, and adults with head injury",
-              "facilityScope": "Community referral thresholds, adult CT criteria, serial neurological assessment, safe discharge, 24-hour supervision, written advice, and return to activity.",
-              "locator": "Recommendations 1.2.4, 1.5.8-1.5.13, and 1.10.1-1.10.11: community referral and CT thresholds, anticoagulant/antiplatelet nuance, serial assessment, competent home supervision for 24 hours, written danger signs, and return-to-activity advice."
+              "officialUrl": "https://www.acep.org/siteassets/new-pdfs/clinical-policies/mtbi2023.pdf",
+              "population": "Adults presenting to emergency care with mild traumatic brain injury",
+              "facilityScope": "Risk stratification, selective CT, anticoagulant and antiplatelet considerations, safe discharge, written advice, and follow-up.",
+              "locator": "Adult mTBI recommendations: use validated decision tools for selective CT, account for anticoagulant or antiplatelet therapy, and provide written danger signs plus follow-up instructions at discharge."
             },
             {
               "sourceId": "cdc-mild-tbi-2025",
@@ -1015,7 +1015,7 @@
       },
       "currentEditorial": {
         "clue": "Jejas setang, defans, nyeri bahu kiri tanpa cedera bahu, takikardia, hipotensi, dan perfusi buruk menunjukkan trauma abdomen tumpul dengan perdarahan internal. Jalankan <C>ABCDE sambil mengaktifkan rujukan. Beri oksigen terkontrol karena ada syok meski SpO2 awal 97%. Pasang satu akses IV besar; tambah akses kedua hanya bila tidak menunda keberangkatan. Beri kristaloid hangat 250 mL lalu nilai ulang. Tanpa bukti cedera otak atau spinal, jangan mengejar normotensi; sasaran sementara SBP sekitar 80-90 mmHg. Berikan asam traneksamat 1 g IV selama 10 menit, yaitu dua ampul 500 mg, secepatnya dan dalam tiga jam; dosis lanjutan diteruskan jejaring. Puasakan, cegah hipotermia, pantau serial, pra-notifikasi, dan transfer segera. FAST, Hb serial, dan golongan darah boleh dikerjakan paralel bila siap, tetapi tidak mendapat skor dan tidak boleh menjadi prasyarat atau menahan ambulans.",
-        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detail menjadi kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal, TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, serta pencegahan hipotermia. NICE NG39 menegaskan imaging minimum pada pasien tidak stabil dan TXA dini tanpa menunda transfer.",
+        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detailnya: kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal. Selain itu: TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, pencegahan hipotermia, serta pemeriksaan minimum yang tidak menunda kendali perdarahan.",
         "realityNote": "Profil Sukamaju menyediakan oksigen, oksimeter nadi, akses IV, kristaloid hangat, TXA 1 g (dua ampul 500 mg), selimut, termometer, dan ambulans. FAST dengan operator, Hb cepat, golongan darah ABO, produk darah, dan kendali sumber tidak diasumsikan tersedia; semuanya BUKAN prasyarat transfer. Karena skema belum mengenal pemeriksaan opsional, FAST/Hb/ABO tidak menjadi tombol bernilai atau alasan menahan transport.",
         "ebmPearl": "Nilai perdarahan trauma dari gabungan fisiologi, pola cedera, mekanisme, dan respons terhadap tindakan, bukan satu kelas syok atau satu angka. Shock index pasien ini sekitar 1,33 dan mendukung risiko tinggi, tetapi bukan pengganti penilaian klinis. Hb awal dapat tetap normal pada perdarahan bermakna, sedangkan satu Hb rendah dipengaruhi nilai dasar, perpindahan cairan, dan resusitasi; ia tidak mengukur volume atau kecepatan perdarahan sendirian. FAST berspesifisitas tinggi tetapi sensitivitasnya terbatas: hasil negatif tidak menyingkirkan cedera atau hemoperitoneum. Pada pasien tidak stabil, pemeriksaan hanya bernilai bila berjalan paralel dan langsung membantu kendali perdarahan tanpa menunda transfer."
       },
@@ -1067,17 +1067,6 @@
               "population": "Adults with major traumatic bleeding or risk of significant traumatic bleeding",
               "facilityScope": "Rapid transfer and bleeding control, physiologic assessment, restrictive crystalloid resuscitation, TXA, temperature management, imaging, and limits of a single haemoglobin value.",
               "locator": "Recommendations 1, 5, 8, 9, 13, 15, 18, and 23: minimise time to haemorrhage control; integrate physiology, anatomy, mechanism, and response; do not let ultrasound delay transport; use serial rather than isolated Hb; apply restrictive warmed crystalloid, prevent hypothermia, and give TXA within three hours."
-            },
-            {
-              "sourceId": "nice-major-trauma-ng39",
-              "relation": "direct",
-              "title": "Major trauma: assessment and initial management (NG39)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2016,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng39/chapter/Recommendations",
-              "population": "Children, young people, and adults with major trauma",
-              "facilityScope": "Pre-hospital and emergency assessment, TXA, haemorrhage control, restrictive imaging in instability, transfer, and definitive care.",
-              "locator": "Recommendations on haemorrhage protocols, early TXA for active or suspected active bleeding, minimum imaging in haemodynamic instability, and immediate transfer to a major-trauma service."
             },
             {
               "sourceId": "anzcor-oxygen-emergencies-2026",
@@ -2334,17 +2323,6 @@
               "population": "Adults, adolescents, children, and pregnant or breastfeeding people living with HIV",
               "facilityScope": "Optimized antiretroviral regimens, vertical-transmission prevention, and tuberculosis prevention within public-health HIV programmes.",
               "locator": "Updated clinical-management recommendations retain optimized dolutegravir-based ART and integrate tuberculosis prevention and reproductive considerations within longitudinal HIV care."
-            },
-            {
-              "sourceId": "who-hiv-dtg-all-populations-2019",
-              "relation": "direct",
-              "title": "WHO recommends dolutegravir as preferred HIV treatment option in all populations",
-              "authority": "World Health Organization",
-              "year": 2019,
-              "officialUrl": "https://www.who.int/news/item/22-07-2019-who-recommends-dolutegravir-as-preferred-hiv-treatment-option-in-all-populations",
-              "population": "People living with HIV, including pregnant women and women of childbearing potential",
-              "facilityScope": "Preferred first- and second-line dolutegravir use with informed discussion of benefits and potential risks.",
-              "locator": "WHO explicitly recommends dolutegravir as preferred first- and second-line treatment for all populations, including pregnant women and women of childbearing potential, with informed choice."
             },
             {
               "sourceId": "who-hiv-service-2026",
@@ -4734,7 +4712,7 @@
       },
       "currentEditorial": {
         "clue": "Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan SpO2 84% mendukung edema paru akut hipertensif. Dudukkan, titrasi oksigen, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, pantau tekanan darah dan respons, lalu transfer segera. ISDN sublingual hanya opsi jembatan bila protokol lokal mengizinkan, tekanan darah dipantau, dan tidak ada kontraindikasi; satu tablet bukan pengganti nitrat intravena terpantau di layanan akut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Bab gagal jantung akut PPK 1186/2022 menjadi floor terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. NICE CG187 rekomendasi 1.3.2-1.3.8 mendukung diuretik intravena dan melarang opiat rutin; nitrat tidak diberikan rutin dan bila dipakai untuk hipertensi berat memerlukan pemantauan tekanan darah di layanan dengan kapabilitas memadai.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Bab gagal jantung akut PPK 1186/2022 menjadi floor terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. ESC 2021 dengan focused update 2023 mendukung diuretik intravena untuk kongesti; vasodilator hanya untuk presentasi terpilih seperti hipertensi berat dengan pemantauan tekanan darah dan kapabilitas yang memadai.",
         "realityNote": "Vignette ini menyatakan oksigen, pulse oximeter, furosemid injeksi, akses IV, EKG beserta operator, monitoring, dan transport sedang ready. EKG dilakukan paralel dan tidak boleh menunda transfer. CPAP/nitrat intravena tidak diasumsikan tersedia di Sukamaju; ketiadaannya tidak boleh menunda stabilisasi feasible dan transfer."
       },
       "evidence": {
@@ -4790,15 +4768,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-acute-heart-failure-cg187",
+              "sourceId": "esc-heart-failure-2023",
               "relation": "direct",
-              "title": "Acute heart failure: diagnosis and management (CG187)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2021,
-              "officialUrl": "https://www.nice.org.uk/guidance/cg187/chapter/recommendations",
+              "title": "2021 Heart Failure Guideline with 2023 Focused Update",
+              "authority": "European Society of Cardiology",
+              "year": 2023,
+              "officialUrl": "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/focused-update-on-heart-failure/",
               "population": "Adults with suspected or confirmed acute heart failure",
-              "facilityScope": "Hospital acute care; used with the Indonesian FKTP floor to define pre-referral treatment and what requires monitored specialist care.",
-              "locator": "Recommendations 1.3.2-1.3.8: avoid routine opiates, give intravenous diuretic therapy, monitor response, and reserve nitrates for selected monitored circumstances such as severe hypertension."
+              "facilityScope": "Acute and chronic heart-failure care; used with the Indonesian FKTP floor to define pre-referral treatment and monitored specialist care.",
+              "locator": "Acute heart-failure pathway in the 2021 guideline, read with the 2023 update: oxygen only for hypoxaemia, intravenous loop diuretic for congestion, vasodilator in selected hypertensive presentations, close monitoring, and urgent escalation."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -4981,7 +4959,7 @@
       },
       "currentEditorial": {
         "clue": "GAGAL JANTUNG DEKOMPENSASI AKUT (SKDI 3B - RUJUK): sesak progresif, ortopnea tiga bantal, paroxysmal nocturnal dyspnoea, kenaikan berat 4 kg, JVP meningkat, gallop S3, ronki basal, hepatomegali, dan edema perifer sudah cukup menegakkan kongesti secara klinis. Pencetusnya adalah penghentian diuretik dan beban garam. Di FKTP: posisikan setengah duduk, titrasi oksigen karena SpO2 89%, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, monitor, dan rujuk. Jangan memulai beta-blocker baru sebelum stabil; jangan pula menghentikan terapi beta-blocker lama secara otomatis tanpa syok, bradikardia berat, atau blok.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memerinci oksigen, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. NICE CG187 rekomendasi 1.3.3-1.3.5 menguatkan diuretik intravena dengan pemantauan fungsi ginjal, berat, dan diuresis; rekomendasi 1.5.1-1.5.3 membedakan kelanjutan beta-blocker lama dari inisiasi atau restart setelah stabil.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memerinci oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. ESC 2021 dengan focused update 2023 menguatkan diuretik intravena untuk kongesti, pemantauan respons dan fungsi ginjal, pencarian pencetus, serta penyesuaian terapi kronik menurut stabilitas hemodinamik.",
         "realityNote": "Vignette menyatakan oksigen, pulse oximeter, EKG, furosemid injeksi, akses IV, monitoring, dan transport ready. Rontgen tidak tersedia onsite; diagnosis klinis, stabilisasi, dan transfer tidak menunggu foto. Bila injeksi kosong, jangan menyatakan furosemid oral setara atau mengarang substitusi: kerjakan stabilisasi yang feasible, komunikasikan keterbatasan, dan percepat transfer.",
         "ebmPearl": "Kenaikan berat badan 4 kg dalam seminggu adalah tanda kongesti paling awal dan paling murah — muncul jauh sebelum sesak, dan hanya butuh timbangan. Sebaliknya, tungkai yang \"tidak terlalu bengkak\" menyesatkan: pasien bisa menahan 4-5 liter cairan sebelum edema tampak nyata, sehingga edema ringan tidak berarti kongesti ringan."
       },
@@ -5040,15 +5018,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-acute-heart-failure-cg187",
+              "sourceId": "esc-heart-failure-2023",
               "relation": "direct",
-              "title": "Acute heart failure: diagnosis and management (CG187)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2021,
-              "officialUrl": "https://www.nice.org.uk/guidance/cg187/chapter/recommendations",
+              "title": "2021 Heart Failure Guideline with 2023 Focused Update",
+              "authority": "European Society of Cardiology",
+              "year": 2023,
+              "officialUrl": "https://www.escardio.org/guidelines/clinical-practice-guidelines/all-esc-practice-guidelines/focused-update-on-heart-failure/",
               "population": "Adults with suspected or confirmed acute heart failure",
-              "facilityScope": "Hospital acute care; used with the Indonesian FKTP floor to define pre-referral treatment and what requires monitored specialist care.",
-              "locator": "Recommendations 1.3.3-1.3.5 and 1.5.1-1.5.3: intravenous diuresis with monitoring; continue established beta-blocker unless specific instability exists, but start or restart only after stabilization."
+              "facilityScope": "Acute and chronic heart-failure care; used with the Indonesian FKTP floor to define pre-referral treatment and monitored specialist care.",
+              "locator": "Acute heart-failure pathway in the 2021 guideline, read with the 2023 update: treat congestion with monitored intravenous diuresis, identify precipitants, and individualize continuation or temporary interruption of chronic therapy according to haemodynamic stability."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -7359,7 +7337,7 @@
       },
       "currentEditorial": {
         "clue": "Perdarahan jalan lahir merah segar, mendadak, dan tanpa nyeri pada kehamilan lanjut dengan riwayat seksio berulang sangat mencurigakan plasenta previa. Jangan lakukan vaginal toucher digital sebelum previa disingkirkan dengan pencitraan. Pemeriksaan spekulum berbeda: oleh klinisi terlatih dapat membantu menilai jumlah/sumber perdarahan traktus bawah dan tidak dilarang secara kategoris, tetapi tidak boleh dipaksakan atau menunda transfer. Tugas FKTP pada episode ini ialah menilai ABC, pasang akses intravena, pantau ibu dan denyut jantung janin, hubungi RS, dan rujuk dengan dokumentasi bahwa VT digital tidak dilakukan. USG bermanfaat bila segera tersedia, bukan prasyarat untuk merujuk perdarahan antepartum.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik plasenta previa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat tata laksana previa. RCOG Green-top 27a edisi kelima 2026 menjadi sumber diagnosis/manajemen langsung; NICE NG201 mendukung pelokalan plasenta dan penilaian sekunder untuk perdarahan tidak terjelaskan setelah 13 minggu. Larangan utamanya ialah vaginal toucher digital sampai previa disingkirkan, bukan larangan universal terhadap spekulum.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik plasenta previa, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat tata laksana previa. RCOG Green-top 27a edisi kelima 2026 menjadi sumber diagnosis dan manajemen langsung, termasuk pelokalan plasenta serta tata laksana perdarahan. Larangan utamanya ialah vaginal toucher digital sampai previa disingkirkan, bukan larangan universal terhadap spekulum.",
         "realityNote": "Pada profil Sukamaju, USG obstetri adalah layanan terjadwal/berbagi, bukan kemampuan yang diasumsikan selalu siap. Bila perdarahan datang saat alat atau operator tidak tersedia, keputusan aman tetap stabilisasi dan transfer berdasarkan gambaran klinis; pencitraan lokal tidak boleh menjadi antrean wajib.",
         "ebmPearl": "Perdarahan tanpa nyeri tidak menenangkan; pola itu justru mendukung plasenta previa. Sebaliknya, solusio plasenta lebih sering menimbulkan nyeri dan uterus tegang. Pada solusio, darah dapat tertahan di belakang plasenta sehingga perdarahan yang tampak sedikit tidak mencerminkan beratnya syok. Karena itu, jangan menilai keparahan hanya dari isi pembalut. Plasenta letak rendah pada trimester dua memang sering bergeser ke atas, tetapi riwayat seksio berulang meningkatkan risiko previa menetap dan perlekatan abnormal. Temuan tersebut mengubah perencanaan persalinan dan perlu dinilai di layanan obstetri."
       },
@@ -7388,17 +7366,6 @@
               "population": "Pregnancies complicated by placenta praevia or placenta accreta spectrum",
               "facilityScope": "Diagnostic imaging and specialist obstetric management; FKTP use is recognition, stabilization, and referral.",
               "locator": "Diagnosis and management of placenta praevia, antepartum haemorrhage risk, placental localization, and specialist obstetric care."
-            },
-            {
-              "sourceId": "nice-antenatal-ng201",
-              "relation": "related",
-              "title": "Antenatal care (NG201)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2021,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng201/chapter/Recommendations",
-              "population": "Pregnant women receiving routine or additional antenatal care",
-              "facilityScope": "Antenatal assessment, placental localization, referral, and communication across care settings.",
-              "locator": "Recommendations 1.2.15 and 1.4.23-1.4.24: placental localization and secondary-care review for unexplained bleeding after 13 weeks."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -7824,7 +7791,7 @@
       },
       "currentEditorial": {
         "clue": "Perempuan usia reproduktif dengan nyeri perut/panggul harus dinilai kemungkinan hamil meski gejalanya tidak khas. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, hipotensi, takikardia, dan tanda peritoneal berarti suspek kehamilan ektopik terganggu dengan syok. Tugas FKTP: panggil jejaring emergensi, lakukan ABCDE, pasang akses intravena dan berikan kristaloid terukur sambil menilai respons, puasakan, pantau ketat, lalu transfer segera ke fasilitas bedah-obstetri. Jangan menunggu USG atau beta-hCG serial pada pasien tidak stabil. Oksigen diberikan terkontrol bila hipoksemia atau gangguan respirasi muncul; SpO2 98% udara ruangan bukan alasan menjadikannya tindakan wajib.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. NICE NG126 (diperbarui 2026) menjadi sumber langsung: pasien tidak stabil atau dengan kekhawatiran bermakna atas nyeri/perdarahan dirujuk langsung; setiap layanan yang menilai perempuan usia reproduktif perlu akses tes kehamilan. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. HSE National Clinical Practice Guideline 2024 menjadi sumber langsung untuk pengenalan, penilaian stabilitas, jalur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.",
         "realityNote": "Di Sukamaju, tes kehamilan dan kristaloid adalah sumber daya inti, sedangkan USG obstetri bersifat terjadwal/berbagi dan ambulans dapat sedang bertugas. Keterbatasan itu tidak mengubah keputusan: gambaran syok dengan tes kehamilan positif memicu stabilisasi paralel dan transfer, bukan antrean USG atau pemeriksaan tambahan yang menunda.",
         "ebmPearl": "Bercak darah yang sedikit dapat menipu karena perdarahan utama pada ektopik terganggu dapat tersembunyi di rongga perut. Tes kehamilan positif juga tidak membuktikan lokasi intrauterin, dan struktur intrauterin dapat berupa kantong semu. Tes urine negatif menurunkan kemungkinan kehamilan yang sedang berlangsung, tetapi hasil tunggal tidak boleh mengalahkan penilaian syok atau kecurigaan klinis sangat tinggi; fokus pedagogisnya adalah selalu mempertimbangkan dan menguji kehamilan, lalu bertindak menurut stabilitas pasien."
       },
@@ -7844,15 +7811,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-ectopic-ng126-2026",
+              "sourceId": "hse-ectopic-pregnancy-2024",
               "relation": "direct",
-              "title": "Ectopic pregnancy and miscarriage: diagnosis and initial management (NG126)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2026,
-              "officialUrl": "https://www.nice.org.uk/guidance/NG126/chapter/symptoms-and-signs-of-ectopic-pregnancy-and-initial-assessment",
-              "population": "People with pain, bleeding, or other possible complications in early pregnancy",
-              "facilityScope": "Initial assessment, immediate referral, pregnancy testing, and specialist early-pregnancy pathways.",
-              "locator": "Recommendations 1.4.1 and 1.4.5-1.4.7: immediate transfer when unstable; pregnancy testing and immediate specialist assessment for a positive test with pain/tenderness."
+              "title": "National Clinical Practice Guideline: Diagnosis and Management of Ectopic Pregnancy",
+              "authority": "Health Service Executive Ireland and Institute of Obstetricians and Gynaecologists",
+              "year": 2024,
+              "officialUrl": "https://www.hse.ie/eng/about/who/acute-hospitals-division/woman-infants/clinical-guidelines/the-diagnosis-and-management-of-ectopic-pregnancy-2024-.pdf",
+              "population": "People with suspected or confirmed ectopic pregnancy",
+              "facilityScope": "Recognition, diagnostic pathways, immediate stabilization, transfer, and definitive specialist management.",
+              "locator": "Recognition and emergency-management sections: assess stability immediately, consider ectopic pregnancy in early-pregnancy pain or bleeding, begin resuscitation when needed, and arrange urgent specialist transfer."
             },
             {
               "sourceId": "who-basic-emergency-care-2018",
@@ -15488,7 +15455,7 @@
       },
       "currentEditorial": {
         "clue": "Anemia mikrositik-hipokrom dengan RDW meningkat dan haid banyak sangat mendukung defisiensi besi, tetapi terapi tidak boleh berhenti pada tablet Fe. Beri sekitar 60 mg besi elemental sekali sehari; bila tidak toleran, regimen selang sehari dapat dipertimbangkan. Nilai kenaikan Hb dalam 2-4 minggu dan lanjutkan sekitar tiga bulan setelah Hb normal untuk mengisi cadangan, sambil menilai serta menangani penyebab haid banyak. Rujuk bila tidak respons, anemia berat/gejala tidak stabil, perdarahan mencurigakan, atau perlu evaluasi ginekologi lanjut.",
-        "officialGuidance": "PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. NICE NG88 menguatkan bahwa haid banyak perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.",
+        "officialGuidance": "PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. ACOG menegaskan bahwa perdarahan uterus abnormal perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.",
         "realityNote": "Ferritin tidak dijadikan tombol wajib karena tidak selalu tersedia di Puskesmas. CBC dan pola klinis memulai tata laksana; ferritin atau pemeriksaan lain diatur melalui jejaring bila diagnosis meragukan atau respons tidak memadai. Episode baru selesai bila sumber perdarahan, toleransi obat, dan kenaikan Hb ikut ditindaklanjuti."
       },
       "evidence": {
@@ -15546,15 +15513,15 @@
               "locator": "Treatment recommendations: one tablet daily, alternate-day dosing when not tolerated, monitor Hb response within the first four weeks, and continue around three months after Hb normalizes."
             },
             {
-              "sourceId": "nice-hmb-ng88",
+              "sourceId": "acog-aub-2013",
               "relation": "related",
-              "title": "Heavy menstrual bleeding: assessment and management (NG88)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2025,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng88/chapter/Recommendations",
-              "population": "Women and people who menstruate with heavy menstrual bleeding",
-              "facilityScope": "History, full blood count, cause-oriented assessment, treatment choices, and referral pathways.",
-              "locator": "Recommendations 1.2.1-1.2.7: characterize heavy menstrual bleeding, obtain a full blood count, and investigate or treat the bleeding cause in parallel with anaemia care."
+              "title": "Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women",
+              "authority": "American College of Obstetricians and Gynecologists",
+              "year": 2013,
+              "officialUrl": "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women",
+              "population": "Nonpregnant reproductive-aged patients with acute abnormal uterine bleeding",
+              "facilityScope": "Initial stability assessment, cause-oriented history and testing, medical treatment, and criteria for procedural or specialist escalation.",
+              "locator": "Evaluation sections: characterize abnormal uterine bleeding, assess haemodynamic stability and anaemia, classify likely causes, and investigate or treat the bleeding source in parallel with iron replacement."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -15705,7 +15672,7 @@
       },
       "currentEditorial": {
         "clue": "ANEMIA DEFISIENSI BESI BERAT SIMPTOMATIK AKIBAT PERDARAHAN KRONIK (SKDI 3B - RUJUK): Hb 5,8 g/dL disertai sesak aktivitas minimal, takikardia, presinkop, pika, koilonikia, dan haid sangat banyak membuat defisiensi besi akibat perdarahan uterus kronik sangat mungkin. Tes kehamilan tetap wajib; perdarahan tidak membuktikan seseorang tidak hamil. PPK menetapkan Hb <7 g/dL sebagai indikasi transfusi dan gejala sebagai alasan rujuk tanpa menunggu ambang. Di Sukamaju, rujuk hari yang sama untuk penilaian transfusi dan penyebab perdarahan. Tablet Fe dapat dimulai bila tidak menunda transfer, tetapi tidak menggantikan darah bila tim RS menilainya perlu dan tidak menutup sumber perdarahan.",
-        "officialGuidance": "PPK 1186/2022 bab anemia defisiensi besi adalah floor langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. NICE NG88 meminta hitung darah lengkap pada heavy menstrual bleeding tetapi tidak menganjurkan ferritin rutin; evaluasi penyebab dan pilihan terapi mengikuti stabilitas, preferensi, kontrasepsi, serta kebutuhan fertilitas.",
+        "officialGuidance": "PPK 1186/2022 bab anemia defisiensi besi adalah floor langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. ACOG menempatkan stabilitas hemodinamik, derajat anemia, pola perdarahan, dan etiologi sebagai dasar evaluasi serta pilihan terapi perdarahan uterus abnormal.",
         "realityNote": "Sukamaju dapat mengulang Hb dan tes kehamilan; darah lengkap terjadwal, sedangkan ferritin/retikulosit memakai jejaring. Hb 5,8 dengan gejala tidak menunggu pemeriksaan lanjutan itu. Rujukan harus membawa pola perdarahan, kontrasepsi, tanda vital, Hb, hasil tes kehamilan, dan terapi yang sudah diberikan.",
         "ebmPearl": "Pasien masih bisa berjalan sendiri ke Puskesmas dan tekanan darahnya normal — dua hal yang membuat Hb 5,8 terasa \"tidak segawat angkanya\". Itu jebakan adaptasi anemia kronik: tubuh menaikkan curah jantung dan menggeser kurva disosiasi oksigen selama berbulan-bulan, sehingga tanda vital tetap tenang sampai cadangan itu habis mendadak. Perhatikan juga SpO2 98% yang tampak menenangkan — saturasi hanya mengukur PERSEN hemoglobin yang terisi oksigen, bukan berapa banyak hemoglobin yang ada. Pada Hb 5,8, saturasi 98% berarti hampir seluruh dari sangat sedikit itu terisi penuh, dan pasien tetap kekurangan oksigen."
       },
@@ -15763,15 +15730,15 @@
               "locator": "Recommendation 1 and good-practice statement: for hemodynamically stable hospitalized adults, consider transfusion below 7 g/dL while incorporating symptoms, comorbidity, alternatives, and overall context."
             },
             {
-              "sourceId": "nice-heavy-menstrual-bleeding-ng88",
+              "sourceId": "acog-aub-2013",
               "relation": "direct",
-              "title": "Heavy menstrual bleeding: assessment and management (NG88)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2021,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng88/chapter/Recommendations",
-              "population": "Women of reproductive age with heavy menstrual bleeding",
-              "facilityScope": "History, full blood count, selective testing, cause-directed investigation, treatment choices, and specialist referral.",
-              "locator": "Recommendations 1.2.1-1.2.10 and 1.3: assess bleeding impact and cause, obtain a full blood count, avoid routine ferritin testing, and select further investigation/referral from history, examination, severity, and patient goals."
+              "title": "Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women",
+              "authority": "American College of Obstetricians and Gynecologists",
+              "year": 2013,
+              "officialUrl": "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women",
+              "population": "Nonpregnant reproductive-aged patients with acute abnormal uterine bleeding",
+              "facilityScope": "Initial stability assessment, cause-oriented history and testing, medical treatment, and criteria for procedural or specialist escalation.",
+              "locator": "Initial assessment and management: determine haemodynamic stability, evaluate anaemia and bleeding cause, and choose medical, procedural, or specialist treatment according to severity, contraindications, and patient goals."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -16915,7 +16882,7 @@
       },
       "currentEditorial": {
         "clue": "SUSPEK PENYAKIT GRAVES DENGAN TIROTOKSIKOSIS (SKDI 3A - RUJUK): berat turun meski makan bertambah, berdebar, tremor, intoleransi panas, tekanan nadi lebar, gondok difus dengan bruit, dan tanda mata tiroid membuat Graves sangat mungkin. Namun diagnosis biokimia tidak boleh dikunci oleh gejala atau TSH tunggal: TSH rendah perlu FT4/FT3, lalu TRAb membantu mengonfirmasi Graves. Di FKTP, propranolol dapat meredakan gejala adrenergik setelah memastikan tidak ada asma/mengi, bradikardia, atau kontraindikasi lain. Jangan memulai PTU secara ad hoc tanpa menilai kehamilan, hitung darah/fungsi hati, dosis, monitoring, dan jalur tindak lanjut. Rujuk untuk konfirmasi serta pemilihan terapi; penurunan visus/warna, diplopia baru, nyeri gerak mata, aritmia, gagal jantung, atau demam-bingung mempercepat urgensi.",
-        "officialGuidance": "PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi floor terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. NICE NG145 (diperbarui 2023, ditinjau 2025) memperjelas bahwa TSH rendah harus diikuti FT4 dan FT3, TRAb dipakai untuk mengonfirmasi Graves, dan hitung darah serta fungsi hati diperiksa sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.",
+        "officialGuidance": "PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi floor terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. ATA 2016 tetap menjadi guideline aktif untuk menegakkan tirotoksikosis, memastikan etiologi Graves, mengendalikan gejala secara aman, dan menilai keamanan sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.",
         "realityNote": "Profil Sukamaju tidak mengasumsikan TSH/FT4/FT3 siap di tempat; hasil hormon dan TRAb diperoleh lewat jejaring. Ketiadaan tes hari itu tidak menghalangi pengenalan klinis, skrining kontraindikasi propranolol, konseling tanda bahaya, dan rujukan. Obat antitiroid baru dimulai melalui protokol yang menjamin pemeriksaan awal serta tindak lanjut.",
         "ebmPearl": "Berdebar, gelisah, tremor, dan berat turun mudah dilabeli gangguan cemas. Gondok difus dengan bruit dan tanda mata tiroid menggeser probabilitas kuat ke Graves, tetapi tetap tidak menggantikan FT4/FT3 dan penetapan etiologi. GDS normal sewaktu juga tidak “menyingkirkan diabetes”; karena itu tes tersebut tidak lagi dijadikan pengunci diagnosis di kasus ini."
       },
@@ -16952,15 +16919,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-thyroid-ng145-2023",
+              "sourceId": "ata-hyperthyroidism-2016",
               "relation": "direct",
-              "title": "Thyroid disease: assessment and management (NG145)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2023,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng145/chapter/Recommendations",
-              "population": "Adults, children, and young people with suspected or confirmed primary thyroid disease; pregnancy is outside scope",
+              "title": "Guidelines for Diagnosis and Management of Hyperthyroidism and Other Causes of Thyrotoxicosis",
+              "authority": "American Thyroid Association",
+              "year": 2016,
+              "officialUrl": "https://www.thyroid.org/professionals/ata-professional-guidelines/",
+              "population": "Adults with suspected or confirmed hyperthyroidism or thyrotoxicosis; pregnancy requires separate guidance",
               "facilityScope": "Primary/non-specialist testing and initial treatment, etiologic confirmation, definitive-care options, and monitoring.",
-              "locator": "Recommendations 1.2.8, 1.6.1, 1.6.5-1.6.6, and 1.6.21: cascade a low TSH to FT4/FT3, use TRAb to confirm Graves, provide safe initial symptom control, and obtain FBC/LFT before antithyroid treatment."
+              "locator": "Diagnostic and Graves-disease recommendations: confirm biochemical thyrotoxicosis, establish etiology, use beta blockade for appropriate symptom control, and perform baseline safety assessment before antithyroid treatment."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -20418,8 +20385,8 @@
       },
       "currentEditorial": {
         "clue": "Hematemesis coffee-ground, melena, hipotensi, dan takikardia menunjukkan perdarahan GI atas dengan instabilitas hemodinamik. Stabilkan ABC, pasang akses IV besar dan berikan kristaloid secara terukur dengan penilaian ulang, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan ibuprofen, lalu transfer untuk endoskopi setelah resusitasi awal. Jangan menunggu Hb, golongan darah, NGT, atau bilas lambung rutin untuk berangkat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. NICE CG141 meminta endoskopi segera setelah resusitasi pada perdarahan berat yang tidak stabil. ACG 2021 dan ESGE 2021 mendukung stratifikasi risiko serta endoskopi dalam 24 jam. Bilas lambung rutin tidak boleh menahan transfer.",
-        "realityNote": "PNPK 2162/2023 menganjurkan PPI pra-endoskopi, sedangkan NICE CG141 tidak. Karena stok IV, dosis, dan protokol tidak diasumsikan ready, PPI tidak dinilai wajib dan tidak boleh menunda transfer; omeprazol oral bukan pengganti akut saat pasien muntah dan NPO. Hb serta O+ adalah data handover, bukan crossmatch atau kesiapan transfusi; bila belum ada, tetap berangkat.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. ACG dan ESGE 2021 mendukung stratifikasi risiko, resusitasi, serta endoskopi dalam 24 jam setelah stabilisasi; perdarahan tidak stabil memerlukan kendali sumber lebih segera. Bilas lambung rutin tidak boleh menahan transfer.",
+        "realityNote": "PNPK 2162/2023 menganjurkan PPI pra-endoskopi. Karena stok IV, dosis, dan protokol tidak diasumsikan ready, PPI tidak dinilai wajib dan tidak boleh menunda transfer; omeprazol oral bukan pengganti akut saat pasien muntah dan NPO. Hb serta O+ adalah data handover, bukan crossmatch atau kesiapan transfusi; bila belum ada, tetap berangkat.",
         "ebmPearl": "Hb awal dapat belum mencerminkan seluruh kehilangan darah akut; keputusan resusitasi dan transfer mengikuti keadaan hemodinamik, bukan satu angka Hb. Glasgow-Blatchford membantu stratifikasi pra-endoskopi, tetapi hipotensi, takikardia, melena, sinkop, dan Hb 8,4 membuat pasien ini jelas bukan kelompok rawat jalan berisiko sangat rendah."
       },
       "evidence": {
@@ -20475,17 +20442,6 @@
         "ebm": {
           "status": "cocok",
           "sources": [
-            {
-              "sourceId": "nice-ugib-cg141",
-              "relation": "direct",
-              "title": "Acute upper gastrointestinal bleeding in over 16s: management (CG141)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2016,
-              "officialUrl": "https://www.nice.org.uk/guidance/cg141",
-              "population": "People aged 16 years and older with acute upper gastrointestinal bleeding",
-              "facilityScope": "Risk assessment, resuscitation, transfusion strategy, endoscopy timing, and hospital management.",
-              "locator": "Resuscitation and timing-of-endoscopy recommendations: unstable severe bleeding receives endoscopy immediately after optimal resuscitation."
-            },
             {
               "sourceId": "acg-ugib-2021",
               "relation": "direct",
@@ -21103,7 +21059,7 @@
       },
       "currentEditorial": {
         "clue": "Tidak bisa berkemih sejak semalam + buli teraba dan pekak suprapubik + riwayat pancaran melemah, mengejan, menetes, dan nokturia = retensi urin akut pada pembesaran prostat, kemungkinan dipicu obat flu antikolinergik. Bila alat dan operator siap serta tidak ada dugaan cedera uretra, lakukan satu upaya kateterisasi lembut untuk dekompresi, catat volume awal, lalu pantau diuresis dan rujuk penyebabnya. Mulai tamsulosin untuk meningkatkan peluang pelepasan kateter dan hentikan pencetus. Resistensi, darah di meatus, riwayat trauma pelvis/uretra, atau upaya gagal berarti berhenti dan transfer — bukan mengulang secara traumatik.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. NICE CG97 rekomendasi 1.7.1-1.7.2 meminta kateterisasi segera pada retensi akut dan penghambat alfa sebelum pelepasan kateter; penyebab tetap memerlukan penilaian spesialis.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. EAU 2026 menempatkan drainase kandung kemih tepat waktu, penilaian obstruksi dan komplikasi, serta tindak lanjut penyebab sebagai inti; retensi berulang atau refrakter memerlukan jejaring urologi.",
         "realityNote": "Untuk encounter ini Sukamaju menyatakan kateter Foley ukuran sesuai, jeli steril, urine bag, dan operator terlatih siap. Kesiapan itu bukan asumsi universal: bila alat/operator tidak ready atau satu upaya lembut gagal, dokumentasikan dan transfer tanpa manipulasi berulang. USG dan kreatinin tidak dijadikan prasyarat dekompresi atau rujuk.",
         "ebmPearl": "Dua ajaran klasik yang menyesatkan di sini. Pertama: \"kalau masih ada urine menetes berarti bukan retensi\" — justru sebaliknya, buli yang terlalu penuh sering merembes sedikit-sedikit (overflow), sehingga laporan \"masih keluar sedikit\" tidak menyingkirkan apa pun; buli yang teraba dan pekak suprapubik jauh lebih dapat dipercaya. Kedua: \"kosongkan buli bertahap, jangan lebih dari 500 mL sekaligus, nanti terjadi perdarahan dan syok\" — ini tidak didukung bukti. Pengosongan lengkap sekaligus terbukti sama amannya, dan menjepit kateter berkala hanya menunda pemulihan serta menambah risiko sumbatan. Yang benar-benar perlu dipantau adalah diuresis pasca-sumbatan (urine mengalir sangat banyak setelah kateter terpasang) pada retensi yang sudah kronis."
       },
@@ -21123,15 +21079,15 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "nice-acute-retention-cg97",
+              "sourceId": "eau-male-luts-2026",
               "relation": "direct",
-              "title": "Lower urinary tract symptoms in men: management (CG97)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2015,
-              "officialUrl": "https://www.nice.org.uk/guidance/cg97/chapter/recommendations",
+              "title": "Guidelines on the Management of Non-neurogenic Male Lower Urinary Tract Symptoms",
+              "authority": "European Association of Urology",
+              "year": 2026,
+              "officialUrl": "https://uroweb.org/guidelines/management-of-non-neurogenic-male-luts",
               "population": "Adult men with lower urinary tract symptoms, including acute urinary retention",
-              "facilityScope": "Immediate catheterisation, alpha-blocker before catheter removal, and specialist management of the cause.",
-              "locator": "Recommendations 1.7.1-1.7.2: immediately catheterise men with acute retention and offer an alpha blocker before removal of the catheter."
+              "facilityScope": "Diagnostic evaluation, timely bladder drainage, treatment of obstruction, and specialist management of recurrent or refractory retention.",
+              "locator": "Diagnostic and disease-management sections: relieve clinically important retention with bladder drainage, assess obstruction and complications, and escalate recurrent or refractory retention for specialist management."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -22105,7 +22061,7 @@
       },
       "currentEditorial": {
         "clue": "Prodrom pilek-batuk diikuti wheezing/ronki difus, retraksi, asupan kurang dari setengah, dan SpO2 menetap 89% mendukung bronkiolitis berat dengan hipoksemia. Mulai oksigen aliran rendah, pantau serial, dan rujuk segera. Jangan rutin memberi antibiotik, salbutamol, ipratropium, atau kortikosteroid; foto toraks dan pemeriksaan darah bukan prasyarat transfer. Suction hidung hanya bila sekret mengganggu napas atau minum.",
-        "officialGuidance": "PPK 1186/2022 tidak memiliki bab bronkiolitis diagnosis-spesifik; PNPK sepsis anak hanya memberi prinsip stabilisasi terkait. WHO 2026 menjadi acuan langsung terbaru untuk diagnosis klinis, kriteria rawat, selektivitas foto toraks, dan oksigen aliran rendah sebagai langkah awal. NICE NG9 melengkapi: pada bayi sehat usia lebih dari 6 minggu beri oksigen bila SpO2 menetap di bawah 90%, hindari antibiotik, salbutamol, ipratropium, dan kortikosteroid rutin, serta gunakan suction dan dukungan cairan secara selektif. WHO 2026 memberi opsi uji salin hipertonik secara kondisional dengan kepastian bukti rendah; di FKTP tindakan itu bukan kewajiban dan tidak dijadikan jebakan penilaian.",
+        "officialGuidance": "PPK 1186/2022 tidak memiliki bab bronkiolitis diagnosis-spesifik; PNPK sepsis anak hanya memberi prinsip stabilisasi terkait. WHO 2026 menjadi acuan langsung terbaru untuk diagnosis klinis, kriteria rawat, selektivitas foto toraks, oksigen aliran rendah, suction selektif, dan dukungan cairan. Antibiotik, salbutamol, ipratropium, serta kortikosteroid tidak digunakan rutin. WHO memberi opsi uji salin hipertonik secara kondisional dengan kepastian bukti rendah; di FKTP tindakan itu bukan kewajiban dan tidak dijadikan jebakan penilaian.",
         "realityNote": "Oksigen, pulse oximeter, petugas pemantau, dan transport dinyatakan siap. Suction hidung lembut hanya bila sekret menghambat napas atau minum. Jangan memaksa minum saat sesak berat. Bila asupan tetap tidak adekuat, jejaring dapat memakai cairan oral/NG-OG; cairan IV isotonik dipertimbangkan bila enteral tidak toleran atau ada ancaman gagal napas. Akses tidak boleh menunda transfer dan bukan izin bolus rutin."
       },
       "evidence": {
@@ -22156,17 +22112,6 @@
               "population": "Infants and children under 2 years with suspected or confirmed bronchiolitis",
               "facilityScope": "Diagnosis, admission criteria, imaging, oxygen escalation, and supportive care across primary and referral settings.",
               "locator": "Sections 6.1-6.6: good-practice statements for diagnosis and admission; Recommendation 1 on selective chest X-ray; Recommendation 2 remarks on standard low-flow oxygen first; Recommendation 3 on a conditional hypertonic-saline trial."
-            },
-            {
-              "sourceId": "nice-bronchiolitis-ng9",
-              "relation": "direct",
-              "title": "Bronchiolitis in children: diagnosis and management (NG9)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2021,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng9/chapter/Recommendations",
-              "population": "Babies and children under 2 years with bronchiolitis",
-              "facilityScope": "Primary-care referral and hospital management thresholds are stated separately.",
-              "locator": "Recommendations 1.2.1-1.2.3 and 1.4.3-1.4.12: referral, oxygen thresholds, treatments not used routinely, selective suction, and enteral/IV fluid support."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."
@@ -24332,7 +24277,7 @@
       },
       "currentEditorial": {
         "clue": "Gejala neurologis fokal mendadak yang pulih total, disertai gula darah normal, adalah suspek TIA atau stroke iskemik kecil dan tetap merupakan kegawatan. Setelah kontraindikasi disaring, berikan asetosal 320 mg dengan mengunyah empat tablet tidak bersalut 80 mg, lalu berangkat sekarang melalui jalur stroke agar penilaian spesialis berlangsung paling lambat 24 jam; jangan menunggu gejala kambuh dan jangan memakai ABCD2 untuk menurunkan urgensi. EKG menemukan fibrilasi atrium. Aspirin adalah terapi awal saat diagnosis sedang dipastikan, bukan pencegahan jangka panjang yang memadai untuk AF; pilihan dan waktu antikoagulasi ditentukan setelah evaluasi pencitraan, perdarahan, fungsi ginjal, dan etiologi. Jangan menurunkan tekanan darah mendadak dengan nifedipin kerja cepat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. NICE NG128, yang tetap berlaku setelah review 2026, meminta eksklusi hipoglikemia, aspirin 300 mg segera bila tidak ada kontraindikasi, rujukan langsung untuk penilaian dalam 24 jam, dan larangan memakai ABCD2 untuk menentukan urgensi. AHA 2023 menekankan evaluasi emergensi serta workup etiologi cepat. AHA/ASA 2021 dan ESC AF 2024 menempatkan antikoagulasi sebagai pencegahan sekunder utama pada AF bila tidak ada kontraindikasi; aspirin bukan penggantinya dan kombinasi rutin keduanya tidak dibenarkan tanpa indikasi lain.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. AHA 2023 menekankan bahwa gejala yang telah menghilang tetap emergensi karena risiko stroke awal terkonsentrasi; lakukan eksklusi mimik seperti hipoglikemia, workup etiologi cepat, dan jalur stroke regional tanpa mengandalkan satu skor risiko. AHA/ASA 2021 dan ESC AF 2024 menempatkan antikoagulasi sebagai pencegahan sekunder utama pada AF bila tidak ada kontraindikasi; aspirin bukan penggantinya dan kombinasi rutin keduanya tidak dibenarkan tanpa indikasi lain.",
         "realityNote": "Fornas 1199/2025 mencantumkan asetosal 80 mg di tingkat pertama; empat tablet tidak bersalut memberi dosis awal 320 mg. EKG dan operator dinyatakan siap, tetapi kegagalan alat tidak boleh menahan transfer. Setelah RS menetapkan etiologi dan regimen, kendali AF, tekanan darah, lipid, serta rokok kembali dipantau FKTP. Sebut PRB hanya bila spesialis menerbitkan surat rujuk balik.",
         "ebmPearl": "Pemulihan sempurna bukan bukti aman. Sebelum pencitraan, istilah yang jujur adalah suspek TIA atau stroke kecil: CT tanpa kontras dapat normal dan terutama membantu menilai perdarahan atau diagnosis banding, sedangkan lesi akut pada DWI-MRI menunjukkan infark. Karena itu hasil CT normal tidak membatalkan kegawatan. Perangkap berikutnya ada pada nadi: fibrilasi atrium dapat tanpa gejala dan terlewat bila nadi hanya dihitung sebentar; raba cukup lama, konfirmasi dengan EKG bila tersedia, lalu pastikan temuan itu mengikuti pasien dalam surat rujukan."
       },
@@ -24382,17 +24327,6 @@
         "ebm": {
           "status": "cocok",
           "sources": [
-            {
-              "sourceId": "nice-tia-ng128",
-              "relation": "direct",
-              "title": "Stroke and transient ischaemic attack in over 16s: diagnosis and initial management (NG128; reviewed 2026)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2022,
-              "officialUrl": "https://www.nice.org.uk/guidance/NG128/chapter/recommendations",
-              "population": "People aged over 16 years with suspected or confirmed TIA or acute stroke",
-              "facilityScope": "First recognition, immediate aspirin for suspected TIA, urgent specialist assessment, and imaging pathways.",
-              "locator": "Recommendations 1.1.2 and 1.1.4-1.1.6: exclude hypoglycaemia, start aspirin 300 mg immediately unless contraindicated, refer immediately for assessment within 24 hours, and do not use ABCD2 to set urgency."
-            },
             {
               "sourceId": "aha-tia-2023",
               "relation": "direct",
@@ -24599,7 +24533,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, sepsis, hidrasi, dan kemampuan menelan; beri analgesia serta antibiotik awal bila rute oral aman, pantau selama menunggu, lalu transfer untuk evaluasi THT dan source control. Drainase biasanya menjadi bagian tata laksana abses terkonfirmasi, tetapi teknik dan tempatnya bergantung pada kompetensi, toleransi pasien, anatomi, serta kesiapan suction dan jalan napas - bukan aspirasi buta di FKTP.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi floor terkait, bukan pedoman definitif. NICE NG84 menggolongkan quinsy sebagai komplikasi supuratif berat yang harus dirujuk ke rumah sakit. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan penilaian komplikasi, toleransi drainase, konsultasi THT, kontrol nyeri, kemampuan minum, dan drainase terkontrol sebagai simpul keputusan utama.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi floor terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.",
         "realityNote": "Pasien ini masih dapat menelan, tidak stridor, dan tidak sepsis, sehingga antibiotik oral pra-rujuk dimodelkan tanpa menunda transfer. Bila ludah sama sekali tidak dapat ditelan, ada stridor, hipoksia, kelelahan napas, toksisitas, atau pembengkakan leher cepat, jangan memaksa obat oral atau pemeriksaan agresif; prioritaskan jalan napas, monitoring, dan transfer emergensi.",
         "ebmPearl": "Deviasi uvula membantu, tetapi bukan satu-satunya penentu dan tidak membedakan abses dari selulitis peritonsil dengan sempurna. Kombinasi nyeri unilateral, trismus, perubahan suara, palatal fullness, kemampuan menelan, serta tanda perluasan leher menentukan urgensi; pencitraan tidak rutin diperlukan pada presentasi klasik dan tidak boleh menunda rujukan bila komplikasi dicurigai."
       },
@@ -24658,17 +24592,6 @@
         "ebm": {
           "status": "cocok",
           "sources": [
-            {
-              "sourceId": "nice-sore-throat-ng84",
-              "relation": "direct",
-              "title": "Sore throat (acute): antimicrobial prescribing (NG84)",
-              "authority": "National Institute for Health and Care Excellence",
-              "year": 2018,
-              "officialUrl": "https://www.nice.org.uk/guidance/ng84/chapter/Recommendations",
-              "population": "Children, young people, and adults with acute sore throat or a serious suppurative complication",
-              "facilityScope": "First-contact recognition, antimicrobial prescribing, safety-netting, and hospital referral for quinsy or deep-neck complications.",
-              "locator": "Recommendation 1.1.13: quinsy/peritonsillar abscess is a severe suppurative complication requiring hospital referral."
-            },
             {
               "sourceId": "chop-peritonsillar-abscess-2025",
               "relation": "direct",

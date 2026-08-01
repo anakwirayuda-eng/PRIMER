@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-14-igd-adjudication.v2",
-  "generatedAt": "2026-07-22T11:43:04.886Z",
-  "sourceCommit": "d360abc3d7b2+working-tree",
-  "contentRelease": "igd-adjudication-2026-07-22",
-  "engineRevision": 57,
-  "packFingerprint": "93738a72",
-  "artifactFingerprint": "c5587e95e46ba4989713c8f562dfe1fc42761979ecc54ebb7f15a35939949a66",
+  "generatedAt": "2026-07-31T22:10:11.355Z",
+  "sourceCommit": "aeb769492018+working-tree",
+  "contentRelease": "gameplay-comfort-2026-08-01",
+  "engineRevision": 62,
+  "packFingerprint": "2b073677",
+  "artifactFingerprint": "00c223adb7fc256f5acdf154bfe173945291bfb92ec6e5b9a5fd44742da73334",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",
     "Apakah urutan ABC/stabilisasi awal benar, tidak menunda tindakan penyelamat nyawa, dan masuk akal di FKTP?",
@@ -269,13 +269,6 @@
           "kind": "evidence_internasional"
         },
         {
-          "id": "nice_head_injury_2023",
-          "label": "NICE NG232 - Head Injury: Assessment and Early Management",
-          "url": "https://www.nice.org.uk/guidance/NG232/chapter/recommendations",
-          "year": 2023,
-          "kind": "evidence_internasional"
-        },
-        {
           "id": "permenkes_rujukan_2024",
           "label": "Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan",
           "url": "https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024",
@@ -458,13 +451,6 @@
           "label": "WHO Pre-eclampsia Fact Sheet and Recommendations 2025",
           "url": "https://www.who.int/news-room/fact-sheets/detail/pre-eclampsia",
           "year": 2025,
-          "kind": "evidence_internasional"
-        },
-        {
-          "id": "nice_hypertension_pregnancy",
-          "label": "NICE NG133 - Hypertension in Pregnancy",
-          "url": "https://www.nice.org.uk/guidance/ng133/chapter/recommendations",
-          "year": 2023,
           "kind": "evidence_internasional"
         },
         {
@@ -1660,13 +1646,6 @@
           "kind": "evidence_internasional"
         },
         {
-          "id": "nice_major_trauma",
-          "label": "NICE NG39 - Major Trauma: Assessment and Initial Management",
-          "url": "https://www.nice.org.uk/guidance/ng39/chapter/Recommendations",
-          "year": 2016,
-          "kind": "evidence_internasional"
-        },
-        {
           "id": "wses_thoracic_trauma_2025",
           "label": "WSES-AAST Thoracic Trauma Guidelines 2025",
           "url": "https://link.springer.com/article/10.1186/s13017-025-00651-1",
@@ -1862,13 +1841,6 @@
           "label": "WHO - Antiseizure Medicines for Established Status Epilepticus 2023",
           "url": "https://www.who.int/teams/mental-health-and-substance-use/mental-health-gap-action-programme/resources-centre/epilepsy-and-seizures/Antiseizure-medicines-for-management-of-established-status-epilepticus",
           "year": 2023,
-          "kind": "evidence_internasional"
-        },
-        {
-          "id": "nice_epilepsy_2025",
-          "label": "NICE NG217 - Treating Status Epilepticus, updated 2025",
-          "url": "https://www.nice.org.uk/guidance/ng217/chapter/7-Treating-status-epilepticus-repeated-or-cluster-seizures-and-prolonged-seizures",
-          "year": 2025,
           "kind": "evidence_internasional"
         },
         {
