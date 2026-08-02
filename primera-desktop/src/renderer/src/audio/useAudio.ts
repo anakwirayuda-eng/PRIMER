@@ -24,14 +24,19 @@ import {
   sfxPagi,
   sfxSelesai
 } from './synth'
-import { duckBgm } from './bgm'
+import { redamAmbient } from './ambient'
 
 // DeepThink "game juice" (2026-07-04): surat kabar-buruk (teguran/karma/IGD)
 // dulu memakai bel ceria yang SAMA dengan surat rutin — bobot emosionalnya
 // harus terasa beda begitu Kotak Masuk menyala.
 const JENIS_SURAT_BURUK = new Set<JenisSurat>(['teguran_kapus', 'karma', 'igd'])
 
-const JEDA_BLIP_MS = 60
+/**
+ * Audit audio 2026-08-02: 60 ms membolehkan ~16,7 blip/detik. Brewster dkk.
+ * (1995) menetapkan batas kegunaan earcon ~6 nada/detik — di atas itu rentetan
+ * berhenti terbaca sbg isyarat dan berubah jadi derau. 160 ms = ~6/detik.
+ */
+const JEDA_BLIP_MS = 160
 
 export function useAudio(): void {
   const eventTick = useGame((s) => s.eventTick)
@@ -86,7 +91,7 @@ function mainkan(ev: GameEvent, blipTerakhir: { current: number }): void {
       // Konsekuensi paling berat — sengaja BUKAN sfxBuzzer (dulu disamakan
       // dgn kesalahan rutin). Duck BGM dulu supaya drone kematian terdengar
       // jelas, bukan tenggelam di musik latar.
-      duckBgm(180, 900)
+      redamAmbient(180, 900)
       sfxKodeHitam()
       break
 

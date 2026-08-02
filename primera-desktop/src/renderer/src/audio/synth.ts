@@ -95,8 +95,8 @@ export function initAudio(): void {
 
   mesin = { ctx, master, bufferNoise }
   if (ctx.state === 'suspended') void ctx.resume()
-  // Catatan: BGM ambient synth lama DIMATIKAN sejak M7 — musik latar kini
-  // dari berkas (audio/bgm.ts). Fungsi jadwalkanBgm dipertahankan sbg cadangan.
+  // Musik latar TIDAK di sini: sejak 2026-08-02 ditangani ambient.ts (generatif
+  // laras gamelan) yang memakai AudioContext yang sama lewat ambilCtxAudio().
 }
 
 /** Matikan seluruh mesin audio dengan rapi (dipanggil saat App di-unmount). */
@@ -117,6 +117,15 @@ export function disposeAudio(): void {
 
 export function isMuted(): boolean {
   return muted
+}
+
+/**
+ * AudioContext bersama — dipakai ambient.ts agar musik latar generatif
+ * memakai konteks yang SAMA dgn SFX (satu AudioContext per aplikasi; membuat
+ * konteks kedua boros dan bisa ditolak kebijakan autoplay).
+ */
+export function ambilCtxAudio(): AudioContext | null {
+  return mesin?.ctx ?? null
 }
 
 export function setMuted(nilai: boolean): void {
@@ -281,10 +290,18 @@ function siapBunyi(): boolean {
  * SFX per peristiwa (dipanggil useAudio berdasar GameEvent)
  * ------------------------------------------------------------------------- */
 
-/** Stempel jatuh ke kertas: thunk rendah + derau kertas singkat. */
+/**
+ * Stempel jatuh ke kertas: thunk rendah + derau kertas singkat.
+ *
+ * Audit audio 2026-08-02: gain 0.85 adalah OUTLIER ~9,6-13,5 dB di atas tujuh
+ * cue lain — padahal ini bunyi yang PALING SERING dipicu (tiap stempel
+ * diagnosis). Diturunkan ke 0.40; karakternya tetap datang dari burst derau
+ * kertas, bukan dari amplitudo thunk. Komponen 82 Hz juga yang paling
+ * merambat lewat meja ke kursi sebelah di lab.
+ */
 export function sfxStempel(): void {
   if (!siapBunyi()) return
-  suaraFm({ freq: 82, durasi: 0.16, gain: 0.85, ratio: 1, index: 2.2, attack: 0.002 })
+  suaraFm({ freq: 82, durasi: 0.16, gain: 0.4, ratio: 1, index: 2.2, attack: 0.002 })
   burstNoise(0.07, 0.22, 1400)
 }
 

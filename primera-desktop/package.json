@@ -1,6 +1,6 @@
 {
   "name": "primera-desktop",
-  "version": "1.1.0-beta.10",
+  "version": "1.1.0-beta.11",
   "description": "PRIMERA: Puskesmas Pagi — Primary Care Simulator & Arena, game desktop simulasi dokter Puskesmas untuk pendidikan kedokteran Indonesia",
   "main": "out/main/index.js",
   "author": "Anak Agung Bagus Wirayuda, MD, PhD",
@@ -29,7 +29,8 @@
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
     "m13:igd-adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate-igd.ts",
     "pack": "npm run check:bgm-license && npm run build && electron-builder --win --dir",
-    "dist": "npm run check:bgm-license && npm run build && electron-builder --win nsis"
+    "dist": "npm run check:bgm-license && npm run build && electron-builder --win && npm run checksum",
+    "checksum": "node scripts/checksum-rilis.js"
   },
   "build": {
     "appId": "id.ac.its.medics.primer.testbeta",
@@ -44,11 +45,18 @@
       "package.json"
     ],
     "win": {
-      "icon": "build/icon.ico"
+      "icon": "build/icon.ico",
+      "target": [
+        "nsis",
+        "portable"
+      ]
     },
     "nsis": {
       "oneClick": true,
       "shortcutName": "PRIMERA test-beta"
+    },
+    "portable": {
+      "artifactName": "PRIMERA-test-beta-Portable-${version}.${ext}"
     }
   },
   "dependencies": {

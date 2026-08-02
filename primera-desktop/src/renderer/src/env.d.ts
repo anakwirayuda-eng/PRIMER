@@ -13,6 +13,7 @@ interface Window {
       read: () => Promise<string[]>
     }
     appVersion: () => Promise<string>
+    cekPembaruan?: () => Promise<{ judul: string; url: string }[]>
     runtime?: {
       consumeRecovery: () => Promise<{ occurredAt: string; reason: string; exitCode: number } | null>
       readCrashLog: () => Promise<string[]>

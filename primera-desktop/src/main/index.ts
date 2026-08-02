@@ -184,6 +184,72 @@ function registerIpc(): void {
     }
   })
 
+  /**
+   * A7 distribusi (2026-08-02): cek versi terbaru HARUS dari main process.
+   *
+   * Dua alasan, keduanya terverifikasi bukan diasumsikan:
+   *  1. CSP renderer `default-src 'self'` (src/renderer/index.html) memblokir
+   *     fetch keluar — implementasi di renderer akan GAGAL SENYAP di build
+   *     terpasang meski jalan di dev. `net.request` Electron tidak tunduk CSP.
+   *  2. Dipakai feed Atom, BUKAN REST api.github.com: REST dibatasi 60
+   *     permintaan/jam per IP publik, dan satu lab kampus berbagi satu IP NAT —
+   *     30 mesin membuka aplikasi bersamaan akan langsung kena batas.
+   *
+   * Mengembalikan daftar mentah {judul, url}; perbandingan versi dikerjakan
+   * renderer (sudah teruji di pembaruan.test.ts).
+   */
+  ipcMain.handle('pembaruan:cek', async () => {
+    const { net } = await import('electron')
+    return await new Promise<{ judul: string; url: string }[]>((resolve) => {
+      const selesai = (hasil: { judul: string; url: string }[]): void => resolve(hasil)
+      try {
+        const req = net.request({
+          method: 'GET',
+          url: 'https://github.com/anakwirayuda-eng/PRIMER/releases.atom',
+        })
+        // GitHub menolak permintaan tanpa User-Agent; net.request tidak
+        // mengirimkannya otomatis. Jujur menyebut diri, bukan menyamar browser.
+        req.setHeader('User-Agent', `PRIMERA-test-beta/${app.getVersion()} (+https://github.com/anakwirayuda-eng/PRIMER)`)
+        const batas = setTimeout(() => {
+          try { req.abort() } catch { /* sudah selesai */ }
+          selesai([])
+        }, 8000)
+        req.on('response', (res) => {
+          if (res.statusCode < 200 || res.statusCode >= 300) {
+            clearTimeout(batas)
+            selesai([])
+            return
+          }
+          let xml = ''
+          res.on('data', (c) => {
+            xml += c.toString()
+            // Pagar ukuran — feed publik tak seharusnya sebesar ini.
+            if (xml.length > 512_000) {
+              try { req.abort() } catch { /* sudah selesai */ }
+            }
+          })
+          res.on('end', () => {
+            clearTimeout(batas)
+            const hasil: { judul: string; url: string }[] = []
+            for (const entri of xml.split('<entry>').slice(1)) {
+              const judul = entri.match(/<title[^>]*>([\s\S]*?)<\/title>/)?.[1]?.trim() ?? ''
+              const url = entri.match(/<link[^>]*href="([^"]+)"/)?.[1] ?? ''
+              if (judul && url) hasil.push({ judul, url })
+            }
+            selesai(hasil.slice(0, 20))
+          })
+        })
+        req.on('error', () => {
+          clearTimeout(batas)
+          selesai([])
+        })
+        req.end()
+      } catch {
+        selesai([])
+      }
+    })
+  })
+
   ipcMain.handle('app:version', () => app.getVersion())
   ipcMain.handle('runtime:consume-recovery', () => {
     const notice = pemulihanRendererTertunda

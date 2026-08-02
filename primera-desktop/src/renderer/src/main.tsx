@@ -48,6 +48,7 @@ if (typeof window.primer === 'undefined') {
       logError: async () => true,
     },
     appVersion: async () => 'browser-preview',
+    cekPembaruan: async () => [],
   }
 }
 

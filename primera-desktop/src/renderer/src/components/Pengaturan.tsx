@@ -135,6 +135,31 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
                 onChange={(e) => setPengaturan({ amanButaWarna: e.target.checked })} />
             </label>
 
+            {/* Musik latar generatif (2026-08-02). Default MATI atas dasar
+                riset audio-lab: 30 mesin memutar ambient beda-fase menaikkan
+                derau ruangan ~15 dB. Label headphone bukan basa-basi. */}
+            <label
+              className="set-baris set-baris--switch"
+              data-tip="Musik latar yang dibangkitkan aplikasi (tanpa berkas musik). Sangat pelan dan tak pernah berulang persis. Disarankan memakai headphone bila kamu bermain di ruang bersama."
+            >
+              <span>Musik Latar <small className="teks-lembut">(disarankan pakai headphone)</small></span>
+              <input type="checkbox" checked={p.musikAktif}
+                onChange={(e) => setPengaturan({ musikAktif: e.target.checked })} />
+            </label>
+
+            {/* A7 distribusi (2026-08-02): OPT-IN, default mati — aplikasi ini
+                sengaja luring; satu-satunya koneksi keluar harus dinyalakan
+                sadar. Alasannya bukan kenyamanan tapi keadilan penilaian:
+                dossier lintas-versi tak dapat diverifikasi dosen. */}
+            <label
+              className="set-baris set-baris--switch"
+              data-tip="Saat aplikasi dibuka, periksa apakah ada versi lebih baru di halaman rilis. Tidak mengirim data apa pun — hanya membaca daftar rilis publik, maksimal sekali per 12 jam."
+            >
+              <span>Periksa Pembaruan Saat Dibuka</span>
+              <input type="checkbox" checked={p.cekPembaruan}
+                onChange={(e) => setPengaturan({ cekPembaruan: e.target.checked })} />
+            </label>
+
             {/* -- Bantuan & Laporan (A8, 2026-08-02) ---------------------- */}
             <div className="set-lapor">
               <h3 className="judul-seksi">Menemukan Masalah?</h3>

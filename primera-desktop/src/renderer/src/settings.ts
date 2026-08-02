@@ -24,6 +24,23 @@ export interface Pengaturan {
    * :root.aman-buta-warna). Permukaan lain sudah berlabel teks (WCAG 1.4.1).
    */
   amanButaWarna: boolean
+  /**
+   * A7 distribusi (2026-08-02): izin memeriksa versi terbaru ke GitHub
+   * Releases saat aplikasi dibuka. OPT-IN (default mati) — aplikasi ini
+   * sengaja luring; satu-satunya koneksi keluar harus dinyalakan sadar oleh
+   * pengguna. Tak ada data pengguna yang dikirim, hanya permintaan baca
+   * daftar rilis publik.
+   */
+  cekPembaruan: boolean
+  /**
+   * Musik latar generatif nyala/mati. Default MATI — keputusan sadar, bukan
+   * kelalaian: riset audio-lab 2026-08-02 menunjukkan 30 mesin memutar ambient
+   * beda-fase menghasilkan kenaikan derau agregat ~15 dB di satu ruangan.
+   * Musik ditujukan untuk pemakaian dengan headphone / belajar mandiri.
+   * Dipisah dari `volumeMusik` supaya slider tak perlu diturunkan ke nol —
+   * menyalakan kembali langsung terdengar pada volume yang wajar.
+   */
+  musikAktif: boolean
 }
 
 const KUNCI = 'primer.pengaturan'
@@ -39,6 +56,8 @@ export const PENGATURAN_DEFAULT: Pengaturan = {
   modeMalam: 'auto',
   kurangiGerak: false,
   amanButaWarna: false,
+  cekPembaruan: false,
+  musikAktif: false,
 }
 
 function klem(n: unknown, min: number, max: number, fallback: number): number {
@@ -61,6 +80,8 @@ function baca(): Pengaturan {
       modeMalam: p.modeMalam === 'siang' || p.modeMalam === 'malam' ? p.modeMalam : 'auto',
       kurangiGerak: p.kurangiGerak === true,
       amanButaWarna: p.amanButaWarna === true,
+      cekPembaruan: p.cekPembaruan === true,
+      musikAktif: p.musikAktif === true,
     }
   } catch {
     return { ...PENGATURAN_DEFAULT }

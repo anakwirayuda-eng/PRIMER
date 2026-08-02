@@ -14,6 +14,8 @@ const api = {
     read: (): Promise<string[]> => ipcRenderer.invoke('telemetri:read'),
   },
   appVersion: (): Promise<string> => ipcRenderer.invoke('app:version'),
+  /** A7: daftar rilis dari feed Atom publik (diambil di main — CSP & rate limit). */
+  cekPembaruan: (): Promise<{ judul: string; url: string }[]> => ipcRenderer.invoke('pembaruan:cek'),
   runtime: {
     consumeRecovery: (): Promise<{ occurredAt: string; reason: string; exitCode: number } | null> =>
       ipcRenderer.invoke('runtime:consume-recovery'),
