@@ -125,11 +125,45 @@
   z-index: 2;
   background: var(--bg-app);
   padding-bottom: var(--sp-2);
+  /* Baris kendali: kotak cari melar, dropdown organ & hitungan hasil menempel
+     di kanan. Membungkus ke baris baru di lebar sempit (audit visual
+     2026-08-01) — satu kendali tambahan, bukan 14 chip. */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sp-2) var(--sp-3);
+}
+
+.dexskdi__kategori-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-1);
+  white-space: nowrap;
+}
+
+.dexskdi__kategori {
+  font-family: inherit;
+  font-size: var(--text-xs);
+  padding: var(--sp-1) var(--sp-2);
+  max-width: 12rem;
+  color: var(--tinta);
+  background: var(--bg-panel);
+  border: 1px solid var(--border-tegas);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+}
+
+.dexskdi__kategori:focus-visible {
+  outline: 2px solid var(--warna-fokus);
+  outline-offset: 1px;
 }
 
 /* Kotak pencarian dgn hint keycap "/" & tombol hapus (audit premium 2026-07-23). */
 .dexskdi__cari-box {
   position: relative;
+  /* Melar mengisi baris kendali; menyusut lebih dulu sebelum dropdown organ. */
+  flex: 1 1 14rem;
+  min-width: 0;
 }
 
 .dexskdi__cari-kbd {
@@ -198,7 +232,9 @@
 
 /* Hitung hasil pencarian (aria-live) + kartu pesan kosong. */
 .dexskdi__hasil-hitung {
-  margin-top: var(--sp-1);
+  /* Kini anggota baris kendali flex — margin atas lama membuatnya melayang. */
+  margin-top: 0;
+  white-space: nowrap;
 }
 
 .dexskdi__kosong {

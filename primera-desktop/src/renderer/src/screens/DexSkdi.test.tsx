@@ -183,3 +183,50 @@ describe('<DexSkdi /> — lapisan debrief M11.5 dipersist per kasus (#23)', () =
     if (kasus.panduanResmi) expect(screen.getByText(kasus.panduanResmi)).toBeInTheDocument()
   }, 15000)
 })
+
+// Audit visual 2026-08-01: layar terpadat di game (~76 elemen interaktif
+// terlihat sekaligus). Chip status menjawab "mana yang belum tuntas", tapi
+// tak ada jalan memindai per-organ — padahal itu cara mahasiswa belajar
+// (blok THT, blok kulit). Sengaja SATU dropdown, bukan 14 chip kategori.
+describe('<DexSkdi /> — saring kelompok organ (2026-08-01)', () => {
+  beforeEach(() => {
+    pasangState()
+  })
+
+  it('hanya menawarkan kelompok yang benar-benar terwakili, dgn hitungannya', () => {
+    render(<DexSkdi />)
+    const sel = screen.getByLabelText('Saring menurut kelompok organ') as HTMLSelectElement
+    const nilai = [...sel.options].map((o) => o.value).filter((v) => v !== 'semua')
+
+    // Tiap opsi harus punya ≥1 entri nyata — tak ada menu kosong.
+    expect(nilai.length).toBeGreaterThan(0)
+    for (const kat of nilai) {
+      const nyata = PACK.skdi144.filter(
+        (e) => (e.kasusId !== undefined ? PACK.kasus[e.kasusId]?.kategori : undefined) === kat,
+      ).length
+      expect(nyata, `kategori ${kat} kosong tapi ditawarkan`).toBeGreaterThan(0)
+      const opsi = [...sel.options].find((o) => o.value === kat)!
+      expect(opsi.textContent).toContain(`(${nyata})`)
+    }
+  })
+
+  it('memilih kelompok menyaring grid, dan tetap bisa dipadukan dgn chip status', async () => {
+    render(<DexSkdi />)
+    const { default: userEvent } = await import('@testing-library/user-event')
+    const user = userEvent.setup({ pointerEventsCheck: 0 })
+    const sel = screen.getByLabelText('Saring menurut kelompok organ') as HTMLSelectElement
+
+    const kat = [...sel.options].map((o) => o.value).find((v) => v !== 'semua')!
+    const nyata = PACK.skdi144.filter(
+      (e) => (e.kasusId !== undefined ? PACK.kasus[e.kasusId]?.kategori : undefined) === kat,
+    ).length
+
+    await user.selectOptions(sel, kat)
+    expect(screen.getByText(`${nyata} dari 144 entri`)).toBeInTheDocument()
+
+    // Chip "belum" (state kosong → semua belum) tak boleh MENIMPA kategori.
+    await user.click(screen.getByRole('button', { name: /belum$/ }))
+    expect(sel.value).toBe(kat)
+    expect(screen.getByText(`${nyata} dari 144 entri`)).toBeInTheDocument()
+  }, 15000)
+})

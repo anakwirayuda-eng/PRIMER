@@ -9,6 +9,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { PACK } from '@content/index'
+import type { KategoriKasus } from '@content/types'
 import { normalisasiNamaObat } from './klinik/util'
 import { DuelDiagnosis } from './klinik/RefleksiKlinis'
 import { TeksTerbaca } from '../components/TeksTerbaca'
@@ -44,6 +45,24 @@ function Bintang({ jumlah, besar = false }: { jumlah: number; besar?: boolean })
 
 type FilterDex = 'semua' | 'belum' | 'dijumpai' | 'tersertifikasi' | 'dikuasai'
 
+/** Nama kelompok organ untuk pemain — istilah katalog, bukan enum engine. */
+const LABEL_KATEGORI: Record<KategoriKasus, string> = {
+  infeksi: 'Infeksi',
+  respirasi: 'Respirasi',
+  pencernaan: 'Pencernaan',
+  kulit: 'Kulit',
+  kardiovaskular: 'Jantung & Pembuluh',
+  metabolik: 'Metabolik & Endokrin',
+  muskuloskeletal: 'Otot & Sendi',
+  saraf: 'Saraf',
+  mata: 'Mata',
+  tht: 'THT',
+  gigi: 'Gigi & Mulut',
+  kia: 'KIA & Reproduksi',
+  jiwa: 'Jiwa',
+  gawat: 'Kegawatan',
+}
+
 export function DexSkdi() {
   const state = useGame((s) => s.state)!
   const [pilihanId, setPilihanId] = useState<string | null>(null)
@@ -52,6 +71,22 @@ export function DexSkdi() {
   // tuntaskan" — chip progres di header kini merangkap filter klik.
   const [filter, setFilter] = useState<FilterDex>('semua')
   const toggleFilter = (f: FilterDex) => setFilter((cur) => (cur === f ? 'semua' : f))
+  const [kategori, setKategori] = useState<KategoriKasus | 'semua'>('semua')
+
+  // Kategori diturunkan dari kasus tertaut (entri skdi144 sendiri tak
+  // membawanya) — seluruh 144 baris kini tertaut 1:1, jadi tak ada yang jatuh
+  // ke luar daftar. Hanya kelompok yang BENAR-BENAR terwakili yang muncul di
+  // dropdown, lengkap dgn hitungannya: menu tanpa opsi kosong.
+  const kategoriTersedia = useMemo(() => {
+    const hitung = new Map<KategoriKasus, number>()
+    for (const entri of PACK.skdi144) {
+      const kat = entri.kasusId !== undefined ? PACK.kasus[entri.kasusId]?.kategori : undefined
+      if (kat) hitung.set(kat, (hitung.get(kat) ?? 0) + 1)
+    }
+    return [...hitung.entries()].sort((a, b) =>
+      LABEL_KATEGORI[a[0]].localeCompare(LABEL_KATEGORI[b[0]], 'id'),
+    )
+  }, [])
 
   // Audit premium 2026-07-23: "/" atau Ctrl+F memfokuskan pencarian dari mana
   // pun di layar ini (standar aplikasi katalog — 144 entri, pencarian adalah
@@ -103,6 +138,12 @@ export function DexSkdi() {
           normalisasiNamaObat(entri.nama).includes(q) || normalisasiNamaObat(entri.icd10).includes(q),
       )
     }
+    if (kategori !== 'semua') {
+      list = list.filter(
+        (entri) =>
+          (entri.kasusId !== undefined ? PACK.kasus[entri.kasusId]?.kategori : undefined) === kategori,
+      )
+    }
     if (filter !== 'semua') {
       list = list.filter((entri) => {
         const dex = entri.kasusId !== undefined ? state.dex[entri.kasusId] : undefined
@@ -119,7 +160,7 @@ export function DexSkdi() {
       })
     }
     return list
-  }, [cari, filter, state.dex])
+  }, [cari, filter, kategori, state.dex])
 
   // CODEX M14 #20: cari dari daftar TERFILTER, bukan PACK penuh — dulu memilih
   // entri lalu mengetik pencarian yang menyaringnya keluar tetap menampilkan
@@ -239,6 +280,28 @@ export function DexSkdi() {
                 </button>
               )}
             </div>
+            {/* Audit visual 2026-08-01: layar terpadat di game (terukur ~76
+                elemen interaktif terlihat sekaligus). Chip status di header
+                menjawab "mana yang belum tuntas", tapi tak ada jalan memindai
+                per-organ — padahal itulah cara mahasiswa belajar (blok THT,
+                blok kulit). Sengaja SATU dropdown, bukan 14 chip kategori:
+                menambah 14 kontrol justru memperparah sesak yang mau dikurangi. */}
+            <label className="dexskdi__kategori-label">
+              <span className="teks-xs teks-lembut mono">ORGAN</span>
+              <select
+                className="dexskdi__kategori"
+                value={kategori}
+                onChange={(e) => setKategori(e.target.value as KategoriKasus | 'semua')}
+                aria-label="Saring menurut kelompok organ"
+              >
+                <option value="semua">Semua kelompok</option>
+                {kategoriTersedia.map(([kat, jumlah]) => (
+                  <option key={kat} value={kat}>
+                    {LABEL_KATEGORI[kat]} ({jumlah})
+                  </option>
+                ))}
+              </select>
+            </label>
             <p className="teks-xs teks-lembut mono dexskdi__hasil-hitung" aria-live="polite">
               {daftarSkdi.length} dari {TOTAL_ENTRI} entri
             </p>

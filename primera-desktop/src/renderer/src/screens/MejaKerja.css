@@ -52,11 +52,18 @@
   color: var(--kunyit-700);
 }
 
-/* Hierarki heading 2 tingkat: judul panel (anak langsung) sedikit lebih besar;
-   judul kartu di dalam .mk__program/.mk__lokmin-rival tetap kecil. */
+/* Hierarki heading 2 tingkat: judul panel (anak langsung) lebih besar;
+   judul kartu di dalam .mk__program/.mk__lokmin-rival tetap kecil.
+   Audit visual 2026-08-01: langkah lama text-sm (13.4px) cuma 1.4px di atas
+   teks isi — terukur 84/91 node teks layar ini seragam 12-13px, mata tak
+   dipandu. text-md membuat tiga anchor panel (Kotak Masuk / Briefing /
+   Langkah Berikutnya) genuinely terlihat TANPA meninggalkan identitas
+   small-caps mono; letter-spacing diciutkan sedikit agar uppercase 16px
+   tak terasa berteriak. */
 .mk__panel > .judul-seksi,
 .mk__inbox-header .judul-seksi {
-  font-size: var(--text-sm);
+  font-size: var(--text-md);
+  letter-spacing: 0.1em; /* dari --lacak-seksi 0.18em — 16px uppercase butuh lacak lebih rapat */
   color: var(--tinta);
 }
 

@@ -109,7 +109,9 @@
    pakai aria-keyshortcuts. Disembunyikan saat teks-besar (ruang reflow). */
 .hud__kbd {
   font-family: var(--font-mono);
-  font-size: 0.62em;
+  /* Audit visual 2026-08-01: 0.62em pada label 13.4px = 8.3px terender —
+     di bawah floor keterbacaan. Keycap harus subtle, bukan tak terbaca. */
+  font-size: 0.78em;
   font-weight: 700;
   line-height: 1;
   padding: 0.2em 0.42em;

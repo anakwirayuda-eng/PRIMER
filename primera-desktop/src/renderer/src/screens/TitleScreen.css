@@ -49,6 +49,55 @@
   to { opacity: 1; transform: scale(1.035); }
 }
 
+/* -- Awan pagi (audit visual 2026-08-01) -------------------------------------- */
+.title__awan {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.title__awan-svg {
+  position: absolute;
+  animation: title-awan-drift 90s ease-in-out infinite alternate;
+}
+
+.title__awan--1 {
+  top: 9%;
+  left: 10%;
+  width: clamp(130px, 14vw, 210px);
+  opacity: 0.55;
+}
+
+.title__awan--2 {
+  top: 21%;
+  right: 8%;
+  width: clamp(100px, 11vw, 170px);
+  opacity: 0.4;
+  animation-duration: 120s;
+  animation-direction: alternate-reverse;
+}
+
+.title__awan--3 {
+  top: 30%;
+  left: 6%;
+  width: clamp(80px, 8vw, 120px);
+  opacity: 0.3;
+  animation-duration: 75s;
+}
+
+/* Drift sway kecil bolak-balik — bukan menyeberangi layar (distraksi). */
+@keyframes title-awan-drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(3.5vw); }
+}
+
+/* Mode malam: awan putih pekat di langit gelap = mencolok — redupkan jadi
+   awan tersinari bulan. */
+[data-mode='malam'] .title__awan-svg {
+  opacity: 0.08;
+}
+
 /* -- Siluet desa -------------------------------------------------------------- */
 .title__siluet {
   position: absolute;

@@ -263,6 +263,26 @@ export function TitleScreen() {
         </svg>
       </div>
 
+      {/* Awan pagi (audit visual 2026-08-01) — langit atas dulu polos total.
+          Tiga awan datar (gaya sama dgn siluet: flat shape, tanpa gradasi)
+          ber-drift sangat lambat; beku otomatis saat kurangi-gerak lewat
+          kill-switch global base.css. */}
+      <div className="title__awan" aria-hidden="true">
+        <svg className="title__awan-svg title__awan--1" viewBox="0 0 120 36">
+          <ellipse cx="34" cy="24" rx="30" ry="11" fill="#fff" />
+          <ellipse cx="62" cy="17" rx="26" ry="13" fill="#fff" />
+          <ellipse cx="90" cy="25" rx="26" ry="10" fill="#fff" />
+        </svg>
+        <svg className="title__awan-svg title__awan--2" viewBox="0 0 120 36">
+          <ellipse cx="38" cy="23" rx="32" ry="10" fill="#fff" />
+          <ellipse cx="72" cy="18" rx="28" ry="12" fill="#fff" />
+        </svg>
+        <svg className="title__awan-svg title__awan--3" viewBox="0 0 120 36">
+          <ellipse cx="40" cy="22" rx="28" ry="9" fill="#fff" />
+          <ellipse cx="66" cy="17" rx="22" ry="10" fill="#fff" />
+        </svg>
+      </div>
+
       <SiluetPuskesmas />
 
       <div className="title__panel kertas">
