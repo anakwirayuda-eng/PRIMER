@@ -47,5 +47,7 @@ export const KREDIT_MUSIK: readonly KreditMusik[] = []
 /** Format atribusi CC BY yang benar (mengikuti permintaan pencipta). */
 export function barisAtribusi(k: KreditMusik): string {
   const ubah = k.dimodifikasi ? ' — diperpendek/di-loop untuk permainan ini' : ''
-  return `"${k.judul}" oleh ${k.pencipta} (${k.urlSumber}), lisensi ${k.lisensi}${ubah}`
+  // urlLisensi WAJIB ikut: syarat atribusi CC BY meminta tautan ke teks
+  // lisensinya, bukan hanya namanya (KEBIJAKAN_ASET_AUDIO.md §5).
+  return `"${k.judul}" oleh ${k.pencipta} (${k.urlSumber}), lisensi ${k.lisensi} — ${k.urlLisensi}${ubah}`
 }

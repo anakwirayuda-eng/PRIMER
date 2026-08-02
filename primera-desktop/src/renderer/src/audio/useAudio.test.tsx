@@ -20,10 +20,30 @@ vi.mock('./synth', () => ({
   sfxArpeggio: vi.fn(),
   sfxPagi: vi.fn(),
   sfxSelesai: vi.fn(),
+  sfxKlik: vi.fn(),
+  sfxPanggil: vi.fn(),
+  sfxTolak: vi.fn(),
+  sfxSirine: vi.fn(),
+  sfxTickSabar: vi.fn(),
+  sfxTemuan: vi.fn(),
+  sfxBlok: vi.fn(),
 }))
 vi.mock('./bgm', () => ({ redamBgm: vi.fn() }))
 
-import { sfxBuzzer, sfxKodeHitam, sfxBel } from './synth'
+import {
+  sfxBuzzer,
+  sfxKodeHitam,
+  sfxBel,
+  sfxArpeggio,
+  sfxSelesai,
+  sfxKlik,
+  sfxPanggil,
+  sfxTolak,
+  sfxSirine,
+  sfxTickSabar,
+  sfxTemuan,
+  sfxBlok,
+} from './synth'
 import { redamBgm } from './bgm'
 import { useAudio } from './useAudio'
 
@@ -75,5 +95,98 @@ describe('useAudio — pemetaan event ke SFX', () => {
     })
     expect(sfxBel).toHaveBeenCalledTimes(1)
     expect(sfxBuzzer).not.toHaveBeenCalled()
+  })
+
+  // ---- Kelengkapan SFX (audit 2026-08-02) ----------------------------------
+
+  it('IGD_TIBA memakai sfxSirine, BUKAN sfxBuzzer (peristiwa eksternal ≠ "kamu salah")', () => {
+    tembakEvent({ type: 'IGD_TIBA', narasi: 'Pasien gawat tiba.' })
+    expect(sfxSirine).toHaveBeenCalledTimes(1)
+    expect(sfxBuzzer).not.toHaveBeenCalled()
+  })
+
+  it('ERROR_AKSI memakai sfxTolak lirih, BUKAN buzzer — dan di-throttle bila beruntun', () => {
+    tembakEvent({ type: 'ERROR_AKSI', pesan: 'Aksi tidak sah.' })
+    tembakEvent({ type: 'ERROR_AKSI', pesan: 'Aksi tidak sah.' })
+    expect(sfxTolak).toHaveBeenCalledTimes(1)
+    expect(sfxBuzzer).not.toHaveBeenCalled()
+  })
+
+  it('SABAR_MENIPIS berbunyi sekali lalu diam (engine menembak ulang tiap aksi)', () => {
+    tembakEvent({ type: 'SABAR_MENIPIS' })
+    tembakEvent({ type: 'SABAR_MENIPIS' })
+    tembakEvent({ type: 'SABAR_MENIPIS' })
+    expect(sfxTickSabar).toHaveBeenCalledTimes(1)
+  })
+
+  it('PASIEN_DIPANGGIL → denting loket; BLOK_BERGANTI → nada transisi; HOTSPOT_DITEMUKAN → dua nada temuan', () => {
+    tembakEvent({ type: 'PASIEN_DIPANGGIL', nama: 'Bu Sari' })
+    tembakEvent({ type: 'BLOK_BERGANTI', blok: 'siang' })
+    tembakEvent({ type: 'HOTSPOT_DITEMUKAN', hotspotId: 'h1', narasi: 'Jentik di bak mandi.' })
+    expect(sfxPanggil).toHaveBeenCalledTimes(1)
+    expect(sfxBlok).toHaveBeenCalledTimes(1)
+    expect(sfxTemuan).toHaveBeenCalledTimes(1)
+  })
+
+  it('KUNJUNGAN_SELESAI: berhasil → arpeggio, gagal → nada selesai netral', () => {
+    const dasar = {
+      keluargaId: 'k1', skenarioId: 's1', diusir: false, hipotesisBenar: true, trustDelta: 1,
+    }
+    tembakEvent({
+      type: 'KUNJUNGAN_SELESAI',
+      hasil: { ...dasar, hasilAkhir: 'tuntas', berhasil: true } as never,
+    })
+    expect(sfxArpeggio).toHaveBeenCalledTimes(1)
+    tembakEvent({
+      type: 'KUNJUNGAN_SELESAI',
+      hasil: { ...dasar, hasilAkhir: 'gagal', berhasil: false } as never,
+    })
+    expect(sfxSelesai).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useAudio — klik UI universal', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+    useGame.setState({ lastEvents: [], eventTick: 0 })
+  })
+
+  it('klik pada tombol aktif membunyikan sfxKlik; tombol disabled diam', () => {
+    const { unmount } = render(
+      <>
+        <Harness />
+        <button type="button">Aktif</button>
+        <button type="button" disabled>Mati</button>
+      </>
+    )
+    const [aktif, mati] = Array.from(document.querySelectorAll('button'))
+    act(() => {
+      mati!.click()
+    })
+    expect(sfxKlik).not.toHaveBeenCalled()
+    act(() => {
+      aktif!.click()
+    })
+    expect(sfxKlik).toHaveBeenCalledTimes(1)
+    unmount()
+    // Listener dilepas saat unmount — klik berikutnya tidak berbunyi lagi.
+    act(() => {
+      aktif!.click()
+    })
+    expect(sfxKlik).toHaveBeenCalledTimes(1)
+  })
+
+  it('klik pada elemen non-interaktif (div/teks) tidak berbunyi', () => {
+    const { unmount } = render(
+      <>
+        <Harness />
+        <div data-testid="polos">bukan tombol</div>
+      </>
+    )
+    act(() => {
+      document.querySelector<HTMLElement>('[data-testid="polos"]')!.click()
+    })
+    expect(sfxKlik).not.toHaveBeenCalled()
+    unmount()
   })
 })

@@ -382,3 +382,70 @@ export function sfxSelesai(): void {
   suaraFm({ freq: nadaSlendro(4), durasi: 0.28, gain: 0.2, ratio: 2, index: 1.5 })
   suaraFm({ freq: nadaSlendro(2), durasi: 0.36, gain: 0.2, ratio: 2, index: 1.5, delay: 0.14 })
 }
+
+/* ---------------------------------------------------------------------------
+ * Kelengkapan SFX (2026-08-02) — mengisi event yang dulu bisu + klik universal.
+ * Semua bunyi baru SANGAT lirih & pendek: keluarga timbre yang sama dgn SFX
+ * lama (FM sine + derau kertas + laras slendro), bukan kosakata bunyi baru.
+ * ------------------------------------------------------------------------- */
+
+/**
+ * Klik UI universal — ketukan kertas mungil utk SEMUA tombol.
+ * Gain sengaja terkecil di seluruh katalog (0.07): terasa di jari, tak
+ * terdengar dari kursi sebelah. Bunyi khusus (stempel/bel/dsb) menumpuk di
+ * atasnya secara alami, seperti benda fisik.
+ */
+export function sfxKlik(): void {
+  if (!siapBunyi()) return
+  burstNoise(0.022, 0.07, 2400)
+  suaraFm({ freq: 1050, durasi: 0.03, gain: 0.045, ratio: 1, index: 0.8, attack: 0.001 })
+}
+
+/** Loket memanggil pasien — satu denting lembut, lebih rendah dari bel surat. */
+export function sfxPanggil(): void {
+  if (!siapBunyi()) return
+  suaraFm({ freq: 880, durasi: 0.5, gain: 0.16, ratio: 3.53, index: 2.5, attack: 0.002 })
+}
+
+/**
+ * Aksi ditolak engine (ERROR_AKSI) — "tidak bisa", BUKAN "kamu salah":
+ * satu thud rendah teredam, jauh lebih ringan dari buzzer kesalahan klinis.
+ */
+export function sfxTolak(): void {
+  if (!siapBunyi()) return
+  suaraFm({ freq: 130, durasi: 0.12, gain: 0.18, ratio: 1, index: 1.5, attack: 0.003 })
+}
+
+/**
+ * Pasien gawat tiba di IGD. Audit audio 2026-08-02 (Brewster): dulu memakai
+ * sfxBuzzer yang SAMA dgn kesalahan (firewall/diusir) padahal kategorinya
+ * beda — ini peristiwa eksternal mendesak, bukan umpan balik "kamu salah".
+ * Dibedakan lewat JUMLAH nada & arah: dua nada NAIK berulang (pola sirene),
+ * bukan satu hantaman disonan.
+ */
+export function sfxSirine(): void {
+  if (!siapBunyi()) return
+  for (const ulang of [0, 1]) {
+    suaraFm({ freq: 523, durasi: 0.16, gain: 0.2, ratio: 2, index: 1.6, attack: 0.004, delay: ulang * 0.42 })
+    suaraFm({ freq: 698, durasi: 0.2, gain: 0.22, ratio: 2, index: 1.6, attack: 0.004, delay: ulang * 0.42 + 0.18 })
+  }
+}
+
+/** Sabar pasien menipis — satu ketukan kayu lirih, sekadar menoleh ke meter. */
+export function sfxTickSabar(): void {
+  if (!siapBunyi()) return
+  suaraFm({ freq: 340, durasi: 0.06, gain: 0.12, ratio: 1, index: 2.5, attack: 0.001 })
+}
+
+/** Titik pengamatan ditemukan (kunjungan rumah) — dua nada slendro naik singkat. */
+export function sfxTemuan(): void {
+  if (!siapBunyi()) return
+  suaraFm({ freq: nadaSlendro(4), durasi: 0.16, gain: 0.14, ratio: 2, index: 1.5 })
+  suaraFm({ freq: nadaSlendro(6), durasi: 0.22, gain: 0.14, ratio: 2, index: 1.5, delay: 0.1 })
+}
+
+/** Pergantian blok (pagi→siang→sore) — satu nada rendah mengambang, netral. */
+export function sfxBlok(): void {
+  if (!siapBunyi()) return
+  suaraFm({ freq: nadaSlendro(0), durasi: 0.7, gain: 0.13, ratio: 1.4, index: 1.2, attack: 0.05 })
+}

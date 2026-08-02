@@ -1,10 +1,12 @@
 /**
  * TENTANG & KREDIT (M7 butir 35) — modal identitas resmi + HKI + disclaimer
  * medis + kredit aset. Sumber: content/metadata.ts (satu sumber kebenaran).
- * CATATAN musik: kredit + peringatan lisensi (lihat public/bgm/CATATAN_LISENSI).
+ * CATATAN musik: kredit dibaca dari bgmKredit.ts (KEBIJAKAN_ASET_AUDIO.md §5)
+ * sehingga atribusi CC BY otomatis tampil begitu lagu terkurasi ditambahkan.
  */
 
 import { METADATA } from '@content/metadata'
+import { KREDIT_MUSIK, barisAtribusi } from '../audio/bgmKredit'
 import { useFocusTrap } from '../useFocusTrap'
 import './TentangModal.css'
 
@@ -53,10 +55,20 @@ export function TentangModal({ onTutup }: { onTutup: () => void }) {
               Efek suara &amp; sebagian nada: sintesis prosedural (WebAudio, tanpa aset).
               Ilustrasi &amp; ikon: prosedural/SVG in-house.
             </p>
-            <p className="teks-xs tentang-peringatan">
-              ⚠️ Musik latar saat ini memakai koleksi pribadi pengembang untuk playtest
-              internal dan <strong>wajib diganti musik berlisensi sebelum distribusi</strong>.
-            </p>
+            {KREDIT_MUSIK.length === 0 ? (
+              <p className="teks-xs teks-lembut">
+                Musik latar: belum ada — menunggu kurasi lagu berlisensi bebas.
+              </p>
+            ) : (
+              <>
+                <p className="teks-xs teks-lembut">Musik latar:</p>
+                {KREDIT_MUSIK.map((k) => (
+                  <p key={k.berkas} className="teks-xs teks-lembut">
+                    {barisAtribusi(k)}
+                  </p>
+                ))}
+              </>
+            )}
           </div>
 
           <p className="teks-xs teks-lembut tentang-copyright">{METADATA.copyright}</p>

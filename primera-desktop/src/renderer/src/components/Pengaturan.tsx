@@ -13,6 +13,7 @@ import { useGame } from '../store'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
 import { resetOnboarding } from './Onboarding'
+import { KREDIT_MUSIK } from '../audio/bgmKredit'
 import { TentangModal } from './TentangModal'
 import { PintasanModal } from './PintasanModal'
 import { sedangMengetik } from '../utils/navigasiHud'
@@ -85,12 +86,16 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
               <button className="tombol tombol--senyap" onClick={() => setBuka(false)} aria-label="Tutup">✕</button>
             </div>
 
-            <label className="set-baris">
-              <span>Volume Musik</span>
-              <input type="range" min="0" max="1" step="0.05" value={p.volumeMusik}
-                onChange={(e) => setPengaturan({ volumeMusik: Number(e.target.value) })} />
-              <span className="set-nilai mono">{persen(p.volumeMusik)}</span>
-            </label>
+            {/* Slider musik ikut disembunyikan selama katalog kosong — lihat
+                catatan di toggle Musik Latar di bawah. */}
+            {KREDIT_MUSIK.length > 0 && (
+              <label className="set-baris">
+                <span>Volume Musik</span>
+                <input type="range" min="0" max="1" step="0.05" value={p.volumeMusik}
+                  onChange={(e) => setPengaturan({ volumeMusik: Number(e.target.value) })} />
+                <span className="set-nilai mono">{persen(p.volumeMusik)}</span>
+              </label>
+            )}
 
             <label className="set-baris">
               <span>Volume Efek Suara</span>
@@ -138,14 +143,19 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
             {/* Musik latar generatif (2026-08-02). Default MATI atas dasar
                 riset audio-lab: 30 mesin memutar ambient beda-fase menaikkan
                 derau ruangan ~15 dB. Label headphone bukan basa-basi. */}
-            <label
-              className="set-baris set-baris--switch"
-              data-tip="Musik latar yang dibangkitkan aplikasi (tanpa berkas musik). Sangat pelan dan tak pernah berulang persis. Disarankan memakai headphone bila kamu bermain di ruang bersama."
-            >
-              <span>Musik Latar <small className="teks-lembut">(disarankan pakai headphone)</small></span>
-              <input type="checkbox" checked={p.musikAktif}
-                onChange={(e) => setPengaturan({ musikAktif: e.target.checked })} />
-            </label>
+            {/* Toggle disembunyikan selama katalog musik kosong (BGM ditunda
+                2026-08-02 sampai kurasi manusia — KURASI_MUSIK_LATAR.md):
+                sakelar yang tak berbunyi hanya membingungkan playtester. */}
+            {KREDIT_MUSIK.length > 0 && (
+              <label
+                className="set-baris set-baris--switch"
+                data-tip="Musik latar pelan selama bermain. Disarankan memakai headphone bila kamu bermain di ruang bersama."
+              >
+                <span>Musik Latar <small className="teks-lembut">(disarankan pakai headphone)</small></span>
+                <input type="checkbox" checked={p.musikAktif}
+                  onChange={(e) => setPengaturan({ musikAktif: e.target.checked })} />
+              </label>
+            )}
 
             {/* A7 distribusi (2026-08-02): OPT-IN, default mati — aplikasi ini
                 sengaja luring; satu-satunya koneksi keluar harus dinyalakan
