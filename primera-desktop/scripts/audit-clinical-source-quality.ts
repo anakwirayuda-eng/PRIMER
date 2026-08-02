@@ -190,23 +190,39 @@ const retainedOlderEvidence = olderEvidence.filter(
 const olderEvidenceNeedingReview = olderEvidence.filter(
   (source) => !RETAINED_OLDER_EVIDENCE[source.id],
 )
-const encounterIssues: string[] = []
-
-for (const encounter of Object.values(PACK.kasus)) {
-  const source = encounter.sumber ?? []
-  if (!source.some((item) => item.cakupan === 'langsung')) {
-    encounterIssues.push(`${encounter.id}: belum memiliki sumber langsung`)
+/**
+ * Gerbang cakupan per-encounter. Audit 2026-08-02: dulu HANYA memeriksa poli,
+ * sehingga 20 kasus IGD lolos tanpa label `cakupan` sama sekali selama
+ * berbulan-bulan — sumbernya ada dan bermutu, tapi pemain tak pernah diberi
+ * tahu mana yang langsung membahas kasusnya dan mana yang cuma payung umum.
+ * Kedua area kini dijaga aturan yang sama supaya celah itu tak bisa terulang
+ * diam-diam saat konten IGD baru ditambahkan.
+ */
+function periksaCakupan(
+  area: string,
+  daftar: { id: string; sumber?: readonly SumberKlinis[] }[],
+): string[] {
+  const temuan: string[] = []
+  for (const encounter of daftar) {
+    const source = encounter.sumber ?? []
+    if (!source.some((item) => item.cakupan === 'langsung')) {
+      temuan.push(`${area}/${encounter.id}: belum memiliki sumber langsung`)
+    }
+    if (
+      !source.some(
+        (item) => item.jenis === 'evidence_internasional' && item.cakupan === 'langsung',
+      )
+    ) {
+      temuan.push(`${area}/${encounter.id}: EBM internasional masih terkait/floor`)
+    }
   }
-  if (
-    !source.some(
-      (item) =>
-        item.jenis === 'evidence_internasional' &&
-        item.cakupan === 'langsung',
-    )
-  ) {
-    encounterIssues.push(`${encounter.id}: EBM internasional masih terkait/floor`)
-  }
+  return temuan
 }
+
+const encounterIssues = [
+  ...periksaCakupan('poli', Object.values(PACK.kasus)),
+  ...periksaCakupan('igd', Object.values(PACK.kasusIgd)),
+]
 
 const lines = [
   '# Audit Mutu Sumber Klinis PRIMERA',
@@ -222,7 +238,7 @@ const lines = [
   `- Tautan dari domain yang gagal di browser pemain: ${blocked.length}`,
   `- Sumber lama yang dipertahankan dengan alasan eksplisit: ${retainedOlderEvidence.length}`,
   `- Kandidat review kemutakhiran (EBM <= ${CURRENT_YEAR - 6}): ${olderEvidenceNeedingReview.length}`,
-  `- Kandidat penguatan cakupan poli: ${encounterIssues.length}`,
+  `- Kandidat penguatan cakupan (poli + IGD): ${encounterIssues.length}`,
   '',
   'Tahun lama adalah pemicu review, bukan vonis kedaluwarsa. Sumber lama dapat',
   'dipertahankan bila masih merupakan pedoman aktif, dokumen fondasional, atau',
@@ -270,7 +286,7 @@ console.log(`Sumber unik: ${sources.length}`)
 console.log(`Blocker akses pemain: ${blocked.length}`)
 console.log(`Sumber lama dipertahankan: ${retainedOlderEvidence.length}`)
 console.log(`Kandidat review kemutakhiran: ${olderEvidenceNeedingReview.length}`)
-console.log(`Kandidat penguatan cakupan poli: ${encounterIssues.length}`)
+console.log(`Kandidat penguatan cakupan (poli+IGD): ${encounterIssues.length}`)
 console.log(`Laporan: ${OUTPUT}`)
 
 if (blocked.length > 0) process.exitCode = 1

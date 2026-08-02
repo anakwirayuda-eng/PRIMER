@@ -1,17 +1,17 @@
 # Audit Mutu Sumber Klinis PRIMERA
 
-Dihasilkan: 2026-08-01T12:16:18.223Z
+Dihasilkan: 2026-08-02T06:42:19.134Z
 
 ## Ringkasan
 
 - Encounter poli: 210
 - Encounter IGD: 20
-- Pemakaian sumber: 565
-- Identitas sumber unik: 257
+- Pemakaian sumber: 566
+- Identitas sumber unik: 258
 - Tautan dari domain yang gagal di browser pemain: 0
 - Sumber lama yang dipertahankan dengan alasan eksplisit: 33
 - Kandidat review kemutakhiran (EBM <= 2020): 0
-- Kandidat penguatan cakupan poli: 0
+- Kandidat penguatan cakupan (poli + IGD): 0
 
 Tahun lama adalah pemicu review, bukan vonis kedaluwarsa. Sumber lama dapat
 dipertahankan bila masih merupakan pedoman aktif, dokumen fondasional, atau

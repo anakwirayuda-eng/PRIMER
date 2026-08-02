@@ -14,6 +14,7 @@ export const SUMBER_IGD = {
     label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
     url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
     tahun: 2022,
+    cakupan: 'floor_umum',
     jenis: 'pedoman_indonesia',
   },
   pnpk_epilepsi_2026: {
@@ -21,6 +22,7 @@ export const SUMBER_IGD = {
     label: 'PNPK Tata Laksana Epilepsi Dewasa 2026',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan1776933600_244772.pdf',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   pnpk_stroke_2026: {
@@ -28,6 +30,7 @@ export const SUMBER_IGD = {
     label: 'KMK 304/2026 - PNPK Tata Laksana Stroke',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan1780387545_996111.pdf',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   pnpk_sepsis_2017: {
@@ -35,6 +38,7 @@ export const SUMBER_IGD = {
     label: 'KMK 342/2017 - PNPK Tata Laksana Sepsis',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan_1610419769_850165.pdf',
     tahun: 2017,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   pnpk_ska_2019: {
@@ -42,13 +46,34 @@ export const SUMBER_IGD = {
     label: 'PNPK Tata Laksana Sindroma Koroner Akut 2019',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan_1610419977_266892.pdf',
     tahun: 2019,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
+  },
+  /**
+   * Audit cakupan IGD 2026-08-02: igd_kejang_demam satu-satunya kasus IGD yang
+   * EBM internasionalnya cuma WHO Basic Emergency Care (payung kegawatan umum
+   * = 'terkait'), jadi belum punya bukti internasional yang benar-benar
+   * membahas kejang demam. AAP Febrile Seizures SENGAJA TIDAK dipakai: teksnya
+   * eksplisit menyatakan diri tidak diperuntukkan bagi kejang demam KOMPLEKS,
+   * sedangkan kasus ini justru kompleks — mengutipnya akan jadi overclaim.
+   * Tinjauan sistematik 2024 ini membandingkan 7 pedoman lintas negara dan
+   * membahas kejang demam kompleks secara eksplisit (kriteria rawat inap,
+   * profilaksis pada kasus risiko tinggi). PMID 38653182.
+   */
+  febrile_seizures_guidelines_review_2024: {
+    id: 'febrile_seizures_guidelines_review_2024',
+    label: 'Pediatric Neurology 2024 - Febrile Seizures: A Systematic Review of Different Guidelines',
+    url: 'https://pubmed.ncbi.nlm.nih.gov/38653182/',
+    tahun: 2024,
+    cakupan: 'langsung',
+    jenis: 'evidence_internasional',
   },
   idai_kejang_demam: {
     id: 'idai_kejang_demam',
     label: 'IDAI - Rekomendasi Penatalaksanaan Kejang Demam',
     url: 'https://bpdev.idai.or.id/buku/rekomendasi-penatalaksanaan-kejang-demam',
     tahun: 2016,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   who_bec: {
@@ -56,6 +81,7 @@ export const SUMBER_IGD = {
     label: 'WHO/ICRC Basic Emergency Care',
     url: 'https://www.who.int/teams/integrated-health-services/clinical-services-and-systems/emergency-and-critical-care/bec',
     tahun: 2018,
+    cakupan: 'terkait',
     jenis: 'evidence_internasional',
   },
   rcuk_anaphylaxis_2025: {
@@ -63,6 +89,7 @@ export const SUMBER_IGD = {
     label: 'Resuscitation Council UK - Anaphylaxis Guideline 2025',
     url: 'https://www.resus.org.uk/library/2025-resuscitation-guidelines/special-circumstances-guidelines',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   gina_2026: {
@@ -70,6 +97,7 @@ export const SUMBER_IGD = {
     label: 'GINA Global Strategy for Asthma 2026',
     url: 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   ada_hypoglycemia_2026: {
@@ -77,6 +105,7 @@ export const SUMBER_IGD = {
     label: 'ADA Standards of Care - Glycemic Goals and Hypoglycemia 2026',
     url: 'https://diabetesjournals.org/care/article/49/Supplement_1/S132/163927/6-Glycemic-Goals-Hypoglycemia-and-Hyperglycemic',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_arboviral_2025: {
@@ -84,6 +113,7 @@ export const SUMBER_IGD = {
     label: 'WHO Guidelines for Clinical Management of Arboviral Diseases 2025',
     url: 'https://www.who.int/publications/i/item/9789240111110',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   ilae_status_2015: {
@@ -91,6 +121,7 @@ export const SUMBER_IGD = {
     label: 'ILAE Definition and Classification of Status Epilepticus',
     url: 'https://www.ilae.org/guidelines/definition-and-classification/status-epilepticus-2015',
     tahun: 2015,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   hyperglycemic_crises_2024: {
@@ -98,6 +129,7 @@ export const SUMBER_IGD = {
     label: 'Hyperglycemic Crises in Adults - International Consensus Report 2024',
     url: 'https://diabetesjournals.org/care/article-pdf/47/8/1257/780938/dci240032.pdf',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   aha_asa_stroke_2026: {
@@ -105,6 +137,7 @@ export const SUMBER_IGD = {
     label: 'AHA/ASA Guideline for Acute Ischemic Stroke 2026',
     url: 'https://professional.heart.org/en/science-news/2026-guideline-for-the-early-management-of-patients-with-acute-ischemic-stroke',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_pph_2025: {
@@ -112,6 +145,7 @@ export const SUMBER_IGD = {
     label: 'WHO/FIGO/ICM Postpartum Haemorrhage Guideline 2025',
     url: 'https://www.who.int/publications/i/item/9789240115637',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   aha_neonatal_2025: {
@@ -119,6 +153,7 @@ export const SUMBER_IGD = {
     label: 'AHA/AAP Neonatal Resuscitation Guidelines 2025',
     url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/neonatal-resuscitation',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_pesticide_2008: {
@@ -126,6 +161,7 @@ export const SUMBER_IGD = {
     label: 'WHO Clinical Management of Acute Pesticide Intoxication',
     url: 'https://www.who.int/publications/i/item/9789241597456',
     tahun: 2008,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_snakebite_2016: {
@@ -133,6 +169,7 @@ export const SUMBER_IGD = {
     label: 'WHO SEARO Guidelines for Management of Snakebites',
     url: 'https://www.who.int/southeastasia/publications/i/item/9789290225300',
     tahun: 2016,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   ssc_sepsis_2026: {
@@ -140,6 +177,7 @@ export const SUMBER_IGD = {
     label: 'Surviving Sepsis Campaign Adult Guidelines 2026',
     url: 'https://sccm.org/survivingsepsiscampaign/guidelines-and-resources/surviving-sepsis-campaign-adult-guidelines',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_preeclampsia_2025: {
@@ -147,6 +185,7 @@ export const SUMBER_IGD = {
     label: 'WHO Pre-eclampsia Fact Sheet and Recommendations 2025',
     url: 'https://www.who.int/news-room/fact-sheets/detail/pre-eclampsia',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   aha_pediatric_bls_2025: {
@@ -154,6 +193,7 @@ export const SUMBER_IGD = {
     label: 'AHA/AAP Pediatric Basic Life Support 2025',
     url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/pediatric-basic-life-support',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   acc_aha_acs_2025: {
@@ -161,6 +201,7 @@ export const SUMBER_IGD = {
     label: 'ACC/AHA Guideline for Acute Coronary Syndromes 2025',
     url: 'https://professional.heart.org/en/science-news/2025-guideline-for-the-management-of-patients-with-acute-coronary-syndromes',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   permenkes_rujukan_2024: {
@@ -168,6 +209,7 @@ export const SUMBER_IGD = {
     label: 'Permenkes 16/2024 - Sistem Rujukan Pelayanan Kesehatan Perseorangan',
     url: 'https://jdih.kemkes.go.id/documents/peraturan-menteri-kesehatan-nomor-16-tahun-2024',
     tahun: 2024,
+    cakupan: 'floor_umum',
     jenis: 'pedoman_indonesia',
   },
   fornas_2025: {
@@ -175,6 +217,7 @@ export const SUMBER_IGD = {
     label: 'KMK 1199/2025 - Formularium Nasional',
     url: 'https://farmalkes.kemkes.go.id/unduh/keputusan-menteri-kesehatan-republik-indonesia-nomor-hk-01-07-menkes-1199-2025-tentang-formularium-nasional/',
     tahun: 2025,
+    cakupan: 'floor_umum',
     jenis: 'pedoman_indonesia',
   },
   idai_resneo_2024: {
@@ -182,6 +225,7 @@ export const SUMBER_IGD = {
     label: 'IDAI - Panduan Provider Resusitasi Neonatus Resneo ID 2024',
     url: 'https://www.idai.or.id/publications/buku-idai/buku-panduan-provider-resusitasi-neonatus-resneo-id-edisi-pertama',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   acs_tbi_2024: {
@@ -189,6 +233,7 @@ export const SUMBER_IGD = {
     label: 'ACS Best Practices Guidelines - Traumatic Brain Injury 2024',
     url: 'https://www.facs.org/media/vgfgjpfk/best-practices-guidelines-traumatic-brain-injury.pdf',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   bkpk_snakebite_2025: {
@@ -196,6 +241,7 @@ export const SUMBER_IGD = {
     label: 'BKPK Kemenkes - Pedoman Gigitan dan Sengatan Hewan Berbisa 2025',
     url: 'https://simplek.badankebijakan.kemkes.go.id/repositori/detail/1004',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   ghbtb_2026: {
@@ -203,6 +249,7 @@ export const SUMBER_IGD = {
     label: 'Kementerian Kesehatan - Portal Program GHBTB',
     url: 'https://s.kemkes.go.id/GHBTB',
     tahun: 2026,
+    cakupan: 'terkait',
     jenis: 'pedoman_indonesia',
   },
   kemenkes_icha_2026: {
@@ -210,6 +257,7 @@ export const SUMBER_IGD = {
     label: 'Kementerian Kesehatan - Investigasi dan Perlindungan Nakes Kasus dr. Icha',
     url: 'https://www.kemkes.go.id/id/kemenkes-akan-usut-tuntas-kasus-dugaan-intimidasi-terhadap-dr-icha',
     tahun: 2026,
+    cakupan: 'terkait',
     jenis: 'pedoman_indonesia',
   },
   bkpk_poisoning_2024: {
@@ -217,6 +265,7 @@ export const SUMBER_IGD = {
     label: 'BKPK Kemenkes - Buku Pedoman Keracunan Alami dan Non Alami 2024',
     url: 'https://repository.badankebijakan.kemkes.go.id/id/eprint/5608/',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   aha_special_circumstances_2025: {
@@ -224,6 +273,7 @@ export const SUMBER_IGD = {
     label: 'AHA Special Circumstances of Resuscitation 2025',
     url: 'https://cpr.heart.org/en/resuscitation-science/cpr-and-ecc-guidelines/adult-and-pediatric-special-circumstances-of-resuscitation',
     tahun: 2025,
+    cakupan: 'terkait',
     jenis: 'evidence_internasional',
   },
   perkeni_insulin_2021: {
@@ -231,6 +281,7 @@ export const SUMBER_IGD = {
     label: 'PERKENI - Petunjuk Praktis Terapi Insulin 2021',
     url: 'https://pbperkeni.or.id/wp-content/uploads/2021/11/22-10-21-_-Website-Pedoman-Petunjuk-Praktis-Terapi-Insulin-Pada-Pasien-Diabetes-Melitus-Ebook.pdf',
     tahun: 2021,
+    cakupan: 'terkait',
     jenis: 'pedoman_indonesia',
   },
   ada_hospital_2026: {
@@ -238,6 +289,7 @@ export const SUMBER_IGD = {
     label: 'ADA Standards of Care - Diabetes Care in the Hospital 2026',
     url: 'https://diabetesjournals.org/care/article/49/Supplement_1/S339/163925/16-Diabetes-Care-in-the-Hospital-Standards-of-Care',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   pnpk_burn_2019: {
@@ -245,6 +297,7 @@ export const SUMBER_IGD = {
     label: 'KMK 555/2019 - PNPK Tata Laksana Luka Bakar',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan_1610415947_843237.pdf',
     tahun: 2019,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   aba_burn_resuscitation_2024: {
@@ -252,6 +305,7 @@ export const SUMBER_IGD = {
     label: 'American Burn Association - Burn Shock Resuscitation 2024',
     url: 'https://academic.oup.com/jbcr/article/45/3/565/7458089',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   pnpk_pregnancy_complications_2017: {
@@ -259,6 +313,7 @@ export const SUMBER_IGD = {
     label: 'KMK 91/2017 - PNPK Tata Laksana Komplikasi Kehamilan',
     url: 'https://www.kemkes.go.id/app_asset/file_content_download/17012281586566ae7eec8862.58707574.pdf',
     tahun: 2017,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   who_pph_implementation_2026: {
@@ -266,6 +321,7 @@ export const SUMBER_IGD = {
     label: 'WHO/FIGO/ICM - PPH Implementation Guide 2026',
     url: 'https://www.who.int/publications/i/item/9789240116115',
     tahun: 2026,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   pnpk_trauma_2017: {
@@ -273,6 +329,7 @@ export const SUMBER_IGD = {
     label: 'KMK 132/2017 - PNPK Tata Laksana Trauma',
     url: 'https://keslan.kemkes.go.id/unduhan/fileunduhan_1610422327_714480.pdf',
     tahun: 2017,
+    cakupan: 'langsung',
     jenis: 'pedoman_indonesia',
   },
   wses_thoracic_trauma_2025: {
@@ -280,6 +337,7 @@ export const SUMBER_IGD = {
     label: 'WSES-AAST Thoracic Trauma Guidelines 2025',
     url: 'https://link.springer.com/article/10.1186/s13017-025-00651-1',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_status_epilepticus_2023: {
@@ -287,6 +345,7 @@ export const SUMBER_IGD = {
     label: 'WHO - Antiseizure Medicines for Established Status Epilepticus 2023',
     url: 'https://www.who.int/teams/mental-health-and-substance-use/mental-health-gap-action-programme/resources-centre/epilepsy-and-seizures/Antiseizure-medicines-for-management-of-established-status-epilepticus',
     tahun: 2023,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   queensland_fbao_2025: {
@@ -294,6 +353,7 @@ export const SUMBER_IGD = {
     label: 'Queensland Paediatric Guideline - Inhaled Foreign Body 2025',
     url: 'https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/foreign-body-inhaled',
     tahun: 2025,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   sepsis3_2016: {
@@ -301,6 +361,7 @@ export const SUMBER_IGD = {
     label: 'Sepsis-3 International Consensus Definitions',
     url: 'https://jamanetwork.com/journals/jama/fullarticle/2492881',
     tahun: 2016,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   anzcor_drowning_2026: {
@@ -308,6 +369,7 @@ export const SUMBER_IGD = {
     label: 'ANZCOR 11.10 - Resuscitation in Special Circumstances 2026',
     url: 'https://www.anzcor.org/home/adult-advanced-life-support/guideline-11-10-resuscitation-in-special-circumstances',
     tahun: 2026,
+    cakupan: 'terkait',
     jenis: 'evidence_internasional',
   },
   wms_drowning_2024: {
@@ -315,6 +377,7 @@ export const SUMBER_IGD = {
     label: 'Wilderness Medical Society Drowning Guideline 2024',
     url: 'https://doi.org/10.1177/10806032241227460',
     tahun: 2024,
+    cakupan: 'langsung',
     jenis: 'evidence_internasional',
   },
   who_drowning_2024: {
@@ -322,6 +385,7 @@ export const SUMBER_IGD = {
     label: 'WHO Global Status Report on Drowning Prevention 2024',
     url: 'https://www.who.int/publications/i/item/9789240103962',
     tahun: 2024,
+    cakupan: 'terkait',
     jenis: 'evidence_internasional',
   },
   basarnas_search_rescue_2014: {
@@ -329,6 +393,7 @@ export const SUMBER_IGD = {
     label: 'UU 29/2014 - Pencarian dan Pertolongan',
     url: 'https://jdih.basarnas.go.id/produk-hukum/427',
     tahun: 2014,
+    cakupan: 'terkait',
     jenis: 'pedoman_indonesia',
   },
 } as const satisfies Record<string, SumberKlinis>
@@ -347,7 +412,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
   },
   igd_kejang_demam: {
     panduanResmi: 'Kejang aktif lebih dari 5 menit ditangani sebagai kegawatan: amankan ABC, cek glukosa, berikan benzodiazepin sesuai rute yang tersedia, lalu rujuk bila kompleks, berulang, fokal, atau pemulihan tidak wajar.',
-    sumberIds: ['idai_kejang_demam', 'who_bec'],
+    sumberIds: ['idai_kejang_demam', 'febrile_seizures_guidelines_review_2024', 'who_bec'],
   },
   igd_asma_berat: {
     panduanResmi: 'Serangan berat memerlukan oksigen terkontrol, SABA berulang, kortikosteroid sistemik dini, penilaian ulang, dan rujukan tanpa menunggu gagal napas. Ipratropium adalah tambahan bila tersedia, bukan alasan menunda tata laksana dasar FKTP.',

@@ -6,6 +6,7 @@ import { PACK } from '@content/index'
 import type { GameState } from '@engine/state'
 import { useGame } from '../store'
 import { MejaKerja } from './MejaKerja'
+import { BuktiKlinis } from '../components/BuktiKlinis'
 
 function pasangPrimerStub() {
   window.primer = {
@@ -95,3 +96,36 @@ describe('<MejaKerja /> - provenance hasil IGD', () => {
 })
 
 const SUMBER_URL_GINA = 'https://ginasthma.org/wp-content/uploads/2026/05/GINA-2026-Strategy-Report-WMS.pdf'
+
+/**
+ * Audit cakupan IGD 2026-08-02: 20 kasus IGD dulu tak punya field `cakupan`
+ * sama sekali, sehingga BuktiKlinis merender sumbernya TANPA label tiga-tingkat
+ * (LANGSUNG / TERKAIT / PEDOMAN DASAR) yang mencegah overclaim di sisi poli.
+ * Sumbernya ada dan bermutu — yang hilang adalah pemberitahuan mana yang
+ * benar-benar membahas kasus ini. Test ini mengunci agar tak kembali hilang.
+ */
+describe('<MejaKerja /> — label cakupan sumber IGD tampil ke pemain', () => {
+  it('debrief IGD menampilkan label tiga-tingkat, bukan sumber tanpa keterangan', async () => {
+    const kasus = Object.values(PACK.kasusIgd)[0]!
+    expect(kasus.sumber.length, 'pra-syarat: kasus IGD punya sumber').toBeGreaterThan(0)
+    // Setiap sumber IGD kini WAJIB berlabel — tanpa ini, render jatuh ke null.
+    for (const s of kasus.sumber) {
+      expect(s.cakupan, `${kasus.id}/${s.id} tanpa cakupan`).toBeDefined()
+    }
+
+    render(
+      <BuktiKlinis
+        namaKasus={kasus.nama}
+        ringkasan={kasus.panduanResmi}
+        sumber={kasus.sumber}
+        defaultOpen
+      />,
+    )
+
+    // Label dirender dalam satu span gabungan ("EBM · LANGSUNG · 2025"), jadi
+    // dicocokkan sbg regex — bukan string persis. Minimal satu sumber tampil
+    // LANGSUNG: bukti yang genuinely membahas kasus ini, bukan cuma payung.
+    expect(screen.getAllByText(/LANGSUNG|TERKAIT|PEDOMAN DASAR/).length).toBeGreaterThan(0)
+    expect(screen.getAllByText(/LANGSUNG/).length).toBeGreaterThan(0)
+  })
+})
