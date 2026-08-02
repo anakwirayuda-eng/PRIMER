@@ -822,7 +822,13 @@
 
 .klinik-hasil {
   width: min(660px, 92vw);
-  padding: var(--sp-6);
+  /* padding-bottom sengaja 0 — lihat catatan di .klinik-hasil__aksi:
+     versi lama mengandalkan margin-bottom negatif utk membatalkan
+     padding ini, dan kombinasi itu membuat perhitungan `position: sticky`
+     Chromium meleset ~32px (lebar satu var(--sp-6)), sehingga baris aksi
+     menutup ~8px baris terakhir "Pelajari Lebih Dalam" saat digulir mentok
+     (audit UI/UX 2026-08-02, terverifikasi lewat getBoundingClientRect). */
+  padding: var(--sp-6) var(--sp-6) 0;
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
@@ -1051,17 +1057,30 @@ details[open].klinik-hasil__panduan > summary::before {
 /* S1-panelhasil: baris aksi LENGKET di dasar modal — CTA utama ("Pasien
    Berikutnya") selalu terlihat tanpa scroll. .modal adalah scroll-container-nya
    (base.css: max-height 88vh; overflow auto) → sticky bottom bekerja terhadap
-   scrollport itu. Margin negatif lama dipertahankan: saat scroll mentok, baris
-   tetap menempel rapat tepi dalam modal. --bg-panel sudah diremap gelap di
-   [data-mode='malam'] (tokens.css) — mode malam beres lewat token, tanpa blok
-   override tambahan. z-index memastikan konten yang lewat di bawahnya tak
-   menembus. */
+   scrollport itu. --bg-panel sudah diremap gelap di [data-mode='malam']
+   (tokens.css) — mode malam beres lewat token, tanpa blok override tambahan.
+   z-index memastikan konten yang lewat di bawahnya tak menembus.
+
+   Audit UI/UX 2026-08-02: margin-bottom NEGATIF di elemen yang SAMA dgn
+   position:sticky (versi lama, dipertahankan demi tampilan "menempel rapat
+   tepi modal") ternyata membuat Chromium salah hitung titik "stuck" ~32px
+   (persis lebar satu var(--sp-6)) — baris aksi jadi nempel ~8px LEBIH TINGGI
+   dari seharusnya, menutup ekor teks grup "Pelajari Lebih Dalam"/"Referensi
+   kasus" saat kontennya panjang & digulir mentok (dilaporkan pengguna:
+   teks tampak "kedempet" dgn tombol Tutup/Pasien Berikutnya; dikonfirmasi
+   lewat getBoundingClientRect — jarak jadi NEGATIF -8px, bukan cuma sempit).
+   Perbaikan: margin-bottom TIDAK LAGI negatif (kini kecil & positif, sp-1);
+   "flush ke tepi modal" dicapai dgn menghapus padding-bottom induk
+   (.klinik-hasil di atas) alih-alih membatalkannya lewat margin negatif —
+   hasil visual nyaris sama (gap ~28px vs 24px lama), tapi sticky tak lagi
+   meleset. Margin kiri/kanan negatif TETAP (horizontal, tak ikut memicu bug
+   `bottom` sticky ini). */
 .klinik-hasil__aksi {
   position: sticky;
   bottom: 0;
   z-index: 1;
   background: var(--bg-panel);
-  margin: var(--sp-1) calc(-1 * var(--sp-6)) calc(-1 * var(--sp-6));
+  margin: var(--sp-1) calc(-1 * var(--sp-6));
   padding: var(--sp-3) var(--sp-6) var(--sp-5);
   border-top: 1px dashed var(--border-tegas);
 }
