@@ -116,10 +116,10 @@ Kelas pembanding yang dipakai: simulator medis komersial (Body Interact, Full Co
 | A1 | Core loop & pacing | 4 |
 | A2 | Onboarding & learnability | 4 |
 | A3 | UI/UX & identitas visual | 4 |
-| A4 | Audio | 3,5 |
+| A4 | Audio | 3,5 → **4,5** (adendum §6) |
 | A5 | Konten & replayability | 4 |
 | A6 | Stabilitas & kualitas teknis | 4,5 |
-| A7 | Distribusi & kesiapan komersial | **2** |
+| A7 | Distribusi & kesiapan komersial | 2 → **3,5** (adendum §6) |
 | A8 | Telemetri & live-ops | 3 → **4** (adendum §6) |
 | B1 | Keselarasan kurikulum | **5** |
 | B2 | Akurasi & fidelity klinis | 4 |
@@ -186,6 +186,31 @@ di test suite, bukan audit sekali-jalan. **Mengapa bukan 5:** audit
 screen-reader manual ujung-ke-ujung (NVDA/JAWS oleh pengguna nyata) belum
 dilakukan dan tidak dapat digantikan mesin — itu tetap pekerjaan tersisa yang
 jujur, dijadwalkan bersama pilot.
+
+### Adendum lanjutan (beta.11) — A4 & A7
+
+**A4 Audio: 3,5 → 4,5.** Temuan pangkal yang mengoreksi benchmark ini sendiri:
+musik latar **mati total** sejak audit lisensi menghapus 7 track OST — teks
+§A4 di atas keliru menyebut "BGM ambient tersintesis". Kini ada
+`audio/ambient.ts`: musik generatif laras **slendro & pelog**, nol berkas,
+bebas lisensi secara konstruksi, tak pernah berulang persis, berubah watak per
+konteks. Riset juga menemukan **dua bug SFX nyata**: `sfxStempel` 10-13 dB di
+atas semua cue lain padahal paling sering dibunyikan, dan throttle blip yang
+membolehkan ~17/detik (batas kegunaan earcon ~6/detik). **Mengapa bukan 5:**
+penulisnya tidak dapat mendengar — yang terverifikasi parameter & ketiadaan
+error, bukan keindahan. Sesi dengar manusia 45-60 menit adalah syarat yang
+belum ditunaikan (prosedur: `docs/KEBIJAKAN_ASET_AUDIO.md` §6).
+
+**A7 Distribusi: 2 → 3,5.** Ditambahkan: build **portable** (tanpa instalasi —
+untuk PC lab terkunci, diuji betul-betul berjalan), **SHA256SUMS** per rilis
+dengan perintah verifikasi salin-tempel, dan **cek versi opt-in** yang
+memindahkan pengambilan ke main process setelah riset membuktikan implementasi
+renderer-nya **mati senyap** di build terpasang (CSP `default-src 'self'`).
+Juga koreksi klaim: alasan menolak auto-update bukan "SmartScreen kedua" (itu
+keliru secara mekanis) melainkan bahwa electron-updater **melewati verifikasi
+penerbit** pada aplikasi tak bertanda tangan. **Mengapa bukan 5:** butuh
+sertifikat penandatanganan (keputusan & biaya pemilik), plus multiplatform &
+storefront. Plafon tanpa sertifikat memang sekitar sini.
 
 ## 7. Referensi kerangka
 
