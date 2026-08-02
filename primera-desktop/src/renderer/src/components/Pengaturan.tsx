@@ -8,6 +8,8 @@
 import { useEffect, useState } from 'react'
 import { setPengaturan, PENGATURAN_DEFAULT, type ModeMalam } from '../settings'
 import { usePengaturan } from '../usePengaturan'
+import { unduhLaporanDiagnostik } from '../diagnostik'
+import { useGame } from '../store'
 import { useFocusTrap } from '../useFocusTrap'
 import { useRadioGroup } from '../useRadioGroup'
 import { resetOnboarding } from './Onboarding'
@@ -46,6 +48,12 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
   }, [])
   const p = usePengaturan()
   const persen = (n: number) => `${Math.round(n * 100)}%`
+  // A8 telemetri (2026-08-02): umpan balik + Laporan Diagnostik — kanal
+  // pelaporan in-app pertama (dulu mahasiswa harus lapor lewat luar tanpa
+  // ada data teknis apa pun yang menyertainya).
+  const [umpanBalik, setUmpanBalik] = useState('')
+  const [statusLaporan, setStatusLaporan] = useState<'idle' | 'sukses' | 'gagal'>('idle')
+  const stateGame = useGame((s) => s.state)
   // CODEX M10.a ronde-4 (dossier §44): trap NONAKTIF saat `tentang` terbuka —
   // TentangModal (di atasnya, DOM-order sama z-modal) yang wajib pegang fokus
   // saat itu; dua trap aktif bersamaan akan rebutan ke mana Tab dibungkus.
@@ -117,6 +125,58 @@ export function Pengaturan({ dok = false }: { dok?: boolean } = {}) {
               <input type="checkbox" checked={p.kurangiGerak}
                 onChange={(e) => setPengaturan({ kurangiGerak: e.target.checked })} />
             </label>
+
+            <label
+              className="set-baris set-baris--switch"
+              data-tip="Peta desa memakai biru (bukan hijau) untuk RW sehat — hijau vs merah sulit dibedakan pada buta warna merah-hijau."
+            >
+              <span>Warna Peta Aman Buta Warna</span>
+              <input type="checkbox" checked={p.amanButaWarna}
+                onChange={(e) => setPengaturan({ amanButaWarna: e.target.checked })} />
+            </label>
+
+            {/* -- Bantuan & Laporan (A8, 2026-08-02) ---------------------- */}
+            <div className="set-lapor">
+              <h3 className="judul-seksi">Menemukan Masalah?</h3>
+              <p className="teks-xs teks-lembut">
+                Ceritakan yang terjadi (opsional), lalu simpan Laporan Diagnostik —
+                berkas berisi versi aplikasi, pengaturan, dan catatan gangguan teknis
+                (tanpa isi permainanmu) — dan kirimkan ke dosen/pengembang.
+              </p>
+              <textarea
+                className="set-lapor__teks"
+                value={umpanBalik}
+                onChange={(e) => setUmpanBalik(e.target.value)}
+                placeholder="Apa yang kamu lakukan saat masalah muncul? Apa yang kamu harapkan terjadi?"
+                rows={3}
+                maxLength={4000}
+                aria-label="Teks umpan balik untuk laporan diagnostik"
+              />
+              <div className="baris baris--antara">
+                <button
+                  className="tombol"
+                  onClick={() => {
+                    unduhLaporanDiagnostik(
+                      umpanBalik,
+                      stateGame
+                        ? { hari: stateGame.hari, blok: stateGame.blok, mode: stateGame.mode, layar: stateGame.layar }
+                        : null,
+                    )
+                      .then(() => setStatusLaporan('sukses'))
+                      .catch(() => setStatusLaporan('gagal'))
+                  }}
+                >
+                  Simpan Laporan Diagnostik
+                </button>
+                {statusLaporan !== 'idle' && (
+                  <span className={`teks-xs ${statusLaporan === 'gagal' ? 'set-lapor__gagal' : 'teks-lembut'}`} role="status">
+                    {statusLaporan === 'sukses'
+                      ? 'Tersimpan — cek folder Unduhan/Downloads.'
+                      : 'Gagal menyusun laporan — coba lagi.'}
+                  </span>
+                )}
+              </div>
+            </div>
 
             <div className="baris baris--antara set-kaki">
               <button className="tombol tombol--senyap" onClick={() => setPengaturan({ ...PENGATURAN_DEFAULT })}>

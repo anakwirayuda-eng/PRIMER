@@ -16,6 +16,7 @@ interface Window {
     runtime?: {
       consumeRecovery: () => Promise<{ occurredAt: string; reason: string; exitCode: number } | null>
       readCrashLog: () => Promise<string[]>
+      logError: (entri: { pesan: string; stack?: string; layar?: string }) => Promise<boolean>
     }
   }
 }

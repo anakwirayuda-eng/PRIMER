@@ -97,9 +97,12 @@ export function jalurOrganik(b: BentukPetak): string {
 export function warnaPetak(rw: RwState): string {
   if (rw.kkTersurvei <= 0) return 'var(--kertas-400)' // abu-abu: belum ada data
   const kelas = klasifikasiIks(rw.iks)
-  if (kelas === 'sehat') return 'var(--daun-600)'
-  if (kelas === 'pra_sehat') return 'var(--kunyit-600)'
-  return 'var(--tinta-merah)'
+  // Token semantik --peta-* (audit aksesibilitas 2026-08-02): nilai default
+  // identik dgn palet lama, tapi mode aman buta-warna (Pengaturan) me-remap
+  // hijau-vs-merah → biru-vs-merah di tokens.css tanpa menyentuh logika ini.
+  if (kelas === 'sehat') return 'var(--peta-sehat)'
+  if (kelas === 'pra_sehat') return 'var(--peta-pra-sehat)'
+  return 'var(--peta-tidak-sehat)'
 }
 
 /**

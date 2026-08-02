@@ -18,6 +18,12 @@ export interface Pengaturan {
   modeMalam: ModeMalam
   /** Kurangi animasi (melengkapi prefers-reduced-motion OS). */
   kurangiGerak: boolean
+  /**
+   * Mode aman buta-warna (audit aksesibilitas 2026-08-02): menukar palet
+   * choropleth peta hijau-vs-merah → biru-vs-merah (tokens.css,
+   * :root.aman-buta-warna). Permukaan lain sudah berlabel teks (WCAG 1.4.1).
+   */
+  amanButaWarna: boolean
 }
 
 const KUNCI = 'primer.pengaturan'
@@ -32,6 +38,7 @@ export const PENGATURAN_DEFAULT: Pengaturan = {
   ukuranTeks: 1,
   modeMalam: 'auto',
   kurangiGerak: false,
+  amanButaWarna: false,
 }
 
 function klem(n: unknown, min: number, max: number, fallback: number): number {
@@ -53,6 +60,7 @@ function baca(): Pengaturan {
       ukuranTeks: klem(p.ukuranTeks, 0.9, 2, PENGATURAN_DEFAULT.ukuranTeks),
       modeMalam: p.modeMalam === 'siang' || p.modeMalam === 'malam' ? p.modeMalam : 'auto',
       kurangiGerak: p.kurangiGerak === true,
+      amanButaWarna: p.amanButaWarna === true,
     }
   } catch {
     return { ...PENGATURAN_DEFAULT }

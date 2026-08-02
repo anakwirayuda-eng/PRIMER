@@ -17,19 +17,19 @@ describe('warnaPetak — konsisten dgn klasifikasiIks 3-kelas (CODEX audit UI/UX
   it('RW di zona "Pra-Sehat" (0.65-0.8, dulu tampak hijau krn pita 5-warna) kini warna KUNYIT, bukan hijau', () => {
     const target = rw({ iks: 0.7, kkTersurvei: 10 })
     expect(klasifikasiIks(target.iks)).toBe('pra_sehat')
-    expect(warnaPetak(target)).toBe('var(--kunyit-600)')
-    expect(warnaPetak(target)).not.toBe('var(--daun-600)')
+    expect(warnaPetak(target)).toBe('var(--peta-pra-sehat)')
+    expect(warnaPetak(target)).not.toBe('var(--peta-sehat)')
   })
 
   it('RW di zona "Tidak Sehat" (0.35-0.5, dulu tampak kunyit krn pita 5-warna) kini warna MERAH, bukan kunyit', () => {
     const target = rw({ iks: 0.4, kkTersurvei: 10 })
     expect(klasifikasiIks(target.iks)).toBe('tidak_sehat')
-    expect(warnaPetak(target)).toBe('var(--tinta-merah)')
+    expect(warnaPetak(target)).toBe('var(--peta-tidak-sehat)')
     expect(warnaPetak(target)).not.toBe('var(--kunyit-700)')
   })
 
   it('RW "Sehat" (>0.8) tetap hijau; belum tersurvei tetap abu-abu (regresi guard)', () => {
-    expect(warnaPetak(rw({ iks: 0.9, kkTersurvei: 10 }))).toBe('var(--daun-600)')
+    expect(warnaPetak(rw({ iks: 0.9, kkTersurvei: 10 }))).toBe('var(--peta-sehat)')
     expect(warnaPetak(rw({ iks: 0, kkTersurvei: 0 }))).toBe('var(--kertas-400)')
   })
 
@@ -37,7 +37,7 @@ describe('warnaPetak — konsisten dgn klasifikasiIks 3-kelas (CODEX audit UI/UX
     for (let iks = 0; iks <= 1; iks += 0.01) {
       const kelas = klasifikasiIks(iks)
       const warna = warnaPetak(rw({ iks, kkTersurvei: 10 }))
-      const warnaHarapan = kelas === 'sehat' ? 'var(--daun-600)' : kelas === 'pra_sehat' ? 'var(--kunyit-600)' : 'var(--tinta-merah)'
+      const warnaHarapan = kelas === 'sehat' ? 'var(--peta-sehat)' : kelas === 'pra_sehat' ? 'var(--peta-pra-sehat)' : 'var(--peta-tidak-sehat)'
       expect(warna, `iks=${iks} kelas=${kelas}`).toBe(warnaHarapan)
     }
   })

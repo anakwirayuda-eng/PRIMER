@@ -159,6 +159,31 @@ function registerIpc(): void {
     }
   })
 
+  // A8 telemetri (audit benchmark 2026-08-02): error JS renderer (ErrorBoundary
+  // / unhandledrejection) dulu hanya tampil di konsol yang tak pernah dilihat
+  // siapa pun di mesin mahasiswa — kini ikut masuk log crash yang sama dgn
+  // render-process-gone, jadi bisa diekspor lewat Laporan Diagnostik.
+  // Renderer membatasi laju di sisinya; batas ukuran pesan di sini adalah
+  // pagar kedua (log forensik, bukan tempat menampung payload sebesar-besarnya).
+  ipcMain.handle('runtime:log-error', async (_e, entriMentah: unknown) => {
+    try {
+      const o = (typeof entriMentah === 'object' && entriMentah !== null ? entriMentah : {}) as Record<string, unknown>
+      const entri = {
+        occurredAt: new Date().toISOString(),
+        source: 'renderer-js',
+        pesan: String(o['pesan'] ?? '').slice(0, 500),
+        stack: String(o['stack'] ?? '').slice(0, 2000),
+        layar: String(o['layar'] ?? '').slice(0, 40),
+        appVersion: app.getVersion(),
+      }
+      await fs.appendFile(RUNTIME_CRASH_LOG(), JSON.stringify(entri) + '\n', 'utf-8')
+      return true
+    } catch (error) {
+      console.error('[runtime:log-error]', error)
+      return false
+    }
+  })
+
   ipcMain.handle('app:version', () => app.getVersion())
   ipcMain.handle('runtime:consume-recovery', () => {
     const notice = pemulihanRendererTertunda

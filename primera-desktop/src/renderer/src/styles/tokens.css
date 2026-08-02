@@ -65,6 +65,17 @@
   --tinta-merah: var(--tinta-merah-siang); /* stempel merah — bahaya, alergi, gawat */
   --tinta-biru: var(--tinta-biru-siang); /* pulpen biru — catatan, link, info */
 
+  /* -- Choropleth peta desa (audit aksesibilitas 2026-08-02) ----------------
+     Satu-satunya permukaan yang maknanya disandikan WARNA SAJA (petak SVG
+     tanpa teks di dalamnya) — chip/stempel lain selalu berlabel teks (WCAG
+     1.4.1). Token semantik ini memungkinkan mode aman buta-warna menukar
+     palet hijau-vs-merah (pasangan yang runtuh pada deuteranopia/protanopia)
+     TANPA menyentuh logika petaUtil. Override-nya di blok
+     `:root.aman-buta-warna` di bawah. */
+  --peta-sehat: var(--daun-600);
+  --peta-pra-sehat: var(--kunyit-600);
+  --peta-tidak-sehat: var(--tinta-merah);
+
   /* -- Semantik klinis ------------------------------------------------------ */
   --vital-baik: var(--daun-700);
   --vital-waspada: var(--kunyit-600);
@@ -219,4 +230,23 @@
   --kunyit-600: #eaa54f;
   --tinta-merah: #ef8478;
   --tinta-biru: #83b3de;
+}
+
+/* -- Mode aman buta-warna (audit aksesibilitas 2026-08-02) --------------------
+   Diaktifkan dari Pengaturan (kelas di <html>, pola sama .kurangi-gerak).
+   Hanya menukar palet choropleth peta: pasangan hijau-vs-merah diganti
+   biru-vs-merah — biru tetap terbedakan dari merah pada deuteranopia,
+   protanopia, dan tritanopia. Sinyal non-warna yang sudah ada (awan mendung
+   utk "tidak sehat", pola putus-putus utk data tipis, label IKS di panel
+   detail) tetap bekerja di kedua palet. */
+:root.aman-buta-warna {
+  --peta-sehat: #2b6cb0;
+  --peta-pra-sehat: #b0842b;
+  --peta-tidak-sehat: #c0392b;
+}
+
+:root.aman-buta-warna[data-mode='malam'] {
+  --peta-sehat: #83b3de;
+  --peta-pra-sehat: #eaa54f;
+  --peta-tidak-sehat: #ef8478;
 }

@@ -18,6 +18,8 @@ const api = {
     consumeRecovery: (): Promise<{ occurredAt: string; reason: string; exitCode: number } | null> =>
       ipcRenderer.invoke('runtime:consume-recovery'),
     readCrashLog: (): Promise<string[]> => ipcRenderer.invoke('runtime:crash-log'),
+    logError: (entri: { pesan: string; stack?: string; layar?: string }): Promise<boolean> =>
+      ipcRenderer.invoke('runtime:log-error', entri),
   },
 }
 

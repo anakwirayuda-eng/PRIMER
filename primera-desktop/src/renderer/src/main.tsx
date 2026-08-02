@@ -45,10 +45,32 @@ if (typeof window.primer === 'undefined') {
     runtime: {
       consumeRecovery: async () => null,
       readCrashLog: async () => [],
+      logError: async () => true,
     },
     appVersion: async () => 'browser-preview',
   }
 }
+
+// A8 telemetri (2026-08-02): error JS yang LOLOS dari ErrorBoundary (listener
+// event, promise yatim, kode di luar pohon React) dulu lenyap di konsol yang
+// tak pernah dilihat siapa pun di mesin mahasiswa. Catat ke log crash lokal —
+// dibatasi 10 entri per sesi supaya error berulang tak membanjiri log forensik.
+let sisaKuotaLogError = 10
+function catatErrorGlobal(pesan: string, stack?: string): void {
+  if (sisaKuotaLogError <= 0) return
+  sisaKuotaLogError--
+  void window.primer?.runtime?.logError?.({ pesan, stack: stack ?? '' }).catch(() => {})
+}
+window.addEventListener('error', (e) => {
+  catatErrorGlobal(`[window.onerror] ${e.message}`, e.error instanceof Error ? e.error.stack : undefined)
+})
+window.addEventListener('unhandledrejection', (e) => {
+  const alasan = e.reason
+  catatErrorGlobal(
+    `[unhandledrejection] ${alasan instanceof Error ? alasan.message : String(alasan).slice(0, 200)}`,
+    alasan instanceof Error ? alasan.stack : undefined,
+  )
+})
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>

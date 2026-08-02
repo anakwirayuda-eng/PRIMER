@@ -193,16 +193,16 @@ export function PetaDesa() {
             <span className="peta-legenda__swatch" style={{ background: 'var(--kertas-400)' }} /> belum tersurvei
           </span>
           <span className="peta-legenda__item">
-            <span className="peta-legenda__swatch" style={{ background: 'var(--daun-600)' }} /> sehat
+            <span className="peta-legenda__swatch" style={{ background: 'var(--peta-sehat)' }} /> sehat
           </span>
           <span className="peta-legenda__item">
-            <span className="peta-legenda__swatch" style={{ background: 'var(--kunyit-600)' }} /> pra-sehat
+            <span className="peta-legenda__swatch" style={{ background: 'var(--peta-pra-sehat)' }} /> pra-sehat
           </span>
           <span className="peta-legenda__item">
-            <span className="peta-legenda__swatch" style={{ background: 'var(--tinta-merah)' }} /> tidak sehat
+            <span className="peta-legenda__swatch" style={{ background: 'var(--peta-tidak-sehat)' }} /> tidak sehat
           </span>
           <span className="peta-legenda__item">
-            <span className="peta-legenda__swatch peta-legenda__swatch--tipis" style={{ background: 'var(--daun-600)' }} /> warna pudar = data awal, belum representatif
+            <span className="peta-legenda__swatch peta-legenda__swatch--tipis" style={{ background: 'var(--peta-sehat)' }} /> warna pudar = data awal, belum representatif
           </span>
           <span className="peta-legenda__pisah" />
           {/* Copy-audit 2026-08-01: "Provenance" = istilah internal — pakai

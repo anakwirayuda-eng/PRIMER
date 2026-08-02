@@ -120,7 +120,7 @@ Kelas pembanding yang dipakai: simulator medis komersial (Body Interact, Full Co
 | A5 | Konten & replayability | 4 |
 | A6 | Stabilitas & kualitas teknis | 4,5 |
 | A7 | Distribusi & kesiapan komersial | **2** |
-| A8 | Telemetri & live-ops | 3 |
+| A8 | Telemetri & live-ops | 3 → **4** (adendum §6) |
 | B1 | Keselarasan kurikulum | **5** |
 | B2 | Akurasi & fidelity klinis | 4 |
 | B3 | Provenance bukti | **5** |
@@ -128,7 +128,7 @@ Kelas pembanding yang dipakai: simulator medis komersial (Body Interact, Full Co
 | B5 | Feedback & debriefing | 4,5 |
 | B6 | Integritas akademik | **5** |
 | B7 | Realisme sistem kesehatan | 4,5 |
-| B8 | Aksesibilitas | 3,5 |
+| B8 | Aksesibilitas | 3,5 → **4,5** (adendum §6) |
 | B9 | **Validasi empiris** | **1,5** |
 | B10 | Kesiapan fasilitasi | 3 |
 
@@ -159,7 +159,35 @@ Kelas pembanding yang dipakai: simulator medis komersial (Body Interact, Full Co
 
 ---
 
-## 6. Referensi kerangka
+## 6. Adendum 2026-08-02 (malam) — A8 & B8 dikerjakan, skor ulang
+
+Setelah benchmark ini terbit, dua dimensi terlemah non-manusia langsung dikerjakan:
+
+**A8 Telemetri & live-ops: 3 → 4.** Yang ditambahkan (beta.10): error JS renderer
+(ErrorBoundary + window error/unhandledrejection, dibatasi laju) kini masuk log
+crash lokal yang sama dengan crash proses; **Laporan Diagnostik** satu-klik di
+Pengaturan — berkas berisi versi, platform, pengaturan, log crash, penghitung
+pemakaian layar, dan teks umpan balik pengguna (kanal pelaporan in-app pertama);
+penghitung kunjungan layar per-instalasi (localStorage murni — tak menyentuh
+save/engine/fingerprint) menjawab "fitur mana dipakai/diabaikan" dari lapangan.
+**Mengapa bukan 5:** by design tidak akan pernah 5 versi live-service — tanpa
+server, tanpa auto-crash-upload, tanpa remote config; itu pilihan sadar privasi
+(aplikasi luring untuk mahasiswa), bukan kekurangan yang direncanakan ditutup.
+Plafon realistis untuk arsitektur ini ≈ 4,5 (auto-update akan menambah 0,5).
+
+**B8 Aksesibilitas: 3,5 → 4,5.** Yang ditambahkan (beta.10): **mode aman buta
+warna** (Pengaturan) — choropleth peta, satu-satunya permukaan bermakna-warna-saja,
+kini punya palet biru-vs-merah yang tetap terbedakan pada deuteranopia/
+protanopia/tritanopia, via token semantik `--peta-*` (permukaan lain sudah
+berlabel teks per WCAG 1.4.1); **audit axe-core otomatis** atas 6 permukaan
+utama (Onboarding, Pengaturan, Klinik, Peta, Buku Saku 144 entri, Rapor) —
+hasil perdana **nol pelanggaran**, dan kini menjadi gerbang regresi permanen
+di test suite, bukan audit sekali-jalan. **Mengapa bukan 5:** audit
+screen-reader manual ujung-ke-ujung (NVDA/JAWS oleh pengguna nyata) belum
+dilakukan dan tidak dapat digantikan mesin — itu tetap pekerjaan tersisa yang
+jujur, dijadwalkan bersama pilot.
+
+## 7. Referensi kerangka
 
 - [MEEGA+, Systematic Model to Evaluate Educational Games (Springer)](https://link.springer.com/rwe/10.1007/978-3-031-23161-2_214) · [paper metode](https://www.sbgames.org/sbgames2019/files/papers/CTDDoutorado/195720.pdf)
 - [INACSL Healthcare Simulation Standards of Best Practice](https://www.inacsl.org/healthcare-simulation-standards-of-best-practice-) · [ringkasan daftar standar](https://www.healthysimulation.com/healthcare-simulation-standards-of-best-practice/)

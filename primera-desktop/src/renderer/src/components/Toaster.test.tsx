@@ -77,6 +77,7 @@ describe('<Toaster /> — aria-live per-toast (CODEX audit UI/UX 2026-07-10 #25)
       runtime: {
         consumeRecovery: async () => ({ occurredAt: '2026-07-22T00:00:00.000Z', reason: 'crashed', exitCode: 1 }),
         readCrashLog: async () => [],
+        logError: async () => true,
       },
       appVersion: async () => 'test',
     }

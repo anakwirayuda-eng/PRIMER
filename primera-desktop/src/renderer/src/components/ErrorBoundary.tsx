@@ -36,6 +36,14 @@ export class ErrorBoundary extends Component<Props, State> {
 
   override componentDidCatch(error: Error, info: ErrorInfo): void {
     console.error('[ErrorBoundary]', this.props.judul ?? '', error, info.componentStack)
+    // A8 telemetri (2026-08-02): konsol di mesin mahasiswa tak pernah dilihat
+    // siapa pun — catat juga ke log crash lokal agar terbawa Laporan
+    // Diagnostik. Best-effort: kegagalan logging tak boleh mengganggu pemulihan.
+    void window.primer?.runtime?.logError?.({
+      pesan: `[ErrorBoundary:${this.props.judul ?? '?'}] ${error.message}`,
+      stack: (error.stack ?? '') + '\n--component--' + (info.componentStack ?? ''),
+      layar: this.props.judul ?? '',
+    }).catch(() => {})
   }
 
   private cobaLagi = () => this.setState((s) => ({ error: null, percobaan: s.percobaan + 1 }))

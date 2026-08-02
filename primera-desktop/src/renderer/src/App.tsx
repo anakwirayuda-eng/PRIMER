@@ -27,6 +27,7 @@ import { Onboarding, sudahOnboarding } from './components/Onboarding'
 import { usePengaturan } from './usePengaturan'
 import { adaKontrolInteraktifDifokus } from './utils/fokus'
 import { useHotkeyNavigasi } from './useHotkeyNavigasi'
+import { catatKunjunganLayar } from './diagnostik'
 import './App.css'
 
 const LAYAR_DIKENAL = new Set([
@@ -108,7 +109,15 @@ export default function App() {
     const root = document.documentElement
     root.style.fontSize = `${pengaturan.ukuranTeks * 100}%`
     root.classList.toggle('kurangi-gerak', pengaturan.kurangiGerak)
-  }, [pengaturan.ukuranTeks, pengaturan.kurangiGerak])
+    root.classList.toggle('aman-buta-warna', pengaturan.amanButaWarna)
+  }, [pengaturan.ukuranTeks, pengaturan.kurangiGerak, pengaturan.amanButaWarna])
+
+  // A8 telemetri (2026-08-02): penghitung kunjungan layar — murni localStorage,
+  // ikut terbawa Laporan Diagnostik supaya "fitur mana yang dipakai/diabaikan"
+  // terjawab dari lapangan tanpa server analytics (aplikasi sengaja offline).
+  useEffect(() => {
+    if (state?.layar) catatKunjunganLayar(state.layar)
+  }, [state?.layar])
 
   // CODEX audit UI/UX 2026-07-10 (#18): key={state.layar} pada ErrorBoundary di
   // bawah me-remount seluruh subtree saat pindah layar — tombol "Kembali" dsb
