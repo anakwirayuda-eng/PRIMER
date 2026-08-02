@@ -4,9 +4,9 @@
 
 **Status:** **14/14 keputusan dokter tercatat dan patch telah diterapkan ke gameplay Karier**
 
-**Snapshot:** 076667c86f38+working-tree; content release `gameplay-comfort-2026-08-01`; `REVISI_ENGINE=63`
+**Snapshot:** b665e7d31fa0+working-tree; content release `gameplay-comfort-2026-08-01`; `REVISI_ENGINE=63`
 
-**Fingerprint:** `00c223adb7fc256f5acdf154bfe173945291bfb92ec6e5b9a5fd44742da73334`
+**Fingerprint:** `e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d`
 
 ## Tujuan
 

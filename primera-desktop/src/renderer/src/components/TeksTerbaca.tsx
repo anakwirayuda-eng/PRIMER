@@ -9,26 +9,34 @@ function hitungKata(teks: string): number {
 }
 
 export function pecahTeksTerbaca(teks: string, batasKata = 55): string[] {
-  const bersih = teks.replace(/\s+/g, ' ').trim()
-  if (!bersih) return []
-
-  const kalimat = bersih
-    .split(/(?<=[.!?])\s+(?=["'“”‘’(]*[\p{Lu}\p{N}])/u)
-    .map((item) => item.trim())
+  // Sapuan delivery 2026-08-02: penulis konten kini boleh memisahkan gagasan
+  // dgn baris kosong (\n\n). Pemisah itu HARUS dihormati — dulu seluruh teks
+  // diratakan lebih dulu, jadi paragraf yang sengaja dipisah penulis dilebur
+  // kembali dan pemecahannya jatuh ke tebakan batas kata semata.
+  const blok = teks
+    .split(/\n\s*\n/)
+    .map((b) => b.replace(/\s+/g, ' ').trim())
     .filter(Boolean)
-  const paragraf: string[] = []
-  let kini = ''
+  if (blok.length === 0) return []
 
-  for (const item of kalimat) {
-    const gabungan = kini ? `${kini} ${item}` : item
-    if (kini && hitungKata(gabungan) > batasKata) {
-      paragraf.push(kini)
-      kini = item
-    } else {
-      kini = gabungan
+  const paragraf: string[] = []
+  for (const bersih of blok) {
+    const kalimat = bersih
+      .split(/(?<=[.!?])\s+(?=["'“”‘’(]*[\p{Lu}\p{N}])/u)
+      .map((item) => item.trim())
+      .filter(Boolean)
+    let kini = ''
+    for (const item of kalimat) {
+      const gabungan = kini ? `${kini} ${item}` : item
+      if (kini && hitungKata(gabungan) > batasKata) {
+        paragraf.push(kini)
+        kini = item
+      } else {
+        kini = gabungan
+      }
     }
+    if (kini) paragraf.push(kini)
   }
-  if (kini) paragraf.push(kini)
   return paragraf
 }
 

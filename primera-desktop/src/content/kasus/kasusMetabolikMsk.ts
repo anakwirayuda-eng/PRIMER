@@ -395,7 +395,9 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['gizi_seimbang', 'aktivitas_fisik', 'kontrol_rutin', 'higiene_tidur'],
     },
     clue: 'Obesitas: LINI UTAMA adalah intervensi gaya hidup — defisit kalori bertahap + aktivitas fisik 150 menit/minggu, target turun 5–10% BB dalam 6 bulan. Skrining komorbid (GDP, lipid, TD) & singkirkan hipotiroid (TSH). Farmakoterapi/bedah bukan ranah rutin FKTP. HINDARI diuretik/pencahar sebagai "pelangsing" (Pedoman PTM Kemenkes / PERKENI).',
-    panduanResmi: 'PPK 1186/2022 memberi batas kompetensi FKTP yang tegas: mulai defisit 300-500 kkal/hari (≈½-1 kg/minggu) + aktivitas 150 menit/minggu; bila modifikasi gaya hidup 3 BULAN tak memberi respons, rujuk ke SpPD untuk obat penurun BB — kriteria rujukan resmi yang tak dirinci clue.',
+    panduanResmi: `PPK 1186/2022 memberi batas kompetensi FKTP yang tegas. Mulai dengan defisit 300-500 kkal/hari (setara turun ½-1 kg/minggu) ditambah aktivitas fisik 150 menit/minggu.
+
+Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk ke Sp.PD untuk pertimbangan obat penurun berat badan. Itu kriteria rujukan resmi — bukan penilaian selera.`,
     konsekuensi: {
       narasi: 'Tanpa modifikasi gaya hidup, obesitas berlanjut ke diabetes tipe 2, hipertensi, dislipidemia, dan OSA — beban komorbid menumpuk.',
       // M10 Batch-2 (CODEX C.9): dikompresi 90-180 → 45-80 (lihat catatan
@@ -782,7 +784,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
       edukasi: ['istirahat_cukup', 'peregangan_sendi', 'postur_ergonomi'],
     },
     clue: 'Mialgia pasca-aktivitas: nyeri OTOT difus (bukan sendi), pemicu kerja fisik/olahraga berlebih, TANPA demam/bengkak sendi/urin gelap. Simtomatik (parasetamol/NSAID) + istirahat + peregangan; self-limiting beberapa hari. Waspadai bendera merah: urin seperti teh (rabdomiolisis), demam (miositis viral), atau riwayat statin.',
-    panduanResmi: 'PPK 1186/2022 tidak memiliki algoritme mialgia mekanik sebagai penyakit tersendiri. Karena ini sindrom gejala, floor FKTP adalah menilai penyebab dan red flag, memberi perawatan konservatif singkat, serta tidak memberi antibiotik atau kortikosteroid empiris. Kelemahan objektif, urin gelap, demam sistemik, atau nyeri progresif memerlukan pemeriksaan/rujukan sesuai penyebab.',
+    panduanResmi: 'PPK 1186/2022 tidak memiliki algoritme mialgia mekanik sebagai penyakit tersendiri. Karena ini sindrom gejala, acuan dasar FKTP adalah menilai penyebab dan red flag, memberi perawatan konservatif singkat, serta tidak memberi antibiotik atau kortikosteroid empiris. Kelemahan objektif, urin gelap, demam sistemik, atau nyeri progresif memerlukan pemeriksaan/rujukan sesuai penyebab.',
     konsekuensi: {
       narasi: 'Overtreatment (antibiotik/steroid) pada keluhan swasirna hanya menambah risiko efek samping dan menormalkan harapan pasien akan obat berlebih.',
       kembaliHariMin: 4,

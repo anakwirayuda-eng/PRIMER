@@ -73,7 +73,7 @@ describe('M13-137 adjudication wave 10: preservasi penglihatan di FKTP', () => {
     expect(PACK.edukasi.skrining_retinopati_diabetik?.nama).toMatch(/skrining retina/i)
     expect(kasus.clue).toMatch(/tidak boleh mengunci stadium proliferatif/i)
     expect(kasus.clue).toMatch(/tinjauan DM komprehensif terpisah/i)
-    expect(kasus.panduanResmi).toMatch(/interval 1–2 tahun.*pemeriksaan normal/is)
+    expect(kasus.panduanResmi).toMatch(/interval 1-2 tahun.*pemeriksaan normal/is)
     expect(kasus.panduanResmi).toMatch(/lebih sering.*mengancam penglihatan/is)
     expect(kasus.catatanRealita).toMatch(/fungsi ginjal, risiko hipoglikemia, kepatuhan, komorbid/i)
   })

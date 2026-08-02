@@ -24,7 +24,7 @@ import {
   sfxPagi,
   sfxSelesai
 } from './synth'
-import { redamAmbient } from './ambient'
+import { redamBgm } from './bgm'
 
 // DeepThink "game juice" (2026-07-04): surat kabar-buruk (teguran/karma/IGD)
 // dulu memakai bel ceria yang SAMA dengan surat rutin — bobot emosionalnya
@@ -91,7 +91,7 @@ function mainkan(ev: GameEvent, blipTerakhir: { current: number }): void {
       // Konsekuensi paling berat — sengaja BUKAN sfxBuzzer (dulu disamakan
       // dgn kesalahan rutin). Duck BGM dulu supaya drone kematian terdengar
       // jelas, bukan tenggelam di musik latar.
-      redamAmbient(180, 900)
+      redamBgm(180, 900)
       sfxKodeHitam()
       break
 

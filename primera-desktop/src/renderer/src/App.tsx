@@ -21,7 +21,7 @@ import { BannerPembaruan } from './components/BannerPembaruan'
 import { TooltipInstan } from './components/TooltipInstan'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { useAudio } from './audio/useAudio'
-import { useAmbient } from './audio/useAmbient'
+import { useBgm } from './audio/bgm'
 import { MuteButton } from './audio/MuteButton'
 import { Pengaturan } from './components/Pengaturan'
 import { Onboarding, sudahOnboarding } from './components/Onboarding'
@@ -79,9 +79,7 @@ export default function App() {
     return () => window.removeEventListener('primer-onboarding-replay', tampilkan)
   }, [])
   useAudio()
-  // Musik latar generatif (2026-08-02) menggantikan useBgm berbasis berkas
-  // yang mati sejak masalah lisensi OST — lihat audio/ambient.ts.
-  useAmbient()
+  useBgm()
   // Audit premium 2026-07-23: hotkey angka 1-5 = navigasi tab HUD (gate sama
   // persis dgn tombolnya via alasanTabNonaktif; mati saat mengetik/modal).
   useHotkeyNavigasi()

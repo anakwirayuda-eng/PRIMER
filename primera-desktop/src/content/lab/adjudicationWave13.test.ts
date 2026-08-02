@@ -147,7 +147,7 @@ describe('M13-137 adjudication wave 13: HIV, kusta, dan sifilis longitudinal', (
     expect(text).not.toMatch(/ambil hasil HIV/i)
     expect(text).not.toMatch(/F43\.2/i)
     expect(text).not.toMatch(/kotrimoksazol otomatis diberikan/i)
-    expect(text).not.toMatch(/Permenkes 23\/2022 menjadi floor/i)
+    expect(text).not.toMatch(/Permenkes 23\/2022 menjadi acuan dasar/i)
     expect(text).not.toMatch(/Permenkes 23\/2022 (?:adalah|tetap|masih) (?:regulasi )?aktif utuh/i)
     expect(text).not.toMatch(/dua lesi, BTA negatif.*mendukung PB/i)
     expect(text).not.toMatch(/kusta tak diobati merusak saraf dan menular/i)

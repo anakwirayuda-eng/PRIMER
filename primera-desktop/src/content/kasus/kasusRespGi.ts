@@ -128,7 +128,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['etika_batuk', 'istirahat_cukup', 'minum_air_cukup', 'tanda_bahaya'],
     },
     clue: 'Bronkitis akut = batuk (kadang sampai 3 minggu) pasca-ISPA, tanpa sesak/ronki menetap/tanda pneumonia. VIRAL & self-limiting → simtomatik saja, TANPA antibiotik (PPK IDI). Red flag ke pneumonia/TB: demam tinggi menetap, sesak, ronki fokal menetap, batuk >3 minggu, hemoptisis, BB turun.',
-    panduanResmi: 'PPK 1186/2022 tidak memuat jalur bronkitis akut tersendiri; floor FKTP adalah menyingkirkan pneumonia, TB, dan kegawatan lalu menghindari antibiotik tanpa indikasi sesuai stewardship Kemenkes. CDC 2024 menegaskan bahwa pneumonia harus disingkirkan secara klinis dan antibiotik rutin tidak bermanfaat pada bronkitis akut tanpa komplikasi; terapi tambahan dipilih hanya bila ada indikasi spesifik.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur bronkitis akut tersendiri; acuan dasar FKTP adalah menyingkirkan pneumonia, TB, dan kegawatan lalu menghindari antibiotik tanpa indikasi sesuai stewardship Kemenkes. CDC 2024 menegaskan bahwa pneumonia harus disingkirkan secara klinis dan antibiotik rutin tidak bermanfaat pada bronkitis akut tanpa komplikasi; terapi tambahan dipilih hanya bila ada indikasi spesifik.',
     konsekuensi: {
       narasi: 'Peresepan antibiotik sia-sia menormalisasi harapan pasien akan antibiotik dan berisiko efek samping (diare, alergi) tanpa manfaat.',
       kembaliHariMin: 7,
@@ -377,7 +377,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Eksudat tonsil, demam, KGB servikal anterior nyeri, dan tidak adanya batuk meningkatkan kemungkinan GAS, tetapi tidak membuktikannya. Bila tersedia, RADT atau kultur mengonfirmasi sebelum antibiotik. Vignette remaja akhir/dewasa ini memakai regimen PPK lokal sebagai jalur pragmatis dengan diagnosis kerja tetap SUSPEK. Trismus, deviasi uvula, drooling, stridor, atau toksisitas mengarah ke komplikasi dan memerlukan rujukan.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi floor lokal dan memuat amoksisilin/penisilin serta alternatif makrolida bila alergi; dosis tetap disesuaikan dengan usia/berat. Pedoman CDC 2025 menegaskan bahwa pemeriksaan klinis dan hitung darah tidak dapat mengonfirmasi GAS tanpa tes mikrobiologis bila gejala viral tidak jelas. Kortikosteroid bukan pengganti konfirmasi maupun antibiotik yang tepat.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi acuan dasar lokal dan memuat amoksisilin/penisilin serta alternatif makrolida bila alergi; dosis tetap disesuaikan dengan usia/berat. Pedoman CDC 2025 menegaskan bahwa pemeriksaan klinis dan hitung darah tidak dapat mengonfirmasi GAS tanpa tes mikrobiologis bila gejala viral tidak jelas. Kortikosteroid bukan pengganti konfirmasi maupun antibiotik yang tepat.',
     sumber: [
       {
         id: 'kemenkes_ppk_fktp_1186_1936_2022',
@@ -639,7 +639,7 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       edukasi: ['posisi_tidur_gerd', 'diet_lambung', 'berhenti_merokok', 'tanda_bahaya'],
     },
     clue: 'Heartburn retrosternal dan regurgitasi asam yang memburuk setelah makan atau berbaring mendukung GERD. Setelah penyebab jantung dinilai pada nyeri dada, pasien tanpa alarm dapat menjalani PPI empiris 8 minggu sekali sehari sebelum makan serta modifikasi gaya hidup. Respons gejala memperkuat dugaan, tetapi tidak mengonfirmasi GERD sendirian karena spesifisitas PPI test rendah. Disfagia, perdarahan, anemia, penurunan berat badan, muntah persisten, atau respons tidak memadai memerlukan evaluasi lanjutan melalui jejaring.',
-    panduanResmi: 'PPK 1186/2022 menjadi floor lokal dan memuat PPI test singkat serta pilihan PPI/H2-blocker. ACG 2022 memperbarui jalur: pada gejala klasik tanpa alarm, lakukan uji PPI 8 minggu sekali sehari sebelum makan; respons klinis mendukung, bukan membuktikan, diagnosis. Meta-analisis diagnostik 2022 menemukan sensitivitas sekitar 79% tetapi spesifisitas hanya 45%, sehingga perbaikan gejala tidak boleh disebut konfirmasi definitif. Pilihan obat pengganti mengikuti Fornas dan stok aktual, bukan otomatis memakai produk historis yang mungkin sudah tidak relevan.',
+    panduanResmi: 'PPK 1186/2022 menjadi acuan dasar lokal dan memuat PPI test singkat serta pilihan PPI/H2-blocker. ACG 2022 memperbarui jalur: pada gejala klasik tanpa alarm, lakukan uji PPI 8 minggu sekali sehari sebelum makan; respons klinis mendukung, bukan membuktikan, diagnosis. Meta-analisis diagnostik 2022 menemukan sensitivitas sekitar 79% tetapi spesifisitas hanya 45%, sehingga perbaikan gejala tidak boleh disebut konfirmasi definitif. Pilihan obat pengganti mengikuti Fornas dan stok aktual, bukan otomatis memakai produk historis yang mungkin sudah tidak relevan.',
     sumber: [
       {
         id: 'acg_gerd_2022',

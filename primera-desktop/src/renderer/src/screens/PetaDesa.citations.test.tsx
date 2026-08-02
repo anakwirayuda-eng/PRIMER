@@ -29,7 +29,14 @@ describe('<PetaDesa /> - debrief sitasi kunjungan C2', () => {
 
     render(<PetaDesa />)
 
-    expect(await screen.findByText(panduanSkenarioUkm(skenario))).toBeInTheDocument()
+    // panduanSkenarioUkm kini multi-paragraf (\n\n, dirender white-space:
+    // pre-line) — testing-library meratakan whitespace DOM, jadi kedua sisi
+    // dinormalkan dgn cara yang sama sebelum dibandingkan utuh.
+    const rata = (t: string) => t.replace(/\s+/g, ' ').trim()
+    const panduanUtuh = rata(panduanSkenarioUkm(skenario))
+    expect(
+      await screen.findByText((_, el) => el?.tagName === 'P' && rata(el.textContent ?? '') === panduanUtuh),
+    ).toBeInTheDocument()
     const tautan = tautanPanduanSkenarioUkm(skenario)
     for (const sumber of tautan) {
       expect(screen.getByRole('link', { name: new RegExp(sumber.label) })).toHaveAttribute('href', sumber.url)

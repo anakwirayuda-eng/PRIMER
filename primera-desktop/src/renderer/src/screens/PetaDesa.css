@@ -443,6 +443,13 @@
   text-align: left;
 }
 
+/* Sapuan delivery 2026-08-02: panduanSkenarioUkm kini paragraf-paragraf
+   pendek yang dipisah \n\n — hormati pemisahnya alih-alih meleburnya kembali
+   jadi satu blok panjang yang dulu dikeluhkan "muter-muter". */
+.peta-hasil__panduan p {
+  white-space: pre-line;
+}
+
 .peta-hasil__panduan b {
   color: var(--tinta-biru);
   font-size: var(--text-xs);

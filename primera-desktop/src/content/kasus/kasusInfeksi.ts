@@ -248,7 +248,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Demam, eksudat, KGB servikal anterior nyeri, dan tidak adanya batuk meningkatkan kemungkinan GAS, tetapi skor klinis maupun leukositosis tidak mengonfirmasinya. Bila RADT atau kultur tersedia, gunakan untuk konfirmasi sebelum antibiotik. Dalam vignette remaja akhir/dewasa ini, regimen PPK lokal dipakai sebagai jalur pragmatis dengan diagnosis kerja tetap SUSPEK; alergi penisilin harus menggeser pilihan ke alternatif non-penisilin.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi floor tata laksana lokal dan memuat amoksisilin atau eritromisin bila alergi; dosis tetap harus disesuaikan dengan usia/berat pasien. Pedoman CDC 2025 menegaskan bahwa tanpa gejala viral yang jelas, pemeriksaan klinis saja tidak dapat membedakan faringitis viral dari GAS; RADT atau kultur tenggorok mengonfirmasi diagnosis bila tersedia. Dokumentasikan alasan bila fasilitas konfirmasi tidak tersedia dan jangan menyebut Centor atau hitung darah sebagai bukti pasti.',
+    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi acuan dasar tata laksana lokal dan memuat amoksisilin atau eritromisin bila alergi; dosis tetap harus disesuaikan dengan usia/berat pasien. Pedoman CDC 2025 menegaskan bahwa tanpa gejala viral yang jelas, pemeriksaan klinis saja tidak dapat membedakan faringitis viral dari GAS; RADT atau kultur tenggorok mengonfirmasi diagnosis bila tersedia. Dokumentasikan alasan bila fasilitas konfirmasi tidak tersedia dan jangan menyebut Centor atau hitung darah sebagai bukti pasti.',
     sumber: [
       {
         id: 'kemenkes_ppk_fktp_1186_1936_2022',
@@ -519,7 +519,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       // tak tuntas → perforasi usus/perdarahan minggu ke-3.
       edukasiKritis: ['kepatuhan_obat'],
     },
-    clue: 'Tidak ada pola demam, lidah, bradikardia relatif, atau hitung darah yang cukup spesifik untuk memastikan tifoid. Kultur darah adalah pemeriksaan utama bila dapat diakses; Widal tunggal tidak dianjurkan sebagai alat konfirmasi. Pada pasien stabil ini, diagnosis tetap SUSPEK dan terapi empiris mengikuti floor PPK lokal dengan sediaan serta dosis sesuai usia/berat, sambil menilai diagnosis banding, derajat sakit, respons, dan pola resistensi setempat.',
+    clue: 'Tidak ada pola demam, lidah, bradikardia relatif, atau hitung darah yang cukup spesifik untuk memastikan tifoid. Kultur darah adalah pemeriksaan utama bila dapat diakses; Widal tunggal tidak dianjurkan sebagai alat konfirmasi. Pada pasien stabil ini, diagnosis tetap SUSPEK dan terapi empiris mengikuti acuan dasar PPK lokal dengan sediaan serta dosis sesuai usia/berat, sambil menilai diagnosis banding, derajat sakit, respons, dan pola resistensi setempat.',
     panduanResmi: 'PPK 1186/2022 memuat pilihan antibiotik dan batas rujukan, termasuk gagal membaik atau muncul toksisitas/komplikasi; sediaan dan dosis harus mengikuti usia/berat. Kemenkes dan CDC sama-sama menempatkan kultur darah sebagai penopang diagnosis serta memperingatkan keterbatasan Widal. Karena resistensi antimikroba berubah menurut wilayah dan waktu, pilihan antibiotik harus mengikuti kebijakan program dan antibiogram lokal bila tersedia.',
     sumber: [
       {
@@ -657,7 +657,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['cairan_oralit'],
     },
     clue: 'Anak ini mengalami dehidrasi ringan-sedang: rewel, mata cekung, haus, minum lahap, dan turgor kembali agak lambat. Gunakan Rencana Terapi B. Berikan oralit 75 mL/kgBB sedikit demi sedikit selama 3–4 jam di Puskesmas, lalu nilai ulang hidrasi. Bila membaik, pulangkan dengan oralit setiap BAB cair, zinc 20 mg selama 10–14 hari, serta lanjutkan ASI dan makan. Bila memburuk, gunakan Rencana Terapi C dan rujuk bila perlu. Antibiotik tidak rutin diberikan pada diare cair tanpa darah.',
-    panduanResmi: 'LINTAS DIARE/MTBS Kemenkes menjadi floor: dehidrasi ringan-sedang memakai Rencana Terapi B dengan oralit 75 mL/kgBB selama 3–4 jam dan penilaian ulang di fasilitas; setelah membaik lanjutkan oralit, zinc 20 mg/hari selama 10–14 hari untuk usia kasus ini, serta ASI/makan. Antibiotik dibatasi pada indikasi seperti disentri atau kolera, bukan diare cair sederhana.',
+    panduanResmi: 'LINTAS DIARE/MTBS Kemenkes menjadi acuan dasar: dehidrasi ringan-sedang memakai Rencana Terapi B dengan oralit 75 mL/kgBB selama 3–4 jam dan penilaian ulang di fasilitas; setelah membaik lanjutkan oralit, zinc 20 mg/hari selama 10–14 hari untuk usia kasus ini, serta ASI/makan. Antibiotik dibatasi pada indikasi seperti disentri atau kolera, bukan diare cair sederhana.',
     // Fix M1/#6a (triase DeepThink 2026-07-11): "oralit tiap BAB cair" adalah
     // instruksi Rencana Terapi A (tanpa-dehidrasi) — sering keliru diterapkan
     // pulang-langsung pada anak yang sebenarnya sudah dehidrasi ringan-sedang.
@@ -795,7 +795,7 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
       edukasiKritis: ['minum_oat_tuntas'],
     },
     clue: 'Batuk >2 minggu + BB turun + keringat malam + kontak TB = terduga TB. Utamakan pemeriksaan molekuler cepat yang sekaligus menilai resistansi rifampisin. Bila akses molekuler sungguh terkendala, BTA dua spesimen boleh menjadi jalur sementara, tetapi spesimen tetap harus diteruskan untuk deteksi resistansi. Setelah TB sensitif obat ditegakkan, mulai OAT KDT harian 2HRZE/4HR melalui program, dukung kepatuhan sampai tuntas, tawarkan tes HIV, dan lakukan investigasi kontak serumah.',
-    panduanResmi: 'Petunjuk Teknis Penatalaksanaan TB Sensitif Obat Indonesia 2025 (Kepdirjen P2 HK.02.02/C/5401/2025) menetapkan paduan standar dewasa KDT dosis harian 2HRZE/4HR. Regimen intermiten pada PPK 1186/2022 adalah floor lama dan tidak lagi menjadi jawaban operasional utama. Pemeriksaan molekuler cepat diprioritaskan; mikroskopis BTA hanya dipakai sementara bila ada kendala administratif, geografis, transportasi, atau reagen, lalu wajib dilengkapi pemeriksaan yang mampu mendeteksi resistansi OAT.',
+    panduanResmi: 'Petunjuk Teknis Penatalaksanaan TB Sensitif Obat Indonesia 2025 (Kepdirjen P2 HK.02.02/C/5401/2025) menetapkan paduan standar dewasa KDT dosis harian 2HRZE/4HR. Regimen intermiten pada PPK 1186/2022 adalah acuan dasar lama dan tidak lagi menjadi jawaban operasional utama. Pemeriksaan molekuler cepat diprioritaskan; mikroskopis BTA hanya dipakai sementara bila ada kendala administratif, geografis, transportasi, atau reagen, lalu wajib dilengkapi pemeriksaan yang mampu mendeteksi resistansi OAT.',
     // Juknis TB-SO 2025 mempertahankan BTA sebagai fallback sementara yang
     // realistis, tetapi tidak membolehkan hambatan alat memutus akses pasien
     // ke uji resistansi dalam jejaring. Kasus ini sengaja memakai jalur itu.

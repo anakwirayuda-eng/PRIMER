@@ -11,7 +11,7 @@ import { PACK } from '@content/index'
 import App from './App'
 
 vi.mock('./audio/useAudio', () => ({ useAudio: () => {} }))
-vi.mock('./audio/useAmbient', () => ({ useAmbient: () => {} }))
+vi.mock('./audio/bgm', () => ({ useBgm: () => {} }))
 
 function pasang(): void {
   window.primer = {

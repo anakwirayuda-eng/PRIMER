@@ -66,7 +66,7 @@ describe('M11.5 — debrief asma stabil mengikuti GINA aktif', () => {
     expect(asma.clue).toMatch(/Track 1.*ICS-formoterol/i)
     expect(asma.clue).toMatch(/Track 2.*budesonid.*salbutamol/i)
     expect(asma.tatalaksana.obatBenar).toEqual(['salbutamol_inhaler', 'budesonide_inhaler'])
-    expect(asma.panduanResmi).toMatch(/PPK 1186\/2022.*floor regulasi/i)
+    expect(asma.panduanResmi).toMatch(/PPK 1186\/2022.*acuan dasar regulasi/i)
     expect(asma.catatanRealita).toMatch(/Fornas 1199\/2025.*FPKTP/i)
   })
 })

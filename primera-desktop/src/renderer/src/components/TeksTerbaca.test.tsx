@@ -26,3 +26,27 @@ describe('TeksTerbaca', () => {
     expect(screen.getByText('Langkah kedua menyusul.')).toBeInTheDocument()
   })
 })
+
+/**
+ * Sapuan delivery 2026-08-02: penulis konten kini boleh memisahkan gagasan
+ * dgn baris kosong. Dulu seluruh teks diratakan lebih dulu sehingga pemisah
+ * itu hilang dan pemecahan jatuh ke tebakan batas kata semata.
+ */
+describe('pecahTeksTerbaca — menghormati pemisah paragraf penulis', () => {
+  it('baris kosong SELALU memulai paragraf baru, walau kedua sisi masih pendek', () => {
+    const hasil = pecahTeksTerbaca('Gagasan pertama, ringkas.\n\nGagasan kedua, juga ringkas.', 55)
+    expect(hasil).toEqual(['Gagasan pertama, ringkas.', 'Gagasan kedua, juga ringkas.'])
+  })
+
+  it('pemecahan batas-kata tetap bekerja DI DALAM tiap blok', () => {
+    const panjang = Array.from({ length: 12 }, (_, i) => `Kalimat nomor ${i + 1} berisi beberapa kata tambahan.`).join(' ')
+    const hasil = pecahTeksTerbaca(`Pembuka singkat.\n\n${panjang}`, 20)
+    expect(hasil[0]).toBe('Pembuka singkat.')
+    expect(hasil.length).toBeGreaterThan(2)
+  })
+
+  it('baris kosong berlebih atau spasi di antaranya tak menghasilkan paragraf kosong', () => {
+    const hasil = pecahTeksTerbaca('Satu.\n\n\n   \n\nDua.', 55)
+    expect(hasil).toEqual(['Satu.', 'Dua.'])
+  })
+})

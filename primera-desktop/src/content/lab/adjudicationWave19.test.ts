@@ -80,7 +80,7 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
     expect(PACK.kasus.lab_furunkel_fluktuatif?.tatalaksana.prosedur).toEqual(['insisi_abses'])
     expect(PACK.kasus.lab_ektima_tungkai?.tatalaksana.obatBenar).toEqual(['cefadroxil_sirup_125'])
     for (const id of ['lab_abses_folikel_rambut', 'lab_folikulitis_superfisialis', 'lab_furunkel_fluktuatif', 'lab_ektima_tungkai'] as const) {
-      expect(PACK.kasus[id]?.panduanResmi, id).toMatch(/floor terkait|hanya floor terkait/i)
+      expect(PACK.kasus[id]?.panduanResmi, id).toMatch(/acuan dasar terkait|hanya acuan dasar terkait/i)
       expect(record(id).compiler.suggestion, id).toBe('cocok')
     }
   })
@@ -88,12 +88,12 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
   it('menggrounding BV dan hemoroid tanpa alat diagnostik berlebihan', () => {
     const bv = PACK.kasus.lab_vaginosis_bakterialis!
     expect(bv.tatalaksana.obatBenar).toEqual(['metronidazol_500'])
-    expect(bv.panduanResmi).toMatch(/floor terkait.*CDC/is)
+    expect(bv.panduanResmi).toMatch(/acuan dasar terkait.*CDC/is)
     expect(record('lab_vaginosis_bakterialis').evidence.aspak.unresolvedResourceIds).toEqual([])
 
     const hemorrhoid = PACK.kasus.lab_hemoroid_interna_derajat4!
     expect(hemorrhoid.lab.map((item) => item.id)).toEqual(['darah_rutin'])
-    expect(hemorrhoid.panduanResmi).toMatch(/floor terkait.*AGA.*2026/is)
+    expect(hemorrhoid.panduanResmi).toMatch(/acuan dasar terkait.*AGA.*2026/is)
     expect(hemorrhoid.clue).toMatch(/pria dewasa.*tidak boleh otomatis/is)
     expect(record('lab_hemoroid_interna_derajat4').evidence.aspak.unresolvedResourceIds).toEqual([])
   })

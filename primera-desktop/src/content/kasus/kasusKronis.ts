@@ -5,7 +5,7 @@
  * berlebih), otitis & anemia bumil (KIA), lalu dua kasus RUJUK (pneumonia balita &
  * stroke iskemik) yang mengajarkan gatekeeping SKDI 3B dan "Time is Brain".
  *
- * Akurasi medis memakai PNPK/PPK Kemenkes sebagai floor dan pedoman EBM
+ * Akurasi medis memakai PNPK/PPK Kemenkes sebagai acuan dasar dan pedoman EBM
  * mutakhir yang disebut per kasus pada `clue`/`panduanResmi`/`guideline`.
  *
  * Catatan integrasi: sesuai BUILD_SPECS, pertanyaan tak relevan diberi
@@ -552,7 +552,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
       edukasiKritis: ['teknik_inhaler'],
     },
     clue: 'GINA 2026 menilai kontrol dan risiko, bukan menentukan kebutuhan ICS dari label intermiten/persisten. Terbangun malam membuat kasus ini tergolong kontrol sebagian. Track 1: ICS-formoterol dosis rendah sesuai kebutuhan. Jika tidak tersedia, Track 2: budesonid dosis rendah harian + salbutamol inhalasi sesuai kebutuhan; jangan SABA-tunggal. Kendalikan pencetus, cek teknik dan kepatuhan inhaler, lalu tinjau ulang. Antibiotik rutin tidak diindikasikan.',
-    panduanResmi: 'Divergensi 2026: PPK 1186/2022 masih memakai klasifikasi intermiten/persisten dan membolehkan SABA saja pada asma intermiten. GINA 2026 menilai kontrol serta risiko dan tidak menganjurkan SABA-tunggal. Track 1 memakai ICS-formoterol dosis rendah sesuai kebutuhan; Track 2 memakai ICS dosis rendah harian + SABA sesuai kebutuhan. PPK menjadi floor regulasi; EBM mutakhir diterapkan dengan adaptasi formularium dan kesiapan FKTP.',
+    panduanResmi: 'Divergensi 2026: PPK 1186/2022 masih memakai klasifikasi intermiten/persisten dan membolehkan SABA saja pada asma intermiten. GINA 2026 menilai kontrol serta risiko dan tidak menganjurkan SABA-tunggal. Track 1 memakai ICS-formoterol dosis rendah sesuai kebutuhan; Track 2 memakai ICS dosis rendah harian + SABA sesuai kebutuhan. PPK menjadi acuan dasar regulasi; EBM mutakhir diterapkan dengan adaptasi formularium dan kesiapan FKTP.',
     catatanRealita: 'Fornas 1199/2025 mencantumkan budesonid tunggal dan budesonid-formoterol di FPKTP, tetapi stok dan jenis device lokal tetap harus diverifikasi. Bila ICS-formoterol tidak tersedia, gunakan Track 2: ICS dosis rendah harian + SABA inhalasi sesuai kebutuhan; jangan biarkan kekosongan pengendali berubah menjadi SABA-tunggal permanen.',
   },
 

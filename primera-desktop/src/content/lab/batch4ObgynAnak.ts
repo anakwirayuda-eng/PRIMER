@@ -17,7 +17,7 @@ import type { LabCaseSpec, LabQuestionSpec } from './labCaseFactory'
 import { buatKasusLab } from './labCaseFactory'
 
 const PPK_FLOOR =
-  'PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan.'
+  'Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti.'
 
 /**
  * Shim lokal: `LabQuestionSpec` di `labCaseFactory.ts` belum memuat `variasi`
@@ -231,7 +231,9 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['akses_iv_resusitasi'],
     clue: 'Perempuan usia reproduktif dengan nyeri perut/panggul harus dinilai kemungkinan hamil meski gejalanya tidak khas. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, hipotensi, takikardia, dan tanda peritoneal berarti suspek kehamilan ektopik terganggu dengan syok. Tugas FKTP: panggil jejaring emergensi, lakukan ABCDE, pasang akses intravena dan berikan kristaloid terukur sambil menilai respons, puasakan, pantau ketat, lalu transfer segera ke fasilitas bedah-obstetri. Jangan menunggu USG atau beta-hCG serial pada pasien tidak stabil. Oksigen diberikan terkontrol bila hipoksemia atau gangguan respirasi muncul; SpO2 98% udara ruangan bukan alasan menjadikannya tindakan wajib.',
-    panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. HSE National Clinical Practice Guideline 2024 menjadi sumber langsung untuk pengenalan, penilaian stabilitas, jalur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.',
+    panduanResmi: `Dua pedoman Indonesia tidak menjangkau kondisi ini: PPK Dokter di FKTP (KMK 1186/2022) tidak punya bab kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan (KMK 91/2017) juga tidak memuatnya.
+
+HSE National Clinical Practice Guideline 2024 menjadi sumber langsungnya — mencakup pengenalan, penilaian stabilitas, alur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care melengkapi kerangka untuk fasilitas kontak pertama: ABCDE, stabilisasi syok, transfer, dan serah-terima pasien.`,
     catatanRealita: 'Di Sukamaju, tes kehamilan dan kristaloid adalah sumber daya inti, sedangkan USG obstetri bersifat terjadwal/berbagi dan ambulans dapat sedang bertugas. Keterbatasan itu tidak mengubah keputusan: gambaran syok dengan tes kehamilan positif memicu stabilisasi paralel dan transfer, bukan antrean USG atau pemeriksaan tambahan yang menunda.',
     mutiaraEbm: 'Bercak darah yang sedikit dapat menipu karena perdarahan utama pada ektopik terganggu dapat tersembunyi di rongga perut. Tes kehamilan positif juga tidak membuktikan lokasi intrauterin, dan struktur intrauterin dapat berupa kantong semu. Tes urine negatif menurunkan kemungkinan kehamilan yang sedang berlangsung, tetapi hasil tunggal tidak boleh mengalahkan penilaian syok atau kecurigaan klinis sangat tinggi; fokus pedagogisnya adalah selalu mempertimbangkan dan menguji kehamilan, lalu bertindak menurut stabilitas pasien.',
     konsekuensi: {
@@ -1033,7 +1035,7 @@ export const LAB_BATCH_4_OA_CASES: KasusKlinis[] = [
       kembaliHariMin: 1,
       kembaliHariMax: 3,
       kondisiKembali: 'Dibawa kembali dalam keadaan sangat lemah, bicara melantur, mata bergerak-gerak sendiri, dan tidak mampu berjalan tanpa dipapah — gambaran ensefalopati Wernicke yang sebagian defisitnya menetap seumur hidup.',
-      guideline: 'RCOG Green-top Guideline No. 69, second edition 2024 (doi:10.1111/1471-0528.17739); PPK FKTP KMK 1186/2022 bab O21.0 sebagai floor terkait.',
+      guideline: 'RCOG Green-top Guideline No. 69, second edition 2024 (doi:10.1111/1471-0528.17739); PPK FKTP KMK 1186/2022 bab O21.0 sebagai acuan dasar terkait.',
     },
   }),
 

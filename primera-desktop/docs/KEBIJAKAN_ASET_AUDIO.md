@@ -16,23 +16,23 @@ Kebijakan ini supaya kejadian itu tidak terulang.
 
 ---
 
-## 1. Posisi saat ini: musik disintesis, bukan berkas
+## 1. Posisi saat ini: berkas musik asli, dikurasi manusia
 
-Musik latar PRIMERA **dibangkitkan kode** (`src/renderer/src/audio/ambient.ts`)
-memakai Web Audio API. Tidak ada satu berkas musik pun di dalam installer.
+Musik latar PRIMERA memakai **berkas musik buatan manusia** yang berlisensi
+bebas, diputar oleh `src/renderer/src/audio/bgm.ts`.
 
-Alasannya berlapis:
+**Percobaan musik generatif (disintesis kode) sudah dicoba dan DIBATALKAN**
+pada 2026-08-02. Secara lisensi ia sempurna — nol risiko, nol byte — tetapi
+dr. Wirayuda mendengarnya dan hasilnya "suara-suara bunyi-bunyian gak jelas".
 
-| | Berkas musik | Sintesis prosedural |
-|---|---|---|
-| Risiko lisensi | Ada selamanya — lisensi bisa berubah/dicabut | **Nol** — tak ada yang bisa dicabut |
-| Ukuran installer | +5-30 MB | **0 byte** |
-| Pengulangan | Loop 2-3 menit, terasa setelah stase 90 hari | Tak pernah berulang persis |
-| Variasi konteks | Butuh 6 berkas berbeda | Parameter, bukan aset |
-| Atribusi | Wajib dijaga & bisa keliru | Tidak perlu |
+Pelajarannya bukan "generatif itu buruk", melainkan: **mutu musik tidak dapat
+diverifikasi oleh pengembang yang tidak bisa mendengar.** Lisensi bisa
+diperiksa mesin; keindahan tidak. Karena itu jalur yang dipakai sekarang
+menuntut kurasi telinga manusia — lihat [KURASI_MUSIK_LATAR.md](./KURASI_MUSIK_LATAR.md).
 
-**Konsekuensi jujurnya:** musik sintesis tidak akan sekaya musik yang digubah
-dan direkam manusia. Itu pertukaran yang diambil sadar.
+Konsekuensinya: risiko lisensi kembali ada, jadi §2-§5 di bawah menjadi
+mengikat, dan ditegakkan otomatis oleh `npm run audit:audio` yang
+**menggagalkan build** bila dilanggar.
 
 ---
 
@@ -86,14 +86,14 @@ privat sebelum dipakai.
 
 ---
 
-## 4. Kepekaan budaya — laras gamelan
+## 4. Kepekaan budaya — bila kelak memakai nuansa gamelan
 
-Musik PRIMERA terinspirasi laras **slendro** dan **pelog** karawitan Jawa.
-Aturan yang berlaku:
+Aturan ini berlaku bila suatu saat musik bernuansa karawitan dipakai (baik
+rekaman maupun sintesis). SFX permainan saat ini masih memakai laras slendro.
 
-1. **Tangga nada tidak berhak cipta; komposisi berhak cipta.** Kami membangkitkan
-   melodi sendiri di atas laras tersebut — **tidak pernah** mengutip gendhing
-   tradisional.
+1. **Tangga nada tidak berhak cipta; komposisi berhak cipta.** Boleh memakai
+   laras slendro/pelog, tetapi melodinya harus digubah sendiri — **jangan
+   pernah** mengutip gendhing tradisional.
 2. **JANGAN pernah menulis "public domain" untuk melodi gamelan tradisional.**
    Menurut **UU 28/2014 Pasal 38**, hak cipta Ekspresi Budaya Tradisional
    dipegang **Negara tanpa batas waktu**, dan penjelasannya menyebut musik
@@ -101,24 +101,20 @@ Aturan yang berlaku:
 3. **Jangan mengutip repertoar pusaka/sakral** atau menautkan musik ke konteks
    upacara. Pemakaian PRIMERA sekuler dan edukatif.
 4. **Laras tidak terstandar.** Tiap perangkat gamelan ditala sendiri (*embat*),
-   jadi nilai sen di kode kami adalah pilihan estetika, bukan transkripsi
-   perangkat tertentu — dan ditulis begitu di komentar kodenya.
-5. Kalimat yang benar untuk kredit:
-   > *"Musik latar disintesis prosedural, terinspirasi laras slendro dan pelog
-   > karawitan Jawa; bukan rekaman gamelan dan tidak mengutip gendhing pusaka."*
+   jadi nilai sen apa pun di kode adalah pilihan estetika, bukan transkripsi
+   perangkat tertentu — dan harus ditulis begitu di komentarnya.
 
-> **Catatan untuk dr. Wirayuda:** bila musik ini akan dipakai luas dalam
-> pendidikan kedokteran Indonesia, akan sangat baik meminta pendapat satu
-> pengajar karawitan. Nilai laras di kode adalah pilihan estetika pengembang,
-> dan pandangan ahli akan lebih berbobot daripada aproksimasi kami.
+> **Catatan untuk dr. Wirayuda:** bila kelak nuansa karawitan dipakai untuk
+> musik latar, akan sangat baik meminta pendapat satu pengajar karawitan.
 
 ---
 
 ## 5. Bila kelak menambah berkas audio — prosedur wajib
 
-1. Catat entri di `src/renderer/src/audio/credits/audio-credits.json`:
-   berkas, judul, pencipta, URL sumber, lisensi, URL legalcode, tanggal unduh,
-   dan apakah dimodifikasi.
+1. Catat entri di `src/renderer/src/audio/bgmKredit.ts`: berkas, judul,
+   pencipta, URL sumber, lisensi, URL lisensi, suasana, dan apakah
+   dimodifikasi. Ini sumber kebenaran tunggal — layar kredit membacanya, jadi
+   atribusi tak mungkin lupa ditampilkan.
 2. **Arsipkan bukti**: simpan salinan HTML/tangkapan layar halaman lisensi ke
    `docs/lisensi-bukti/`. Inilah satu-satunya yang menyelamatkan bila sumber
    mengubah atau menghapus lisensinya kelak.
@@ -134,22 +130,27 @@ Aturan yang berlaku:
 
 ## 6. Batas verifikasi yang jujur
 
-Pengembang AI yang menulis musik ini **tidak dapat mendengar**. Yang dapat
-diverifikasi secara otomatis hanyalah **parameter**: laras, register, tempo,
-plafon gain, dan pagar keselamatan pendengaran — semuanya diuji di
-`src/renderer/src/audio/ambient.test.ts`.
+Pengembang AI di proyek ini **tidak dapat mendengar**. Yang dapat diverifikasi
+otomatis hanyalah hal yang terperiksa mesin: lisensi, kelengkapan atribusi,
+keberadaan berkas, dan tingkat volume. **Mutu musiknya tidak.**
+
+Ini bukan kehati-hatian teoretis — sudah terbukti sekali. Musik generatif yang
+lolos seluruh uji parameter ternyata terdengar sebagai "bunyi-bunyian tak
+jelas" begitu didengar manusia, dan harus dibatalkan.
 
 **Yang wajib dilakukan manusia sebelum musik dianggap layak rilis:**
 
 - Dengarkan **45-60 menit menerus** di build Electron sungguhan (bukan dev
-  server, bukan unit test). Yang dicari: pola yang mulai terasa berulang, nada
-  yang mulai mengganggu, atau kombinasi yang denyutnya kasar.
+  server, bukan unit test). Yang dicari: apakah loop-nya mulai terasa
+  menjemukan, apakah ada bagian yang mengganggu konsentrasi membaca.
 - Uji di **speaker laptop murah**, bukan hanya headphone bagus.
 - Uji di **ruangan berisi beberapa mesin** bila akan dipakai di lab.
 
-Musik latar **default MATI** justru karena alasan terakhir: riset audio
-menunjukkan 30 mesin memutar ambient beda-fase menaikkan derau ruangan
-sekitar 15 dB. Setelan ini ditujukan untuk pemakaian dengan headphone.
+Musik latar **default MATI** justru karena alasan terakhir: 30 mesin memutar
+musik bersamaan menaikkan derau ruangan sekitar 15 dB. Setelan ini ditujukan
+untuk pemakaian dengan headphone atau belajar mandiri.
+
+Prosedur pemilihan lagunya ada di [KURASI_MUSIK_LATAR.md](./KURASI_MUSIK_LATAR.md).
 
 ---
 

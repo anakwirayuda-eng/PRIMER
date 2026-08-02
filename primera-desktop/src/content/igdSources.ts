@@ -427,7 +427,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'who_arboviral_2025'],
   },
   igd_status_epileptikus: {
-    panduanResmi: 'PNPK Epilepsi Dewasa 2026 menjadi floor: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.',
+    panduanResmi: 'PNPK Epilepsi Dewasa 2026 menjadi acuan dasar: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.',
     sumberIds: ['pnpk_epilepsi_2026', 'ilae_status_2015', 'who_status_epilepticus_2023', 'fornas_2025', 'permenkes_rujukan_2024'],
   },
   igd_cedera_kepala_sedang: {
@@ -435,7 +435,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'acs_tbi_2024', 'permenkes_rujukan_2024'],
   },
   igd_luka_bakar_luas: {
-    panduanResmi: 'PNPK Luka Bakar dan PPK FKTP menjadi floor. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.',
+    panduanResmi: 'PNPK Luka Bakar dan PPK FKTP menjadi acuan dasar. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.',
     sumberIds: ['pnpk_burn_2019', 'ppk_fktp_2022', 'aba_burn_resuscitation_2024', 'who_bec', 'permenkes_rujukan_2024'],
   },
   igd_ketoasidosis_diabetik: {
@@ -447,7 +447,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['pnpk_stroke_2026', 'aha_asa_stroke_2026', 'permenkes_rujukan_2024'],
   },
   igd_perdarahan_pascasalin: {
-    panduanResmi: 'PNPK komplikasi kehamilan dan PPK FKTP menjadi floor; WHO/FIGO/ICM 2025-2026 memperbarui bundel MOTIVE. Jalankan masase, oksitosin, TXA 1 g IV, kristaloid hangat, pemeriksaan 4T, serta eskalasi secara paralel. Listing Fornas tidak menjamin readiness; rujuk ke darah, anestesi, operasi, kendali sumber, ICU, dan dukungan neonatus.',
+    panduanResmi: 'PNPK komplikasi kehamilan dan PPK FKTP menjadi acuan dasar; WHO/FIGO/ICM 2025-2026 memperbarui bundel MOTIVE. Jalankan masase, oksitosin, TXA 1 g IV, kristaloid hangat, pemeriksaan 4T, serta eskalasi secara paralel. Listing Fornas tidak menjamin readiness; rujuk ke darah, anestesi, operasi, kendali sumber, ICU, dan dukungan neonatus.',
     sumberIds: ['pnpk_pregnancy_complications_2017', 'ppk_fktp_2022', 'who_pph_2025', 'who_pph_implementation_2026', 'fornas_2025', 'permenkes_rujukan_2024'],
   },
   igd_asfiksia_neonatorum: {
@@ -467,7 +467,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['bkpk_snakebite_2025', 'ghbtb_2026', 'kemenkes_icha_2026', 'who_snakebite_2016', 'permenkes_rujukan_2024'],
   },
   igd_syok_sepsis: {
-    panduanResmi: 'PNPK Sepsis 2017 dan PPK FKTP menjadi floor, dengan SSC 2026 sebagai pembaruan cairan individual, antibiotik satu jam, vasopresor, source control, dan quality improvement. Beri kristaloid seimbang 250-500 mL lalu nilai ulang; gunakan seftriakson 2 g IV hanya sebagai stok jembatan berprotokol pada encounter ini, dan transfer tanpa menunggu administrasi.',
+    panduanResmi: 'PNPK Sepsis 2017 dan PPK FKTP menjadi acuan dasar, dengan SSC 2026 sebagai pembaruan cairan individual, antibiotik satu jam, vasopresor, source control, dan quality improvement. Beri kristaloid seimbang 250-500 mL lalu nilai ulang; gunakan seftriakson 2 g IV hanya sebagai stok jembatan berprotokol pada encounter ini, dan transfer tanpa menunggu administrasi.',
     sumberIds: ['pnpk_sepsis_2017', 'ppk_fktp_2022', 'ssc_sepsis_2026', 'sepsis3_2016', 'fornas_2025', 'permenkes_rujukan_2024'],
   },
   igd_eklampsia: {
@@ -479,7 +479,7 @@ const GROUNDING_IGD: Record<string, GroundingIgd> = {
     sumberIds: ['ppk_fktp_2022', 'aha_pediatric_bls_2025', 'queensland_fbao_2025', 'permenkes_rujukan_2024'],
   },
   igd_pneumotoraks_tension_trauma: {
-    panduanResmi: 'PNPK Trauma dan PPK FKTP menjadi floor. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.',
+    panduanResmi: 'PNPK Trauma dan PPK FKTP menjadi acuan dasar. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.',
     sumberIds: ['pnpk_trauma_2017', 'ppk_fktp_2022', 'who_bec', 'wses_thoracic_trauma_2025', 'permenkes_rujukan_2024'],
   },
   igd_stemi_anterior_hipoksemik: {

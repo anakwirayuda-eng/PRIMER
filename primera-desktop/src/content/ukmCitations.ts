@@ -12,26 +12,37 @@ import {
   type TingkatDukunganUkm,
 } from './ukmEvidence'
 
+/*
+ * Sapuan delivery 2026-08-02 (masukan dr. Wirayuda: paragraf landasan lama
+ * "mbulet dan muter-muter" — mengganggu memori & pembelajaran). Prinsip
+ * penulisan ulang, berlaku utk seluruh blok di file ini:
+ *   1. MAKSUD DULU, nomor peraturan BELAKANGAN (dalam kurung di ujung
+ *      kalimat) — pembaca tak boleh dipaksa melewati kop birokrasi sebelum
+ *      tahu apa isinya. Tautan BUKA SUMBER tetap membawa rujukan lengkapnya.
+ *   2. Satu gagasan per kalimat; rantai titik-koma dipecah.
+ *   3. Istilah asing diterjemahkan (missing service → layanan terlewat, dst.)
+ *      — konsisten kebijakan "bahasa pemain" copy-audit 2026-08-01.
+ *   4. Boilerplate hukum tanpa nilai belajar ("dibaca bersama bagian yang
+ *      tidak dicabut") dibuang — itu bahasa penyusun peraturan, bukan
+ *      bahasa pembelajar. TIDAK ADA rujukan peraturan yang dihapus.
+ */
 const SUMBER_SAJI =
-  'Permenkes RI No. 39 Tahun 2016, Lampiran I Bab IV: kunjungan rumah memakai SAJI dan Pinkesga sesuai masalah keluarga; implementasi ILP Kemenkes RI 15 April 2025 menegaskan kader tetap memakai SAJI dan KIE pada kunjungan rumah.'
+  'Cara berkunjungnya memakai alur SAJI — Salam, Ajak bicara, Jelaskan dan bantu, Ingatkan — dengan paket informasi Pinkesga sesuai masalah keluarga (Permenkes 39/2016, Lampiran I Bab IV). Alur yang sama tetap dipakai kader pada implementasi ILP (laporan Kemenkes, 15 April 2025).'
 
 const SUMBER_ILP =
-  'KMK RI No. HK.01.07/MENKES/2015/2023: kunjungan rumah menindaklanjuti sasaran yang kehilangan layanan, tidak patuh, atau memiliki tanda bahaya melalui jejaring Puskesmas-Pustu-Posyandu; laporan implementasi Kemenkes RI 15 April 2025 mengonfirmasi missing service, non-compliance, dan danger sign sebagai keluaran kunjungan rumah ILP.'
+  'Kunjungan rumah juga alat tindak lanjut: mencari sasaran yang layanannya terlewat, yang tidak patuh berobat, atau yang menunjukkan tanda bahaya, lewat jejaring Puskesmas-Pustu-Posyandu (Juknis ILP, KMK HK.01.07/MENKES/2015/2023).'
 
 const SUMBER_PENANGGULANGAN_PENYAKIT =
-  'Permenkes RI No. 3 Tahun 2026 tentang Penanggulangan Penyakit adalah payung aktif pencegahan, surveilans, respons, komunikasi risiko, serta pelibatan masyarakat; ketentuan program spesifik tetap dibaca bersama bagian yang tidak dicabut dan pedoman teknis terkait.'
+  'Payung besarnya Permenkes 3/2026 tentang Penanggulangan Penyakit: pencegahan, surveilans, respons, komunikasi risiko, dan pelibatan masyarakat.'
 
 const SUMBER_POSYANDU =
-  'Panduan Pengelolaan Posyandu Bidang Kesehatan, Kementerian Kesehatan RI, Agustus 2023, Bab III: lima langkah pelayanan untuk seluruh siklus hidup; Kurikulum Pelatihan Keterampilan Dasar Kader Posyandu Kemenkes RI 2024 memuat 25 keterampilan kader; keduanya selaras dengan ILP KMK RI No. HK.01.07/MENKES/2015/2023.'
+  'Pelayanan Posyandu memakai lima langkah yang sama untuk seluruh siklus hidup (Panduan Pengelolaan Posyandu Bidang Kesehatan, Kementerian Kesehatan RI 2023, Bab III). Kader dibekali 25 keterampilan dasar (Kurikulum Pelatihan Kader Posyandu 2024). Keduanya selaras dengan Juknis ILP.'
 
 const SUMBER_PROLANIS =
-  'Panduan Praktis PROLANIS BPJS Kesehatan No. 06 (dokumen resmi era 2014-2019): konsultasi, edukasi klub, reminder, dan home visit; dibaca bersama KMK RI No. HK.01.07/MENKES/2015/2023 yang mengintegrasikan layanan dewasa-lansia.'
+  'PROLANIS mengelola penyakit kronis lewat empat kegiatan: konsultasi rutin, edukasi klub, pengingat, dan kunjungan rumah (Panduan Praktis PROLANIS BPJS Kesehatan No. 06, dokumen resmi era 2014-2019). Lewat Juknis ILP, layanan dewasa dan lansia kini berjalan terintegrasi.'
 
 const SUMBER_KLB =
-  'Permenkes RI No. 1 Tahun 2026 tentang Kejadian Luar Biasa, Wabah, dan Krisis Kesehatan menjadi dasar operasional penyelidikan, surveilans, respons, komunikasi risiko, dan pelaporan KLB; Permenkes RI No. 19 Tahun 2024 menempatkan fungsi tersebut pada klaster P2PL Puskesmas, selaras dengan ILP KMK RI No. HK.01.07/MENKES/2015/2023.'
-
-const SUMBER_JKN =
-  'Permenkes RI No. 39 Tahun 2016, Lampiran I: kepesertaan JKN adalah indikator keluarga sehat; pada langkah Jelaskan dan Bantu, JKN dicontohkan untuk mengatasi hambatan biaya layanan.'
+  'Penyelidikan, surveilans, respons, komunikasi risiko, dan pelaporan KLB berpayung pada Permenkes 1/2026. Di Puskesmas, fungsi itu dijalankan klaster P2PL (Permenkes 19/2024), selaras dengan Juknis ILP.'
 
 export interface TautanSumberUkm {
   id: string
@@ -110,53 +121,61 @@ interface LandasanIndikator {
   pinkesga: string
 }
 
+/**
+ * `ringkas` = frasa inti TELANJANG (tanpa awalan "indikator keluarga sehat
+ * menilai..."). Sapuan delivery 2026-08-02: awalan itu dulu melekat di TIAP
+ * entri, jadi skenario multi-target menghasilkan "indikator keluarga sehat
+ * menilai X; indikator keluarga sehat menilai Y" — pengulangan yang membuat
+ * paragraf terasa muter-muter. Kini bingkainya disebut SEKALI oleh template
+ * (panduanSkenarioUkm / sitasiIntervensiUkm), entri tinggal isinya.
+ */
 const LANDASAN_INDIKATOR: Record<IndikatorPisPk, LandasanIndikator> = {
   kb: {
-    ringkas: 'indikator keluarga sehat menilai keikutsertaan pasangan menikah dalam program KB',
+    ringkas: 'keikutsertaan pasangan menikah dalam program KB',
     pinkesga: 'Pinkesga Keluarga Berencana (KB)',
   },
   persalinan_faskes: {
-    ringkas: 'indikator keluarga sehat mensyaratkan persalinan berlangsung di fasilitas pelayanan kesehatan',
+    ringkas: 'persalinan berlangsung di fasilitas pelayanan kesehatan',
     pinkesga: 'Pinkesga Pemeriksaan Kehamilan',
   },
   imunisasi_dasar: {
-    ringkas: 'indikator keluarga sehat menilai kelengkapan imunisasi dasar bayi',
+    ringkas: 'kelengkapan imunisasi dasar bayi',
     pinkesga: 'Pinkesga Imunisasi',
   },
   asi_eksklusif: {
-    ringkas: 'indikator keluarga sehat mendefinisikan ASI eksklusif selama enam bulan pertama, dengan pengecualian obat serta vitamin/mineral',
+    ringkas: 'ASI eksklusif selama enam bulan pertama (obat serta vitamin/mineral tidak membatalkannya)',
     pinkesga: 'Pinkesga ASI Eksklusif',
   },
   pantau_tumbuh_kembang: {
-    ringkas: 'indikator keluarga sehat menilai pemantauan pertumbuhan balita dalam satu bulan terakhir',
+    ringkas: 'pemantauan pertumbuhan balita dalam satu bulan terakhir',
     pinkesga: 'Pinkesga Penimbangan Balita',
   },
   tb_berobat_standar: {
-    ringkas: 'indikator keluarga sehat menilai pengobatan TB paru sesuai standar; pendekatan keluarga juga mencakup akses layanan, pencegahan penularan, pemantauan kepatuhan, dan kontak serumah',
+    ringkas: 'pengobatan TB paru sesuai standar — termasuk akses layanan, pencegahan penularan, kepatuhan minum obat, dan pemeriksaan kontak serumah',
     pinkesga: 'Pinkesga Tuberkulosis',
   },
   hipertensi_berobat: {
-    ringkas: 'indikator keluarga sehat menilai keteraturan pengobatan pada anggota yang telah didiagnosis hipertensi',
+    ringkas: 'keteraturan minum obat pada anggota yang sudah terdiagnosis hipertensi',
     pinkesga: 'Pinkesga Hipertensi',
   },
   jiwa_tidak_ditelantarkan: {
-    ringkas: 'indikator keluarga sehat menilai pengobatan teratur gangguan jiwa berat serta memastikan anggota keluarga tidak dipasung atau ditelantarkan',
+    ringkas: 'pengobatan teratur gangguan jiwa berat, dan tidak ada anggota keluarga yang dipasung atau ditelantarkan',
     pinkesga: 'Pinkesga Kesehatan Jiwa',
   },
   tidak_merokok: {
-    ringkas: 'indikator keluarga sehat mensyaratkan tidak ada anggota keluarga yang masih merokok; program juga mencakup layanan upaya berhenti merokok',
+    ringkas: 'tidak ada anggota keluarga yang merokok (tersedia layanan upaya berhenti merokok)',
     pinkesga: 'Pinkesga Bahaya Merokok',
   },
   jkn: {
-    ringkas: 'indikator keluarga sehat menilai kepesertaan keluarga dalam Jaminan Kesehatan Nasional',
+    ringkas: 'kepesertaan keluarga dalam Jaminan Kesehatan Nasional',
     pinkesga: 'Pinkesga Jaminan Kesehatan Nasional',
   },
   air_bersih: {
-    ringkas: 'indikator keluarga sehat menilai ketersediaan sarana air bersih dan apakah sumbernya terlindung',
+    ringkas: 'ketersediaan sarana air bersih dari sumber terlindung',
     pinkesga: 'Pinkesga Sarana Air Bersih',
   },
   jamban_sehat: {
-    ringkas: 'indikator keluarga sehat menilai akses atau penggunaan jamban keluarga yang saniter dan tidak menyebarkan bahan berbahaya maupun vektor',
+    ringkas: 'akses dan pemakaian jamban saniter yang tidak menyebarkan penyakit',
     pinkesga: 'Pinkesga Jamban Sehat',
   },
 }
@@ -169,8 +188,20 @@ function gabungPinkesga(target: IndikatorPisPk[]): string {
   return [...new Set(target.map((indikator) => LANDASAN_INDIKATOR[indikator].pinkesga))].join(' + ')
 }
 
+/**
+ * Sapuan delivery 2026-08-02: dulu SATU paragraf raksasa yang membuka dengan
+ * kop peraturan dan MENGUBUR kalimat terpenting (apa yang dinilai kunjungan
+ * ini) di tengah-tengah. Kini empat paragraf pendek (\n\n; perender memakai
+ * white-space: pre-line), diurut menurut kebutuhan pembelajar:
+ * apa yang dinilai → bagaimana caranya → untuk apa lagi → payung besarnya.
+ */
 export function panduanSkenarioUkm(skenario: SkenarioKunjungan): string {
-  return `${SUMBER_SAJI} Untuk skenario ini, ${gabungLandasan(skenario.target)}. ${SUMBER_ILP} ${SUMBER_PENANGGULANGAN_PENYAKIT}`
+  return [
+    `Yang dinilai pada kunjungan ini: ${gabungLandasan(skenario.target)}. Itulah tolok ukur indikator keluarga sehat untuk masalah keluarga ini (Permenkes 39/2016).`,
+    SUMBER_SAJI,
+    SUMBER_ILP,
+    SUMBER_PENANGGULANGAN_PENYAKIT,
+  ].join('\n\n')
 }
 
 export function tautanPanduanSkenarioUkm(
@@ -199,10 +230,13 @@ export function sitasiIntervensiUkm(
   fase: 'pra_penilaian' | 'pasca_penilaian' = 'pra_penilaian',
 ): SitasiIntervensiUkm {
   const pinkesga = kartu.pinkesga?.trim() ?? gabungPinkesga(skenario.target)
-  const konteks = `${SUMBER_SAJI} Landasan domain skenario: ${gabungLandasan(skenario.target)}.`
+  // Sapuan delivery 2026-08-02: maksud dulu, peraturan belakangan — dan tanpa
+  // mengulang seluruh blok SAJI di sini (pemain baru saja membacanya di
+  // konteks kunjungan; pengulangan = beban, bukan penguatan).
+  const konteks = `Masalah keluarga ini dinilai lewat: ${gabungLandasan(skenario.target)} (Permenkes 39/2016).`
   if (fase === 'pra_penilaian') {
     return {
-      sumber: `${konteks} Sumber ini memberi konteks masalah keluarga, bukan mengesahkan kartu yang sedang dipilih atau membocorkan jawaban.`,
+      sumber: `${konteks} Sumber di bawah memberi konteks masalahnya — bukan kunci jawaban untuk kartu yang sedang kamu pilih.`,
       tautan: [TAUTAN_PIS_PK, TAUTAN_SAJI_TERKINI],
       pinkesga,
       tingkatDukungan: 'konteks_domain',

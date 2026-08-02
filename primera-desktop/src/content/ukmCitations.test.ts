@@ -117,11 +117,18 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
   })
 
   it('memetakan seluruh keluarga kartu kegiatan tanpa bergantung pada engine beku', () => {
-    expect(sumberKegiatanUkm({ id: 'posy_timbang' }, 'posyandu')).toMatch(/Kementerian Kesehatan RI.*2023.*2024.*25 keterampilan/i)
+    // Sapuan delivery 2026-08-02: urutan komponen dlm prosa boleh berubah
+    // (kini "25 keterampilan" mendahului tahun kurikulum) — yang dijaga test
+    // ini kelengkapan sitasi, bukan urutan kalimat.
+    const posy = sumberKegiatanUkm({ id: 'posy_timbang' }, 'posyandu')!
+    expect(posy).toMatch(/Kementerian Kesehatan RI/i)
+    expect(posy).toContain('2023')
+    expect(posy).toContain('2024')
+    expect(posy).toMatch(/25 keterampilan/i)
     expect(sumberKegiatanUkm({ id: 'prol_peserta_uji' }, 'prolanis')).toMatch(/BPJS Kesehatan.*2014-2019/i)
     const sumberKlb = sumberKegiatanUkm({ id: 'klb_5w1h' }, 'klb')
-    expect(sumberKlb).toMatch(/Permenkes RI No\. 1 Tahun 2026/i)
-    expect(sumberKlb).toMatch(/Permenkes RI No\. 19 Tahun 2024/i)
+    expect(sumberKlb).toMatch(/Permenkes (RI No\. )?1[ /](Tahun )?2026/i)
+    expect(sumberKlb).toMatch(/Permenkes (RI No\. )?19[ /](Tahun )?2024/i)
     expect(sumberKegiatanUkm({ id: 'kartu_lain' })).toBeUndefined()
     expect(tautanKegiatanUkm({ id: 'posy_timbang' }, 'posyandu')).toHaveLength(3)
     expect(tautanKegiatanUkm({ id: 'prol_peserta_uji' }, 'prolanis')).toHaveLength(2)
@@ -132,6 +139,8 @@ describe('M11 UKM C2 - cakupan sitasi kunjungan rumah', () => {
   it('menjaga lapisan ILP terhubung ke bukti implementasi SAJI terkini', () => {
     const panduan = panduanSkenarioUkm(semuaSkenario[0]!)
     expect(panduan).toMatch(/SAJI.*15 April 2025/is)
-    expect(panduan).toMatch(/missing service.*non-compliance.*danger sign/is)
+    // Sapuan delivery 2026-08-02: jargon Inggris diterjemahkan sesuai kebijakan
+    // "bahasa pemain" — test mengikuti padanannya, bukan mempertahankan Inggris.
+    expect(panduan).toMatch(/layanannya terlewat.*tidak patuh.*tanda bahaya/is)
   })
 })

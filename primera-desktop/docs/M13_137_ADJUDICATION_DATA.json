@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-02T06:43:39.349Z",
-  "sourceCommit": "076667c86f38465b3b8e5f85669dd7ecbc551ce5+dirty",
-  "artifactFingerprint": "6461d068a246a2b832ee582d59912f621b198bf3c3f90741c8615bb4289ae086",
-  "packFingerprint": "5024490c",
+  "generatedAt": "2026-08-02T09:32:59.501Z",
+  "sourceCommit": "b665e7d31fa05e8337a1d57156746f295ad47ba4+dirty",
+  "artifactFingerprint": "83c78952f198a383986dfb1772ae2bd318ee81f13dc16a8068f6e82f272a5d6b",
+  "packFingerprint": "03bd2d05",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 63,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -150,7 +150,7 @@
       },
       "currentEditorial": {
         "clue": "Benturan energi rendah dengan hematoma kecil, nyeri hanya saat ditekan, GCS E4 V5 M6, dan tanpa gejala neurologis mendukung cedera superfisial kulit kepala, bukan otomatis konkusi. Ulangi GCS per komponen, pupil, gejala, dan defisit sebelum pulang. Parasetamol boleh diberikan bila perlu, tetapi bukan syarat kelulusan. Jangan lakukan foto polos kepala atau CT rutin pada pasien yang benar-benar berisiko rendah. Rujuk untuk evaluasi CT bila GCS menurun, muncul muntah, kejang, defisit, tanda fraktur, sakit kepala menetap atau dominan, amnesia atau pingsan, koagulopati, antikoagulan/antiplatelet bermakna, intoksikasi, mekanisme berbahaya, atau observasi dan akses kembali tidak aman.",
-        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala. PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. ACEP 2023 mendukung penggunaan alat keputusan tervalidasi untuk CT selektif dan kehati-hatian khusus pada antikoagulan atau antiplatelet. Kasus dewasa ini sengaja tidak memiliki fitur risiko; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.",
+        "officialGuidance": "PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi acuan dasar khusus untuk penilaian trauma kepala. PNPK mencantumkan CT bila GCS belum kembali 15 dalam 2-6 jam atau GCS 15 disertai faktor risiko seperti muntah lebih dari dua episode, usia di atas 60 tahun, defisit, fraktur, sakit kepala dominan, koagulopati, kejang, pingsan lama, gangguan memori, intoksikasi, antikoagulan, atau mekanisme berbahaya. ACEP 2023 mendukung penggunaan alat keputusan tervalidasi untuk CT selektif dan kehati-hatian khusus pada antikoagulan atau antiplatelet. Kasus dewasa ini sengaja tidak memiliki fitur risiko; pulang hanya setelah penilaian serial tetap stabil dan pendamping memahami instruksi tertulis.",
         "realityNote": "Sukamaju mampu melakukan observasi serial neurologis tetapi tidak memiliki CT. Pasien tanpa indikasi imaging dapat pulang setelah kondisi stabil dan pengawasan rumah dipastikan. Bila satu red flag muncul, observasi berkepanjangan di FKTP bukan pengganti CT atau evaluasi rumah sakit.",
         "ebmPearl": "GCS 15 tidak sendirian membuktikan aman; keputusan lahir dari mekanisme, gejala, obat, komorbid, pemeriksaan serial, dan keamanan pulang. Sebaliknya, benturan kepala tidak otomatis berarti konkusi atau membutuhkan CT. Pasien tanpa gejala konkusi tidak memerlukan bed rest berkepanjangan, tetapi sebaiknya menghindari berkendara dan aktivitas berisiko benturan ulang pada hari kejadian. Bila gejala konkusi muncul, gunakan istirahat relatif singkat selama satu sampai dua hari lalu naikkan aktivitas secara bertahap sesuai toleransi."
       },
@@ -320,7 +320,7 @@
       },
       "currentEditorial": {
         "clue": "Dasar merah muda-merah, lembap, sangat nyeri, sensasi utuh, blister kecil, dan blanching cepat mendukung superficial partial-thickness. Lanjutkan air mengalir sejuk hingga total 20 menit sambil menghangatkan bagian tubuh lain, beri parasetamol, bersihkan lembut, lalu pasang balutan non/low-adherent tanpa melingkar ketat. Blister kecil tidak tegang dibiarkan utuh. Seri tetanus lengkap dengan booster tiga tahun lalu tidak memerlukan vaksin atau TIG tambahan. Jangan gunakan es, pasta, minyak, antibiotik sistemik profilaksis, silver sulfadiazine rutin, atau cairan formula Parkland pada luka stabil 2% ini.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 dan PNPK Tata Laksana Luka Bakar KMK 555/2019 menjadi floor Indonesia untuk diagnosis, penilaian luas-kedalaman, status tetanus, pembersihan lembut, balutan, dan batas rujukan. ACI Burn Patient Management edisi 2026 memperbarui detail first aid menjadi air mengalir sejuk selama 20 menit, penilaian palmar pasien untuk luka kecil, rawat jalan pada luka minor tanpa hambatan fisik-sosial, serta evaluasi ulang karena kedalaman dapat berubah. Luka ini tidak memenuhi kriteria transfer otomatis, tetapi kapasitas lokal dan akses follow-up tetap menentukan.",
+        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 dan PNPK Tata Laksana Luka Bakar KMK 555/2019 menjadi acuan dasar Indonesia untuk diagnosis, penilaian luas-kedalaman, status tetanus, pembersihan lembut, balutan, dan batas rujukan. ACI Burn Patient Management edisi 2026 memperbarui detail first aid menjadi air mengalir sejuk selama 20 menit, penilaian palmar pasien untuk luka kecil, rawat jalan pada luka minor tanpa hambatan fisik-sosial, serta evaluasi ulang karena kedalaman dapat berubah. Luka ini tidak memenuhi kriteria transfer otomatis, tetapi kapasitas lokal dan akses follow-up tetap menentukan.",
         "realityNote": "Sukamaju mampu mendinginkan dengan air mengalir, memberi analgesia oral, membersihkan lembut, dan memasang balutan non/low-adherent. Dressing khusus dan burn service tidak diasumsikan selalu tersedia. Gunakan balutan lembap aman sesuai stok; rujuk bila kedalaman meragukan, nyeri tak terkendali, perawatan melampaui kemampuan, atau kontrol tak terjamin. Jangan mengganti keterbatasan dengan antibiotik empiris.",
         "ebmPearl": "Luas luka bukan satu-satunya penentu berat. Kedalaman, lokasi khusus, inhalasi, luka sirkumferensial, komorbid, nyeri, fungsi, dan kondisi sosial dapat mengubah disposisi. Luka bakar juga dinamis dan dapat tampak lebih dalam dalam beberapa hari pertama; karena itu pasien kembali 24-72 jam. Rujuk bila luka memburuk, muncul gangguan fungsi atau neurovaskular, infeksi sistemik, kedalaman tidak pasti, atau penyembuhan belum nyata dalam 10-12 hari."
       },
@@ -548,7 +548,7 @@
       },
       "currentEditorial": {
         "clue": "Parafimosis adalah kegawatan urologi. Beri analgesia, kompresi edema, lalu reduksi manual lembut; jangan menunda bila perfusi menurun. Reduksi gagal, jaringan iskemik, atau komplikasi memerlukan transfer urologi emergensi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Reduksi manual dilakukan segera; tindakan bedah diperlukan bila gagal.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Reduksi manual dilakukan segera; tindakan bedah diperlukan bila gagal.",
         "realityNote": "Pada encounter ini pencahayaan, sarung tangan, kasa kompresi, pelumas steril, analgesia, serta operator terlatih dinyatakan ready. Lakukan satu upaya reduksi manual lembut; perfusi memburuk, nyeri tak terkendali, atau kegagalan upaya adalah alasan berhenti dan transfer tanpa manipulasi berulang."
       },
       "evidence": {
@@ -676,7 +676,7 @@
       },
       "currentEditorial": {
         "clue": "Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Berikan epinefrin 0,5 mg IM paha (0,5 mL sediaan 1 mg/mL) segera pada pasien dewasa ini dan ulangi setelah 5 menit bila masalah ABC menetap. Baringkan dengan tungkai dinaikkan; bila bernapas lebih mudah dalam posisi setengah duduk, pertahankan tungkai lurus dan jangan biarkan berdiri atau berjalan. Beri oksigen karena hipoksemia, berikan bolus kristaloid dini secara terukur sambil menilai respons, pantau serial, dan transfer paralel. Antihistamin atau steroid tidak boleh menunda epinefrin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK menjadi floor pemberian adrenalin IM, oksigen, cairan, dan rujukan. ERC/RCUK 2025 menegaskan epinefrin dewasa 500 mikrogram IM segera, diulang setelah 5 menit bila belum membaik, disertai kristaloid IV dini. RCUK 2021 tetap menjadi pedoman rinci untuk posisi aman, pemantauan, dan anafilaksis refrakter; adrenalin intravena hanya untuk spesialis berpengalaman dalam lingkungan terpantau. Antihistamin adalah lini ketiga untuk gejala kulit setelah stabilisasi dan steroid tidak digunakan rutin pada tata laksana awal.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). PPK menjadi acuan dasar pemberian adrenalin IM, oksigen, cairan, dan rujukan. ERC/RCUK 2025 menegaskan epinefrin dewasa 500 mikrogram IM segera, diulang setelah 5 menit bila belum membaik, disertai kristaloid IV dini. RCUK 2021 tetap menjadi pedoman rinci untuk posisi aman, pemantauan, dan anafilaksis refrakter; adrenalin intravena hanya untuk spesialis berpengalaman dalam lingkungan terpantau. Antihistamin adalah lini ketiga untuk gejala kulit setelah stabilisasi dan steroid tidak digunakan rutin pada tata laksana awal.",
         "realityNote": "Epinefrin 1 mg/mL, oksigen, akses IV, cairan, pulse oximeter, dan transport dinyatakan ready. Sukamaju tidak punya pompa/monitor untuk adrenalin IV; setelah dua dosis IM tanpa respons, lanjutkan resusitasi, minta ahli, percepat transfer, bukan memberi bolus adrenalin IV atau aminofilin rutin. Setelah stabil, jejaring menyiapkan identifikasi pemicu, action plan, asesmen alergi, dan autoinjektor bila tersedia."
       },
       "evidence": {
@@ -1015,7 +1015,7 @@
       },
       "currentEditorial": {
         "clue": "Jejas setang, defans, nyeri bahu kiri tanpa cedera bahu, takikardia, hipotensi, dan perfusi buruk menunjukkan trauma abdomen tumpul dengan perdarahan internal. Jalankan <C>ABCDE sambil mengaktifkan rujukan. Beri oksigen terkontrol karena ada syok meski SpO2 awal 97%. Pasang satu akses IV besar; tambah akses kedua hanya bila tidak menunda keberangkatan. Beri kristaloid hangat 250 mL lalu nilai ulang. Tanpa bukti cedera otak atau spinal, jangan mengejar normotensi; sasaran sementara SBP sekitar 80-90 mmHg. Berikan asam traneksamat 1 g IV selama 10 menit, yaitu dua ampul 500 mg, secepatnya dan dalam tiga jam; dosis lanjutan diteruskan jejaring. Puasakan, cegah hipotermia, pantau serial, pra-notifikasi, dan transfer segera. FAST, Hb serial, dan golongan darah boleh dikerjakan paralel bila siap, tetapi tidak mendapat skor dan tidak boleh menjadi prasyarat atau menahan ambulans.",
-        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detailnya: kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal. Selain itu: TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, pencegahan hipotermia, serta pemeriksaan minimum yang tidak menunda kendali perdarahan.",
+        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi acuan dasar lintas fasilitas: lakukan survei primer ABCDE dan resusitasi paralel, kenali syok perdarahan secara klinis, lalu transfer segera ke layanan yang mampu mengendalikan sumber. European trauma bleeding guideline 2023 memperbarui detailnya: kristaloid restriktif dengan target SBP 80-90 mmHg sampai kendali perdarahan pada pasien tanpa cedera otak atau spinal. Selain itu: TXA 1 g dalam 10 menit secepatnya dan maksimal tiga jam, pencegahan hipotermia, serta pemeriksaan minimum yang tidak menunda kendali perdarahan.",
         "realityNote": "Profil Sukamaju menyediakan oksigen, oksimeter nadi, akses IV, kristaloid hangat, TXA 1 g (dua ampul 500 mg), selimut, termometer, dan ambulans. FAST dengan operator, Hb cepat, golongan darah ABO, produk darah, dan kendali sumber tidak diasumsikan tersedia; semuanya BUKAN prasyarat transfer. Karena skema belum mengenal pemeriksaan opsional, FAST/Hb/ABO tidak menjadi tombol bernilai atau alasan menahan transport.",
         "ebmPearl": "Nilai perdarahan trauma dari gabungan fisiologi, pola cedera, mekanisme, dan respons terhadap tindakan, bukan satu kelas syok atau satu angka. Shock index pasien ini sekitar 1,33 dan mendukung risiko tinggi, tetapi bukan pengganti penilaian klinis. Hb awal dapat tetap normal pada perdarahan bermakna, sedangkan satu Hb rendah dipengaruhi nilai dasar, perpindahan cairan, dan resusitasi; ia tidak mengukur volume atau kecepatan perdarahan sendirian. FAST berspesifisitas tinggi tetapi sensitivitasnya terbatas: hasil negatif tidak menyingkirkan cedera atau hemoperitoneum. Pada pasien tidak stabil, pemeriksaan hanya bernilai bila berjalan paralel dan langsung membantu kendali perdarahan tanpa menunda transfer."
       },
@@ -1229,7 +1229,7 @@
       },
       "currentEditorial": {
         "clue": "Pada luka tajam kepala, nilai GCS, gejala neurologis, fraktur, kedalaman, kontaminasi, dan benda asing sebelum anestesi/penutupan. Irigasi dan jahit hanya luka kulit kepala sederhana; penurunan kesadaran, defisit, fraktur, penetrasi, perdarahan tak terkendali, atau benda asing perlu rujuk.",
-        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas untuk survei primer, penilaian luka, stabilisasi, dan rujukan trauma. Pada laserasi kulit kepala, singkirkan lebih dulu gangguan ABC, cedera otak, fraktur, penetrasi, perdarahan tak terkendali, kontaminasi berat, dan benda asing. Irigasi serta penutupan di FKTP hanya untuk luka superfisial sederhana setelah penilaian tersebut; evaluasi status tetanus tetap wajib."
+        "officialGuidance": "PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi acuan dasar lintas fasilitas untuk survei primer, penilaian luka, stabilisasi, dan rujukan trauma. Pada laserasi kulit kepala, singkirkan lebih dulu gangguan ABC, cedera otak, fraktur, penetrasi, perdarahan tak terkendali, kontaminasi berat, dan benda asing. Irigasi serta penutupan di FKTP hanya untuk luka superfisial sederhana setelah penilaian tersebut; evaluasi status tetanus tetap wajib."
       },
       "evidence": {
         "ppk": {
@@ -1409,7 +1409,7 @@
       },
       "currentEditorial": {
         "clue": "Nilai neurovaskular, tendon, kontaminasi, benda asing, dan tetanus sebelum menutup luka. Luka sederhana yang telah diirigasi dapat dianestesi dan dijahit; antibiotik profilaksis tidak rutin pada laserasi bersih berisiko rendah.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -1641,7 +1641,7 @@
       },
       "currentEditorial": {
         "clue": "Duh uretra purulen akut setelah pajanan seksual sangat mendukung gonore. WHO 2024 merekomendasikan ceftriaxone 1 g IM dosis tunggal; tambahkan doxycycline 100 mg dua kali sehari selama tujuh hari bila klamidia belum disingkirkan. Tawarkan tes HIV/sifilis dan pemeriksaan lokasi ekstragenital sesuai pajanan. Hindari hubungan selama tujuh hari setelah terapi dosis tunggal dan sampai regimen tujuh hari selesai, gejala hilang, serta pasangan ditangani; jadwalkan retest sekitar tiga bulan karena reinfeksi sering terjadi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis program IMS, termasuk jejaring, surveilans resistensi, penanganan kasus, dan pencegahan stigma. WHO STI 2024 menjadi sumber dosis gonore terkini dan partner services yang sukarela serta rahasia.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai acuan dasar teknis program IMS, termasuk jejaring, surveilans resistensi, penanganan kasus, dan pencegahan stigma. WHO STI 2024 menjadi sumber dosis gonore terkini dan partner services yang sukarela serta rahasia.",
         "realityNote": "Kode A54.9 dipertahankan agar konkordan dengan katalog SKDI-144, sedangkan fenotipenya uretritis gonokokus tanpa komplikasi. Sukamaju dapat memberi ceftriaxone IM dan doxycycline, tetapi kultur/NAAT serta uji resistensi berjalan melalui jejaring bila gagal terapi. Ambang klaster gameplay hanya memicu telaah agregat dan kewaspadaan program tanpa membuka identitas atau membuktikan wabah secara otomatis."
       },
       "evidence": {
@@ -1834,7 +1834,7 @@
       },
       "currentEditorial": {
         "clue": "Prodromal demam-mual diikuti ikterus, urine gelap, ALT/AST tinggi, dan IgM anti-HAV reaktif menegakkan hepatitis A akut. WHO 2026: tidak ada antivirus spesifik; fokus cairan-nutrisi, hindari obat tidak perlu, dan pantau gagal hati. Tiga penghuni kos yang sakit sesudah pajanan warung bersama harus memicu notifikasi, line list, penetapan jendela pajanan, dan penyelidikan pangan-air bersama kesehatan lingkungan. Ini sinyal klaster untuk dinilai, bukan izin otomatis menutup warung atau menganggap sumber sudah terbukti.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menjadi floor terapi suportif dan rujukan tanda gagal hati. WHO Hepatitis A 2026 dan Outbreak Toolbox 2024 menambahkan definisi kasus terkonfirmasi IgM anti-HAV serta alur surveilans, line list, konfirmasi laboratorium, dan respons berbasis konteks. Vaksinasi atau profilaksis pascapajanan dinilai program menurut kebijakan, waktu pajanan, kelayakan, dan stok; bukan resep blanket dari satu kunjungan.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menjadi acuan dasar terapi suportif dan rujukan tanda gagal hati. WHO Hepatitis A 2026 dan Outbreak Toolbox 2024 menambahkan definisi kasus terkonfirmasi IgM anti-HAV serta alur surveilans, line list, konfirmasi laboratorium, dan respons berbasis konteks. Vaksinasi atau profilaksis pascapajanan dinilai program menurut kebijakan, waktu pajanan, kelayakan, dan stok; bukan resep blanket dari satu kunjungan.",
         "realityNote": "AST/ALT dan IgM anti-HAV dijadwalkan melalui jejaring laboratorium; hasilnya tidak diasumsikan tersedia seketika di meja poli. Respons wilayah dimulai dari verifikasi hubungan waktu-tempat-orang dan inspeksi kesehatan lingkungan, tanpa membuka identitas pasien atau menghukum usaha sebelum sumber terkonfirmasi."
       },
       "evidence": {
@@ -1992,7 +1992,7 @@
       },
       "currentEditorial": {
         "clue": "HEPATITIS B KRONIK TANPA GEJALA (SKDI 3A - RUJUK TERENCANA): dua hasil HBsAg reaktif yang terpisah sepuluh bulan membuktikan persistensi lebih dari enam bulan. Riwayat penyakit hati pada ibu menaikkan kecurigaan pajanan masa kecil/perinatal, tetapi tidak membuktikan rute penularan. Tindakan FKTP hari ini adalah menilai tanda dekompensasi dan komorbid, menjelaskan cara penularan tanpa stigma, menguji serta memvaksin kontak yang masih rentan, dan menutup rujukan untuk stadium fibrosis, HBV DNA, koinfeksi, indikasi antivirus, serta rencana surveilans.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Bab hepatitis B pada PPK memberi floor pengenalan dan rujukan, tetapi tidak memuat algoritma hepatitis B kronik selengkap PNPK Hepatitis B. WHO 2024 memperluas kriteria terapi: fibrosis bermakna/sirosis; HBV DNA di atas 2.000 IU/mL dengan ALT meningkat; atau faktor risiko khusus seperti koinfeksi, imunosupresi, manifestasi ekstrahepatik, komorbid tertentu, dan riwayat keluarga kanker hati/sirosis. Bila HBV DNA tidak tersedia, ALT abnormal persisten dapat dipakai dalam algoritma sederhana. Hasil HBsAg reaktif atau satu ALT normal saja tidak cukup untuk memilih terapi.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Bab hepatitis B pada PPK memberi acuan dasar pengenalan dan rujukan, tetapi tidak memuat algoritma hepatitis B kronik selengkap PNPK Hepatitis B. WHO 2024 memperluas kriteria terapi: fibrosis bermakna/sirosis; HBV DNA di atas 2.000 IU/mL dengan ALT meningkat; atau faktor risiko khusus seperti koinfeksi, imunosupresi, manifestasi ekstrahepatik, komorbid tertentu, dan riwayat keluarga kanker hati/sirosis. Bila HBV DNA tidak tersedia, ALT abnormal persisten dapat dipakai dalam algoritma sederhana. Hasil HBsAg reaktif atau satu ALT normal saja tidak cukup untuk memilih terapi.",
         "realityNote": "Di Sukamaju, HBsAg cepat tersedia; ALT terjadwal lewat jejaring, sedangkan HBV DNA/elastografi membutuhkan layanan lanjutan. FKTP tetap mendaftarkan kontak keluarga, menilai kerentanan, memvaksin yang perlu, dan melacak rujukan. Jalur nasional ibu-anak memberi HB0 dan HBIg kurang dari 24 jam kepada bayi dari ibu HBsAg reaktif, dilanjutkan imunisasi dan evaluasi program.",
         "ebmPearl": "Satu nilai ALT normal bukan surat bebas risiko. WHO 2024 menilai fibrosis, replikasi virus, koinfeksi, komorbid, imunosupresi, manifestasi ekstrahepatik, dan riwayat keluarga sebagai cabang keputusan tersendiri. Sebaliknya, tidak setiap orang HBsAg-positif perlu langsung diberi antivirus: nilai pedagogis kasus ini adalah memastikan staging dan retensi layanan tanpa mengobati angka tunggal."
       },
@@ -2234,7 +2234,7 @@
       },
       "currentEditorial": {
         "clue": "Tes skrining awal reaktif belum cukup untuk diagnosis; tiga tes cepat serial yang seluruhnya reaktif mengonfirmasi HIV sesuai algoritma nasional. Karena pasien tanpa gejala infeksi oportunistik, siap berobat, CD4 428 sel/mm3, dan fungsi ginjal memadai, mulai TDF/3TC/DTG sekali sehari pada hari yang sama. Status kehamilan tetap dinilai untuk konseling dan layanan maternal-HIV terintegrasi, tetapi hamil atau berpotensi hamil bukan alasan otomatis untuk menyingkirkan dolutegravir. Bila pasien hamil atau merencanakan kehamilan, lakukan diskusi manfaat-risiko yang terinformasi dan sambungkan ke jalur maternal-HIV sesuai program. Nilai TB aktif dan interaksi obat; setelah TB aktif disingkirkan, nilai kelayakan TPT sesuai program. Panel awal serta viral load mendukung staging dan monitoring, bukan ritual untuk menunda ART tanpa alasan klinis. Kotrimoksazol tidak otomatis diberikan pada CD4 ini tanpa stadium 3/4 atau TB aktif. U=U baru berlaku setelah supresi viral terverifikasi dan dipertahankan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PNPK HIV KMK 90/2019 menjadi floor klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO merekomendasikan dolutegravir sebagai regimen preferred untuk semua populasi, termasuk perempuan hamil dan yang berpotensi hamil; kehamilan memicu informed choice serta integrasi layanan maternal-HIV, bukan larangan otomatis. WHO 2025/2026 mempertahankan regimen berbasis dolutegravir, pencegahan TB, layanan terintegrasi, retensi, dan re-engagement.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). PNPK HIV KMK 90/2019 menjadi acuan dasar klinis treat-all dan rapid ART. Permenkes 3/2026 mencabut sebagian besar Permenkes 23/2022, tetapi Pasal 41 dan Lampirannya tetap berlaku sebagai pedoman teknis program HIV/IMS; karena itu Permenkes 23/2022 tidak boleh ditampilkan seolah aktif utuh. Pedoman Kerja Puskesmas Klaster 3 tahun 2024 menempatkan TDF/3TC/DTG sebagai lini pertama dewasa, ART hari yang sama atau paling lambat hari ketujuh bila tanpa infeksi oportunistik, serta kontrol satu bulan untuk pasien stabil. WHO merekomendasikan dolutegravir sebagai regimen preferred untuk semua populasi, termasuk perempuan hamil dan yang berpotensi hamil; kehamilan memicu informed choice serta integrasi layanan maternal-HIV, bukan larangan otomatis. WHO 2025/2026 mempertahankan regimen berbasis dolutegravir, pencegahan TB, layanan terintegrasi, retensi, dan re-engagement.",
         "realityNote": "Sukamaju ditetapkan sebagai layanan ARV; TLD, konselor, dan jejaring laboratorium siap. Bila hasil darah masih ditunggu tetapi pasien layak, rapid ART tetap berjalan dan ditinjau satu minggu; kasus dengan hasil aman ini kontrol satu bulan. Viral load melalui jejaring. Notifikasi pasangan ditawarkan sukarela, rahasia, aman, dan tanpa paksaan; kunjungan terlewat memicu re-engagement rahasia, bukan penghentian layanan.",
         "ebmPearl": "Tampak sehat tidak menyingkirkan advanced HIV disease: CD4 baseline tetap penting untuk menemukan imunosupresi berat dan menentukan paket profilaksis, tetapi bukan syarat untuk menahan ART. HBsAg juga bermakna karena tenofovir-lamivudin aktif terhadap hepatitis B dan penghentian sembarangan dapat memicu flare. Pada kasus ini CD4 428 sel/mm3, HBsAg nonreaktif, dan tidak ada stadium klinis 3/4, sehingga kotrimoksazol bukan resep otomatis."
       },
@@ -2466,7 +2466,7 @@
       },
       "currentEditorial": {
         "clue": "Pruritus, eritema, discharge putih menggumpal tanpa bau amis, dan pseudohifa mendukung kandidiasis vulvovaginal. Gunakan azol intravaginal; evaluasi diabetes/kehamilan dan rujuk bila berat, rekuren, atau gagal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Vaginitis ditatalaksana sesuai etiologi, bukan semua keputihan diberi regimen yang sama.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila pemeriksaan tidak ready, gambaran klinis klasik tanpa red flag masih dapat ditangani sebagai kandidiasis tidak rumit dengan safety-net; kasus rekuren, berat, hamil, atau gagal terapi memerlukan konfirmasi/jejaring."
       },
       "evidence": {
@@ -2650,7 +2650,7 @@
       },
       "currentEditorial": {
         "clue": "KGB akut unilateral nyeri dengan fokus infeksi lokal mendukung limfadenitis bakterial. Tata sumber infeksi dan antibiotik yang sesuai; evaluasi ulang. Kronik, keras/fiksasi, supraklavikula, gejala TB/keganasan, fluktuasi, atau gagal respons memerlukan pemeriksaan lanjut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Limfadenitis harus dibedakan dari TB kelenjar, keganasan, dan abses."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Limfadenitis harus dibedakan dari TB kelenjar, keganasan, dan abses."
       },
       "evidence": {
         "ppk": {
@@ -2790,7 +2790,7 @@
       },
       "currentEditorial": {
         "clue": "Parotitis dengan pajanan klaster, muara Stensen tanpa pus, dan tanpa toksisitas mendukung mumps. Tata laksana suportif; batasi kontak dekat selama periode menular dan cek status imunisasi kontak.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menempatkan parotitis mumps sebagai terapi suportif dan merujuk bila ada komplikasi atau penyakit sistemik."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menempatkan parotitis mumps sebagai terapi suportif dan merujuk bila ada komplikasi atau penyakit sistemik."
       },
       "evidence": {
         "ppk": {
@@ -3022,7 +3022,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri pelvis dengan cervical motion/adnexal tenderness dan risiko IMS memenuhi ambang klinis rendah untuk PID setelah kehamilan ektopik serta penyebab bedah dinilai. Pasien stabil, tidak hamil, dapat minum, dan tanpa abses atau sepsis dapat menerima ceftriaxone IM sekali ditambah doxycycline serta metronidazole selama 14 hari. Perbaikan harus tampak dalam kurang dari 72 jam; bila tidak, rawat inap dan evaluasi diagnosis/regimen diperlukan. Tawarkan tes gonore/klamidia, HIV, dan sifilis, tata pasangan, serta retest sekitar tiga bulan bila gonore/klamidia terdiagnosis.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK tidak mempunyai bab PID langsung. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis jejaring IMS, sedangkan CDC STI guidance memberi kriteria rawat inap, regimen rawat jalan, evaluasi kurang dari 72 jam, retesting, dan partner management.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). PPK tidak mempunyai bab PID langsung. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai acuan dasar teknis jejaring IMS, sedangkan CDC STI guidance memberi kriteria rawat inap, regimen rawat jalan, evaluasi kurang dari 72 jam, retesting, dan partner management.",
         "realityNote": "Kode N70 dipertahankan agar konkordan dengan katalog SKDI-144; kasus ini memodelkan PID ringan. Katalog menampilkan vial ceftriaxone 1 g, tetapi dosis IM aktual mengikuti protokol PID/IMS dan pemilihan vial tidak berarti seluruh isi selalu diberikan. NAAT dan ultrasonografi tidak diasumsikan tersedia di Sukamaju dan tidak boleh menunda terapi klinis atau rujukan bila memburuk."
       },
       "evidence": {
@@ -3267,7 +3267,7 @@
       },
       "currentEditorial": {
         "clue": "Demam, gejala sistitis, dan nyeri CVA dengan piuria mendukung pielonefritis. Pasien tidak hamil, stabil, tanpa obstruksi/komorbid, dan dapat minum sehingga terapi rawat jalan dapat dipertimbangkan dengan evaluasi 48-72 jam; kultur/rujuk bila respons buruk.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Rujuk bila urosepsis, obstruksi, kehamilan, muntah, fungsi ginjal terganggu, atau tidak membaik.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Rujuk bila urosepsis, obstruksi, kehamilan, muntah, fungsi ginjal terganggu, atau tidak membaik.",
         "realityNote": "Pilihan empiris harus mengikuti pola resistensi lokal; vignette ini memakai opsi PPK pada pasien terseleksi tanpa komplikasi. Kreatinin dan kultur tidak diwajibkan onsite sebelum terapi pada pasien stabil tanpa faktor risiko; keduanya ditempuh lewat jejaring bila ada risiko, respons buruk, atau kekambuhan."
       },
       "evidence": {
@@ -3740,8 +3740,8 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Demam akut, nyeri betis, conjunctival suffusion tanpa sekret, dan pajanan banjir mendukung suspek leptospirosis ringan. Mulai doksisiklin 100 mg dua kali sehari selama 10 hari menurut floor Permenkes 28/2021 tanpa menunggu hasil laboratorium. CDC 2026 memakai 7 hari; perbedaan itu ditampilkan sebagai divergensi EBM, bukan alasan mengubah floor nasional diam-diam. Atur spesimen dan pemeriksaan fungsi ginjal-hati melalui jejaring bila tersedia. Ikterus, oliguria, perdarahan paru, rangsang meningeal, hipotensi, bingung, atau sesak memerlukan rujukan segera.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK menjadi floor pengenalan klinis dan rujukan. Permenkes 28/2021 menetapkan doksisiklin dewasa 100 mg tiap 12 jam selama 10 hari untuk leptospirosis ringan; CDC 2026 merekomendasikan 7 hari dan sama-sama menekankan terapi dini tanpa menunggu hasil. Dua kasus terkait banjir memicu notifikasi, line list, pemetaan air-rodensia-hewan, pencarian kasus aktif, dan koordinasi kesehatan lingkungan/One Health; bukti profilaksis massal antibiotik terbatas dan risiko resistensi melarang pembagian doksisiklin blanket.",
+        "clue": "Demam akut, nyeri betis, conjunctival suffusion tanpa sekret, dan pajanan banjir mendukung suspek leptospirosis ringan. Mulai doksisiklin 100 mg dua kali sehari selama 10 hari menurut acuan dasar Permenkes 28/2021 tanpa menunggu hasil laboratorium. CDC 2026 memakai 7 hari; perbedaan itu ditampilkan sebagai divergensi EBM, bukan alasan mengubah acuan dasar nasional diam-diam. Atur spesimen dan pemeriksaan fungsi ginjal-hati melalui jejaring bila tersedia. Ikterus, oliguria, perdarahan paru, rangsang meningeal, hipotensi, bingung, atau sesak memerlukan rujukan segera.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). PPK menjadi acuan dasar pengenalan klinis dan rujukan. Permenkes 28/2021 menetapkan doksisiklin dewasa 100 mg tiap 12 jam selama 10 hari untuk leptospirosis ringan; CDC 2026 merekomendasikan 7 hari dan sama-sama menekankan terapi dini tanpa menunggu hasil. Dua kasus terkait banjir memicu notifikasi, line list, pemetaan air-rodensia-hewan, pencarian kasus aktif, dan koordinasi kesehatan lingkungan/One Health; bukti profilaksis massal antibiotik terbatas dan risiko resistensi melarang pembagian doksisiklin blanket.",
         "realityNote": "Kasus ini sengaja tidak menjadikan darah rutin, kreatinin, transaminase, PCR, atau serologi sebagai tombol wajib di Puskesmas generik. Jejaring mengatur spesimen dan pemeriksaan menurut hari sakit sambil terapi berjalan; hasil negatif dini tidak otomatis menyingkirkan penyakit."
       },
       "evidence": {
@@ -3976,7 +3976,7 @@
       },
       "currentEditorial": {
         "clue": "Trismus, disfagia, dan spasme generalisata singkat terpicu rangsang setelah luka berisiko dengan imunisasi tidak jelas mendukung tetanus generalisata derajat sedang secara klinis; jangan menunggu tes laboratorium. Tempatkan di ruang tenang, puasakan, pantau jalan napas dan tanda vital, siapkan suction-BVM-oksigen serta pendamping terlatih, berikan human TIG 500 IU IM yang dinyatakan ready, tutup luka secara steril, dan transfer segera ke layanan saraf dengan kemampuan airway/ventilasi/ICU. SpO2 96% tidak memerlukan oksigen rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab tetanus PPK mencantumkan kompetensi 4A, diagnosis klinis, minimisasi rangsang, pengawasan respirasi, perawatan luka, pelaporan, dan rujukan ke neurologi. Label 4A adalah tingkat kompetensi diagnosis, bukan izin menuntaskan tetanus generalisata sedang sebagai rawat jalan. WHO 2026 dan CDC 2025 menempatkannya sebagai kegawatan rawat inap; CDC merekomendasikan human TIG 500 IU IM dosis tunggal. Fornas 1199/2025 mencantumkan human TIG 250 IU dan 500 IU untuk manifestasi tetanus klinis. Regimen ATS dosis tinggi, penisilin, dan sedasi dosis besar dalam teks lama tidak disalin menjadi resep FKTP; antimikroba, kontrol spasme, debridemen, dan ventilasi mengikuti protokol fasilitas rujukan.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bab tetanus PPK mencantumkan kompetensi 4A, diagnosis klinis, minimisasi rangsang, pengawasan respirasi, perawatan luka, pelaporan, dan rujukan ke neurologi. Label 4A adalah tingkat kompetensi diagnosis, bukan izin menuntaskan tetanus generalisata sedang sebagai rawat jalan. WHO 2026 dan CDC 2025 menempatkannya sebagai kegawatan rawat inap; CDC merekomendasikan human TIG 500 IU IM dosis tunggal. Fornas 1199/2025 mencantumkan human TIG 250 IU dan 500 IU untuk manifestasi tetanus klinis. Regimen ATS dosis tinggi, penisilin, dan sedasi dosis besar dalam teks lama tidak disalin menjadi resep FKTP; antimikroba, kontrol spasme, debridemen, dan ventilasi mengikuti protokol fasilitas rujukan.",
         "realityNote": "TIG 500 IU, balutan steril, suction, BVM, oksigen, monitor, petugas terlatih, dan ambulans dinyatakan ready; ini bukan klaim stok universal. Jika TIG tidak ada, transfer jangan ditunda. Sukamaju hanya menutup luka; debridemen dilakukan di RS karena spasme terpicu rangsang. Laporkan kasus ke Dinkes, tetapi tetanus tidak menular antarmanusia dan tidak memerlukan profilaksis kontak atau penetapan KLB otomatis.",
         "ebmPearl": "Tetanus adalah diagnosis klinis dan hasil kultur luka negatif tidak menyingkirkannya. TIG hanya menetralkan toksin yang belum terikat, sehingga diberikan sedini mungkin; pasien yang sembuh tetap tidak memperoleh imunitas alami dan masih memerlukan seri vaksinasi. Keracunan striknin dapat menyerupai spasme terpicu rangsang, tetapi biasanya beronset cepat setelah pajanan tanpa trismus khas atau masa inkubasi luka."
       },
@@ -4191,7 +4191,7 @@
       },
       "currentEditorial": {
         "clue": "Tiga kriteria Amsel atau lebih mendukung vaginosis bakterialis: discharge homogen, pH >4,5, whiff positif, dan clue cells. Metronidazol adalah pilihan; hindari douching dan evaluasi kehamilan/IMS sesuai risiko.",
-        "officialGuidance": "Bab vaginitis pada PPK FKTP 1186/2022 hanya menjadi floor terkait, bukan pedoman etiologi bakterial yang identik. CDC STI Treatment Guidelines memberi kriteria Amsel dan regimen metronidazol 500 mg dua kali sehari selama 7 hari untuk vaginosis bakterialis simptomatik.",
+        "officialGuidance": "Bab vaginitis pada PPK FKTP 1186/2022 hanya menjadi acuan dasar terkait, bukan pedoman etiologi bakterial yang identik. CDC STI Treatment Guidelines memberi kriteria Amsel dan regimen metronidazol 500 mg dua kali sehari selama 7 hari untuk vaginosis bakterialis simptomatik.",
         "realityNote": "Pada encounter ini, pH strip, reagen whiff, dan mikroskop beserta operator dinyatakan siap. Bila mikroskop tidak tersedia, jangan mengarang clue cells: gunakan kriteria klinis yang benar-benar dapat dinilai, evaluasi diagnosis banding/IMS, dan manfaatkan jejaring bila diagnosis meragukan atau berulang."
       },
       "evidence": {
@@ -4344,7 +4344,7 @@
       },
       "currentEditorial": {
         "clue": "Pola temporal setelah iritan dengan eritema eksternal dan tanpa discharge/lesi infeksi mendukung vulvitis iritan. Hentikan pemicu, cuci lembut, jaga kering; kortikosteroid potensi rendah dapat dipakai singkat pada inflamasi ringan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Penyebab infeksi dan IMS harus disingkirkan sebelum memberi terapi simptomatik."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Penyebab infeksi dan IMS harus disingkirkan sebelum memberi terapi simptomatik."
       },
       "evidence": {
         "ppk": {
@@ -4445,7 +4445,7 @@
       },
       "currentEditorial": {
         "clue": "Enam bulan keluhan fisik yang menimbulkan distress, perhatian kesehatan menetap, kunjungan berulang, dan gangguan fungsi mendukung F45 setelah riwayat, pemeriksaan, serta red flag dinilai secara proporsional. Ini diagnosis berbasis fitur positif, bukan kesimpulan bahwa hasil normal berarti keluhan psikologis. Tinjau hasil lama dan ulangi pemeriksaan hanya bila ada indikasi baru. Validasi bahwa gejala nyata; bahas hubungan tubuh, emosi, dan stres sebagai hipotesis bersama; sepakati satu klinisi, kontrol terjadwal, sasaran fungsi, serta aktivitas bertahap. Jangan memberi benzodiazepin atau antidepresan otomatis tanpa diagnosis komorbid yang jelas.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Gangguan Somatoform menjadi floor diagnosis-spesifik: singkirkan penyebab organik dan gangguan jiwa lain secara proporsional, hindari pemeriksaan atau rujukan yang tidak perlu, bangun kemitraan, dan jadwalkan tindak lanjut singkat berkala. Pedoman Penyelenggaraan Kesehatan Jiwa di FKTP Kemenkes 2020 memberi konteks layanan primer, tetapi bukan bab diagnosis-spesifik. PNPK Kedokteran Jiwa 2015 tidak memiliki bab somatoform tersendiri dan tidak dipakai sebagai sumber langsung kasus ini.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bab Gangguan Somatoform menjadi acuan dasar diagnosis-spesifik: singkirkan penyebab organik dan gangguan jiwa lain secara proporsional, hindari pemeriksaan atau rujukan yang tidak perlu, bangun kemitraan, dan jadwalkan tindak lanjut singkat berkala. Pedoman Penyelenggaraan Kesehatan Jiwa di FKTP Kemenkes 2020 memberi konteks layanan primer, tetapi bukan bab diagnosis-spesifik. PNPK Kedokteran Jiwa 2015 tidak memiliki bab somatoform tersendiri dan tidak dipakai sebagai sumber langsung kasus ini.",
         "realityNote": "Asesmen, penjelasan kolaboratif, skrining keselamatan, sasaran fungsi, dan kontrol terjadwal dapat dimulai di FKTP tanpa alat khusus. Sukamaju tidak mengasumsikan psikolog selalu tersedia; psikoterapi atau konsultasi SpKJ memakai jejaring bila fungsi terganggu berat, diagnosis meragukan, ada komorbid/risiko keselamatan, atau respons buruk. Gejala baru maupun pola yang berubah tetap membuka evaluasi medis ulang.",
         "ebmPearl": "ICD-11 mengganti logika lama \"tidak terjelaskan secara medis\" dengan bodily distress disorder: gejala dapat hidup bersama penyakit fisik, sedangkan perhatian berlebihan, distress, persistensi, dan dampak fungsi menjadi pusat diagnosis. Kode F45 tetap dipakai di game karena katalog SKDI dan PPK Indonesia. Intervensi berbasis prinsip CBT dapat dipertimbangkan, tetapi rekomendasi WHO bersifat kondisional dengan mutu bukti sangat rendah; systematic review komunikasi primer juga belum menemukan satu skrip yang pasti unggul. Karena itu tujuan encounter adalah kemitraan, penjelasan yang dapat diterima, kontinuitas, dan pemulihan fungsi, bukan memaksakan reatribusi."
       },
@@ -4712,7 +4712,7 @@
       },
       "currentEditorial": {
         "clue": "Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan SpO2 84% mendukung edema paru akut hipertensif. Dudukkan, titrasi oksigen, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, pantau tekanan darah dan respons, lalu transfer segera. ISDN sublingual hanya opsi jembatan bila protokol lokal mengizinkan, tekanan darah dipantau, dan tidak ada kontraindikasi; satu tablet bukan pengganti nitrat intravena terpantau di layanan akut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Bab gagal jantung akut PPK 1186/2022 menjadi floor terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. ESC 2021 dengan focused update 2023 mendukung diuretik intravena untuk kongesti; vasodilator hanya untuk presentasi terpilih seperti hipertensi berat dengan pemantauan tekanan darah dan kapabilitas yang memadai.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Bab gagal jantung akut PPK 1186/2022 menjadi acuan dasar terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. ESC 2021 dengan focused update 2023 mendukung diuretik intravena untuk kongesti; vasodilator hanya untuk presentasi terpilih seperti hipertensi berat dengan pemantauan tekanan darah dan kapabilitas yang memadai.",
         "realityNote": "Vignette ini menyatakan oksigen, pulse oximeter, furosemid injeksi, akses IV, EKG beserta operator, monitoring, dan transport sedang ready. EKG dilakukan paralel dan tidak boleh menunda transfer. CPAP/nitrat intravena tidak diasumsikan tersedia di Sukamaju; ketiadaannya tidak boleh menunda stabilisasi feasible dan transfer."
       },
       "evidence": {
@@ -4959,7 +4959,7 @@
       },
       "currentEditorial": {
         "clue": "GAGAL JANTUNG DEKOMPENSASI AKUT (SKDI 3B - RUJUK): sesak progresif, ortopnea tiga bantal, paroxysmal nocturnal dyspnoea, kenaikan berat 4 kg, JVP meningkat, gallop S3, ronki basal, hepatomegali, dan edema perifer sudah cukup menegakkan kongesti secara klinis. Pencetusnya adalah penghentian diuretik dan beban garam. Di FKTP: posisikan setengah duduk, titrasi oksigen karena SpO2 89%, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, monitor, dan rujuk. Jangan memulai beta-blocker baru sebelum stabil; jangan pula menghentikan terapi beta-blocker lama secara otomatis tanpa syok, bradikardia berat, atau blok.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memerinci oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. ESC 2021 dengan focused update 2023 menguatkan diuretik intravena untuk kongesti, pemantauan respons dan fungsi ginjal, pencarian pencetus, serta penyesuaian terapi kronik menurut stabilitas hemodinamik.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 memerinci oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, dan rujukan segera pada gagal jantung akut. ESC 2021 dengan focused update 2023 menguatkan diuretik intravena untuk kongesti, pemantauan respons dan fungsi ginjal, pencarian pencetus, serta penyesuaian terapi kronik menurut stabilitas hemodinamik.",
         "realityNote": "Vignette menyatakan oksigen, pulse oximeter, EKG, furosemid injeksi, akses IV, monitoring, dan transport ready. Rontgen tidak tersedia onsite; diagnosis klinis, stabilisasi, dan transfer tidak menunggu foto. Bila injeksi kosong, jangan menyatakan furosemid oral setara atau mengarang substitusi: kerjakan stabilisasi yang feasible, komunikasikan keterbatasan, dan percepat transfer.",
         "ebmPearl": "Kenaikan berat badan 4 kg dalam seminggu adalah tanda kongesti paling awal dan paling murah — muncul jauh sebelum sesak, dan hanya butuh timbangan. Sebaliknya, tungkai yang \"tidak terlalu bengkak\" menyesatkan: pasien bisa menahan 4-5 liter cairan sebelum edema tampak nyata, sehingga edema ringan tidak berarti kongesti ringan."
       },
@@ -5188,7 +5188,7 @@
       },
       "currentEditorial": {
         "clue": "Riwayat keluarnya jaringan diikuti penurunan perdarahan/nyeri, kondisi stabil, dan serviks menutup mendukung abortus komplit. Tidak ada indikasi memberi uterotonik atau misoprostol otomatis; pastikan follow-up dan rujuk/USG bila diagnosis tidak pasti, perdarahan menetap, infeksi, atau curiga ektopik.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Abortus komplit stabil dapat diobservasi dengan konseling, tetapi ketidakpastian sisa jaringan atau ektopik harus dievaluasi.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Abortus komplit stabil dapat diobservasi dengan konseling, tetapi ketidakpastian sisa jaringan atau ektopik harus dievaluasi.",
         "realityNote": "USG tidak diasumsikan tersedia di Sukamaju; akses jejaring digunakan bila temuan klinis tidak meyakinkan."
       },
       "evidence": {
@@ -5330,7 +5330,7 @@
       },
       "currentEditorial": {
         "clue": "Fisura puting paling sering disebabkan perlekatan dangkal. Observasi satu sesi menyusu dan koreksi posisi adalah terapi utama; hindari sabun/iritan, pertahankan menyusui atau perah nyaman, dan evaluasi infeksi bila tidak membaik.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Puting lecet ditangani dengan koreksi teknik menyusui, bukan menghentikan ASI secara otomatis."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Puting lecet ditangani dengan koreksi teknik menyusui, bukan menghentikan ASI secara otomatis."
       },
       "evidence": {
         "ppk": {
@@ -5497,7 +5497,7 @@
       },
       "currentEditorial": {
         "clue": "Fimosis patologis dengan cincin fibrotik tetapi tanpa retensi atau infeksi berat dapat dicoba kortikosteroid topikal dan retraksi lembut terarah. Jangan menarik paksa; rujuk bila skar berat, infeksi berulang, gangguan berkemih, atau gagal terapi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Kortikosteroid topikal 0,05% selama beberapa minggu dan sirkumsisi terpilih adalah opsi."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Kortikosteroid topikal 0,05% selama beberapa minggu dan sirkumsisi terpilih adalah opsi."
       },
       "evidence": {
         "ppk": {
@@ -6296,7 +6296,7 @@
       },
       "currentEditorial": {
         "clue": "Pus umbilikus, eritema meluas, demam, sulit menyusu, letargi, dan perfusi memanjang pada neonatus adalah omfalitis dengan tanda infeksi sistemik dan risiko sepsis. Pertahankan kehangatan, pantau napas, perfusi, suhu, dan glukosa bila tersedia; pasang akses IV dengan cairan terukur sesuai kondisi, berikan antibiotik parenteral awal sesuai protokol neonatus/jejaring, lalu rujuk segera. Jangan mengganti jalur ini dengan obat oles, antibiotik oral, atau bolus cairan otomatis.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. PPK 1186/2022 menjadi floor untuk mengenali omfalitis yang meluas dan merujuk neonatus dengan tanda sistemik. WHO Recommendations for Management of Serious Bacterial Infections in Infants 0-59 Days 2024 menempatkan perawatan rumah sakit sebagai jalur utama; regimen rawat jalan tersederhana hanya dipakai ketika rujukan benar-benar tidak dapat dilakukan, bukan sebagai default FKTP.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). PPK 1186/2022 menjadi acuan dasar untuk mengenali omfalitis yang meluas dan merujuk neonatus dengan tanda sistemik. WHO Recommendations for Management of Serious Bacterial Infections in Infants 0-59 Days 2024 menempatkan perawatan rumah sakit sebagai jalur utama; regimen rawat jalan tersederhana hanya dipakai ketika rujukan benar-benar tidak dapat dilakukan, bukan sebagai default FKTP.",
         "realityNote": "Tombol antibiotik mewakili regimen parenteral neonatus yang sudah disepakati jejaring, bukan satu vial universal. Stok obat, dosis berbasis usia/berat, kemampuan mempertahankan suhu, pemantauan glukosa, dan transport harus dikonfirmasi; keterbatasan salah satunya mempercepat koordinasi rujuk, bukan membenarkan improvisasi.",
         "ebmPearl": "Infeksi tali pusat lokal tanpa tanda sistemik tidak boleh disamakan dengan skenario ini. Begitu muncul gangguan minum, letargi, demam atau hipotermia, gangguan perfusi, apnea, atau kejang, persoalannya bukan lagi sekadar membersihkan umbilikus: bayi harus diperlakukan sebagai infeksi bakteri serius sampai terbukti sebaliknya."
       },
@@ -6472,7 +6472,7 @@
       },
       "currentEditorial": {
         "clue": "Puting terinversi lama tanpa massa tidak mencegah laktasi bila posisi, sandwich hold, stimulasi sebelum menyusu, dan dukungan intensif diberikan. Hindari tindakan traumatik; pantau transfer ASI dan berat bayi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Pendampingan menyusui menjadi inti; inversi baru unilateral atau disertai massa perlu evaluasi lebih lanjut."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Pendampingan menyusui menjadi inti; inversi baru unilateral atau disertai massa perlu evaluasi lebih lanjut."
       },
       "evidence": {
         "ppk": {
@@ -6683,7 +6683,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri-demam dengan eritema sektoral pada ibu menyusui mendukung mastitis. Lanjutkan pengosongan payudara/menyusui, koreksi latch, beri antibiotik antistafilokokus yang sesuai; USG/rujuk bila fluktuasi atau tidak membaik 24-48 jam.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Menghentikan menyusui tanpa indikasi memperburuk stasis; abses memerlukan drainase."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Menghentikan menyusui tanpa indikasi memperburuk stasis; abses memerlukan drainase."
       },
       "evidence": {
         "ppk": {
@@ -7038,7 +7038,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri perut bawah bilateral, demam tinggi, duh serviks purulen, nyeri goyang serviks, massa adneksa nyeri, dan tanda peritoneal pada perempuan usia subur adalah penyakit radang panggul berat dengan curiga abses tubo-ovarium. Singkirkan kehamilan segera, tetapi jangan menjadikan USG FKTP sebagai syarat diagnosis atau rujuk. Kasus berat/abses memerlukan rawat inap: regimen parenteral CDC adalah seftriakson 1 g IV tiap 24 jam PLUS doksisiklin 100 mg oral/IV tiap 12 jam PLUS metronidazol 500 mg oral/IV tiap 12 jam. Berikan dosis awal yang tersedia tanpa menunda transfer dan lanjutkan/ubah regimen di rumah sakit. IUD tidak otomatis dilepas; evaluasi pelepasan dilakukan bila tidak membaik dalam 48-72 jam bersama tim obgyn. Tata pasangan dan skrining IMS tetap penting, tetapi tidak boleh memperlambat stabilisasi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik untuk PID berat/abses tubo-ovarium; PNPK komplikasi kehamilan hanya sumber terkait, bukan padanan. Pedoman IMS Kemenkes menjadi konteks nasional, sedangkan CDC STI Treatment Guidelines 2021 memberi regimen rawat inap dan kriteria hospitalisasi yang eksplisit untuk abses tubo-ovarium, penyakit berat, suhu di atas 38,5 derajat Celsius, ketidakmampuan menjalani terapi oral, atau diagnosis bedah yang belum tersingkir.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik untuk PID berat/abses tubo-ovarium; PNPK komplikasi kehamilan hanya sumber terkait, bukan padanan. Pedoman IMS Kemenkes menjadi konteks nasional, sedangkan CDC STI Treatment Guidelines 2021 memberi regimen rawat inap dan kriteria hospitalisasi yang eksplisit untuk abses tubo-ovarium, penyakit berat, suhu di atas 38,5 derajat Celsius, ketidakmampuan menjalani terapi oral, atau diagnosis bedah yang belum tersingkir.",
         "realityNote": "USG pelvis tidak diasumsikan tersedia di Puskesmas Sukamaju. Massa adneksa, demam tinggi, dan tanda peritoneal cukup untuk mencurigai abses serta mengatur transfer; pencitraan definitif dilakukan di rumah sakit. Skrining HIV/sifilis dan konseling pasangan perlu privasi, tetapi boleh dilanjutkan melalui jejaring bila melakukannya saat ini akan menunda antibiotik atau transport.",
         "ebmPearl": "Keputihan pada perempuan muda adalah keluhan yang paling sering diremehkan — dianggap \"biasa\", \"kecapekan\", atau \"jamur\" — padahal penyakit radang panggul adalah salah satu penyebab infertilitas dan kehamilan ektopik yang benar-benar dapat dicegah, dan kerusakan tubanya terjadi diam-diam pada episode yang gejalanya justru ringan. Yang menyesatkan berikutnya adalah menunggu gambaran \"lengkap\": leukosit yang normal, suhu yang normal, dan duh tubuh yang tidak mencolok TIDAK menyingkirkan diagnosis ini. Kriteria minimum CDC sengaja dibuat longgar — cukup nyeri tekan uterus, adneksa, ATAU nyeri goyang serviks pada perempuan berisiko — justru karena harga menunggu kepastian (tuba yang tersumbat seumur hidup) jauh lebih mahal daripada harga mengobati beberapa pasien yang ternyata bukan."
       },
@@ -7516,7 +7516,7 @@
       },
       "currentEditorial": {
         "clue": "Derajat 1 hanya melibatkan mukosa vagina dan kulit perineum. Robekan kecil tanpa perdarahan dapat sembuh tanpa jahitan, tetapi rembesan aktif pada skenario ini memerlukan pencahayaan, anestesi, hemostasis, dan penjahitan oleh tenaga kompeten; keterlibatan otot/sfingter atau hematoma besar mengubah derajat dan disposisi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Ruptur tingkat 1-2 dapat ditangani tenaga terlatih dengan set dan anestesi yang memadai.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Ruptur tingkat 1-2 dapat ditangani tenaga terlatih dengan set dan anestesi yang memadai.",
         "realityNote": "Ruang tindakan, pencahayaan, anestesi lokal, set jahit steril, material jahit, dan operator kompeten dinyatakan ready pada encounter ini. Bila derajat tidak dapat dipastikan, sfingter/otot terlibat, perdarahan tidak terkontrol, atau resource tidak ready, lakukan hemostasis sementara dan rujuk tanpa jahitan buta."
       },
       "evidence": {
@@ -7791,7 +7791,7 @@
       },
       "currentEditorial": {
         "clue": "Perempuan usia reproduktif dengan nyeri perut/panggul harus dinilai kemungkinan hamil meski gejalanya tidak khas. Telat haid 7 minggu, nyeri satu sisi mendadak, bercak gelap, sinkop, nyeri alih bahu, tes kehamilan positif, hipotensi, takikardia, dan tanda peritoneal berarti suspek kehamilan ektopik terganggu dengan syok. Tugas FKTP: panggil jejaring emergensi, lakukan ABCDE, pasang akses intravena dan berikan kristaloid terukur sambil menilai respons, puasakan, pantau ketat, lalu transfer segera ke fasilitas bedah-obstetri. Jangan menunggu USG atau beta-hCG serial pada pasien tidak stabil. Oksigen diberikan terkontrol bila hipoksemia atau gangguan respirasi muncul; SpO2 98% udara ruangan bukan alasan menjadikannya tindakan wajib.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 tidak memiliki bab diagnosis-spesifik untuk kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan KMK 91/2017 tidak memuat kondisi ini. HSE National Clinical Practice Guideline 2024 menjadi sumber langsung untuk pengenalan, penilaian stabilitas, jalur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care memberi kerangka ABCDE, stabilisasi syok, transfer, dan handover untuk fasilitas kontak pertama.",
+        "officialGuidance": "Dua pedoman Indonesia tidak menjangkau kondisi ini: PPK Dokter di FKTP (KMK 1186/2022) tidak punya bab kehamilan ektopik terganggu, dan PNPK Komplikasi Kehamilan (KMK 91/2017) juga tidak memuatnya.\n\nHSE National Clinical Practice Guideline 2024 menjadi sumber langsungnya — mencakup pengenalan, penilaian stabilitas, alur diagnosis, resusitasi, dan transfer segera pada suspek ektopik. WHO-ICRC Basic Emergency Care melengkapi kerangka untuk fasilitas kontak pertama: ABCDE, stabilisasi syok, transfer, dan serah-terima pasien.",
         "realityNote": "Di Sukamaju, tes kehamilan dan kristaloid adalah sumber daya inti, sedangkan USG obstetri bersifat terjadwal/berbagi dan ambulans dapat sedang bertugas. Keterbatasan itu tidak mengubah keputusan: gambaran syok dengan tes kehamilan positif memicu stabilisasi paralel dan transfer, bukan antrean USG atau pemeriksaan tambahan yang menunda.",
         "ebmPearl": "Bercak darah yang sedikit dapat menipu karena perdarahan utama pada ektopik terganggu dapat tersembunyi di rongga perut. Tes kehamilan positif juga tidak membuktikan lokasi intrauterin, dan struktur intrauterin dapat berupa kantong semu. Tes urine negatif menurunkan kemungkinan kehamilan yang sedang berlangsung, tetapi hasil tunggal tidak boleh mengalahkan penilaian syok atau kecurigaan klinis sangat tinggi; fokus pedagogisnya adalah selalu mempertimbangkan dan menguji kehamilan, lalu bertindak menurut stabilitas pasien."
       },
@@ -8277,7 +8277,7 @@
       },
       "currentEditorial": {
         "clue": "Abses terlokalisasi yang matang/fluktuatif memerlukan insisi dan drainase dengan teknik steril. Pada skenario ini antibiotik sistemik tidak diperlukan; selulitis, gejala sistemik, lokasi/komorbid berisiko, atau kegagalan drainase mengubah keputusan.",
-        "officialGuidance": "Bab pioderma PPK FKTP 1186/2022 adalah floor terkait, bukan padanan abses identik. IDSA SSTI menempatkan insisi-drainase sebagai terapi primer abses kulit terlokalisasi; antibiotik sistemik ditambahkan menurut gejala sistemik, luas selulitis, gangguan pertahanan tubuh, lokasi berisiko, atau kegagalan terapi."
+        "officialGuidance": "Bab pioderma PPK FKTP 1186/2022 adalah acuan dasar terkait, bukan padanan abses identik. IDSA SSTI menempatkan insisi-drainase sebagai terapi primer abses kulit terlokalisasi; antibiotik sistemik ditambahkan menurut gejala sistemik, luas selulitis, gangguan pertahanan tubuh, lokasi berisiko, atau kegagalan terapi."
       },
       "evidence": {
         "ppk": {
@@ -8429,7 +8429,7 @@
       },
       "currentEditorial": {
         "clue": "Komedo membedakan akne dari folikulitis/perioral dermatitis. Akne ringan mulai dengan benzoyl peroxide tipis dan bertahap, perawatan nonkomedogenik, serta evaluasi 6-8 minggu; antibiotik topikal tidak digunakan tunggal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Benzoil peroksida tidak diklaim sebagai item Fornas; skenario menyatakan stok pengadaan lokal/OTC tersedia. Mulai tipis dan bertahap untuk mengurangi iritasi."
       },
       "evidence": {
@@ -8565,7 +8565,7 @@
       },
       "currentEditorial": {
         "clue": "Erupsi serpiginosa yang bermigrasi setelah kontak tanah/pasir khas CLM. Beri antihelmintik sesuai berat badan dan status pasien, rawat ekskoriasi, serta anjurkan alas kaki; lesi luas atau keterlibatan sistemik perlu evaluasi lanjut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -8733,7 +8733,7 @@
       },
       "currentEditorial": {
         "clue": "Pruritus kronik berulang, distribusi fleksural, xerosis, dan riwayat atopi mendukung dermatitis atopik. Emolien adalah fondasi; steroid topikal ringan digunakan singkat pada flare, dengan pencetus dan infeksi sekunder dievaluasi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Petrolatum adalah baseline pengadaan lokal untuk pemulihan sawar kulit dan tidak diklaim sebagai item Fornas. Produk harus sederhana, tanpa pewangi, dan dapat diganti emolien lokal yang setara."
       },
       "evidence": {
@@ -8902,7 +8902,7 @@
       },
       "currentEditorial": {
         "clue": "Hubungan dosis-paparan, batas sesuai area kontak, dan perbaikan saat bebas kerja mendukung dermatitis iritan. Hentikan/kurangi iritan, gunakan sarung tangan yang tepat, emolien sering, dan steroid topikal potensi ringan singkat pada inflamasi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Petrolatum diperlakukan sebagai bahan perawatan kulit hasil pengadaan lokal, bukan klaim item obat Fornas. Bila tidak ada, pilih emolien sederhana tanpa pewangi yang tersedia."
       },
       "evidence": {
@@ -9077,7 +9077,7 @@
       },
       "currentEditorial": {
         "clue": "Plak eksematosa berbentuk koin tanpa central clearing dan KOH negatif mendukung dermatitis numularis. Pulihkan sawar kulit dan gunakan steroid topikal singkat; jangan memberi antijamur hanya karena bentuknya bulat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini; hasil negatif membantu ketika morfologi tumpang tindih dengan tinea, tetapi bukan syarat semua kasus tipikal. Petrolatum adalah emolien pengadaan lokal, bukan item Fornas; emolien sederhana tanpa pewangi yang setara dapat dipakai."
       },
       "evidence": {
@@ -9217,7 +9217,7 @@
       },
       "currentEditorial": {
         "clue": "Papul perioral tanpa komedo dengan sparing vermilion dan paparan steroid mendukung dermatitis perioral. Hentikan steroid wajah dengan konseling kemungkinan rebound, sederhanakan produk, dan gunakan terapi topikal; kasus berat/refrakter dirujuk.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Menghentikan steroid dan kosmetik oklusif adalah inti. Metronidazol topikal hanya opsi pengadaan lokal/non-Fornas; ketiadaannya tidak boleh memicu antibiotik oral otomatis."
       },
       "evidence": {
@@ -9348,7 +9348,7 @@
       },
       "currentEditorial": {
         "clue": "Ruam pada permukaan cembung dengan lipatan relatif bebas mendukung dermatitis popok iritan. Ganti popok sering, bilas lembut, beri waktu bebas popok dan barrier zinc oxide; candidiasis melibatkan lipatan dan pustul satelit.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Zinc oxide adalah barrier hasil pengadaan lokal/OTC dan tidak diklaim sebagai item Fornas. Bila tidak ada, petrolatum sederhana dapat dipakai sebagai barrier pengganti."
       },
       "evidence": {
@@ -9523,7 +9523,7 @@
       },
       "currentEditorial": {
         "clue": "Skuama berminyak pada area seboroik khas dermatitis seboroik. Antijamur topikal adalah inti; steroid ringan hanya singkat pada inflamasi, bukan pemakaian kontinu di wajah.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -9718,7 +9718,7 @@
       },
       "currentEditorial": {
         "clue": "Plak eritem hangat, nyeri, berbatas tegas dan meninggi mendukung erisipelas streptokokus. Terapi beta-laktam, elevasi, tandai tepi, rawat pintu masuk, dan evaluasi ulang 24-48 jam; rujuk bila sepsis, progresi cepat, nekrosis, atau komorbid tidak stabil.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -9859,7 +9859,7 @@
       },
       "currentEditorial": {
         "clue": "Plak cokelat halus di lipatan tanpa tepi aktif, KOH negatif, dan respons buruk terhadap antijamur mendukung eritrasma. Jaga area kering dan gunakan antibiotik topikal; periksa diabetes bila berulang.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini; lampu Wood tidak diasumsikan tersedia. KOH negatif membantu menurunkan kemungkinan dermatofitosis, tetapi bila lab tidak ready diagnosis tetap klinis dan respons harus dievaluasi ulang."
       },
       "evidence": {
@@ -10004,7 +10004,7 @@
       },
       "currentEditorial": {
         "clue": "Hubungan waktu obat baru dan eksantema simetris tanpa mukosa/organ mendukung erupsi morbiliformis sederhana. Hentikan obat tersangka bila aman, dokumentasikan alergi, terapi gejala, dan beri safety-net ketat; ruam nyeri, mukosa, bula, purpura, edema wajah, demam, atau keterlibatan organ memerlukan transfer emergensi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -10189,7 +10189,7 @@
       },
       "currentEditorial": {
         "clue": "Paparan endemis, episode adenolimfangitis, limfedema, dan mikrofilaria malam mendukung filariasis limfatik. Kasus individual terkonfirmasi masuk program untuk regimen berbasis berat badan dan ko-endemisitas; satu resep tidak sama dengan POPM/MDA wilayah. Perawatan seumur hidup mencakup cuci-keringkan tungkai dan sela jari, rawat pintu masuk infeksi, latihan, elevasi, tata serangan akut, serta rujuk hidrokel. Temuan kasus memicu pencatatan dan penilaian fokus; keputusan POPM memerlukan pemetaan endemisitas, kelayakan populasi, cakupan, dan program kabupaten.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 3/2026 adalah payung penanggulangan penyakit yang berlaku dan mencabut sebagian besar Permenkes 94/2014 kecuali ketentuan yang dinyatakan tetap. WHO 2024 memisahkan dua pilar: pemutusan transmisi dengan kemoterapi pencegahan programatik dan pengurangan disabilitas melalui paket MMDP. Regimen DEC-albendazol pada pasien ini tetap harus diverifikasi program menurut berat badan, spesies, ko-endemisitas, kehamilan, dan kontraindikasi; jangan menyalin regimen MDA menjadi terapi improvisasi.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 3/2026 adalah payung penanggulangan penyakit yang berlaku dan mencabut sebagian besar Permenkes 94/2014 kecuali ketentuan yang dinyatakan tetap. WHO 2024 memisahkan dua pilar: pemutusan transmisi dengan kemoterapi pencegahan programatik dan pengurangan disabilitas melalui paket MMDP. Regimen DEC-albendazol pada pasien ini tetap harus diverifikasi program menurut berat badan, spesies, ko-endemisitas, kehamilan, dan kontraindikasi; jangan menyalin regimen MDA menjadi terapi improvisasi.",
         "realityNote": "Apusan darah malam dan obat program dijadwalkan melalui jejaring kabupaten; keduanya tidak diasumsikan tersedia spontan di meja poli. Puskesmas mendaftarkan kasus dan menghubungkan tindak lanjut fokus serta MMDP, sedangkan keputusan POPM berada pada program setelah penilaian wilayah."
       },
       "evidence": {
@@ -10368,7 +10368,7 @@
       },
       "currentEditorial": {
         "clue": "Pustul kecil folikulosentrik tanpa abses atau gejala sistemik adalah folikulitis superfisial. Hentikan pencukuran sementara, kompres/higiene, terapi topikal terbatas; antibiotik oral tidak rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya floor terkait dan bukan padanan folikulitis identik. IDSA SSTI membantu memisahkan proses folikular superfisial dari furunkel/abses yang memerlukan drainase; perluasan, kekambuhan, hot-tub exposure, atau gejala sistemik mengubah evaluasi."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya acuan dasar terkait dan bukan padanan folikulitis identik. IDSA SSTI membantu memisahkan proses folikular superfisial dari furunkel/abses yang memerlukan drainase; perluasan, kekambuhan, hot-tub exposure, atau gejala sistemik mengubah evaluasi."
       },
       "evidence": {
         "ppk": {
@@ -10482,7 +10482,7 @@
       },
       "currentEditorial": {
         "clue": "Furunkel berfluktuasi memerlukan insisi-drainase aseptik. Antibiotik sistemik bukan pengganti drainase dan tidak rutin pada abses kecil tanpa selulitis luas, gejala sistemik, lokasi berisiko, atau imunokompromais.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya floor terkait dan bukan padanan furunkel identik. IDSA SSTI merekomendasikan insisi-drainase untuk furunkel besar atau fluktuatif; antibiotik sistemik biasanya tidak diperlukan tanpa demam, tanda sistemik, pertahanan host terganggu, atau kegagalan kendali sumber."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya acuan dasar terkait dan bukan padanan furunkel identik. IDSA SSTI merekomendasikan insisi-drainase untuk furunkel besar atau fluktuatif; antibiotik sistemik biasanya tidak diperlukan tanpa demam, tanda sistemik, pertahanan host terganggu, atau kegagalan kendali sumber."
       },
       "evidence": {
         "ppk": {
@@ -10639,7 +10639,7 @@
       },
       "currentEditorial": {
         "clue": "Prodrom kesemutan dan vesikel berkelompok rekuren mendukung HSV labialis. Antivirus dini paling bermanfaat; jaga kebersihan tangan, hindari kontak lesi dengan mata dan kontak dekat saat aktif.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -10769,7 +10769,7 @@
       },
       "currentEditorial": {
         "clue": "Nodul nyeri rekuren pada area intertriginosa mendukung hidradenitis; Hurley I belum memiliki sinus/scar luas. Kurangi rokok, friksi, dan berat badan; terapi topikal dapat dipakai pada penyakit ringan, sedangkan flare sering, terowongan, atau dampak besar perlu rujuk.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Klindamisin topikal tidak diklaim sebagai item Fornas dan tersedia di skenario melalui pengadaan lokal. Bila tidak tersedia, jangan mengganti dengan kombinasi antibiotik sistemik tanpa penilaian ulang."
       },
       "evidence": {
@@ -10949,7 +10949,7 @@
       },
       "currentEditorial": {
         "clue": "Ulkus berkrusta tebal yang lebih dalam daripada impetigo mendukung ektima. Bersihkan krusta secara lembut dan beri antibiotik antistafilokokus/streptokokus; evaluasi selulitis, diabetes, dan respons.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya floor terkait dan tidak identik dengan ektima. IDSA SSTI membedakan ektima sebagai infeksi lebih dalam dan merekomendasikan antibiotik oral sekitar 7 hari yang mencakup S. aureus serta streptokokus, dengan kultur bila pola tidak tipikal atau respons buruk."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Bab pioderma hanya acuan dasar terkait dan tidak identik dengan ektima. IDSA SSTI membedakan ektima sebagai infeksi lebih dalam dan merekomendasikan antibiotik oral sekitar 7 hari yang mencakup S. aureus serta streptokokus, dengan kultur bila pola tidak tipikal atau respons buruk."
       },
       "evidence": {
         "ppk": {
@@ -11126,7 +11126,7 @@
       },
       "currentEditorial": {
         "clue": "Hilangnya sensasi yang pasti pada lesi adalah tanda kardinal kusta, sehingga gambaran klasik ini dapat didiagnosis klinis tanpa mewajibkan slit-skin smear. Satu sampai lima lesi tanpa bacilli yang terbukti diklasifikasikan PB untuk terapi: MDT tiga obat selama enam bulan. Catat fungsi saraf dan derajat disabilitas sebagai baseline lalu pantau serial; reaksi dapat timbul sebelum, selama, atau setelah MDT dan tidak boleh membuat pasien menghentikan MDT sendiri. Skrining kontak dan SDR-PEP hanya berjalan melalui program setelah konseling, persetujuan, serta penilaian kelayakan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. PNPK kusta menjadi floor nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. PNPK kusta menjadi acuan dasar nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.",
         "realityNote": "MDT adalah obat program dan Sukamaju dinyatakan terhubung dengan program kusta kabupaten. Diagnosis klasik tidak dibuat bergantung pada operator slit-skin smear; penelusuran kontak menghormati keputusan pasien tentang pengungkapan diagnosis dan tidak boleh memperkuat stigma."
       },
       "evidence": {
@@ -11306,7 +11306,7 @@
       },
       "currentEditorial": {
         "clue": "Papul kecil pada area panas/oklusi tanpa gejala sistemik mendukung miliaria rubra. Pendinginan lingkungan, pakaian longgar, menjaga kulit kering, dan losio penenang cukup; antibiotik atau steroid kuat tidak rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -11402,7 +11402,7 @@
       },
       "currentEditorial": {
         "clue": "Papul mutiara berlekuk di tengah khas moluskum dan sering swasirna. Hindari memencet/berbagi handuk; observasi adalah pilihan utama. Kuretase atau krioterapi hanya tindakan terpilih setelah diskusi nyeri, bekas, lokasi, dan kompetensi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -11532,7 +11532,7 @@
       },
       "currentEditorial": {
         "clue": "Identifikasi kutu/nits pada rambut pubis menegakkan pedikulosis pubis. Terapi pedikulisida sesuai petunjuk, obati pasangan/kontak, cuci pakaian dan seprai, skrining IMS, dan evaluasi ulang bila masih ada kutu hidup.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Permetrin 1% adalah pilihan EBM tetapi Fornas 1199/2025 hanya mencantumkan krim 5%. Skenario menyatakan losio 1% tersedia melalui pengadaan lokal; jangan menukar konsentrasi diam-diam."
       },
       "evidence": {
@@ -11668,7 +11668,7 @@
       },
       "currentEditorial": {
         "clue": "Herald patch diikuti erupsi oval sejajar garis kulit mendukung pitiriasis rosea yang umumnya swasirna 6-8 minggu. Beri reassurance dan terapi gatal; telusuri obat, sifilis, serta kehamilan bila pola tidak khas.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -11809,7 +11809,7 @@
       },
       "currentEditorial": {
         "clue": "Makula ber-skuama halus di trunkus dengan sensasi normal dan KOH khas Malassezia mendukung pitiriasis versikolor. Jelaskan warna kulit pulih lebih lambat daripada eradikasi jamur dan kekambuhan umum.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Bila tidak ready, morfologi dan distribusi tipikal dapat ditangani topikal dengan safety-net; gangguan sensasi atau pola atipikal harus membuka kembali diagnosis banding."
       },
       "evidence": {
@@ -11992,7 +11992,7 @@
       },
       "currentEditorial": {
         "clue": "Papul gatal lokal dengan punctum tanpa gejala sistemik adalah reaksi gigitan lokal. Kompres dingin, antihistamin/topikal ringan, hindari garuk, dan ajarkan tanda anafilaksis atau infeksi sekunder.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -12149,7 +12149,7 @@
       },
       "currentEditorial": {
         "clue": "Chancre tunggal tidak nyeri dan serologi treponemal plus RPR reaktif mendukung sifilis primer. Beri benzathine penicillin G 2,4 juta unit IM dosis tunggal, dokumentasikan titer awal, dan jadwalkan RPR kuantitatif untuk menilai respons. Nilai gejala neurologis, okular, dan otik; status kehamilan wajib diketahui karena penicillin adalah terapi yang terbukti mencegah sifilis kongenital dan alergi pada kehamilan memerlukan jalur desensitisasi spesialis. Jelaskan Jarisch-Herxheimer, ulang tes HIV sesuai window period/risiko, dan hindari hubungan sampai sedikitnya tujuh hari setelah terapi serta pasangan telah ditangani.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai acuan dasar teknis layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.",
         "realityNote": "Benzathine penicillin tercantum dalam formularium, tetapi pemberian tetap memerlukan skrining alergi dan kesiapan menangani reaksi segera. Pasangan ditawari evaluasi dan terapi berdasarkan tahap serta waktu pajanan; tidak ada pengungkapan diagnosis atau pelacakan koersif."
       },
       "evidence": {
@@ -12302,7 +12302,7 @@
       },
       "currentEditorial": {
         "clue": "Nodus dingin yang saling melekat, melunak, lalu membentuk sinus kronis bersama penurunan berat badan dan kontak TB mendukung suspek skrofuloderma. Rujuk tanpa menunggu konfirmasi final; layanan berkemampuan mengambil aspirat nodus atau jaringan untuk pemeriksaan molekuler, kultur, dan/atau histopatologi. Cairan dari permukaan sinus tidak boleh diperlakukan sebagai pengganti otomatis. Nilai pula TB paru dan HIV, lalu hubungkan pasien serta kontak ke program TB.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. PNPK TB memberi konteks TB ekstraparu, sedangkan WHO Module 3 (2025) merekomendasikan uji molekuler cepat pada aspirat jaringan nodus untuk diagnosis awal TB ekstraparu. Hasil molekuler harus dibaca bersama klinis, anatomi spesimen, histopatologi/kultur bila diperlukan, dan penilaian resistansi.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas. PNPK TB memberi konteks TB ekstraparu, sedangkan WHO Module 3 (2025) merekomendasikan uji molekuler cepat pada aspirat jaringan nodus untuk diagnosis awal TB ekstraparu. Hasil molekuler harus dibaca bersama klinis, anatomi spesimen, histopatologi/kultur bila diperlukan, dan penilaian resistansi.",
         "realityNote": "Sukamaju tidak diasumsikan mampu mengambil biopsi atau menjalankan TCM lesi onsite. Tugas FKTP adalah mengenali pola, menilai kemungkinan TB paru/komorbid, membuat handoff spesimen dan rujukan yang jelas, mencatat kasus, serta memulai investigasi kontak; jawaban benar bukan menyeka sinus lalu menunggu hasil tanpa tindak lanjut.",
         "ebmPearl": "TB kulit dapat menjadi pintu masuk ke episode TB yang lebih luas. Pemeriksaan paru normal tidak menyingkirkan TB ekstraparu, dan kontak serumah bukan sekadar faktor risiko dalam anamnesis: ia memicu tindakan program terhadap orang lain yang mungkin belum bergejala."
       },
@@ -12496,7 +12496,7 @@
       },
       "currentEditorial": {
         "clue": "Keterlibatan rambut jenggot dengan hifa memerlukan antijamur sistemik, bukan krim saja. Hentikan berbagi alat cukur dan evaluasi sumber hewan; inflamasi berat, abses, atau respons buruk perlu rujuk.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "KOH rambut pada encounter ini adalah hasil jadwal laboratorium dengan mikroskop, consumable, dan operator yang dinyatakan ready. Bila jalur konfirmasi tidak ready, jangan memulai antijamur sistemik secara empiris; kirim spesimen/rujuk terkoordinasi dan hindari steroid yang menyamarkan lesi."
       },
       "evidence": {
@@ -12648,7 +12648,7 @@
       },
       "currentEditorial": {
         "clue": "Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung tinea fasialis. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal."
       },
       "evidence": {
@@ -12800,7 +12800,7 @@
       },
       "currentEditorial": {
         "clue": "Alopesia berskuama dengan rambut patah/black dots adalah tinea kapitis. Infeksi folikel memerlukan antijamur sistemik berbasis berat badan; terapi topikal saja tidak cukup. Periksa kontak, hewan, dan respons; rujuk bila kerion berat atau diagnosis meragukan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "KOH rambut pada encounter ini adalah hasil jadwal laboratorium dengan mikroskop, consumable, dan operator yang dinyatakan ready. Bila jalur konfirmasi tidak ready, jangan memulai antijamur sistemik secara empiris; kirim spesimen/rujuk terkoordinasi sambil menangani transmisi dan red flag."
       },
       "evidence": {
@@ -12952,7 +12952,7 @@
       },
       "currentEditorial": {
         "clue": "Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung tinea kruris. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal."
       },
       "evidence": {
@@ -13104,7 +13104,7 @@
       },
       "currentEditorial": {
         "clue": "Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung tinea manus. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal."
       },
       "evidence": {
@@ -13256,7 +13256,7 @@
       },
       "currentEditorial": {
         "clue": "Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung tinea pedis interdigital. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal."
       },
       "evidence": {
@@ -13413,7 +13413,7 @@
       },
       "currentEditorial": {
         "clue": "Onikomikosis perlu konfirmasi mikologi sebelum terapi sistemik yang panjang. Nilai hati dan interaksi obat, gunakan griseofulvin FKTP dengan dosis serta durasi sesuai lokasi/berat badan, terapi tinea pedis bersamaan, lalu monitor respons; perubahan kuku tanpa konfirmasi tidak boleh otomatis diberi antijamur oral.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "KOH dapat dilakukan bila mikroskop/operator ready; SGOT/SGPT dijadwalkan melalui jejaring bila tidak onsite."
       },
       "evidence": {
@@ -13645,7 +13645,7 @@
       },
       "currentEditorial": {
         "clue": "Distorsi pada berbagai jarak dan koreksi lensa silinder mendukung astigmatisme. Refraksi objektif/subjektif diperlukan untuk resep yang presisi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
         "realityNote": "Refraksi dan pembuatan lensa dapat dijadwalkan atau dilakukan melalui jejaring optometri; game tidak menganggap seluruh Puskesmas memiliki optik lengkap."
       },
       "evidence": {
@@ -13800,7 +13800,7 @@
       },
       "currentEditorial": {
         "clue": "Sekam berkecepatan rendah yang tampak longgar di konjungtiva tarsal, dengan visus utuh, pupil normal, tanpa defek kornea, dan tanpa tanda penetrasi, dapat ditangani di FKTP. Catat visus sebelum anestetik, eversi kelopak, gunakan irigasi atau cotton bud steril lembap untuk benda yang jelas superfisial, lalu ulangi fluorescein setelah pengangkatan untuk memastikan tidak ada sisa, defek baru, atau kebocoran. Jangan melakukan probing atau upaya berulang bila benda tertanam, berada di kornea/sumbu visual, melawan saat disentuh, atau mekanismenya mencurigakan. Kloramfenikol topikal boleh dipertimbangkan bila terdapat defek epitel atau risiko infeksi yang bermakna, tetapi bukan pengganti ekstraksi lengkap dan tindak lanjut.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Bab Benda Asing di Konjungtiva menjadi floor: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. Kode klinis T15.1 dipakai karena lokasi benda sudah teridentifikasi di sakus/konjungtiva tarsal; T15.9 tetap dipertahankan hanya sebagai kode katalog SKDI yang generik. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bab Benda Asing di Konjungtiva menjadi acuan dasar: nilai visus, angkat benda superfisial dengan anestetik topikal dan alat yang sesuai, beri safety-net, serta rujuk bila visus turun atau benda tidak dapat dikeluarkan. Kode klinis T15.1 dipakai karena lokasi benda sudah teridentifikasi di sakus/konjungtiva tarsal; T15.9 tetap dipertahankan hanya sebagai kode katalog SKDI yang generik. RACGP 2026 menambahkan fluorescein sebelum dan sesudah tindakan, eversi kelopak, uji Seidel pasca-ekstraksi, kontrol 24-48 jam, dan ambang rujuk untuk penetrasi, benda tertanam/sentral, kerusakan kornea, infeksi, atau ekstraksi tidak lengkap.",
         "realityNote": "Profil sukamaju_middle_v1 menyatakan lampu fokus, saline steril, anestetik topikal sekali pakai, fluorescein dengan cahaya biru, cotton bud steril, dan operator siap; slit lamp tidak diasumsikan. Hanya sekam longgar yang tampak di konjungtiva tarsal yang diangkat. Benda korneal/tertanam, resistensi, hasil tidak lengkap, atau red flag menghentikan upaya dan memicu rujuk.",
         "ebmPearl": "Material tumbuhan meningkatkan kewaspadaan terhadap infeksi, tetapi tidak otomatis mengubah setiap benda konjungtiva superfisial menjadi kasus rumah sakit. Penentu utamanya adalah mekanisme, lokasi, kedalaman, visus, defek kornea, tanda penetrasi, kemampuan ekstraksi lengkap, dan tindak lanjut. Panduan praktik masih kerap menganjurkan antibiotik topikal, sedangkan pembaruan Cochrane 2025 menilai kepastian bukti profilaksis pada abrasi kornea sangat rendah dan tidak mendukung satu regimen tertentu. Karena vignette ini tidak memiliki defek kornea, kloramfenikol diperlakukan sebagai opsi klinis, bukan syarat nilai. Anestetik topikal hanya dipakai saat pemeriksaan/tindakan dan tidak dibawa pulang."
       },
@@ -13981,7 +13981,7 @@
       },
       "currentEditorial": {
         "clue": "Krusta tepi kelopak kronik dengan kornea dan visus normal mendukung blefaritis. Terapi utama adalah kompres hangat dan higiene kelopak konsisten; antibiotik topikal tidak rutin dan hanya dipertimbangkan pada komponen bakterial terpilih.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Evaluasi kelainan kornea dan rujuk bila tidak membaik atau terjadi komplikasi."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Evaluasi kelainan kornea dan rujuk bila tidak membaik atau terjadi komplikasi."
       },
       "evidence": {
         "ppk": {
@@ -14116,7 +14116,7 @@
       },
       "currentEditorial": {
         "clue": "Sulit melihat saat senja disertai xerosis/Bitot dan diet miskin vitamin A mendukung xeroftalmia dini. Beri vitamin A sesuai usia/protokol dan perbaiki gizi; keterlibatan kornea memerlukan evaluasi mata pada hari yang sama.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Buta senja memerlukan evaluasi defisiensi vitamin A dan penyebab mata/retina lain."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Buta senja memerlukan evaluasi defisiensi vitamin A dan penyebab mata/retina lain."
       },
       "evidence": {
         "ppk": {
@@ -14284,7 +14284,7 @@
       },
       "currentEditorial": {
         "clue": "Kemerahan sektoral superfisial dengan rasa tidak nyaman ringan dan visus normal mendukung episkleritis, yang sering pulih sendiri. Sakit dalam, fotofobia, rona keunguan, atau penurunan visus mengarah ke skleritis/uveitis dan memerlukan evaluasi mata segera.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Terapi simptomatik dapat diberikan; telusuri penyakit sistemik pada kekambuhan."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Terapi simptomatik dapat diberikan; telusuri penyakit sistemik pada kekambuhan."
       },
       "evidence": {
         "ppk": {
@@ -14380,7 +14380,7 @@
       },
       "currentEditorial": {
         "clue": "Keluhan dekat dengan perbaikan lensa plus mendukung hipermetropia. Koreksi optik ditentukan melalui refraksi, bukan sekadar memilih kacamata baca acak.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
         "realityNote": "Refraksi dan pembuatan lensa dapat dijadwalkan atau dilakukan melalui jejaring optometri; game tidak menganggap seluruh Puskesmas memiliki optik lengkap."
       },
       "evidence": {
@@ -14501,7 +14501,7 @@
       },
       "currentEditorial": {
         "clue": "Penurunan penglihatan perlahan bertahun-tahun, silau berat, kekeruhan lensa putih-keabuan, dan hilangnya refleks fundus mendukung katarak senilis lanjut dengan gangguan fungsi berat. Tidak ada tetes mata, obat, atau suplemen yang melarutkan kekeruhan lensa; terapi definitif adalah operasi katarak setelah asesmen spesialis. Tugas FKTP adalah mengukur tajam penglihatan dan dampak fungsional, menyingkirkan tanda mata akut merah-nyeri, lalu menghubungkan pasien ke layanan mata.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 dan PNPK Katarak Dewasa 2026 menempatkan deteksi, penilaian tajam penglihatan serta fungsi, dan rujukan sebagai peran FKTP. Gangguan penglihatan yang bermakna atau katarak lanjut dirujuk agar spesialis menentukan kelayakan, waktu, dan teknik operasi; tidak ada terapi farmakologis yang menggantikan operasi.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 dan PNPK Katarak Dewasa 2026 menempatkan deteksi, penilaian tajam penglihatan serta fungsi, dan rujukan sebagai peran FKTP. Gangguan penglihatan yang bermakna atau katarak lanjut dirujuk agar spesialis menentukan kelayakan, waktu, dan teknik operasi; tidak ada terapi farmakologis yang menggantikan operasi.",
         "realityNote": "Profil sukmaju_middle_v1 tidak mengasumsikan layanan operasi mata di Puskesmas. Rujukan belum selesai hanya dengan mencetak surat: pastikan jalur layanan mata, pendamping, transportasi, dan hambatan pasien tercatat, lalu berikan safety-net bila mata menjadi merah-nyeri atau penglihatan turun mendadak.",
         "ebmPearl": "Keputusan operasi katarak tidak ditentukan oleh warna lensa atau satu angka visus saja, melainkan dampak penglihatan terhadap fungsi, tujuan pasien, penyakit mata penyerta, serta manfaat-risiko operasi. \"Second sight\" dapat terjadi ketika perubahan indeks lensa membuat penglihatan dekat sementara terasa lebih baik; itu bukan tanda katarak sembuh."
       },
@@ -14670,7 +14670,7 @@
       },
       "currentEditorial": {
         "clue": "Gejala bilateral berpasir yang memburuk saat screen-time/AC tanpa red flag mendukung dry eye. Gunakan lubrikan, jeda berkedip, koreksi faktor lingkungan dan obat; rujuk bila nyeri, defek kornea, atau refrakter.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Air mata buatan dan modifikasi faktor pencetus menjadi terapi awal."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Air mata buatan dan modifikasi faktor pencetus menjadi terapi awal."
       },
       "evidence": {
         "ppk": {
@@ -14771,7 +14771,7 @@
       },
       "currentEditorial": {
         "clue": "Kabur jauh yang membaik dengan pinhole dan lensa minus mendukung miopia. Perubahan cepat, anisometropia berat, atau kelainan fundus memerlukan evaluasi mata.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
         "realityNote": "Refraksi dan pembuatan lensa dapat dijadwalkan atau dilakukan melalui jejaring optometri; game tidak menganggap seluruh Puskesmas memiliki optik lengkap."
       },
       "evidence": {
@@ -14877,7 +14877,7 @@
       },
       "currentEditorial": {
         "clue": "Bercak darah tanpa nyeri, fotofobia, sekret, atau penurunan visus khas perdarahan subkonjungtiva dan umumnya pulih sendiri 1-2 minggu. Ukur tekanan darah serta telusuri trauma, antikoagulan, atau gangguan perdarahan bila berulang.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Rujuk bila trauma berat, gangguan visus, nyeri, kekambuhan, atau kecurigaan gangguan sistemik."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Rujuk bila trauma berat, gangguan visus, nyeri, kekambuhan, atau kecurigaan gangguan sistemik."
       },
       "evidence": {
         "ppk": {
@@ -14978,7 +14978,7 @@
       },
       "currentEditorial": {
         "clue": "Penurunan akomodasi progresif setelah usia sekitar 40 tahun dengan visus jauh baik adalah presbiopia. Tentukan adisi setelah menilai refraksi jauh dan kebutuhan kerja.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Ukur visus dan lakukan koreksi optik; rujuk bila koreksi tidak memperbaiki atau ada kelainan organik.",
         "realityNote": "Refraksi dan pembuatan lensa dapat dijadwalkan atau dilakukan melalui jejaring optometri; game tidak menganggap seluruh Puskesmas memiliki optik lengkap."
       },
       "evidence": {
@@ -15104,7 +15104,7 @@
       },
       "currentEditorial": {
         "clue": "Diabetes tipe 2 lama dengan kendali buruk, penurunan penglihatan, dan episode bercak merah-kehitaman yang muncul-memudar menimbulkan kecurigaan retinopati diabetik yang mengancam penglihatan dengan kemungkinan perdarahan vitreus. Karena dasar mata tidak dapat dinilai memadai, dokter FKTP tidak boleh mengunci stadium proliferatif atau menganggap semua perdarahan vitreus pasti berasal dari diabetes; robekan dan ablasio retina tetap harus disingkirkan oleh dokter mata. Tindakan saat ini adalah ukur visus, rujuk segera untuk pemeriksaan retina, dan jadwalkan tinjauan DM komprehensif terpisah — bukan menjadikan satu resep metformin atau statin sebagai terapi akut mata.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 dan PNPK Retinopati Diabetika 2023 menempatkan deteksi, pengendalian faktor risiko sistemik, dan rujukan sebagai peran FKTP; stadium retina memerlukan visualisasi fundus yang memadai. ADA Standards of Care 2026 meminta pemeriksaan mata saat diagnosis DM tipe 2, interval 1–2 tahun hanya dapat dipertimbangkan setelah satu atau lebih pemeriksaan normal dengan glikemia dalam sasaran, sekurang-kurangnya tahunan bila retinopati ada, dan lebih sering bila progresif atau mengancam penglihatan. Rujuk segera bila ada retinopati sedang-berat, edema makula, atau dugaan PDR.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Peran FKTP menurut PPK 1186/2022 dan PNPK Retinopati Diabetika 2023 ada tiga: mendeteksi, mengendalikan faktor risiko sistemik, dan merujuk. Menentukan stadium retina bukan bagiannya — itu butuh visualisasi fundus yang memadai.\n\nJadwal pemeriksaan mata menurut ADA Standards of Care 2026: periksa saat DM tipe 2 didiagnosis. Interval 1-2 tahun baru boleh dipertimbangkan setelah ada pemeriksaan normal dengan gula darah terkendali. Bila retinopati sudah ada, minimal setahun sekali — dan lebih sering bila progresif atau mengancam penglihatan.\n\nRujuk segera bila ditemukan retinopati sedang-berat, edema makula, atau dugaan PDR.",
         "realityNote": "Profil sukmaju_middle_v1 tidak menganggap kamera fundus, funduskopi dilatasi, OCT, atau HbA1c selalu siap. Kenali risiko dari temuan yang ada dan hubungkan pasien ke pemeriksaan retina tervalidasi; foto yang tak dapat dinilai atau abnormal tetap perlu pemeriksaan langsung. Tinjauan obat DM dilakukan terpisah setelah menilai fungsi ginjal, risiko hipoglikemia, kepatuhan, komorbid, dan regimen aktual.",
         "ebmPearl": "Retinopati yang mengancam penglihatan dapat lama tanpa gejala, sehingga skrining tidak boleh menunggu mata sakit atau kabur. Penurunan HbA1c yang cepat pada orang dengan retinopati memang dapat disertai perburukan awal sementara, tetapi retinopati bukan alasan mempertahankan hiperglikemia: nilai retina ketika terapi glukosa diintensifkan, koordinasikan tindak lanjut mata, dan tetap kejar kendali metabolik jangka panjang secara individual."
       },
@@ -15283,7 +15283,7 @@
       },
       "currentEditorial": {
         "clue": "Silia yang menggesek permukaan mata dengan posisi kelopak normal adalah trikiasis. Epilasi memberi kelegaan sementara; evaluasi kornea dan rujuk untuk terapi definitif bila berulang atau luas.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Kerusakan kornea atau kelainan palpebra kompleks memerlukan layanan mata.",
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Kerusakan kornea atau kelainan palpebra kompleks memerlukan layanan mata.",
         "realityNote": "Lampu pemeriksaan, fluorescein, pinset epilasi steril, dan operator terlatih dinyatakan ready pada encounter ini. Epilasi hanya tindakan sementara untuk dua silia yang terlihat; abrasi kornea, entropion, penyakit luas, atau kekambuhan memerlukan jejaring mata."
       },
       "evidence": {
@@ -15455,7 +15455,7 @@
       },
       "currentEditorial": {
         "clue": "Anemia mikrositik-hipokrom dengan RDW meningkat dan haid banyak sangat mendukung defisiensi besi, tetapi terapi tidak boleh berhenti pada tablet Fe. Beri sekitar 60 mg besi elemental sekali sehari; bila tidak toleran, regimen selang sehari dapat dipertimbangkan. Nilai kenaikan Hb dalam 2-4 minggu dan lanjutkan sekitar tiga bulan setelah Hb normal untuk mengisi cadangan, sambil menilai serta menangani penyebab haid banyak. Rujuk bila tidak respons, anemia berat/gejala tidak stabil, perdarahan mencurigakan, atau perlu evaluasi ginekologi lanjut.",
-        "officialGuidance": "PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi floor, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. ACOG menegaskan bahwa perdarahan uterus abnormal perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.",
+        "officialGuidance": "PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi acuan dasar, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. ACOG menegaskan bahwa perdarahan uterus abnormal perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.",
         "realityNote": "Ferritin tidak dijadikan tombol wajib karena tidak selalu tersedia di Puskesmas. CBC dan pola klinis memulai tata laksana; ferritin atau pemeriksaan lain diatur melalui jejaring bila diagnosis meragukan atau respons tidak memadai. Episode baru selesai bila sumber perdarahan, toleransi obat, dan kenaikan Hb ikut ditindaklanjuti."
       },
       "evidence": {
@@ -15672,7 +15672,7 @@
       },
       "currentEditorial": {
         "clue": "ANEMIA DEFISIENSI BESI BERAT SIMPTOMATIK AKIBAT PERDARAHAN KRONIK (SKDI 3B - RUJUK): Hb 5,8 g/dL disertai sesak aktivitas minimal, takikardia, presinkop, pika, koilonikia, dan haid sangat banyak membuat defisiensi besi akibat perdarahan uterus kronik sangat mungkin. Tes kehamilan tetap wajib; perdarahan tidak membuktikan seseorang tidak hamil. PPK menetapkan Hb <7 g/dL sebagai indikasi transfusi dan gejala sebagai alasan rujuk tanpa menunggu ambang. Di Sukamaju, rujuk hari yang sama untuk penilaian transfusi dan penyebab perdarahan. Tablet Fe dapat dimulai bila tidak menunda transfer, tetapi tidak menggantikan darah bila tim RS menilainya perlu dan tidak menutup sumber perdarahan.",
-        "officialGuidance": "PPK 1186/2022 bab anemia defisiensi besi adalah floor langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. ACOG menempatkan stabilitas hemodinamik, derajat anemia, pola perdarahan, dan etiologi sebagai dasar evaluasi serta pilihan terapi perdarahan uterus abnormal.",
+        "officialGuidance": "PPK 1186/2022 bab anemia defisiensi besi adalah acuan dasar langsung: anemia bergejala segera dirujuk dan Hb <7 g/dL dicantumkan sebagai indikasi transfusi. WHO 2024 memperbarui batas hemoglobin untuk klasifikasi anemia, sedangkan AABB 2023 menganjurkan strategi restriktif dengan mempertimbangkan transfusi pada pasien dewasa rawat inap stabil saat Hb <7 g/dL serta tetap menilai gejala dan konteks. ACOG menempatkan stabilitas hemodinamik, derajat anemia, pola perdarahan, dan etiologi sebagai dasar evaluasi serta pilihan terapi perdarahan uterus abnormal.",
         "realityNote": "Sukamaju dapat mengulang Hb dan tes kehamilan; darah lengkap terjadwal, sedangkan ferritin/retikulosit memakai jejaring. Hb 5,8 dengan gejala tidak menunggu pemeriksaan lanjutan itu. Rujukan harus membawa pola perdarahan, kontrasepsi, tanda vital, Hb, hasil tes kehamilan, dan terapi yang sudah diberikan.",
         "ebmPearl": "Pasien masih bisa berjalan sendiri ke Puskesmas dan tekanan darahnya normal — dua hal yang membuat Hb 5,8 terasa \"tidak segawat angkanya\". Itu jebakan adaptasi anemia kronik: tubuh menaikkan curah jantung dan menggeser kurva disosiasi oksigen selama berbulan-bulan, sehingga tanda vital tetap tenang sampai cadangan itu habis mendadak. Perhatikan juga SpO2 98% yang tampak menenangkan — saturasi hanya mengukur PERSEN hemoglobin yang terisi oksigen, bukan berapa banyak hemoglobin yang ada. Pada Hb 5,8, saturasi 98% berarti hampir seluruh dari sangat sedikit itu terisi penuh, dan pasien tetap kekurangan oksigen."
       },
@@ -15914,7 +15914,7 @@
       },
       "currentEditorial": {
         "clue": "DM tipe 1 tidak boleh putus insulin. Episode hipoglikemia level 2 yang memerlukan bantuan, variabilitas besar, HbA1c di atas target, dan lipohipertrofi menuntut review regimen berbasis log oleh tim anak/diabetes; jangan menebak perubahan dosis tunggal dari satu GDS. Stabilkan edukasi hipoglikemia dan sick-day, lanjutkan insulin basal, rujuk terencana, lalu gunakan kunjungan rujuk balik untuk memastikan resume, dosis, target, stok, dan jadwal review benar-benar tersambung.",
-        "officialGuidance": "PNPK DM pada Anak KMK HK.01.07/MENKES/2009/2024 menjadi floor: insulin, pemantauan gula/keton, HbA1c tiap tiga bulan, rotasi lokasi suntik, edukasi hipoglikemia, dan larangan menghentikan insulin saat sakit. ADA Standards of Care 2026 menguatkan review regimen setelah hipoglikemia level 2/3 dan pendidikan terstruktur. Fornas 1199/2025 menyediakan NPH dan regular human insulin pada FPKTP sesuai ketentuan; perencanaan dosis individual tetap melalui jejaring spesialis.",
+        "officialGuidance": "PNPK DM pada Anak KMK HK.01.07/MENKES/2009/2024 menjadi acuan dasar: insulin, pemantauan gula/keton, HbA1c tiap tiga bulan, rotasi lokasi suntik, edukasi hipoglikemia, dan larangan menghentikan insulin saat sakit. ADA Standards of Care 2026 menguatkan review regimen setelah hipoglikemia level 2/3 dan pendidikan terstruktur. Fornas 1199/2025 menyediakan NPH dan regular human insulin pada FPKTP sesuai ketentuan; perencanaan dosis individual tetap melalui jejaring spesialis.",
         "realityNote": "HbA1c berasal dari resume rumah sakit, bukan diasumsikan tersedia sebagai pemeriksaan seketika di Puskesmas. Insulin, strip, rantai dingin, dan edukator perlu dikonfirmasi, bukan dianggap merata. Gameplay menuntut rujukan dulu agar episode kembali sebagai PRB dan pemain harus membaca resume, bukan sekadar menekan kontrol rutin."
       },
       "evidence": {
@@ -16494,8 +16494,8 @@
         ]
       },
       "currentEditorial": {
-        "clue": "Ulkus plantar dalam dengan pus, bau, nekrosis, selulitis lebih dari 2 cm, probe-to-bone positif, neuropati, dan penyakit arteri perifer adalah infeksi kaki diabetik sedang yang disertai komorbiditas kunci dan mengancam tungkai; hitung darah atau HbA1c tidak diperlukan untuk membuat keputusan akut ini. Di FKTP: nilai perfusi dan tanda sistemik, lindungi luka dengan balutan bersih nonadheren tanpa probing/debridemen tajam, off-load tekanan, pasang akses, mulai antibiotik parenteral sesuai protokol jejaring, pantau, lalu transfer untuk tim kaki diabetik yang mencakup bedah dan vaskular. Imaging tulang, kultur jaringan dalam, source control, revaskularisasi, dan kendali glikemik definitif dilakukan pada jalur rumah sakit.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab lengkap infeksi kaki diabetik; bab diabetes hanya menjadi sumber terkait. IWGDF/IDSA 2023 menganjurkan hospitalisasi untuk infeksi berat atau infeksi sedang dengan komorbiditas penting seperti PAD; konsultasi bedah segera untuk gangren, nekrosis, abses dalam, atau iskemia berat; serta konsultasi bedah dan vaskular bersama untuk menentukan urutan drainase/debridemen dan revaskularisasi. Probe-to-bone adalah bagian evaluasi awal osteomielitis, bukan bukti tunggal yang meniadakan pencitraan atau kultur tulang.",
+        "clue": "Gabungan temuan ini — ulkus plantar dalam bernanah dan berbau, nekrosis, selulitis lebih dari 2 cm, probe-to-bone positif, neuropati, dan penyakit arteri perifer — menunjukkan infeksi kaki diabetik sedang dengan komorbiditas kunci, dan tungkainya terancam. Hitung darah atau HbA1c tidak dibutuhkan untuk keputusan akut ini.\n\nYang dikerjakan di FKTP: nilai perfusi dan tanda sistemik; lindungi luka dengan balutan bersih nonadheren tanpa probing atau debridemen tajam; bebaskan area dari tekanan; pasang akses intravena; mulai antibiotik parenteral sesuai protokol jejaring; pantau; lalu transfer ke tim kaki diabetik yang punya bedah dan vaskular.\n\nYang BUKAN pekerjaan FKTP dan dikerjakan di rumah sakit: pencitraan tulang, kultur jaringan dalam, pembersihan sumber infeksi, revaskularisasi, dan pengendalian gula darah definitif.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak punya bab lengkap untuk infeksi kaki diabetik; bab diabetes hanya sumber terkait.\n\nIWGDF/IDSA 2023 memberi tiga ambang keputusan. Rawat inap untuk infeksi berat, atau infeksi sedang yang disertai komorbiditas penting seperti penyakit arteri perifer. Konsultasi bedah segera bila ada gangren, nekrosis, abses dalam, atau iskemia berat. Konsultasi bedah dan vaskular bersama untuk menentukan mana yang lebih dulu — drainase/debridemen atau revaskularisasi.\n\nSatu catatan penting: probe-to-bone hanya bagian dari evaluasi awal osteomielitis. Hasilnya tidak meniadakan kebutuhan pencitraan atau kultur tulang.",
         "realityNote": "Pada encounter ini jejaring telah mengonfirmasi satu dosis awal antibiotik parenteral berbasis protokol, akses IV, balutan, monitoring, dan transport siap; regimen lengkap disesuaikan di RS menurut derajat infeksi, alergi, fungsi ginjal, kultur, dan resistensi lokal. CBC tidak menjadi syarat transfer. Bila monofilamen 10 g tidak ready, riwayat kebas dan uji sensasi sederhana tetap tidak boleh menghambat rujuk.",
         "ebmPearl": "Hilangnya nyeri BUKAN tanda luka membaik — justru sebaliknya. Pada kaki diabetik, tidak adanya nyeri berarti neuropati sudah memutus sistem peringatan tubuh, sehingga pasien terus menapak di atas luka yang menggerogoti jaringan sampai ke tulang. Luka yang paling tidak terasa sering kali luka yang paling dalam. Waspadai juga leukosit dan demam yang \"cuma segini\": pada diabetes, respons inflamasi tumpul, sehingga infeksi kaki yang mengancam tungkai kerap berjalan dengan suhu nyaris normal."
       },
@@ -16698,7 +16698,7 @@
       },
       "currentEditorial": {
         "clue": "PENYAKIT GINJAL KRONIK G3b (eGFR 30-44, SKDI 2 - RUJUK): eGFR 38 enam bulan lalu dan 35 sekarang membuktikan kronisitas lebih dari tiga bulan; hipertensi, diabetes, proteinuria dipstik, edema, dan anemia menunjukkan risiko serta komplikasi. Dipstik +2 belum menentukan kategori albuminuria: ACR kuantitatif tetap diperlukan. Di FKTP, hentikan NSAID/jamu, kendalikan faktor risiko, dan koordinasikan rujukan karena ada anemia serta penyebab/prognosis yang perlu dinilai. ACE-I/ARB memang renoprotektif pada albuminuria, tetapi inisiasi atau titrasi harus disertai data kalium-kreatinin dan rencana pemeriksaan ulang 2-4 minggu; game tidak mewajibkan resep empiris saat data itu belum tersedia.",
-        "officialGuidance": "PNPK Penyakit Ginjal Kronik KMK 1634/2023 menjadi floor Indonesia. KDIGO 2024 mendefinisikan PGK sebagai kelainan struktur/fungsi ginjal minimal tiga bulan, mengklasifikasikan risiko dengan penyebab-eGFR-ACR, dan melarang menyimpulkan kronisitas dari satu hasil abnormal. RAS inhibitor direkomendasikan pada PGK beralbuminuria dengan pemantauan tekanan darah, kreatinin, dan kalium dalam 2-4 minggu. Rujukan nefrologi ditentukan oleh sebab yang belum jelas, risiko gagal ginjal, penurunan eGFR, albuminuria/hematuria bermakna, hipertensi refrakter, atau komplikasi seperti anemia; eGFR 35 sendiri bukan sinonim persiapan dialisis.",
+        "officialGuidance": "PNPK Penyakit Ginjal Kronik KMK 1634/2023 menjadi acuan dasar Indonesia. KDIGO 2024 mendefinisikan PGK sebagai kelainan struktur/fungsi ginjal minimal tiga bulan, mengklasifikasikan risiko dengan penyebab-eGFR-ACR, dan melarang menyimpulkan kronisitas dari satu hasil abnormal. RAS inhibitor direkomendasikan pada PGK beralbuminuria dengan pemantauan tekanan darah, kreatinin, dan kalium dalam 2-4 minggu. Rujukan nefrologi ditentukan oleh sebab yang belum jelas, risiko gagal ginjal, penurunan eGFR, albuminuria/hematuria bermakna, hipertensi refrakter, atau komplikasi seperti anemia; eGFR 35 sendiri bukan sinonim persiapan dialisis.",
         "realityNote": "Di Sukamaju, Hb dan dipstik urine tersedia; kreatinin terjadwal lewat jejaring, sedangkan elektrolit dan ACR tidak diasumsikan siap hari itu. Hasil jejaring dipakai untuk menilai eGFR tanpa menunda rujukan. Rencana ACE-I/ARB harus menyebut cara memperoleh kalium-kreatinin awal dan kontrol ulang, bukan sekadar mencetak resep.",
         "ebmPearl": "Kreatinin 1,9 mg/dL dapat tampak tidak dramatis, tetapi eGFR memasukkan usia dan jenis kelamin sehingga lebih informatif. Prognosis PGK juga tidak boleh dibaca dari eGFR saja: ACR mengubah risiko secara bermakna. Karena itu, “stadium 3b” menjawab seberapa rendah filtrasi, bukan sendirian menjawab kapan dialisis diperlukan."
       },
@@ -16882,7 +16882,7 @@
       },
       "currentEditorial": {
         "clue": "SUSPEK PENYAKIT GRAVES DENGAN TIROTOKSIKOSIS (SKDI 3A - RUJUK): berat turun meski makan bertambah, berdebar, tremor, intoleransi panas, tekanan nadi lebar, gondok difus dengan bruit, dan tanda mata tiroid membuat Graves sangat mungkin. Namun diagnosis biokimia tidak boleh dikunci oleh gejala atau TSH tunggal: TSH rendah perlu FT4/FT3, lalu TRAb membantu mengonfirmasi Graves. Di FKTP, propranolol dapat meredakan gejala adrenergik setelah memastikan tidak ada asma/mengi, bradikardia, atau kontraindikasi lain. Jangan memulai PTU secara ad hoc tanpa menilai kehamilan, hitung darah/fungsi hati, dosis, monitoring, dan jalur tindak lanjut. Rujuk untuk konfirmasi serta pemilihan terapi; penurunan visus/warna, diplopia baru, nyeri gerak mata, aritmia, gagal jantung, atau demam-bingung mempercepat urgensi.",
-        "officialGuidance": "PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi floor terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. ATA 2016 tetap menjadi guideline aktif untuk menegakkan tirotoksikosis, memastikan etiologi Graves, mengendalikan gejala secara aman, dan menilai keamanan sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.",
+        "officialGuidance": "PPK 1186/2022 tidak memuat bab Graves spesifik; bab tirotoksikosis menjadi acuan dasar terkait dan memuat propranolol, PTU bila klinis Graves jelas, serta rujukan untuk pemeriksaan laboratorium. ATA 2016 tetap menjadi guideline aktif untuk menegakkan tirotoksikosis, memastikan etiologi Graves, mengendalikan gejala secara aman, dan menilai keamanan sebelum obat antitiroid. Karena PTU bukan pilihan pertama rutin dan risiko terapi bergantung kehamilan serta monitoring, kasus Sukamaju hanya mewajibkan kontrol gejala yang aman dan rujukan, bukan PTU empiris.",
         "realityNote": "Profil Sukamaju tidak mengasumsikan TSH/FT4/FT3 siap di tempat; hasil hormon dan TRAb diperoleh lewat jejaring. Ketiadaan tes hari itu tidak menghalangi pengenalan klinis, skrining kontraindikasi propranolol, konseling tanda bahaya, dan rujukan. Obat antitiroid baru dimulai melalui protokol yang menjamin pemeriksaan awal serta tindak lanjut.",
         "ebmPearl": "Berdebar, gelisah, tremor, dan berat turun mudah dilabeli gangguan cemas. Gondok difus dengan bruit dan tanda mata tiroid menggeser probabilitas kuat ke Graves, tetapi tetap tidak menggantikan FT4/FT3 dan penetapan etiologi. GDS normal sewaktu juga tidak “menyingkirkan diabetes”; karena itu tes tersebut tidak lagi dijadikan pengunci diagnosis di kasus ini."
       },
@@ -17237,7 +17237,7 @@
       },
       "currentEditorial": {
         "clue": "Deformitas, bengkak, dan penolakan menggerakkan lengan setelah jatuh bertumpu telapak tangan harus dianggap fraktur. Tentukan lebih dahulu apakah fraktur terbuka dan nilai status neurovaskular distal. Pada kasus ini kulit utuh, sehingga antibiotik profilaksis dan tetanus tidak diperlukan. Beri analgesia berbasis berat badan. Catat nadi, warna, suhu, sensasi, serta gerak jari sebelum pemasangan bidai. Imobilisasi siku dan pergelangan dalam posisi ditemukan tanpa memaksa meluruskan, lalu periksa ulang status neurovaskular. Tinggikan lengan dan rujuk ke bedah untuk pencitraan serta reposisi definitif. Jangan mencoba reposisi buta di FKTP karena dapat mencederai saraf, pembuluh, kulit, dan lempeng pertumbuhan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menempatkan fraktur sebagai kompetensi 3B: dokter FKTP memberi analgesia, melakukan imobilisasi, menilai neurovaskular, lalu merujuk — reposisi definitif bukan kewenangan FKTP. Kriteria rujukan resminya mencakup setiap fraktur dengan deformitas atau pergeseran, setiap fraktur pada anak yang melibatkan atau berdekatan dengan lempeng pertumbuhan, dan setiap gangguan neurovaskular. Perbedaan tata laksana antara fraktur tertutup dan terbuka — antibiotik parenteral dini dan profilaksis tetanus HANYA pada yang terbuka — adalah pembeda yang eksplisit di pedoman.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK Dokter FKTP menempatkan fraktur sebagai kompetensi 3B: dokter FKTP memberi analgesia, melakukan imobilisasi, menilai neurovaskular, lalu merujuk — reposisi definitif bukan kewenangan FKTP. Kriteria rujukan resminya mencakup setiap fraktur dengan deformitas atau pergeseran, setiap fraktur pada anak yang melibatkan atau berdekatan dengan lempeng pertumbuhan, dan setiap gangguan neurovaskular. Perbedaan tata laksana antara fraktur tertutup dan terbuka — antibiotik parenteral dini dan profilaksis tetanus HANYA pada yang terbuka — adalah pembeda yang eksplisit di pedoman.",
         "realityNote": "Foto ekstremitas tidak diasumsikan tersedia di Sukamaju: deformitas dan mekanisme cukup untuk suspek fraktur, bidai, dokumentasi neurovaskular, dan rujuk; pencitraan dilakukan di jejaring. Kosakata game menampilkan sediaan tetap, sedangkan dosis analgesia anak selalu dihitung per kilogram. Karena berat badan tidak dimodelkan pada vignette ini, hanya sirup yang dapat ditakar diberi kredit.",
         "ebmPearl": "Jari yang masih bisa digerakkan dan nadi yang masih teraba TIDAK menyingkirkan sindrom kompartemen — dan itulah kesalahan yang paling mahal pada fraktur lengan bawah anak. Nadi menghilang paling akhir, jauh setelah otot mulai mati; tanda paling dini justru nyeri yang tidak sebanding dengan cederanya, nyeri hebat saat jari diregangkan secara pasif, dan kebutuhan analgesia yang terus meningkat. Karena itu jangan pernah membaca \"nadi teraba\" sebagai izin untuk tenang; yang dipantau adalah tren nyeri, bukan sekali pemeriksaan. Jebakan kedua khusus anak: rontgen yang tampak normal sama sekali tidak menyingkirkan fraktur, karena tulang anak yang lentur bisa hanya membengkok (buckle/greenstick) atau retak di lempeng pertumbuhan yang tulang rawannya tidak tertangkap sinar-X. Anak yang menolak memakai lengannya setelah trauma jelas diperlakukan sebagai fraktur — dibidai dan dirujuk — berapa pun bagusnya foto rontgennya."
       },
@@ -17367,7 +17367,7 @@
       },
       "currentEditorial": {
         "clue": "Massa subkutan lunak, mobile, lambat tumbuh, dan tanpa red flag khas lipoma. Beri reassurance dan observasi; eksisi elektif bila nyeri, mengganggu fungsi/kosmetik, diagnosis meragukan, atau pertumbuhan berubah.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas."
       },
       "evidence": {
         "ppk": {
@@ -17513,7 +17513,7 @@
       },
       "currentEditorial": {
         "clue": "Lokasi gaiter, edema memburuk saat berdiri, varises, dan nadi teraba mendukung ulkus vena. Bersihkan dan balut, elevasi, nilai penyakit arteri sebelum kompresi, serta koreksi faktor risiko; jangan memberi antibiotik tanpa infeksi klinis.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
+        "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Doppler/ABI tidak diasumsikan selalu ready. Kompresi kuat tidak dijadikan jawaban wajib sebelum perfusi arteri dinilai aman melalui jejaring."
       },
       "evidence": {
@@ -17776,7 +17776,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri anus berdenyut berat, demam, benjolan perianal fluktuatif, dan indurasi yang masuk ke arah ruang iskioanal menunjukkan abses anorektal kompleks; hitung darah tidak diperlukan untuk membuat keputusan ini. Terapi definitif tetap drainase segera, tetapi anatomi dan faktor pasien menentukan tempat serta tekniknya. Pada kasus ini, perluasan dalam, pemeriksaan yang tidak tuntas, diabetes, dan tanda sistemik membuat drainase bedah terencana lebih aman daripada insisi sederhana di FKTP. Beri analgesia, antibiotik karena ada penyakit sistemik/komorbid, pantau, dan rujuk segera. Antibiotik tidak pernah menggantikan drainase.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab langsung abses perianal; label SKDI 3B tidak boleh disulap menjadi regimen PPK yang tidak ada. ASCRS Clinical Practice Guideline 2022 menyatakan drainase segera sebagai terapi utama, antibiotik selektif bila ada selulitis, tanda sistemik, atau imunosupresi, dan fistulotomi bersamaan hanya untuk pasien terpilih dengan fistula sederhana.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak mempunyai bab langsung abses perianal; label SKDI 3B tidak boleh disulap menjadi regimen PPK yang tidak ada. ASCRS Clinical Practice Guideline 2022 menyatakan drainase segera sebagai terapi utama, antibiotik selektif bila ada selulitis, tanda sistemik, atau imunosupresi, dan fistulotomi bersamaan hanya untuk pasien terpilih dengan fistula sederhana.",
         "realityNote": "Set bedah minor yang tersedia tidak otomatis membuat setiap abses perianal layak diinsisi di Puskesmas. Untuk abses superfisial sederhana, drainase dapat dilakukan di layanan ambulatory oleh operator yang kompeten; skenario ini sengaja berbeda karena ada dugaan perluasan iskioanal dan risiko host tinggi. Kemampuan mengenali batas itu adalah kompetensi yang dinilai.",
         "ebmPearl": "Tidak semua abses anorektal memerlukan CT, MRI, anestesi umum, atau eksplorasi fistula. Pemeriksaan klinis cukup untuk banyak kasus sederhana, sedangkan imaging dipilih untuk abses tersembunyi, rekuren, kompleks, atau pasien imunosupresi. Pada saat drainase, edema dapat menciptakan jalur palsu; karena itu mengejar fistula secara agresif justru dapat mencederai sfingter. Bila muncul nyeri yang meluas, krepitasi, bula, perubahan warna kulit, hipotensi, atau penurunan kesadaran, curigai infeksi nekrotikans/Fournier dan perlakukan sebagai kegawatan bedah."
       },
@@ -17926,7 +17926,7 @@
       },
       "currentEditorial": {
         "clue": "Reaksi kulit cepat dan berulang setelah makanan yang sama mendukung alergi makanan. Antihistamin cukup untuk urtikaria ringan, tetapi gejala jalan napas, sirkulasi, atau multisistem berarti anafilaksis dan memerlukan adrenalin serta penanganan gawat darurat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menekankan penghindaran pemicu, label makanan, dan larangan uji provokasi sembarangan pada riwayat reaksi berat."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menekankan penghindaran pemicu, label makanan, dan larangan uji provokasi sembarangan pada riwayat reaksi berat."
       },
       "evidence": {
         "ppk": {
@@ -18088,7 +18088,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri yang berpindah dari sekitar pusar ke kuadran kanan bawah, anoreksia, muntah, subfebris, dan tanda peritoneal lokal mendukung apendisitis akut pada anak. Puasakan, pasang jalur IV, hitung analgesia berdasarkan berat badan aktual (parasetamol 10-15 mg/kg per dosis), pantau, lalu rujuk bedah. Analgesia tidak menutupi diagnosis; yang tidak aman adalah memilih sediaan dewasa tanpa menghitung dosis atau membiarkan antibiotik oral menunda rujukan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menetapkan apendisitis akut sebagai kompetensi 3B dan meminta stabilisasi serta rujuk ke layanan sekunder. WSES Jerusalem 2025, terbit 2026, mencakup populasi anak dan menegaskan bahwa skor klinis serta imaging dapat meningkatkan akurasi, tetapi implementasi harus menyesuaikan sumber daya lokal. Pada anak ini, tanda klinis sudah kuat; USG bukan prasyarat transfer. NGT dipertimbangkan selektif bila muntah berlanjut, distensi, atau risiko aspirasi, bukan tindakan rutin yang harus menahan keberangkatan.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK Dokter FKTP menetapkan apendisitis akut sebagai kompetensi 3B dan meminta stabilisasi serta rujuk ke layanan sekunder. WSES Jerusalem 2025, terbit 2026, mencakup populasi anak dan menegaskan bahwa skor klinis serta imaging dapat meningkatkan akurasi, tetapi implementasi harus menyesuaikan sumber daya lokal. Pada anak ini, tanda klinis sudah kuat; USG bukan prasyarat transfer. NGT dipertimbangkan selektif bila muntah berlanjut, distensi, atau risiko aspirasi, bukan tindakan rutin yang harus menahan keberangkatan.",
         "realityNote": "USG abdomen tidak diasumsikan tersedia rutin di Sukamaju, sehingga kasus ini sengaja dapat diselesaikan tanpa USG. Darah rutin atau urinalisis yang kebetulan ready boleh membantu diferensial, tetapi keputusan rujuk tidak menunggu leukositosis atau visualisasi apendiks.",
         "ebmPearl": "Leukosit normal atau hanya sedikit meningkat tidak menyingkirkan apendisitis pada anak; hasil laboratorium harus dibaca bersama perjalanan nyeri dan tanda peritoneal. Hilangnya nyeri secara mendadak setelah perburukan juga bukan jaminan sembuh karena perforasi dapat mengubah pola gejala sebelum peritonitis menyeluruh tampak."
       },
@@ -18362,7 +18362,7 @@
       },
       "currentEditorial": {
         "clue": "Benjolan anus yang prolaps menetap dan tidak dapat direposisi = hemoroid interna derajat IV, disertai anemia mikrositik yang sangat mungkin akibat kekurangan besi. Perawatan FKTP tetap penting — serat, cairan, hindari mengejan, pelunak tinja, dan besi oral — tetapi tidak mengoreksi prolaps derajat IV; pasien memerlukan evaluasi bedah untuk terapi definitif. Pada pria dewasa, anemia defisiensi besi tidak boleh otomatis dianggap selesai dijelaskan oleh wasir: tuliskan kebutuhan penelusuran sumber perdarahan gastrointestinal pada rujukan meski berat badan dan pola BAB stabil.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Bab hemoroid PPK 1186/2022 hanya menjadi floor terkait untuk pemeriksaan, terapi konservatif, batas kompetensi, dan kewaspadaan keganasan; ia bukan pedoman definitif grade IV yang identik. AGA Clinical Practice Update 2026 menyatakan hemoroid interna grade IV memerlukan hemoroidektomi dan perdarahan tetap harus dievaluasi secara proporsional.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Bab hemoroid PPK 1186/2022 hanya menjadi acuan dasar terkait untuk pemeriksaan, terapi konservatif, batas kompetensi, dan kewaspadaan keganasan; ia bukan pedoman definitif grade IV yang identik. AGA Clinical Practice Update 2026 menyatakan hemoroid interna grade IV memerlukan hemoroidektomi dan perdarahan tetap harus dievaluasi secara proporsional.",
         "realityNote": "Darah rutin dinyatakan siap di Sukamaju, tetapi ferritin, endoskopi, dan tindakan definitif berada di jejaring. Keterbatasan itu tidak boleh menjadi alasan menutup diagnosis pada “wasir”: FKTP mendokumentasikan anemia, memulai dukungan yang aman, dan memastikan rujukan menilai prolaps sekaligus sumber perdarahan lain.",
         "ebmPearl": "Menemukan hemoroid tidak menyingkirkan kanker kolorektal: keduanya dapat hidup berdampingan. Pada pria dewasa dengan anemia defisiensi besi, sumber perdarahan gastrointestinal tetap perlu ditelusuri sesuai risiko dan jejaring, bukan dianggap wajar hanya karena wasir terlihat. Derajat hemoroid ditentukan oleh prolaps, bukan banyaknya darah atau nyeri; hemoroid interna derajat IV dapat besar tetapi tidak sangat nyeri karena berada di atas linea dentata. Karena itu “tidak sakit” tidak sama dengan “tidak berat”."
       },
@@ -18618,7 +18618,7 @@
       },
       "currentEditorial": {
         "clue": "Hernia inguinalis yang tadinya reponibel kini tidak dapat direduksi, disertai muntah bilious, obstipasi, dan kulit di atas benjolan kemerahan = inkarserasi dengan kecurigaan strangulasi. Puasakan, pasang jalur IV, koreksi kehilangan cairan, dekompresi NGT bila aman, pantau perfusi, dan rujuk bedah segera. Jangan melakukan reduksi paksa. Analgesia yang sesuai rute dan protokol dapat diberikan, tetapi pilihan oral pada pasien yang terus muntah tidak dijadikan jawaban wajib.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik untuk hernia inkarserata atau strangulata, sehingga tidak boleh dikutip seolah memberi algoritma tersebut. WSES 2017 menjadi rujukan langsung: bila strangulasi usus dicurigai, perbaikan hernia darurat harus dilakukan segera. Gambaran kasus ini menuntut stabilisasi singkat dan transfer bedah tanpa percobaan reduksi paksa atau menunggu penunjang.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik untuk hernia inkarserata atau strangulata, sehingga tidak boleh dikutip seolah memberi algoritma tersebut. WSES 2017 menjadi rujukan langsung: bila strangulasi usus dicurigai, perbaikan hernia darurat harus dilakukan segera. Gambaran kasus ini menuntut stabilisasi singkat dan transfer bedah tanpa percobaan reduksi paksa atau menunggu penunjang.",
         "realityNote": "Skenario menyatakan infus, NGT, monitoring, dan transport siap. NGT adalah sumber daya Tier C: bila alat atau operator tidak ready, jangan menunda transfer demi memaksakannya. Foto polos abdomen dan elektrolit cepat tidak diasumsikan tersedia di Sukamaju; keduanya juga tidak dibutuhkan untuk mengenali kecurigaan strangulasi klinis.",
         "ebmPearl": "Nyeri yang tiba-tiba MEREDA dan benjolan yang \"akhirnya masuk\" setelah didorong bukan selalu kabar baik: pada reduction en masse, isi hernia yang sudah rusak berpindah ke rongga perut dan gejala menghilang sesaat sebelum peritonitis muncul. Kedua, bising usus yang masih terdengar — bahkan meningkat — TIDAK menyingkirkan strangulasi; pada obstruksi mekanik bising usus justru khas meningkat dan bernada metalik lebih dulu, baru menghilang belakangan saat usus sudah lelah atau mati."
       },
@@ -18991,7 +18991,7 @@
       },
       "currentEditorial": {
         "clue": "Gejala gastrointestinal yang konsisten setelah laktosa tanpa manifestasi imunologis mendukung intoleransi, bukan alergi. Lakukan eliminasi terbatas lalu reintroduksi terarah; pertahankan kecukupan kalsium dan nutrisi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menyarankan pembatasan nutrisi terarah, suplementasi bila perlu, dan reintroduksi setelah gejala hilang untuk menguji hubungan kausal."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menyarankan pembatasan nutrisi terarah, suplementasi bila perlu, dan reintroduksi setelah gejala hilang untuk menguji hubungan kausal."
       },
       "evidence": {
         "ppk": {
@@ -19137,7 +19137,7 @@
       },
       "currentEditorial": {
         "clue": "Plak putih yang dapat dikerok dan meninggalkan dasar merah mendukung kandidiasis pseudomembran. Beri nistatin lokal, koreksi pencetus, dan cari diabetes atau imunosupresi bila berulang.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK mencantumkan nistatin suspensi 100.000-200.000 IU/mL dan kontrol faktor predisposisi.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK mencantumkan nistatin suspensi 100.000-200.000 IU/mL dan kontrol faktor predisposisi.",
         "realityNote": "Nistatin suspensi tercantum di Fornas 1199/2025. Pencantuman tidak membuktikan stok; bila tidak tersedia, rujuk jejaring formularium tanpa improvisasi antijamur yang tidak sesuai."
       },
       "evidence": {
@@ -19356,7 +19356,7 @@
       },
       "currentEditorial": {
         "clue": "Klaster gejala gastrointestinal beberapa jam setelah makanan yang sama mendukung penyakit bawaan makanan. Pada kasus ringan tanpa demam tinggi atau darah, fokus pada oralit dan pemantauan; antibiotik tidak rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menempatkan rehidrasi sebagai tujuan utama dan merujuk bila memburuk atau tidak berhenti setelah tiga hari."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menempatkan rehidrasi sebagai tujuan utama dan merujuk bila memburuk atau tidak berhenti setelah tiga hari."
       },
       "evidence": {
         "ppk": {
@@ -19727,7 +19727,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri kanan atas dipicu makanan berlemak yang MENETAP lebih dari 6 jam, demam, dan Murphy klinis positif sangat mendukung kolesistitis akut; keputusan FKTP tidak menunggu USG, hitung darah, atau enzim hati. Puasakan, pasang jalur IV, beri analgesia dan antibiotik parenteral dosis pertama sesuai protokol, lalu rujuk bedah. Pada nyeri bilier, NSAID adalah lini pertama bila tidak ada kontraindikasi. Rujukan bersifat dini, bukan pendekatan \"didinginkan dulu\" di FKTP; konfirmasi pencitraan dan keputusan kolesistektomi berada di jejaring bedah.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menempatkan kolesistitis akut sebagai kompetensi 3B — didiagnosis secara klinis di FKTP (nyeri kanan atas menetap, demam, Murphy positif), diberi terapi suportif dan antibiotik, lalu dirujuk ke layanan bedah untuk tata laksana definitif. Kriteria rujukan resmi terpenuhi begitu diagnosis ditegakkan; USG bukan syarat merujuk, melainkan penunjang bila tersedia.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK Dokter FKTP menempatkan kolesistitis akut sebagai kompetensi 3B — didiagnosis secara klinis di FKTP (nyeri kanan atas menetap, demam, Murphy positif), diberi terapi suportif dan antibiotik, lalu dirujuk ke layanan bedah untuk tata laksana definitif. Kriteria rujukan resmi terpenuhi begitu diagnosis ditegakkan; USG bukan syarat merujuk, melainkan penunjang bila tersedia.",
         "realityNote": "USG abdomen, CBC, dan fungsi hati tidak diasumsikan tersedia di Sukamaju dan tidak menjadi syarat rujuk. Kolesistitis akut adalah diagnosis kerja klinis first-contact; kirim pasien dengan puasa, jalur IV, analgesia, dan dosis awal antibiotik yang tersedia sesuai protokol jejaring.",
         "ebmPearl": "Enzim hati dan bilirubin yang NORMAL tidak menyingkirkan kolesistitis akut — pada kolesistitis tanpa komplikasi keduanya memang biasanya normal atau nyaris normal, seperti pasien ini. Yang menaikkannya justru batu yang turun ke saluran empedu (koledokolitiasis/kolangitis), sehingga hasil \"hati normal\" sering keliru dibaca sebagai \"berarti bukan empedu\". Kedua, Murphy dapat NEGATIF pada lansia dan penyandang diabetes — dan pada merekalah kolesistitis paling cepat berkembang menjadi gangren, justru dengan keluhan yang paling ringan."
       },
@@ -20194,7 +20194,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri kolik, muntah bilious, obstipasi, distensi, timpani, dan bising metalik mendukung obstruksi usus mekanik; riwayat operasi abdomen membuat adhesi mungkin, tetapi etiologi final ditentukan di RS. Puasakan, pasang akses IV dan koreksi kehilangan cairan secara terukur, lakukan dekompresi NGT bila aman, pantau perfusi, lalu rujuk bedah. Jangan memberi laksatif atau antimotilitas.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab obstruksi usus halus yang diagnosis-spesifik; bab peritonitis hanya menjadi floor terkait untuk mengenali perburukan dan merujuk. WSES Bologna 2017 menjadi rujukan langsung: puasa, dekompresi NGT, cairan IV, serta penilaian berulang; peritonitis, strangulasi, atau iskemia menutup pilihan tata laksana nonoperatif.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak mempunyai bab obstruksi usus halus yang diagnosis-spesifik; bab peritonitis hanya menjadi acuan dasar terkait untuk mengenali perburukan dan merujuk. WSES Bologna 2017 menjadi rujukan langsung: puasa, dekompresi NGT, cairan IV, serta penilaian berulang; peritonitis, strangulasi, atau iskemia menutup pilihan tata laksana nonoperatif.",
         "realityNote": "Skenario menyatakan NGT, cairan, operator, monitoring, dan transport siap. Pemeriksaan elektrolit dan pencitraan abdomen tidak diasumsikan tersedia segera di Sukamaju dan tidak boleh menjadi syarat transfer. Bila NGT tidak dapat dipasang aman, jangan menunda transfer atau melakukan probing berulang.",
         "ebmPearl": "Tidak adanya defans atau nyeri menetap saat ini tidak membuat pasien aman dipulangkan. Tata laksana nonoperatif obstruksi adhesif adalah jalur rawat dan observasi serial di fasilitas bedah, bukan resep pulang dari FKTP; strangulasi dapat berkembang dan tanda klinis awalnya tidak selalu lengkap."
       },
@@ -20385,7 +20385,7 @@
       },
       "currentEditorial": {
         "clue": "Hematemesis coffee-ground, melena, hipotensi, dan takikardia menunjukkan perdarahan GI atas dengan instabilitas hemodinamik. Stabilkan ABC, pasang akses IV besar dan berikan kristaloid secara terukur dengan penilaian ulang, beri oksigen karena SpO2 92%, pantau respons, puasakan, hentikan ibuprofen, lalu transfer untuk endoskopi setelah resusitasi awal. Jangan menunggu Hb, golongan darah, NGT, atau bilas lambung rutin untuk berangkat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. ACG dan ESGE 2021 mendukung stratifikasi risiko, resusitasi, serta endoskopi dalam 24 jam setelah stabilisasi; perdarahan tidak stabil memerlukan kendali sumber lebih segera. Bilas lambung rutin tidak boleh menahan transfer.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PNPK Perdarahan Saluran Cerna KMK 2162/2023 menjadi acuan diagnosis-spesifik: resusitasi ABC, kristaloid terukur, PPI pra-endoskopi, serta endoskopi dalam 24 jam setelah stabilisasi; NGT hanya bila terindikasi. ACG dan ESGE 2021 mendukung stratifikasi risiko, resusitasi, serta endoskopi dalam 24 jam setelah stabilisasi; perdarahan tidak stabil memerlukan kendali sumber lebih segera. Bilas lambung rutin tidak boleh menahan transfer.",
         "realityNote": "PNPK 2162/2023 menganjurkan PPI pra-endoskopi. Karena stok IV, dosis, dan protokol tidak diasumsikan ready, PPI tidak dinilai wajib dan tidak boleh menunda transfer; omeprazol oral bukan pengganti akut saat pasien muntah dan NPO. Hb serta O+ adalah data handover, bukan crossmatch atau kesiapan transfusi; bila belum ada, tetap berangkat.",
         "ebmPearl": "Hb awal dapat belum mencerminkan seluruh kehilangan darah akut; keputusan resusitasi dan transfer mengikuti keadaan hemodinamik, bukan satu angka Hb. Glasgow-Blatchford membantu stratifikasi pra-endoskopi, tetapi hipotensi, takikardia, melena, sinkop, dan Hb 8,4 membuat pasien ini jelas bukan kelompok rawat jalan berisiko sangat rendah."
       },
@@ -20826,7 +20826,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri mendadak yang menjadi menyeluruh, perut papan yang tidak ikut bernapas, pasien membeku, takikardia, oliguria, dan perfusi memburuk = peritonitis generalisata dengan hipoperfusi, kemungkinan akibat perforasi organ berongga. Berikan kristaloid terukur, antibiotik parenteral dosis pertama yang mencakup Gram-negatif dan anaerob (seftriakson plus metronidazol), dekompresi NGT bila aman, puasa, pemantauan ketat, lalu transfer segera. Antibiotik dan cairan tidak menggantikan kendali sumber di rumah sakit.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK Dokter FKTP menempatkan peritonitis sebagai kompetensi 3B dan kegawatan bedah: diagnosis ditegakkan klinis, lalu pasien dipuasakan, diresusitasi, diberi antibiotik, dan dirujuk cito ke layanan bedah. Foto polos disebut sebagai penunjang bila tersedia, bukan syarat rujuk. SIS 2024 dan WSES global pathways 2021 menegaskan kombinasi stabilisasi fisiologis, antimikroba yang sesuai, dan kendali sumber dini.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK Dokter FKTP menempatkan peritonitis sebagai kompetensi 3B dan kegawatan bedah: diagnosis ditegakkan klinis, lalu pasien dipuasakan, diresusitasi, diberi antibiotik, dan dirujuk cito ke layanan bedah. Foto polos disebut sebagai penunjang bila tersedia, bukan syarat rujuk. SIS 2024 dan WSES global pathways 2021 menegaskan kombinasi stabilisasi fisiologis, antimikroba yang sesuai, dan kendali sumber dini.",
         "realityNote": "Skenario menyatakan seftriakson, metronidazol infus, NGT, monitoring, dan ambulans siap. Foto polos abdomen tidak diasumsikan tersedia dan bukan prasyarat rujuk. Bila salah satu antibiotik atau NGT tidak ready, lakukan intervensi aman yang tersedia, dokumentasikan kekurangannya, dan jangan menunda transport menuju fasilitas kendali sumber.",
         "ebmPearl": "Hilangnya pekak hati atau udara bebas pada foto tegak dapat membantu bila pemeriksaan tersedia, tetapi hasil foto polos yang normal tidak menyingkirkan perforasi. Diagnosis peritonitis terutama klinis. Suhu normal juga tidak memberi rasa aman pada lansia, pengguna steroid, atau pasien dengan perfusi yang memburuk."
       },
@@ -21059,7 +21059,7 @@
       },
       "currentEditorial": {
         "clue": "Tidak bisa berkemih sejak semalam + buli teraba dan pekak suprapubik + riwayat pancaran melemah, mengejan, menetes, dan nokturia = retensi urin akut pada pembesaran prostat, kemungkinan dipicu obat flu antikolinergik. Bila alat dan operator siap serta tidak ada dugaan cedera uretra, lakukan satu upaya kateterisasi lembut untuk dekompresi, catat volume awal, lalu pantau diuresis dan rujuk penyebabnya. Mulai tamsulosin untuk meningkatkan peluang pelepasan kateter dan hentikan pencetus. Resistensi, darah di meatus, riwayat trauma pelvis/uretra, atau upaya gagal berarti berhenti dan transfer — bukan mengulang secara traumatik.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. EAU 2026 menempatkan drainase kandung kemih tepat waktu, penilaian obstruksi dan komplikasi, serta tindak lanjut penyebab sebagai inti; retensi berulang atau refrakter memerlukan jejaring urologi.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak mempunyai bab diagnosis-spesifik retensi urin akut. EAU 2026 menempatkan drainase kandung kemih tepat waktu, penilaian obstruksi dan komplikasi, serta tindak lanjut penyebab sebagai inti; retensi berulang atau refrakter memerlukan jejaring urologi.",
         "realityNote": "Untuk encounter ini Sukamaju menyatakan kateter Foley ukuran sesuai, jeli steril, urine bag, dan operator terlatih siap. Kesiapan itu bukan asumsi universal: bila alat/operator tidak ready atau satu upaya lembut gagal, dokumentasikan dan transfer tanpa manipulasi berulang. USG dan kreatinin tidak dijadikan prasyarat dekompresi atau rujuk.",
         "ebmPearl": "Dua ajaran klasik yang menyesatkan di sini. Pertama: \"kalau masih ada urine menetes berarti bukan retensi\" — justru sebaliknya, buli yang terlalu penuh sering merembes sedikit-sedikit (overflow), sehingga laporan \"masih keluar sedikit\" tidak menyingkirkan apa pun; buli yang teraba dan pekak suprapubik jauh lebih dapat dipercaya. Kedua: \"kosongkan buli bertahap, jangan lebih dari 500 mL sekaligus, nanti terjadi perdarahan dan syok\" — ini tidak didukung bukti. Pengosongan lengkap sekaligus terbukti sama amannya, dan menjepit kateter berkala hanya menunda pemulihan serta menambah risiko sumbatan. Yang benar-benar perlu dipantau adalah diuresis pasca-sumbatan (urine mengalir sangat banyak setelah kateter terpasang) pada retensi yang sudah kronis."
       },
@@ -21619,7 +21619,7 @@
       },
       "currentEditorial": {
         "clue": "Aftosa minor berupa ulkus nyeri dangkal pada mukosa nonkeratinisasi tanpa gejala sistemik. Kortikosteroid topikal oral dapat memperpendek gejala; evaluasi bila menetap >2 minggu, sangat berat, atau disertai tanda sistemik.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menyebut triamsinolon asetonid 0,1% orabase dan higiene mulut untuk aftosa.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menyebut triamsinolon asetonid 0,1% orabase dan higiene mulut untuk aftosa.",
         "realityNote": "Sediaan orabase tidak dianggap stok rutin Puskesmas Sukamaju. Bila tidak ada, gunakan perawatan suportif dan hilangkan trauma; jangan memberi antibiotik sistemik."
       },
       "evidence": {
@@ -22201,7 +22201,7 @@
       },
       "currentEditorial": {
         "clue": "Redup pada perkusi, fremitus turun, dan suara napas melemah di satu basal sangat mendukung suspek efusi pleura, tetapi pemeriksaan fisik belum menentukan etiologinya. Hipoksemia perlu oksigen dan pasien dirujuk untuk pencitraan serta sampling pleura terpandu; jangan memberi OAT, antibiotik, atau diuretik hanya berdasarkan sindrom ini tanpa bukti penyebab.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak menyediakan algoritme efusi pleura sebagai tata laksana tuntas FKTP. BTS Pleural Disease Guideline dan Clinical Statement 2023 serta Quality Standard 2026 meminta akses cepat ke layanan pleura untuk efusi simptomatik/tidak terdiagnosis; tindakan cairan pleura memerlukan operator kompeten dan ultrasonografi toraks peri-prosedural. Di FKTP tanpa kapabilitas itu: kenali sindrom, koreksi hipoksemia, dan rujuk tanpa pungsi buta.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak menyediakan algoritme efusi pleura sebagai tata laksana tuntas FKTP. BTS Pleural Disease Guideline dan Clinical Statement 2023 serta Quality Standard 2026 meminta akses cepat ke layanan pleura untuk efusi simptomatik/tidak terdiagnosis; tindakan cairan pleura memerlukan operator kompeten dan ultrasonografi toraks peri-prosedural. Di FKTP tanpa kapabilitas itu: kenali sindrom, koreksi hipoksemia, dan rujuk tanpa pungsi buta.",
         "realityNote": "Puskesmas Sukamaju tidak diasumsikan memiliki rontgen atau kemampuan torakosentesis. Jawaban benar adalah mengenali sindrom, memberi oksigen, dan merujuk tanpa prosedur buta."
       },
       "evidence": {
@@ -22402,7 +22402,7 @@
       },
       "currentEditorial": {
         "clue": "Onset mendadak demam, mialgia, sakit kepala, dan batuk kering lebih mendukung influenza daripada common cold. Kasus sehat tanpa red flag ditangani suportif; antibiotik tidak rutin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK menyebut influenza umumnya self-limited, dengan terapi simptomatik dan rujuk bila muncul tanda pneumonia."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK menyebut influenza umumnya self-limited, dengan terapi simptomatik dan rujuk bila muncul tanda pneumonia."
       },
       "evidence": {
         "ppk": {
@@ -22537,7 +22537,7 @@
       },
       "currentEditorial": {
         "clue": "Serak akut setelah ISPA atau penggunaan suara berlebih tanpa stridor ditangani dengan istirahat suara, hidrasi, dan analgesik bila perlu. Antibiotik dan steroid tidak rutin pada penyakit ringan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Rujuk bila ada sumbatan jalan napas atas, toksisitas, sianosis, kelelahan, usia <3 tahun, atau kecurigaan tumor."
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Rujuk bila ada sumbatan jalan napas atas, toksisitas, sianosis, kelelahan, usia <3 tahun, atau kecurigaan tumor."
       },
       "evidence": {
         "ppk": {
@@ -22682,7 +22682,7 @@
       },
       "currentEditorial": {
         "clue": "Batuk paroksismal dengan whoop dan muntah pascabatuk selama 12 hari membuat suspek klinis pertusis kuat, tetapi belum merupakan konfirmasi laboratorium. Karena pasien sering menggendong bayi, CDC 2025 mendukung terapi sebelum hasil; pada usia >=1 tahun terapi diberikan dalam tiga minggu sejak batuk, dengan makrolida seperti azitromisin. Ambil swab nasofaring untuk PCR/kultur melalui jejaring bila tersedia, tanpa menunda terapi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki jalur pertusis tersendiri. CDC Clinical Care dan Laboratory Testing 2025 serta WHO Pertussis Surveillance Standards menjadi grounding diagnosis, waktu terapi, dan pemeriksaan. Suspek dilaporkan dan ditelusuri melalui kerangka Permenkes 1/2026 dan Permenkes 3/2026. Hindari kontak dengan bayi atau kelompok rentan sampai lima hari antibiotik efektif; PEP dinilai untuk kontak serumah/berisiko tinggi melalui program, bukan disalin massal dari resep pasien indeks.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak memiliki jalur pertusis tersendiri. CDC Clinical Care dan Laboratory Testing 2025 serta WHO Pertussis Surveillance Standards menjadi grounding diagnosis, waktu terapi, dan pemeriksaan. Suspek dilaporkan dan ditelusuri melalui kerangka Permenkes 1/2026 dan Permenkes 3/2026. Hindari kontak dengan bayi atau kelompok rentan sampai lima hari antibiotik efektif; PEP dinilai untuk kontak serumah/berisiko tinggi melalui program, bukan disalin massal dari resep pasien indeks.",
         "realityNote": "PCR/kultur dan media khusus tidak diasumsikan tersedia di Sukamaju; koordinasikan spesimen dan pelaporan lewat jejaring surveilans. Karena riwayat kuat dan ada kontak bayi, terapi tidak menunggu hasil. PEP adalah penilaian kesehatan masyarakat untuk kontak serumah/berisiko tinggi, bukan resep massal pemain."
       },
       "evidence": {
@@ -23043,7 +23043,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri pleuritik mendadak, hipersonor, dan suara napas unilateral turun mendukung pneumotoraks spontan primer. SpO2 90%, RR 28, dan sesak sedang adalah gangguan fisiologis, sehingga pasien ini bukan kandidat observasi konservatif rawat jalan. Beri oksigen terkontrol dengan target SpO2 94-98%, pantau serial, berikan parasetamol bila perlu, dan transfer segera tanpa menunggu foto toraks. Dekompresi jarum hanya untuk kecurigaan pneumotoraks tensi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. SKDI 2012 menempatkan pneumotoraks dan pneumotoraks ventil pada level 3A. Bab pneumotoraks PPK 1186/2022 mencantumkan 4A, tetapi alur praktiknya tetap oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal; PRIMERA mempertahankan level 3A dari dokumen kompetensi sambil menyatakan ketidaksesuaian sumber ini. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada kasus primer yang hanya bergejala minimal dan tanpa gangguan fisiologis. BTS oxygen guideline menargetkan SpO2 94-98% pada pasien akut tanpa risiko hiperkapnia.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. SKDI 2012 menempatkan pneumotoraks dan pneumotoraks ventil pada level 3A. Bab pneumotoraks PPK 1186/2022 mencantumkan 4A, tetapi alur praktiknya tetap oksigen, akses IV bila ada gagal sirkulasi, dan rujuk segera setelah penanggulangan awal; PRIMERA mempertahankan level 3A dari dokumen kompetensi sambil menyatakan ketidaksesuaian sumber ini. BTS Pleural Disease Guideline 2023 dan ERS/EACTS/ESTS 2024 membatasi tata laksana konservatif pada kasus primer yang hanya bergejala minimal dan tanpa gangguan fisiologis. BTS oxygen guideline menargetkan SpO2 94-98% pada pasien akut tanpa risiko hiperkapnia.",
         "realityNote": "Rontgen dan aspirasi/drainase pleura tidak diasumsikan ready di Sukamaju. Pasien ditransfer untuk konfirmasi; bila muncul hipotensi, hipoksia memburuk, deviasi trakea, atau deteriorasi cepat, perlakukan sebagai dugaan tensi dan jangan menunggu pencitraan. Setelah resolusi terkonfirmasi, penerbangan ditunda sedikitnya tujuh hari dan scuba dihindari kecuali sudah ada pencegahan kekambuhan definitif.",
         "ebmPearl": "Ukuran pneumotoraks pada pencitraan bukan satu-satunya penentu intervensi. Gejala dan gangguan fisiologis lebih penting: pasien yang masih sadar dan bertekanan darah baik tetap tidak aman untuk observasi rawat jalan bila hipoksemik dan sesak sedang. Sebaliknya, dekompresi darurat tanpa pencitraan ditujukan untuk dugaan tension pneumothorax, bukan otomatis untuk semua pneumotoraks."
       },
@@ -23409,7 +23409,7 @@
       },
       "currentEditorial": {
         "clue": "PPOK EKSASERBASI BERAT DENGAN DUGAAN INFEKSI SALURAN NAPAS BAWAH (SKDI 3B - RUJUK): sesak bertambah, volume dahak meningkat, sputum purulen, demam, riwayat PPOK, dan tanda gagal napas mengancam berupa bicara per kata, otot bantu aktif, sianosis, perubahan kesadaran, serta SpO2 88%. Rontgen bukan prasyarat diagnosis atau antibiotik pada vignette ini. Beri oksigen terkontrol dengan target 88-92%, bronkodilator inhalasi/nebulisasi, kortikosteroid sistemik, satu antibiotik karena sputum purulen dan risiko berat, monitoring, lalu transfer segera ke layanan yang mampu analisis gas darah dan ventilasi noninvasif.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menetapkan eksaserbasi sedang-berat untuk rujukan, tetapi fallback aminofilin atau adrenalin injeksi pada bab lama tidak dipakai sebagai substitusi otomatis. GOLD 2026 mengutamakan SABA inhalasi dengan atau tanpa antikolinergik kerja singkat, kortikosteroid sistemik maksimal 5 hari, antibiotik pada sputum purulen atau risiko infeksi tinggi, serta dukungan ventilasi untuk gagal napas. Oksigen dititrasi ke 88-92%, bukan dibuka maksimal.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 menetapkan eksaserbasi sedang-berat untuk rujukan, tetapi fallback aminofilin atau adrenalin injeksi pada bab lama tidak dipakai sebagai substitusi otomatis. GOLD 2026 mengutamakan SABA inhalasi dengan atau tanpa antikolinergik kerja singkat, kortikosteroid sistemik maksimal 5 hari, antibiotik pada sputum purulen atau risiko infeksi tinggi, serta dukungan ventilasi untuk gagal napas. Oksigen dititrasi ke 88-92%, bukan dibuka maksimal.",
         "realityNote": "Vignette menyatakan oksigen, pulse oximeter, nebulizer, obat/consumable, petugas, monitoring, dan transport ready. Rontgen serta analisis gas darah tidak tersedia onsite dan tidak boleh menunda stabilisasi atau transfer. Bila nebulizer tidak ready, gunakan bronkodilator inhalasi lewat spacer sesuai SOP lokal; jangan otomatis beralih ke aminofilin atau adrenalin injeksi tanpa protokol dan monitoring.",
         "ebmPearl": "Suara mengi yang melemah pada pasien yang makin lelah dapat menandakan aliran udara yang sangat kecil, bukan perbaikan. Demikian pula, saturasi yang dipaksa jauh di atas target dapat menyembunyikan hiperkapnia yang memburuk; rasa mengantuk setelah oksigen bukan alasan merasa aman, melainkan alasan menilai ulang ventilasi dan mempercepat dukungan napas."
       },
@@ -23582,7 +23582,7 @@
       },
       "currentEditorial": {
         "clue": "TB PARU RESISTAN RIFAMPISIN (RR-TB; SKDI 3A - RUJUK): gejala TB aktif muncul kembali setelah pengobatan dihentikan pada bulan ketiga, dan TCM dahak mendeteksi MTB serta resistansi rifampisin. Ini belum boleh disebut MDR-TB karena resistansi isoniazid belum dibuktikan; istilah program yang tepat adalah MDR/RR-TB sampai uji kepekaan lanjutan memisahkan keduanya. Di FKTP: terapkan pengendalian infeksi, catat-notifikasi kasus, kirim/teruskan hasil TCM, hubungkan hari yang sama ke layanan TB-RO, dan mulai investigasi kontak. Jangan mengulang KDT lini pertama atau merakit regimen sendiri.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK dan PNPK TB menempatkan riwayat pengobatan sebelumnya serta kecurigaan resistansi sebagai jalur program/rujukan. WHO Module 3 (2025) mengutamakan uji molekuler cepat untuk mendeteksi TB dan resistansi rifampisin; WHO Module 4 (2025) memakai regimen MDR/RR-TB modern yang dipilih dari pola resistansi, kelayakan pasien, dan kapasitas program — bukan otomatis \"OAT enam bulan\" atau pengulangan lini pertama.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK dan PNPK TB menempatkan riwayat pengobatan sebelumnya serta kecurigaan resistansi sebagai jalur program/rujukan. WHO Module 3 (2025) mengutamakan uji molekuler cepat untuk mendeteksi TB dan resistansi rifampisin; WHO Module 4 (2025) memakai regimen MDR/RR-TB modern yang dipilih dari pola resistansi, kelayakan pasien, dan kapasitas program — bukan otomatis \"OAT enam bulan\" atau pengulangan lini pertama.",
         "realityNote": "Sukamaju tidak diasumsikan memiliki mesin TCM onsite. Dahak dikirim melalui jejaring program, hasil ditautkan kembali ke pasien dan layanan TB-RO, serta kasus dicatat agar tidak hilang di antara klinik, laboratorium, dan program. Anak usia empat tahun, lansia serumah, dan kontak erat lain harus masuk daftar investigasi kontak; TPT baru dipilih program setelah TB aktif disingkirkan dan pola pajanan dipertimbangkan.",
         "ebmPearl": "Resistansi rifampisin tidak identik dengan MDR-TB: MDR memerlukan resistansi terhadap rifampisin DAN isoniazid. Namun keduanya dikelola dalam kelompok MDR/RR-TB karena sama-sama memerlukan jalur obat resistan. Perbaikan gejala pada bulan awal bukan bukti eradikasi; dukungan kepatuhan harus mencari penyebab putus obat, menyepakati cara kembali bila efek samping muncul, dan memastikan transfer benar-benar diterima layanan tujuan."
       },
@@ -23800,7 +23800,7 @@
       },
       "currentEditorial": {
         "clue": "Usia 6 bulan-5 tahun, kejang umum <15 menit, hanya sekali/24 jam, pulih penuh, dan tanpa tanda infeksi SSP mendukung kejang demam sederhana. Cari sumber demam dan ajarkan pertolongan kejang; antipiretik meningkatkan kenyamanan tetapi tidak menjamin mencegah kekambuhan.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan klinis kasus ini. Rujuk bila kejang kompleks, penurunan kesadaran menetap, rangsang meningeal, atau diagnosis meragukan."
+        "officialGuidance": "Acuan dasar keputusan klinis kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Rujuk bila kejang kompleks, penurunan kesadaran menetap, rangsang meningeal, atau diagnosis meragukan."
       },
       "evidence": {
         "ppk": {
@@ -24277,7 +24277,7 @@
       },
       "currentEditorial": {
         "clue": "Gejala neurologis fokal mendadak yang pulih total, disertai gula darah normal, adalah suspek TIA atau stroke iskemik kecil dan tetap merupakan kegawatan. Setelah kontraindikasi disaring, berikan asetosal 320 mg dengan mengunyah empat tablet tidak bersalut 80 mg, lalu berangkat sekarang melalui jalur stroke agar penilaian spesialis berlangsung paling lambat 24 jam; jangan menunggu gejala kambuh dan jangan memakai ABCD2 untuk menurunkan urgensi. EKG menemukan fibrilasi atrium. Aspirin adalah terapi awal saat diagnosis sedang dipastikan, bukan pencegahan jangka panjang yang memadai untuk AF; pilihan dan waktu antikoagulasi ditentukan setelah evaluasi pencitraan, perdarahan, fungsi ginjal, dan etiologi. Jangan menurunkan tekanan darah mendadak dengan nifedipin kerja cepat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. AHA 2023 menekankan bahwa gejala yang telah menghilang tetap emergensi karena risiko stroke awal terkonsentrasi; lakukan eksklusi mimik seperti hipoglikemia, workup etiologi cepat, dan jalur stroke regional tanpa mengandalkan satu skor risiko. AHA/ASA 2021 dan ESC AF 2024 menempatkan antikoagulasi sebagai pencegahan sekunder utama pada AF bila tidak ada kontraindikasi; aspirin bukan penggantinya dan kombinasi rutin keduanya tidak dibenarkan tanpa indikasi lain.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 menempatkan TIA pada kompetensi 3B dan menuntut penanganan cepat serta rujukan. PNPK Stroke KMK 304/2026 memberi konteks stroke terkait, bukan pengganti algoritme TIA first-contact. AHA 2023 menekankan bahwa gejala yang telah menghilang tetap emergensi karena risiko stroke awal terkonsentrasi; lakukan eksklusi mimik seperti hipoglikemia, workup etiologi cepat, dan jalur stroke regional tanpa mengandalkan satu skor risiko. AHA/ASA 2021 dan ESC AF 2024 menempatkan antikoagulasi sebagai pencegahan sekunder utama pada AF bila tidak ada kontraindikasi; aspirin bukan penggantinya dan kombinasi rutin keduanya tidak dibenarkan tanpa indikasi lain.",
         "realityNote": "Fornas 1199/2025 mencantumkan asetosal 80 mg di tingkat pertama; empat tablet tidak bersalut memberi dosis awal 320 mg. EKG dan operator dinyatakan siap, tetapi kegagalan alat tidak boleh menahan transfer. Setelah RS menetapkan etiologi dan regimen, kendali AF, tekanan darah, lipid, serta rokok kembali dipantau FKTP. Sebut PRB hanya bila spesialis menerbitkan surat rujuk balik.",
         "ebmPearl": "Pemulihan sempurna bukan bukti aman. Sebelum pencitraan, istilah yang jujur adalah suspek TIA atau stroke kecil: CT tanpa kontras dapat normal dan terutama membantu menilai perdarahan atau diagnosis banding, sedangkan lesi akut pada DWI-MRI menunjukkan infark. Karena itu hasil CT normal tidak membatalkan kegawatan. Perangkap berikutnya ada pada nadi: fibrilasi atrium dapat tanpa gejala dan terlewat bila nadi hanya dihitung sebentar; raba cukup lama, konfirmasi dengan EKG bila tersedia, lalu pastikan temuan itu mengikuti pasien dalam surat rujukan."
       },
@@ -24533,7 +24533,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, sepsis, hidrasi, dan kemampuan menelan; beri analgesia serta antibiotik awal bila rute oral aman, pantau selama menunggu, lalu transfer untuk evaluasi THT dan source control. Drainase biasanya menjadi bagian tata laksana abses terkonfirmasi, tetapi teknik dan tempatnya bergantung pada kompetensi, toleransi pasien, anatomi, serta kesiapan suction dan jalan napas - bukan aspirasi buta di FKTP.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi floor terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi acuan dasar terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.",
         "realityNote": "Pasien ini masih dapat menelan, tidak stridor, dan tidak sepsis, sehingga antibiotik oral pra-rujuk dimodelkan tanpa menunda transfer. Bila ludah sama sekali tidak dapat ditelan, ada stridor, hipoksia, kelelahan napas, toksisitas, atau pembengkakan leher cepat, jangan memaksa obat oral atau pemeriksaan agresif; prioritaskan jalan napas, monitoring, dan transfer emergensi.",
         "ebmPearl": "Deviasi uvula membantu, tetapi bukan satu-satunya penentu dan tidak membedakan abses dari selulitis peritonsil dengan sempurna. Kombinasi nyeri unilateral, trismus, perubahan suara, palatal fullness, kemampuan menelan, serta tanda perluasan leher menentukan urgensi; pencitraan tidak rutin diperlukan pada presentasi klasik dan tidak boleh menunda rujukan bila komplikasi dicurigai."
       },
@@ -24888,7 +24888,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri fokal dan pustul pada folikel vestibulum nasi mendukung furunkel hidung. Pada lesi kecil, lokal, belum fluktuatif, dan tanpa selulitis atau gejala sistemik seperti kasus ini: kompres hangat, antimikroba topikal, analgesia bila perlu, jangan dipencet, dan nilai ulang. Antibiotik sistemik antistafilokokus dipertimbangkan bila infeksi meluas, muncul selulitis atau gejala sistemik, pasien berisiko tinggi, atau respons awal buruk; pilihan mengikuti protokol dan pola resistensi lokal. Edema periorbita, gangguan penglihatan, sakit kepala berat, defisit saraf, atau toksisitas mengubahnya menjadi kasus alih layanan darurat.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memuat kompres hangat, antimikroba, larangan memencet sendiri, serta insisi setelah terbentuk abses. Merck Manual Professional yang ditinjau 2025 menegaskan kompres hangat dan mupirosin topikal, dengan antibiotik sistemik yang disesuaikan derajat penyakit serta kultur bila curiga MRSA. Insisi lesi besar atau gagal terapi adalah tindakan klinis terkontrol, bukan izin memencet lesi kecil di rumah.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 memuat kompres hangat, antimikroba, larangan memencet sendiri, serta insisi setelah terbentuk abses. Merck Manual Professional yang ditinjau 2025 menegaskan kompres hangat dan mupirosin topikal, dengan antibiotik sistemik yang disesuaikan derajat penyakit serta kultur bila curiga MRSA. Insisi lesi besar atau gagal terapi adalah tindakan klinis terkontrol, bukan izin memencet lesi kecil di rumah.",
         "realityNote": "Mupirosin tercantum dalam Fornas 1199/2025 dengan restriksi diagnosis MRSA pada baris formulary; pencantuman itu tidak membuktikan stok atau akses tanpa restriksi di Sukamaju. Kasus ini memakai pilihan topikal sebagai model klinis lesi lokal, sedangkan pengadaan dan substitusi wajib mengikuti formularium serta protokol jejaring.",
         "ebmPearl": "Istilah \"segitiga wajah\" tidak berarti setiap pustul hidung pasti menyebar ke sinus kavernosus. Nilai pengajarannya adalah mengenali perubahan pola: nyeri dan pustul yang tetap lokal dapat ditangani konservatif, sedangkan perluasan ke ujung hidung, wajah, orbita, gejala sistemik, atau neurologis mengubah urgensi dan jalur layanan."
       },
@@ -25046,7 +25046,7 @@
       },
       "currentEditorial": {
         "clue": "Hubungan ketat dengan gerak kendaraan dan resolusi setelah gerak berhenti mendukung mabuk perjalanan. CDC Yellow Book 2026 mengutamakan posisi/pandangan ke horizon dan menghindari aktivitas visual; dimenhidrinat paling efektif bila diminum sebelum paparan, tetapi sedasi membuat pasien tidak boleh mengemudi atau mengoperasikan mesin.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. Tidak ada algoritme mabuk perjalanan tersendiri dalam PPK 1186/2022. Dimenhidrinat tercantum dalam Fornas 1199/2025; pemakaiannya mengikuti kontraindikasi antikolinergik dan peringatan sedasi, sementara strategi perilaku dan waktu pemberian mengikuti CDC Yellow Book edisi 2026.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. Tidak ada algoritme mabuk perjalanan tersendiri dalam PPK 1186/2022. Dimenhidrinat tercantum dalam Fornas 1199/2025; pemakaiannya mengikuti kontraindikasi antikolinergik dan peringatan sedasi, sementara strategi perilaku dan waktu pemberian mengikuti CDC Yellow Book edisi 2026.",
         "realityNote": "Dimenhidrinat 50 mg tercantum dalam Fornas 1199/2025; pencantuman tidak membuktikan stok lokal pada hari kunjungan."
       },
       "evidence": {
@@ -25205,7 +25205,7 @@
       },
       "currentEditorial": {
         "clue": "Demam tinggi, nyeri dan fluktuasi postaurikular, hilangnya lekukan retroaurikular, serta protrusi aurikula setelah OMA sangat mendukung mastoiditis akut dengan dugaan abses subperiosteal. Riwayat obat yang tidak selesai penting untuk stewardship, tetapi tidak membuktikan keluarga menyebabkan komplikasi: mastoiditis juga dapat terjadi meski terapi awal diberikan. Di FKTP, nilai sepsis dan tanda intrakranial, pasang akses IV tanpa bolus cairan rutin bila tidak menunda, berikan antibiotik parenteral berbasis berat badan sesuai protokol jejaring, analgesia, monitoring, dan transfer segera. CT serta pilihan antara antibiotik saja, drainase, grommet, atau operasi mastoid ditentukan tim THT/rumah sakit; tidak semua anak otomatis memerlukan mastoidektomi.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. SKDI 2012 menempatkan mastoiditis pada tingkat 3A: diagnosis, tata laksana awal, lalu rujuk. PPK 1186/2022 tidak memiliki bab mastoiditis; bab Otitis Media Akut hanya menjadi floor terkait karena mencantumkan komplikasi ekstra-temporal/intrakranial dan mewajibkan rujukan. Children's Mercy Acute Mastoiditis Clinical Pathway 2026 mendefinisikan tanda utama berupa protrusi aurikula dan/atau fluktuasi, nyeri, edema, atau eritema postaurikular; meminta antibiotik empiris, rawat inap dan konsultasi THT; serta menyerahkan kebutuhan operasi kepada THT. BSAC Paediatric Pathway juga membedakan infeksi sedang/berat, terapi IV, imaging pada red flag, dan source control selektif.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. SKDI 2012 menempatkan mastoiditis di tingkat 3A: dokter FKTP mendiagnosis, memberi tata laksana awal, lalu merujuk.\n\nPPK 1186/2022 tidak punya bab mastoiditis. Bab Otitis Media Akut hanya terkait — ia menyebut komplikasi ekstra-temporal/intrakranial dan mewajibkan rujukan, tapi bukan panduan mastoiditis itu sendiri.\n\nChildren's Mercy Acute Mastoiditis Clinical Pathway 2026 menyebut tanda utamanya: daun telinga terdorong ke depan dan/atau ada fluktuasi, nyeri, bengkak, atau kemerahan di belakang telinga. Tata laksananya antibiotik empiris, rawat inap, dan konsultasi THT — keputusan operasi ada di tangan THT, bukan FKTP. BSAC Paediatric Pathway menambahkan pembedaan infeksi sedang vs berat, terapi intravena, pencitraan bila ada tanda bahaya, dan pembersihan sumber infeksi secara selektif.",
         "realityNote": "Antibiotik mewakili regimen parenteral berbasis berat badan dan protokol jejaring, bukan seftriakson 1 g universal. Akses IV dipakai untuk obat, bukan bolus cairan rutin. Laboratorium, CT, dan ambulans tidak diasumsikan selalu ready; kegagalan akses atau penunjang tidak boleh menunda koordinasi transfer. Rute alternatif dan dosis pertama mengikuti protokol lokal serta kondisi anak.",
         "ebmPearl": "Perforasi gendang dapat menurunkan tekanan dan nyeri OMA, sehingga berhentinya keluhan telinga tidak selalu berarti proses selesai. Namun mastoiditis tidak boleh diajarkan sebagai hukuman pasti karena orang tua menghentikan antibiotik: tanda postaurikular dan kondisi sistemiklah yang mengubah diagnosis dan urgensi. Riwayat durasi, dosis, kepatuhan, serta respons obat dipakai untuk memilih terapi berikutnya tanpa menyalahkan keluarga."
       },
@@ -25377,7 +25377,7 @@
       },
       "currentEditorial": {
         "clue": "Otore kronik berbau, perforasi atik atau marginal, granulasi, debris putih, penurunan pendengaran progresif, nyeri kepala, dan vertigo menimbulkan kecurigaan kuat OMSK tipe bahaya dengan kolesteatoma serta kemungkinan komplikasi labirin. Vertigo saat tekanan atau manipulasi meningkatkan kecurigaan fistula labirin, tetapi tidak membuktikan erosi tulang tanpa evaluasi spesialis dan pencitraan. Di FKTP: nilai saraf wajah dan tanda intrakranial, bersihkan sekret secara kering tanpa irigasi, jaga telinga tetap kering, hindari tetes ototoksik atau produk yang kontraindikasi pada perforasi, dan rujuk cepat ke THT. Kolesteatoma memerlukan penilaian bedah; antibiotik hanya menangani infeksi penyerta, bukan menghilangkan lesinya.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK 1186/2022 memisahkan OMSK aman dari tipe bahaya dan mewajibkan rujukan pada kolesteatoma atau komplikasi. Namun rekomendasi PPK untuk asam asetat 2% tidak dipakai pada vignette ini karena label produk DailyMed 2025 yang sudah tersimpan dalam registry proyek mencantumkan membran timpani perforasi sebagai kontraindikasi. Queensland Health CSOM Criteria, diperbarui 2025, menganjurkan dry mopping, menjaga telinga kering, kuinolon topikal non-ototoksik bila tersedia, dan rujukan untuk dugaan kolesteatoma; kasus dengan vertigo, nyeri kepala, atau defisit saraf memerlukan jalur lebih mendesak.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 memisahkan OMSK aman dari tipe bahaya dan mewajibkan rujukan pada kolesteatoma atau komplikasi. Namun rekomendasi PPK untuk asam asetat 2% tidak dipakai pada vignette ini karena label produk DailyMed 2025 yang sudah tersimpan dalam registry proyek mencantumkan membran timpani perforasi sebagai kontraindikasi. Queensland Health CSOM Criteria, diperbarui 2025, menganjurkan dry mopping, menjaga telinga kering, kuinolon topikal non-ototoksik bila tersedia, dan rujukan untuk dugaan kolesteatoma; kasus dengan vertigo, nyeri kepala, atau defisit saraf memerlukan jalur lebih mendesak.",
         "realityNote": "Fornas 1199/2025 mencantumkan asam asetat 2% tetapi tidak menyediakan kuinolon otik pada daftar yang dipakai proyek. Karena pasien ini memiliki perforasi dan tanda komplikasi, Sukamaju tidak mengimprovisasi pengganti: lakukan pembersihan kering, proteksi dari air, dan percepat rujukan. Ketersediaan tetes non-ototoksik di jejaring harus dikonfirmasi, bukan diasumsikan.",
         "ebmPearl": "OMSK berbahaya dapat tampak deceptively tenang: nyeri dan demam bisa minimal meski kolesteatoma merusak struktur sekitar. Bau, lokasi perforasi, debris atau polip, gangguan pendengaran progresif, vertigo, paresis fasialis, dan gejala intrakranial lebih penting daripada banyaknya cairan. Telinga yang sementara kering setelah antibiotik juga tidak membuktikan kolesteatoma berhenti tumbuh."
       },
@@ -25574,7 +25574,7 @@
       },
       "currentEditorial": {
         "clue": "Rinorea jernih dan kongesti dipicu iritan atau perubahan suhu tanpa gatal dominan mendukung rinitis vasomotor. Hindari pemicu, bilas salin, dan kortikosteroid intranasal dapat dipakai untuk gejala menetap.",
-        "officialGuidance": "PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan. PPK mencantumkan kortikosteroid intranasal dan penghindaran iritan; tindakan operatif menjadi alasan rujukan.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK mencantumkan kortikosteroid intranasal dan penghindaran iritan; tindakan operatif menjadi alasan rujukan.",
         "realityNote": "Flutikason intranasal dipakai sebagai EBM yang lebih praktis, tetapi tidak ditandai sebagai item Fornas FKTP pada katalog lab; bila tidak tersedia, jangan menggantinya dengan antibiotik atau dekongestan berkepanjangan."
       },
       "evidence": {

@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-14-igd-adjudication.v2",
-  "generatedAt": "2026-08-02T06:43:35.528Z",
-  "sourceCommit": "076667c86f38+working-tree",
+  "generatedAt": "2026-08-02T09:33:09.602Z",
+  "sourceCommit": "b665e7d31fa0+working-tree",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 63,
-  "packFingerprint": "5024490c",
-  "artifactFingerprint": "00c223adb7fc256f5acdf154bfe173945291bfb92ec6e5b9a5fd44742da73334",
+  "packFingerprint": "03bd2d05",
+  "artifactFingerprint": "e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",
     "Apakah urutan ABC/stabilisasi awal benar, tidak menunda tindakan penyelamat nyawa, dan masuk akal di FKTP?",
@@ -1187,7 +1187,7 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "bedah",
       "referralCapabilities": [],
-      "officialGuidance": "PNPK Luka Bakar dan PPK FKTP menjadi floor. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.",
+      "officialGuidance": "PNPK Luka Bakar dan PPK FKTP menjadi acuan dasar. Hentikan proses bakar tanpa menarik kain yang melekat, dinginkan 20 menit tanpa hipotermia, beri oksigen konsentrasi tinggi pada suspek cedera inhalasi, dan gunakan kristaloid seimbang sekitar 2 mL/kg/%TBSA/24 jam sebagai estimasi awal yang dititrasi. Antibiotik profilaksis rutin tidak dianjurkan; transfer ke burn-airway capable service.",
       "teachingPearl": "Luka bakar derajat II-III seluas sekitar 25% permukaan tubuh dapat menyebabkan kebocoran plasma, syok, dan infeksi. Hentikan proses bakar: lepaskan pakaian panas serta perhiasan, lalu dinginkan dengan air mengalir bersuhu ruang sekitar 20 menit. Jangan gunakan es. Nilai ABC dan curigai cedera inhalasi pada kebakaran ruang tertutup, suara serak, bulu hidung hangus, atau jelaga di mulut. Ancaman jalan napas harus ditangani lebih dahulu. Pasang akses IV besar dan mulai kristaloid terhitung; formula Parkland dihitung sejak waktu terbakar dan dititrasi menurut respons klinis serta produksi urin. Jangan mengoleskan odol, kecap, minyak, atau mentega. Tutup luka secara bersih dan rujuk ke pusat luka bakar. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan prinsip EMSB/ATLS.",
       "debrief": {
         "keyPoints": [
@@ -1386,7 +1386,7 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "obgyn",
       "referralCapabilities": [],
-      "officialGuidance": "PNPK komplikasi kehamilan dan PPK FKTP menjadi floor; WHO/FIGO/ICM 2025-2026 memperbarui bundel MOTIVE. Jalankan masase, oksitosin, TXA 1 g IV, kristaloid hangat, pemeriksaan 4T, serta eskalasi secara paralel. Listing Fornas tidak menjamin readiness; rujuk ke darah, anestesi, operasi, kendali sumber, ICU, dan dukungan neonatus.",
+      "officialGuidance": "PNPK komplikasi kehamilan dan PPK FKTP menjadi acuan dasar; WHO/FIGO/ICM 2025-2026 memperbarui bundel MOTIVE. Jalankan masase, oksitosin, TXA 1 g IV, kristaloid hangat, pemeriksaan 4T, serta eskalasi secara paralel. Listing Fornas tidak menjamin readiness; rujuk ke darah, anestesi, operasi, kendali sumber, ICU, dan dukungan neonatus.",
       "teachingPearl": "Perdarahan pascasalin ditelusuri dengan 4T: Tone, Tissue, Trauma, dan Thrombin. Uterus lembek setinggi pusat menunjuk ke atonia, penyebab tersering. Begitu PPH dikenali, jangan mengerjakan terapi satu per satu: jalankan bundel respons pertama secara simultan — panggil bantuan dan eskalasi/rujuk, MASASE uterus, berikan oksitosin, berikan asam traneksamat sedini mungkin dan dalam 3 jam kelahiran, pasang akses IV dengan kristaloid, serta periksa sumber perdarahan. Bila uterus tetap lembek, lakukan KOMPRESI BIMANUAL dan pertahankan; tampon uterus atau kondom kateter dapat menjadi jembatan bila tersedia. Rujuk SAMBIL kompresi dan cairan berjalan, dengan pra-notifikasi RS. Jangan menunggu Hb/golongan darah atau melepaskan kompresi demi memindahkan pasien (PPK FKTP KMK 1186/2022; WHO/FIGO/ICM Consolidated PPH Guideline 2025 dan Implementation Guide 2026; panduan Kemenkes/POGI).",
       "debrief": {
         "keyPoints": [
@@ -1593,7 +1593,7 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "bedah",
       "referralCapabilities": [],
-      "officialGuidance": "PNPK Trauma dan PPK FKTP menjadi floor. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.",
+      "officialGuidance": "PNPK Trauma dan PPK FKTP menjadi acuan dasar. Pada dugaan pneumotoraks tensi dengan instabilitas, jangan menunda dekompresi untuk foto. Encounter harus menyatakan operator, lokasi protokol, kateter cukup panjang, monitoring, dan transport; keberhasilan dinilai dari respons serial, bukan desis. Needle decompression adalah jembatan menuju chest drain dan trauma care definitif.",
       "teachingPearl": "Pneumotoraks tensi terjadi ketika udara masuk ke rongga pleura tetapi tidak dapat keluar. Tekanan yang meningkat mengempiskan paru dan menghambat aliran balik vena, sehingga timbul syok obstruktif. Diagnosisnya klinis: sesak progresif setelah trauma dada, satu sisi dada tertinggal dan hipersonor, suara napas menghilang, distensi vena leher, hipotensi, atau deviasi trakea. Jangan menunggu foto toraks. Beri oksigen aliran tinggi dan lakukan dekompresi segera oleh tenaga terlatih dengan alat serta lokasi sesuai protokol. Masukkan kateter di atas tepi iga untuk menghindari berkas neurovaskular, fiksasi, lalu pantau patensi dan kekambuhan selama perjalanan. Rujuk segera ke layanan bedah untuk drainase definitif. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan prinsip ATLS.",
       "debrief": {
         "keyPoints": [
@@ -1791,7 +1791,7 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "saraf",
       "referralCapabilities": [],
-      "officialGuidance": "PNPK Epilepsi Dewasa 2026 menjadi floor: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.",
+      "officialGuidance": "PNPK Epilepsi Dewasa 2026 menjadi acuan dasar: status konvulsif ditangani sejak menit ke-5 dengan proteksi, dukungan airway-ventilasi, glukosa, dan diazepam dosis terukur yang dapat diulang sekali. Bila dua dosis adekuat gagal, pertahankan monitoring serta transfer ke kemampuan obat lini kedua, EEG, airway, dan ICU; listing Fornas tidak membuktikan kesiapan infus di setiap FKTP.",
       "teachingPearl": "Status epileptikus adalah kejang lebih dari lima menit, atau kejang berulang tanpa pemulihan kesadaran. Setiap menit tambahan membuat kejang makin sulit dihentikan. Miringkan pasien, lindungi kepala, bebaskan jalan napas, dan beri oksigen. Jangan memasukkan benda ke mulut. Pasang akses IV dan monitor, lalu periksa gula darah kapiler untuk mencari hipoglikemia yang dapat segera dikoreksi. Benzodiazepin adalah terapi lini pertama dan dapat diulang satu kali sesuai protokol; antiepileptik lini kedua diberikan sesudahnya. Bila kejang menetap setelah dosis benzodiazepin yang adekuat, pertahankan jalan napas dan oksigenasi selama rujukan emergensi ke layanan saraf. Acuan: PPK Dokter di FKTP KMK 1186/2022 dan konsensus PERDOSSI.",
       "debrief": {
         "keyPoints": [
@@ -2364,7 +2364,7 @@
       "correctDisposition": "rujuk",
       "referralSpecialty": "penyakit_dalam",
       "referralCapabilities": [],
-      "officialGuidance": "PNPK Sepsis 2017 dan PPK FKTP menjadi floor, dengan SSC 2026 sebagai pembaruan cairan individual, antibiotik satu jam, vasopresor, source control, dan quality improvement. Beri kristaloid seimbang 250-500 mL lalu nilai ulang; gunakan seftriakson 2 g IV hanya sebagai stok jembatan berprotokol pada encounter ini, dan transfer tanpa menunggu administrasi.",
+      "officialGuidance": "PNPK Sepsis 2017 dan PPK FKTP menjadi acuan dasar, dengan SSC 2026 sebagai pembaruan cairan individual, antibiotik satu jam, vasopresor, source control, dan quality improvement. Beri kristaloid seimbang 250-500 mL lalu nilai ulang; gunakan seftriakson 2 g IV hanya sebagai stok jembatan berprotokol pada encounter ini, dan transfer tanpa menunggu administrasi.",
       "teachingPearl": "Sepsis adalah disfungsi organ akibat respons tubuh yang tidak terkendali terhadap infeksi. Di FKTP, sumber infeksi disertai hipotensi, akral dingin, pengisian kapiler memanjang, kesadaran menurun, takipnea, atau urin berkurang sudah cukup untuk bertindak. Jangan menunggu laktat atau kultur yang tidak tersedia. SSC 2026 menganjurkan kristaloid hingga sekitar 30 mL/kg dalam tiga jam pertama pada syok, diberikan bertahap dengan penilaian ulang perfusi dan tanda kelebihan cairan. Ambil kultur hanya bila tersedia dan tidak menunda antibiotik IV empiris. Pada syok, antibiotik diberikan segera, idealnya dalam satu jam. Rujuk dengan pemantauan. Kebutuhan vasopresor mempercepat rujukan karena Sukamaju tidak memiliki pompa, monitor, dan protokol yang diperlukan.",
       "debrief": {
         "keyPoints": [

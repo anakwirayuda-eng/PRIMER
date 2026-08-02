@@ -21,10 +21,10 @@ vi.mock('./synth', () => ({
   sfxPagi: vi.fn(),
   sfxSelesai: vi.fn(),
 }))
-vi.mock('./ambient', () => ({ redamAmbient: vi.fn() }))
+vi.mock('./bgm', () => ({ redamBgm: vi.fn() }))
 
 import { sfxBuzzer, sfxKodeHitam, sfxBel } from './synth'
-import { redamAmbient } from './ambient'
+import { redamBgm } from './bgm'
 import { useAudio } from './useAudio'
 
 function Harness() {
@@ -46,10 +46,10 @@ describe('useAudio — pemetaan event ke SFX', () => {
     render(<Harness />)
   })
 
-  it('KODE_HITAM memakai sfxKodeHitam + redamAmbient, BUKAN sfxBuzzer (dulu disamakan dgn kesalahan rutin)', () => {
+  it('KODE_HITAM memakai sfxKodeHitam + redamBgm, BUKAN sfxBuzzer (dulu disamakan dgn kesalahan rutin)', () => {
     tembakEvent({ type: 'KODE_HITAM', narasi: 'Kode Hitam. Uji tidak tertolong.' })
     expect(sfxKodeHitam).toHaveBeenCalledTimes(1)
-    expect(redamAmbient).toHaveBeenCalledTimes(1)
+    expect(redamBgm).toHaveBeenCalledTimes(1)
     expect(sfxBuzzer).not.toHaveBeenCalled()
   })
 

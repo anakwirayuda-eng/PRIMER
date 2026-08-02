@@ -6,7 +6,7 @@ export interface LabArchetypeSpec {
   credits: string[]
 }
 
-const PPK_FLOOR = 'PPK Dokter FKTP KMK 1186/2022 menjadi floor; terapi disesuaikan dengan pedoman yang lebih baru bila relevan.'
+const PPK_FLOOR = 'Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti.'
 
 export const LAB_BATCH_1_CASES: KasusKlinis[] = [
   buatKasusLab({
@@ -792,7 +792,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     konfirmasiWajib: 'anti_hav_igm',
     clue: 'Prodromal demam-mual diikuti ikterus, urine gelap, ALT/AST tinggi, dan IgM anti-HAV reaktif menegakkan hepatitis A akut. WHO 2026: tidak ada antivirus spesifik; fokus cairan-nutrisi, hindari obat tidak perlu, dan pantau gagal hati. Tiga penghuni kos yang sakit sesudah pajanan warung bersama harus memicu notifikasi, line list, penetapan jendela pajanan, dan penyelidikan pangan-air bersama kesehatan lingkungan. Ini sinyal klaster untuk dinilai, bukan izin otomatis menutup warung atau menganggap sumber sudah terbukti.',
-    panduanResmi: `${PPK_FLOOR} PPK menjadi floor terapi suportif dan rujukan tanda gagal hati. WHO Hepatitis A 2026 dan Outbreak Toolbox 2024 menambahkan definisi kasus terkonfirmasi IgM anti-HAV serta alur surveilans, line list, konfirmasi laboratorium, dan respons berbasis konteks. Vaksinasi atau profilaksis pascapajanan dinilai program menurut kebijakan, waktu pajanan, kelayakan, dan stok; bukan resep blanket dari satu kunjungan.`,
+    panduanResmi: `${PPK_FLOOR} PPK menjadi acuan dasar terapi suportif dan rujukan tanda gagal hati. WHO Hepatitis A 2026 dan Outbreak Toolbox 2024 menambahkan definisi kasus terkonfirmasi IgM anti-HAV serta alur surveilans, line list, konfirmasi laboratorium, dan respons berbasis konteks. Vaksinasi atau profilaksis pascapajanan dinilai program menurut kebijakan, waktu pajanan, kelayakan, dan stok; bukan resep blanket dari satu kunjungan.`,
     catatanRealita: 'AST/ALT dan IgM anti-HAV dijadwalkan melalui jejaring laboratorium; hasilnya tidak diasumsikan tersedia seketika di meja poli. Respons wilayah dimulai dari verifikasi hubungan waktu-tempat-orang dan inspeksi kesehatan lingkungan, tanpa membuka identitas pasien atau menghukum usaha sebelum sumber terkonfirmasi.',
   }),
 
@@ -936,7 +936,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['posisi_semifowler', 'oksigen', 'akses_iv_tanpa_bolus'],
     clue: 'Ortopnea mendadak, sputum berbusa, ronki difus, hipertensi berat, dan SpO2 84% mendukung edema paru akut hipertensif. Dudukkan, titrasi oksigen, pasang akses IV tanpa bolus cairan rutin, berikan furosemid intravena, pantau tekanan darah dan respons, lalu transfer segera. ISDN sublingual hanya opsi jembatan bila protokol lokal mengizinkan, tekanan darah dipantau, dan tidak ada kontraindikasi; satu tablet bukan pengganti nitrat intravena terpantau di layanan akut.',
-    panduanResmi: `${PPK_FLOOR} Bab gagal jantung akut PPK 1186/2022 menjadi floor terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. ESC 2021 dengan focused update 2023 mendukung diuretik intravena untuk kongesti; vasodilator hanya untuk presentasi terpilih seperti hipertensi berat dengan pemantauan tekanan darah dan kapabilitas yang memadai.`,
+    panduanResmi: `${PPK_FLOOR} Bab gagal jantung akut PPK 1186/2022 menjadi acuan dasar terkait, bukan pedoman diagnosis-spesifik edema paru hipertensif: oksigen bila hipoksemik, akses IV, furosemid injeksi 20-40 mg, lalu segera rujuk. ESC 2021 dengan focused update 2023 mendukung diuretik intravena untuk kongesti; vasodilator hanya untuk presentasi terpilih seperti hipertensi berat dengan pemantauan tekanan darah dan kapabilitas yang memadai.`,
     catatanRealita: 'Vignette ini menyatakan oksigen, pulse oximeter, furosemid injeksi, akses IV, EKG beserta operator, monitoring, dan transport sedang ready. EKG dilakukan paralel dan tidak boleh menunda transfer. CPAP/nitrat intravena tidak diasumsikan tersedia di Sukamaju; ketiadaannya tidak boleh menunda stabilisasi feasible dan transfer.',
   }),
 
@@ -1025,7 +1025,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, sepsis, hidrasi, dan kemampuan menelan; beri analgesia serta antibiotik awal bila rute oral aman, pantau selama menunggu, lalu transfer untuk evaluasi THT dan source control. Drainase biasanya menjadi bagian tata laksana abses terkonfirmasi, tetapi teknik dan tempatnya bergantung pada kompetensi, toleransi pasien, anatomi, serta kesiapan suction dan jalan napas - bukan aspirasi buta di FKTP.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi floor terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.`,
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi acuan dasar terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.`,
     catatanRealita: 'Pasien ini masih dapat menelan, tidak stridor, dan tidak sepsis, sehingga antibiotik oral pra-rujuk dimodelkan tanpa menunda transfer. Bila ludah sama sekali tidak dapat ditelan, ada stridor, hipoksia, kelelahan napas, toksisitas, atau pembengkakan leher cepat, jangan memaksa obat oral atau pemeriksaan agresif; prioritaskan jalan napas, monitoring, dan transfer emergensi.',
     mutiaraEbm: 'Deviasi uvula membantu, tetapi bukan satu-satunya penentu dan tidak membedakan abses dari selulitis peritonsil dengan sempurna. Kombinasi nyeri unilateral, trismus, perubahan suara, palatal fullness, kemampuan menelan, serta tanda perluasan leher menentukan urgensi; pencitraan tidak rutin diperlukan pada presentasi klasik dan tidak boleh menunda rujukan bila komplikasi dicurigai.',
   }),
@@ -1126,7 +1126,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     stabilisasiWajib: ['akses_iv_resusitasi', 'dekompresi_ngt', 'pemantauan_ketat_vital'],
     clue: 'Nyeri kolik, muntah bilious, obstipasi, distensi, timpani, dan bising metalik mendukung obstruksi usus mekanik; riwayat operasi abdomen membuat adhesi mungkin, tetapi etiologi final ditentukan di RS. Puasakan, pasang akses IV dan koreksi kehilangan cairan secara terukur, lakukan dekompresi NGT bila aman, pantau perfusi, lalu rujuk bedah. Jangan memberi laksatif atau antimotilitas.',
-    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab obstruksi usus halus yang diagnosis-spesifik; bab peritonitis hanya menjadi floor terkait untuk mengenali perburukan dan merujuk. WSES Bologna 2017 menjadi rujukan langsung: puasa, dekompresi NGT, cairan IV, serta penilaian berulang; peritonitis, strangulasi, atau iskemia menutup pilihan tata laksana nonoperatif.`,
+    panduanResmi: `${PPK_FLOOR} PPK 1186/2022 tidak mempunyai bab obstruksi usus halus yang diagnosis-spesifik; bab peritonitis hanya menjadi acuan dasar terkait untuk mengenali perburukan dan merujuk. WSES Bologna 2017 menjadi rujukan langsung: puasa, dekompresi NGT, cairan IV, serta penilaian berulang; peritonitis, strangulasi, atau iskemia menutup pilihan tata laksana nonoperatif.`,
     catatanRealita: 'Skenario menyatakan NGT, cairan, operator, monitoring, dan transport siap. Pemeriksaan elektrolit dan pencitraan abdomen tidak diasumsikan tersedia segera di Sukamaju dan tidak boleh menjadi syarat transfer. Bila NGT tidak dapat dipasang aman, jangan menunda transfer atau melakukan probing berulang.',
     mutiaraEbm: 'Tidak adanya defans atau nyeri menetap saat ini tidak membuat pasien aman dipulangkan. Tata laksana nonoperatif obstruksi adhesif adalah jalur rawat dan observasi serial di fasilitas bedah, bukan resep pulang dari FKTP; strangulasi dapat berkembang dan tanda klinis awalnya tidak selalu lengkap.',
     konsekuensi: {

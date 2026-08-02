@@ -8,9 +8,9 @@ interface LabDefinition {
   spec: FktpLabSpec
 }
 
-const PPK = 'PPK Dokter FKTP KMK 1186/2022 menjadi floor keputusan; sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.'
-const PNPK_COT_2022 = 'PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi floor khusus untuk penilaian trauma kepala.'
-const PNPK_TRAUMA_2017 = 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi floor lintas fasilitas untuk survei primer, penilaian luka, stabilisasi, dan rujukan trauma.'
+const PPK = 'Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.'
+const PNPK_COT_2022 = 'PNPK Cedera Otak Traumatik KMK HK.01.07/MENKES/1600/2022 menjadi acuan dasar khusus untuk penilaian trauma kepala.'
+const PNPK_TRAUMA_2017 = 'PNPK Tata Laksana Trauma KMK HK.01.07/MENKES/132/2017 menjadi acuan dasar lintas fasilitas untuk survei primer, penilaian luka, stabilisasi, dan rujukan trauma.'
 const NORMAL = { td: '120/78', nadi: 78, rr: 18, suhu: 36.7, spo2: 99 } as const
 
 const DEFINITIONS: LabDefinition[] = [
@@ -104,7 +104,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L08.0', 'L01.0', 'L97'],
       tatalaksana: { obatBenar: ['cefadroxil_sirup_125'], obatOpsional: ['mupirosin_krim'], prosedur: ['perawatan_luka'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Ulkus berkrusta tebal yang lebih dalam daripada impetigo mendukung ektima. Bersihkan krusta secara lembut dan beri antibiotik antistafilokokus/streptokokus; evaluasi selulitis, diabetes, dan respons.',
-      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan tidak identik dengan ektima. IDSA SSTI membedakan ektima sebagai infeksi lebih dalam dan merekomendasikan antibiotik oral sekitar 7 hari yang mencakup S. aureus serta streptokokus, dengan kultur bila pola tidak tipikal atau respons buruk.`,
+      panduanResmi: `${PPK} Bab pioderma hanya acuan dasar terkait dan tidak identik dengan ektima. IDSA SSTI membedakan ektima sebagai infeksi lebih dalam dan merekomendasikan antibiotik oral sekitar 7 hari yang mencakup S. aureus serta streptokokus, dengan kultur bila pola tidak tipikal atau respons buruk.`,
     },
   },
   {
@@ -122,7 +122,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L73.9', 'L02', 'L70.0'],
       tatalaksana: { obatBenar: ['mupirosin_krim'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Pustul kecil folikulosentrik tanpa abses atau gejala sistemik adalah folikulitis superfisial. Hentikan pencukuran sementara, kompres/higiene, terapi topikal terbatas; antibiotik oral tidak rutin.',
-      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan bukan padanan folikulitis identik. IDSA SSTI membantu memisahkan proses folikular superfisial dari furunkel/abses yang memerlukan drainase; perluasan, kekambuhan, hot-tub exposure, atau gejala sistemik mengubah evaluasi.`,
+      panduanResmi: `${PPK} Bab pioderma hanya acuan dasar terkait dan bukan padanan folikulitis identik. IDSA SSTI membantu memisahkan proses folikular superfisial dari furunkel/abses yang memerlukan drainase; perluasan, kekambuhan, hot-tub exposure, atau gejala sistemik mengubah evaluasi.`,
     },
   },
   {
@@ -140,7 +140,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['L02', 'L73.9', 'L03.9'],
       tatalaksana: { obatBenar: [], prosedur: ['insisi_abses'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Furunkel berfluktuasi memerlukan insisi-drainase aseptik. Antibiotik sistemik bukan pengganti drainase dan tidak rutin pada abses kecil tanpa selulitis luas, gejala sistemik, lokasi berisiko, atau imunokompromais.',
-      panduanResmi: `${PPK} Bab pioderma hanya floor terkait dan bukan padanan furunkel identik. IDSA SSTI merekomendasikan insisi-drainase untuk furunkel besar atau fluktuatif; antibiotik sistemik biasanya tidak diperlukan tanpa demam, tanda sistemik, pertahanan host terganggu, atau kegagalan kendali sumber.`,
+      panduanResmi: `${PPK} Bab pioderma hanya acuan dasar terkait dan bukan padanan furunkel identik. IDSA SSTI merekomendasikan insisi-drainase untuk furunkel besar atau fluktuatif; antibiotik sistemik biasanya tidak diperlukan tanpa demam, tanda sistemik, pertahanan host terganggu, atau kegagalan kendali sumber.`,
     },
   },
   {
@@ -224,7 +224,7 @@ const DEFINITIONS: LabDefinition[] = [
       diagnosisBanding: ['A30', 'B36.0', 'L30.0'],
       tatalaksana: { obatBenar: ['mdt_kusta_pb'], edukasi: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta', 'skrining_kontak_kusta'], edukasiKritis: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta'] },
       clue: 'Hilangnya sensasi yang pasti pada lesi adalah tanda kardinal kusta, sehingga gambaran klasik ini dapat didiagnosis klinis tanpa mewajibkan slit-skin smear. Satu sampai lima lesi tanpa bacilli yang terbukti diklasifikasikan PB untuk terapi: MDT tiga obat selama enam bulan. Catat fungsi saraf dan derajat disabilitas sebagai baseline lalu pantau serial; reaksi dapat timbul sebelum, selama, atau setelah MDT dan tidak boleh membuat pasien menghentikan MDT sendiri. Skrining kontak dan SDR-PEP hanya berjalan melalui program setelah konseling, persetujuan, serta penilaian kelayakan.',
-      panduanResmi: `${PPK} PNPK kusta menjadi floor nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.`,
+      panduanResmi: `${PPK} PNPK kusta menjadi acuan dasar nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.`,
       catatanRealita: 'MDT adalah obat program dan Sukamaju dinyatakan terhubung dengan program kusta kabupaten. Diagnosis klasik tidak dibuat bergantung pada operator slit-skin smear; penelusuran kontak menghormati keputusan pasien tentang pengungkapan diagnosis dan tidak boleh memperkuat stigma.',
     },
   },
@@ -247,7 +247,7 @@ const DEFINITIONS: LabDefinition[] = [
       tatalaksana: { obatBenar: ['benzatin_penisilin_24juta'], edukasi: ['tindak_lanjut_sifilis', 'layanan_pasangan_sifilis', 'reaksi_jarisch_herxheimer'], edukasiKritis: ['tindak_lanjut_sifilis', 'layanan_pasangan_sifilis'] },
       konfirmasiWajib: 'tes_sifilis',
       clue: 'Chancre tunggal tidak nyeri dan serologi treponemal plus RPR reaktif mendukung sifilis primer. Beri benzathine penicillin G 2,4 juta unit IM dosis tunggal, dokumentasikan titer awal, dan jadwalkan RPR kuantitatif untuk menilai respons. Nilai gejala neurologis, okular, dan otik; status kehamilan wajib diketahui karena penicillin adalah terapi yang terbukti mencegah sifilis kongenital dan alergi pada kehamilan memerlukan jalur desensitisasi spesialis. Jelaskan Jarisch-Herxheimer, ulang tes HIV sesuai window period/risiko, dan hindari hubungan sampai sedikitnya tujuh hari setelah terapi serta pasangan telah ditangani.',
-      panduanResmi: `${PPK} Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai floor teknis layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.`,
+      panduanResmi: `${PPK} Permenkes 3/2026 mempertahankan Pasal 41 dan Lampiran Permenkes 23/2022 sebagai acuan dasar teknis layanan IMS nasional. WHO 2024 mempertahankan benzathine penicillin untuk sifilis dini dan menekankan testing serta partner services yang sukarela, rahasia, berpusat pada pasien, dan menilai risiko kekerasan.`,
       catatanRealita: 'Benzathine penicillin tercantum dalam formularium, tetapi pemberian tetap memerlukan skrining alergi dan kesiapan menangani reaksi segera. Pasangan ditawari evaluasi dan terapi berdasarkan tahap serta waktu pajanan; tidak ada pengungkapan diagnosis atau pelacakan koersif.',
     },
   },
@@ -703,7 +703,7 @@ const DEFINITIONS: LabDefinition[] = [
         edukasiKritis: ['pertolongan_luka_bakar', 'kontrol_luka_bakar'],
       },
       clue: 'Dasar merah muda-merah, lembap, sangat nyeri, sensasi utuh, blister kecil, dan blanching cepat mendukung superficial partial-thickness. Lanjutkan air mengalir sejuk hingga total 20 menit sambil menghangatkan bagian tubuh lain, beri parasetamol, bersihkan lembut, lalu pasang balutan non/low-adherent tanpa melingkar ketat. Blister kecil tidak tegang dibiarkan utuh. Seri tetanus lengkap dengan booster tiga tahun lalu tidak memerlukan vaksin atau TIG tambahan. Jangan gunakan es, pasta, minyak, antibiotik sistemik profilaksis, silver sulfadiazine rutin, atau cairan formula Parkland pada luka stabil 2% ini.',
-      panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 dan PNPK Tata Laksana Luka Bakar KMK 555/2019 menjadi floor Indonesia untuk diagnosis, penilaian luas-kedalaman, status tetanus, pembersihan lembut, balutan, dan batas rujukan. ACI Burn Patient Management edisi 2026 memperbarui detail first aid menjadi air mengalir sejuk selama 20 menit, penilaian palmar pasien untuk luka kecil, rawat jalan pada luka minor tanpa hambatan fisik-sosial, serta evaluasi ulang karena kedalaman dapat berubah. Luka ini tidak memenuhi kriteria transfer otomatis, tetapi kapasitas lokal dan akses follow-up tetap menentukan.',
+      panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 dan PNPK Tata Laksana Luka Bakar KMK 555/2019 menjadi acuan dasar Indonesia untuk diagnosis, penilaian luas-kedalaman, status tetanus, pembersihan lembut, balutan, dan batas rujukan. ACI Burn Patient Management edisi 2026 memperbarui detail first aid menjadi air mengalir sejuk selama 20 menit, penilaian palmar pasien untuk luka kecil, rawat jalan pada luka minor tanpa hambatan fisik-sosial, serta evaluasi ulang karena kedalaman dapat berubah. Luka ini tidak memenuhi kriteria transfer otomatis, tetapi kapasitas lokal dan akses follow-up tetap menentukan.',
       catatanRealita: 'Sukamaju mampu mendinginkan dengan air mengalir, memberi analgesia oral, membersihkan lembut, dan memasang balutan non/low-adherent. Dressing khusus dan burn service tidak diasumsikan selalu tersedia. Gunakan balutan lembap aman sesuai stok; rujuk bila kedalaman meragukan, nyeri tak terkendali, perawatan melampaui kemampuan, atau kontrol tak terjamin. Jangan mengganti keterbatasan dengan antibiotik empiris.',
       mutiaraEbm: 'Luas luka bukan satu-satunya penentu berat. Kedalaman, lokasi khusus, inhalasi, luka sirkumferensial, komorbid, nyeri, fungsi, dan kondisi sosial dapat mengubah disposisi. Luka bakar juga dinamis dan dapat tampak lebih dalam dalam beberapa hari pertama; karena itu pasien kembali 24-72 jam. Rujuk bila luka memburuk, muncul gangguan fungsi atau neurovaskular, infeksi sistemik, kedalaman tidak pasti, atau penyembuhan belum nyata dalam 10-12 hari.',
       sumber: [

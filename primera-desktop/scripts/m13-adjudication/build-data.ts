@@ -707,7 +707,13 @@ function caseRecord(kasus: KasusKlinis, ordinal: number): AdjudicationCase {
     /\btidak (?:ada|ditemukan)\b[^.]{0,140}\bPPK\b/i.test(kasus.panduanResmi) ||
     /\bPPK\b[^.]{0,200}\bbukan pedoman diagnosis-spesifik\b/i.test(kasus.panduanResmi) ||
     /\btidak ada algoritme\b[^.]{0,140}\bPPK\b/i.test(kasus.panduanResmi) ||
-    /\b(?:bab|crosswalk)[^.]{0,180}\b(?:hanya (?:menjadi )?floor terkait|tidak identik|bukan (?:padanan|pedoman)[^.]{0,80}identik)\b/i.test(kasus.panduanResmi)
+    // Sapuan delivery 2026-08-02: jargon "floor" diganti "acuan dasar" di
+    // seluruh teks pemain. Pola ini HARUS mengenali keduanya — kalau tidak,
+    // pembatasan yang sudah dinyatakan penulis jadi tak terbaca kompiler dan
+    // kasus yang sebenarnya jujur ikut ditandai sourceAttributionWarning.
+    /\b(?:bab|crosswalk)[^.]{0,180}\b(?:hanya (?:menjadi )?(?:floor|acuan dasar) terkait|tidak identik|bukan (?:padanan|pedoman)[^.]{0,80}identik)\b/i.test(kasus.panduanResmi) ||
+    /\bPPK[^.]{0,120}\b(?:hanya )?(?:sumber|acuan dasar) terkait\b/i.test(kasus.panduanResmi) ||
+    /\bPPK[^.]{0,160}\btidak punya bab\b/i.test(kasus.panduanResmi)
   ))
   const sourceAttributionWarning = ppkMention && !ppkLimitationExplicit && ppk.relation !== 'direct'
 

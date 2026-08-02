@@ -16,6 +16,7 @@
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
     "check:bgm-license": "node scripts/check-bgm-license.js",
+    "audit:audio": "node scripts/audit-audio-licenses.mjs",
     "check:bundle": "node scripts/check-renderer-budget.js",
     "cohort:manifest": "vite-node --config vitest.config.ts scripts/generate-cohort-manifest.ts",
     "exam:simulate": "vite-node --config vitest.config.ts scripts/simulate-exam-blueprint.ts",
@@ -28,8 +29,8 @@
     "m13:kfa": "vite-node --config vitest.config.ts scripts/m13-adjudication/harvest-kfa.ts",
     "m13:adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate.ts",
     "m13:igd-adjudication": "vite-node --config vitest.config.ts scripts/m13-adjudication/generate-igd.ts",
-    "pack": "npm run check:bgm-license && npm run build && electron-builder --win --dir",
-    "dist": "npm run check:bgm-license && npm run build && electron-builder --win && npm run checksum",
+    "pack": "npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --win --dir",
+    "dist": "npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --win && npm run checksum",
     "checksum": "node scripts/checksum-rilis.js"
   },
   "build": {

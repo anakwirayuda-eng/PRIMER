@@ -137,7 +137,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['anc_rutin', 'tanda_bahaya_kehamilan', 'gizi_seimbang', 'kepatuhan_obat'],
     },
     clue: 'ANC menurut PMK 6/2024 mencakup sedikitnya enam kunjungan: satu pada trimester I, dua pada trimester II, dan tiga pada trimester III. Sedikitnya dua kunjungan dilakukan oleh dokter pada trimester I dan III, termasuk USG. Berikan tablet tambah darah harian berisi 60 mg besi elemental dan 0,4 mg asam folat, dengan standar 180 tablet per kehamilan. Bila mual, anjurkan minum setelah makan atau malam hari dan jauhkan dari teh atau kopi. Kenali tanda bahaya P4K tanpa memperlakukan kehamilan sehat sebagai penyakit.',
-    panduanResmi: 'PPK 1186/2022 masih memuat ANC 4 kali dan folat 250 mcg, sedangkan PMK 6/2024 sebagai standar Kemenkes yang lebih baru menetapkan K6, pelayanan 10T + USG, dua kunjungan dokter, dan 180 tablet tambah darah 60 mg besi elemental + 0,4 mg asam folat. Puskesmas yang belum mampu menyediakan USG wajib mengatur rujukan horizontal, bukan menghilangkan komponennya.',
+    panduanResmi: `Dua pedoman berbeda di sini, dan yang lebih baru menang. PPK 1186/2022 masih memuat ANC 4 kali dan folat 250 mcg. PMK 6/2024 — standar Kemenkes terbaru — menetapkan K6, pelayanan 10T disertai USG, dua kali kunjungan dokter, serta 180 tablet tambah darah berisi 60 mg besi elemental dan 0,4 mg asam folat.
+
+Puskesmas yang belum punya USG tetap wajib mengatur rujukan horizontal untuk komponen itu, bukan menghapusnya dari layanan.`,
     catatanRealita: 'PMK 6/2024 menetapkan K6, sedikitnya dua kunjungan dokter pada TM1/TM3 termasuk USG, serta rujukan horizontal bila Puskesmas belum mampu. Jadi USG tidak harus tersedia setiap hari di gedung yang sama, tetapi komponennya tidak boleh hilang: jadwalkan/jejaringkan dan dokumentasikan hasilnya.',
   },
 
@@ -253,7 +255,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasiKritis: ['kepatuhan_obat'],
     },
     clue: 'Sistitis pada kehamilan perlu kultur urin bila dapat diakses dan antibiotik 5–7 hari yang aman serta aktif terhadap kuman. Pada kehamilan 24 minggu ini, nitrofurantoin atau sefalosporin dapat menjadi pilihan empiris sesuai pola resistensi dan kondisi pasien; hindari amoksisilin/ampisilin empiris sebelum sensitivitas diketahui. Demam tinggi, nyeri CVA, muntah, atau toksisitas mengarah ke pielonefritis dan memerlukan rawat/rujuk.',
-    panduanResmi: 'PPK 1186/2022 bab ISK menjadi floor diagnosis dan rujukan, sedangkan PNPK ISK KMK 762/2025 memperkuat stewardship. ACOG Clinical Consensus 2023 yang ditegaskan kembali 2026 menganjurkan kultur pada sistitis kehamilan dan antibiotik terarah 5–7 hari; amoksisilin/ampisilin tidak dipakai empiris karena resistensi E. coli tinggi. Nitrofurantoin hanya untuk infeksi bawah, bukan pielonefritis, dan dihindari pada defisiensi G6PD yang diketahui.',
+    panduanResmi: 'PPK 1186/2022 bab ISK menjadi acuan dasar diagnosis dan rujukan, sedangkan PNPK ISK KMK 762/2025 memperkuat stewardship. ACOG Clinical Consensus 2023 yang ditegaskan kembali 2026 menganjurkan kultur pada sistitis kehamilan dan antibiotik terarah 5–7 hari; amoksisilin/ampisilin tidak dipakai empiris karena resistensi E. coli tinggi. Nitrofurantoin hanya untuk infeksi bawah, bukan pielonefritis, dan dihindari pada defisiensi G6PD yang diketahui.',
     konsekuensi: {
       narasi: 'Bila ISK tidak diobati tuntas, dapat naik menjadi pielonefritis akut dan mencetuskan kontraksi prematur; pemberian antibiotik teratogenik membahayakan janin.',
       kembaliHariMin: 3,
@@ -368,7 +370,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       terapiKritis: ['mgso4_inj'],
     },
     clue: 'Preeklampsia BERAT: TD ≥160/110 + proteinuria + gejala berat (nyeri kepala hebat, gangguan visus, nyeri epigastrium, hiperrefleksia/klonus, trombositopenia, SGOT/SGPT naik). WAJIB stabilisasi MgSO4 (loading + maintenance) & kendalikan TD dengan nifedipin/metildopa lalu RUJUK ke SpOG. JANGAN dipulangkan — risiko eklampsia/HELLP mengancam nyawa ibu & janin (PNPK Preeklampsia Kemenkes/POGI).',
-    panduanResmi: 'PPK 1186/2022: MgSO4 loading 4 g IV pelan (20 menit) + rumatan 6 g/6 jam, dengan SYARAT wajib refleks patella (+), urin ≥0,5 ml/kgBB/jam, & Ca Glukonas 10% siap sebagai antidot toksisitas Mg — detail keamanan pemberian yang tak dirinci clue. (ACE-inhibitor/ARB kontraindikasi pada bumil.)',
+    panduanResmi: 'Dosis MgSO4 menurut PPK 1186/2022: loading 4 g IV pelan selama 20 menit, lalu rumatan 6 g tiap 6 jam. Tiga syarat keamanan wajib dipenuhi sebelum dan selama pemberian: refleks patella masih ada, urin minimal 0,5 ml/kgBB/jam, dan Ca Glukonas 10% tersedia sebagai antidot bila terjadi toksisitas magnesium. Catatan terpisah: ACE-inhibitor dan ARB kontraindikasi pada ibu hamil.',
     konsekuensi: {
       narasi: 'Bila tidak diberi MgSO4 dan tidak dirujuk, pasien berisiko kejang eklampsia, perdarahan otak, sindrom HELLP, dan kematian ibu serta janin dalam hitungan jam.',
       kembaliHariMin: 0,
@@ -598,7 +600,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['asi_eksklusif', 'kontrol_rutin', 'kb_aman_menyusui'],
     },
     clue: 'Konseling KB pascapersalinan pada ibu MENYUSUI: pilihan aman = metode non-hormonal (IUD/AKDR, kondom) atau progestin-only (pil progestin, suntik DMPA 3 bulan, implan). HINDARI kontrasepsi kombinasi estrogen dalam 6 minggu pertama & selama menyusui dini (estrogen menurunkan produksi ASI + risiko trombosis). Konseling harus BERIMBANG (informed choice) — sesuaikan dengan rencana reproduksi & syarat medis (WHO MEC / Kemenkes BKKBN).',
-    panduanResmi: 'Permenkes 2/2025 mewajibkan konseling pilihan metode, efek samping, penapisan kelayakan medis, persetujuan tindakan, dan pelayanan sesuai pilihan klien. Pada ibu yang terutama menyusui usia 3 bulan, WHO MEC edisi ke-6 (2025) menempatkan metode progestin-only sebagai dapat digunakan, sedangkan kontrasepsi hormonal kombinasi berada pada kategori 3 sampai usia 6 bulan postpartum; karena itu pil kombinasi bukan pilihan rutin kasus ini.',
+    panduanResmi: `Konseling KB wajib mencakup lima hal: pilihan metode, efek sampingnya, penapisan kelayakan medis, persetujuan tindakan, dan pelayanan sesuai pilihan klien (Permenkes 2/2025).
+
+Untuk ibu menyusui pada 3 bulan pascasalin, WHO MEC edisi ke-6 (2025) menyatakan metode progestin-only boleh dipakai. Kontrasepsi hormonal kombinasi masuk kategori 3 sampai 6 bulan pascasalin — itulah sebabnya pil kombinasi bukan pilihan rutin di kasus ini.`,
     catatanRealita:
       'Layanan KB Puskesmas berjejaring dengan program BKKBN: pil progestin, suntik DMPA, dan kondom umumnya tersedia gratis. AKDR dan implan butuh pemasangan oleh tenaga terlatih — di sini dimodelkan lewat konseling pilihan metode, bukan tindakan pemasangan.',
   },
@@ -855,7 +859,7 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['manajemen_stres', 'aktivitas_fisik', 'higiene_tidur', 'kontrol_rutin'],
     },
     clue: 'Depresi ringan: ≥2 minggu mood depresif + anhedonia + gejala penyerta dengan fungsi masih cukup terjaga. Nilai ide bunuh diri, niat, rencana, akses sarana, faktor pelindung, riwayat manik, dan penyebab organik. Lini pertama adalah psikoedukasi, intervensi psikologis terstruktur/aktivasi perilaku, aktivitas fisik, dan follow-up aktif; antidepresan tidak menjadi terapi awal rutin episode ringan. Rujuk/eskalasi bila risiko keselamatan, psikosis/mania, fungsi runtuh, atau memburuk.',
-    panduanResmi: 'PPK 1186/2022 memberi floor pengenalan gangguan depresi/campuran cemas-depresi dan penilaian rujukan. WHO mhGAP Guideline edisi ke-3 (2023) menempatkan intervensi psikososial terstruktur sebagai terapi awal dan tidak menganjurkan antidepresan sebagai terapi awal rutin episode ringan. Ketiadaan psikolog lokal tidak menghapus skrining keselamatan, follow-up aktif, dan akses jejaring.',
+    panduanResmi: 'PPK 1186/2022 memberi acuan dasar pengenalan gangguan depresi/campuran cemas-depresi dan penilaian rujukan. WHO mhGAP Guideline edisi ke-3 (2023) menempatkan intervensi psikososial terstruktur sebagai terapi awal dan tidak menganjurkan antidepresan sebagai terapi awal rutin episode ringan. Ketiadaan psikolog lokal tidak menghapus skrining keselamatan, follow-up aktif, dan akses jejaring.',
     catatanRealita: 'PMK 19/2024 memasukkan psikolog klinis dalam standar Puskesmas, tetapi pemenuhannya boleh bertahap sesuai kemampuan daerah; SDM primer juga belum merata. Jika psikoterapi terstruktur belum tersedia, lakukan intervensi psikososial yang kompeten, follow-up aktif, skrining bunuh diri, dan rujuk/telekonsultasi, bukan otomatis memberi obat.',
     konsekuensi: {
       narasi: 'Bila hanya diberi obat penenang tanpa konseling dan tanpa skrining bunuh diri, gejala dapat memberat menjadi depresi sedang-berat dengan risiko keselamatan.',
@@ -1101,7 +1105,9 @@ export const KASUS_KIA_JIWA: KasusKlinis[] = [
       edukasi: ['kenali_kambuh_jiwa', 'kepatuhan_obat', 'kontrol_rutin'],
     },
     clue: 'Skizofrenia: gejala psikotik (halusinasi auditorik, waham kejar/curiga, disorganisasi) ≥1 bulan + penurunan fungsi bermakna, tanpa penyebab organik/zat. SKDI 3A → dokter FKTP mengenali, boleh MULAI stabilisasi antipsikotik (mis. haloperidol) bila agitasi, lalu RUJUK ke SpKJ untuk penegakan & rencana terapi. Rangkul keluarga dengan bahasa yang manusiawi — pasien jiwa TIDAK boleh ditelantarkan/dipasung (indikator PIS-PK & UU Kesehatan Jiwa).',
-    panduanResmi: 'PPK 1186/2022 memerinci dosis resmi: Haloperidol oral 2-3x2-5 mg atau IM 5 mg untuk gaduh gelisah (maks 30 mg/hari, boleh + diazepam), antidot efek samping ekstrapiramidal Triheksifenidil 2-4x2 mg, plus kunjungan rumah untuk kepatuhan; rujuk kasus baru untuk konfirmasi setelah stabilisasi awal.',
+    panduanResmi: `Dosis resmi menurut PPK 1186/2022: Haloperidol oral 2-3 × 2-5 mg, atau IM 5 mg bila gaduh gelisah (maksimal 30 mg/hari, boleh dikombinasi diazepam). Bila muncul efek samping ekstrapiramidal, antidotnya Triheksifenidil 2-4 × 2 mg.
+
+Kepatuhan minum obat dipantau lewat kunjungan rumah. Kasus baru tetap dirujuk untuk konfirmasi diagnosis setelah stabilisasi awal.`,
     konsekuensi: {
       narasi: 'Bila tidak dirujuk dan keluarga dibiarkan tanpa panduan, gejala psikotik memberat, risiko membahayakan diri/orang lain meningkat, dan pasien berisiko dipasung atau ditelantarkan.',
       kembaliHariMin: 7,
