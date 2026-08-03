@@ -533,7 +533,11 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
         { id: 'prednison_5', alasan: 'Kortikosteroid oral TIDAK diindikasikan untuk OA — OA bukan penyakit inflamasi sistemik; steroid rutin hanya menimbulkan efek samping (osteoporosis, gula naik) tanpa manfaat.', bahaya: 'nonPrimer' },
         { id: 'allopurinol_100', alasan: 'Pola klinis kasus ini adalah OA mekanik, bukan flare gout; kadar asam urat normal saja tidak menyingkirkan gout, tetapi allopurinol tetap tidak memiliki indikasi pada OA.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang', 'postur_ergonomi'],
+      // Audit tag-vs-penyakit 2026-08-04: postur_ergonomi ber-tag [Punggung]
+      // (khusus LBP/mengangkat beban) dibuang — kasus ini murni LUTUT, clue
+      // tak sekali pun menyebut punggung/mengangkat; 3 topik lain sudah
+      // menutup seluruh poin ajar (peregangan, aktivitas, berat badan).
+      edukasi: ['peregangan_sendi', 'aktivitas_fisik', 'gizi_seimbang'],
     },
     clue: 'Osteoartritis lutut: nyeri MEKANIK (memberat saat aktivitas, mereda saat istirahat) + kaku pagi singkat (<30 menit) + krepitasi + usia >45 tahun, tanpa tanda inflamasi sistemik. Inti terapi adalah edukasi, latihan penguatan kuadrisep, aktivitas aerobik, dan penurunan berat badan. Analgesik dipilih individual menurut manfaat, alergi, komorbid, dan risiko. Rontgen tidak rutin diperlukan pada gambaran klinis yang khas tanpa tanda bahaya.',
     panduanResmi: 'PPK 1186/2022 mencantumkan analgesik topikal dan NSAID serta rujukan bila terapi gagal atau ada komplikasi. VA/DoD 2026 menempatkan evaluasi terstruktur, latihan terapeutik, aktivitas fisik, dan pengelolaan berat badan sebagai inti tata laksana non-bedah; obat dipilih menurut risiko dan preferensi pasien. Pada kasus ini, parasetamol sesekali adalah keputusan individual karena alergi NSAID, bukan aturan lini pertama universal.',

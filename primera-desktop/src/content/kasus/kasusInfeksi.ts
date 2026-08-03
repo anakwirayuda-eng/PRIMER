@@ -1025,7 +1025,11 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
         { id: 'dexamethasone_05', alasan: 'Steroid TIDAK boleh diberikan sembarangan pada mata merah — bila ternyata ada keterlibatan kornea/herpes, steroid memperparah dan mengancam penglihatan.', bahaya: 'kontraindikasi' },
         { id: 'amoxicillin_500', alasan: 'Antibiotik oral tidak diperlukan untuk konjungtivitis bakterial ringan; cukup antibiotik topikal (tetes).', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['cuci_tangan', 'kebersihan_kulit'],
+      // Audit tag-vs-penyakit 2026-08-04: kebersihan_kulit ber-tag [Kulit]
+      // dibuang — ini penyakit MATA, bukan kulit/pakaian. Poin ajar penularan
+      // sudah tertutup cuci_tangan (higiene tangan mencegah sebar antar mata/
+      // orang lain).
+      edukasi: ['cuci_tangan'],
     },
     clue: 'Konjungtivitis bakterial: mata merah + sekret MUKOPURULEN + kelopak lengket pagi, TANPA nyeri hebat/silau/penurunan visus. Antibiotik topikal (kloramfenikol tetes), self-limiting 5–7 hari. Nyeri hebat + fotofobia + visus TURUN = red flag keratitis → rujuk (AAO PPP).',
     panduanResmi: 'PPK 1186/2022 memberi dosis resmi spesifik: kloramfenikol tetes 1 tetes 6x/hari ATAU salep mata 3x/hari selama 3 hari (clue hanya sebut \'kloramfenikol tetes\'). Kriteria rujukan resmi: bila komplikasi pada kornea atau tak ada respons perbaikan terhadap pengobatan.',

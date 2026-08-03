@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-03T17:34:45.311Z",
-  "sourceCommit": "490dd55c63a4f9249b33a6c611b0118f52f7a2cb+dirty",
-  "artifactFingerprint": "672e61686bbac2ac721d841c7970acb24e82204e10db8ad847b8d7543493db4b",
-  "packFingerprint": "5048c378",
+  "generatedAt": "2026-08-03T20:31:27.873Z",
+  "sourceCommit": "2b90fe0ff76be7ae1f57eb24844f0b007e1d6163+dirty",
+  "artifactFingerprint": "c3a3fe52680ccda29366623b5176144064feb179f41b154a0c1372d55cf81743",
+  "packFingerprint": "81afbd5c",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 64,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -5152,8 +5152,8 @@
         "procedures": [],
         "education": [
           {
-            "id": "tanda_bahaya_kehamilan",
-            "name": "[Kehamilan] Tanda bahaya — P4K",
+            "id": "tanda_bahaya_pascakeguguran",
+            "name": "[Pascakeguguran] Kenali perdarahan menetap, demam, atau nyeri hebat — segera kontrol",
             "critical": true
           },
           {
@@ -7499,11 +7499,6 @@
             "id": "perawatan_perineum",
             "name": "[Nifas] Jaga luka perineum bersih-kering dan kenali infeksi/perdarahan",
             "critical": false
-          },
-          {
-            "id": "tanda_bahaya_kehamilan",
-            "name": "[Kehamilan] Tanda bahaya — P4K",
-            "critical": false
           }
         ],
         "relevantLabs": [],
@@ -9328,8 +9323,8 @@
         "procedures": [],
         "education": [
           {
-            "id": "higiene_genital_lembut",
-            "name": "[Genital] Hindari douching, sabun pewangi, dan pakaian lembap",
+            "id": "perawatan_area_popok",
+            "name": "[Popok] Ganti sering, bilas lembut, beri waktu bebas popok, pakai zinc oxide",
             "critical": false
           },
           {
@@ -20806,8 +20801,8 @@
             "critical": false
           },
           {
-            "id": "hentikan_obat_pencetus",
-            "name": "[Erupsi obat] Hentikan obat tersangka dan jangan mencoba ulang sendiri",
+            "id": "hentikan_nsaid_pencetus_ulkus",
+            "name": "[Lambung] Hentikan NSAID/obat warung pencetus tukak & perforasi",
             "critical": false
           }
         ],
@@ -21026,8 +21021,8 @@
         ],
         "education": [
           {
-            "id": "hentikan_obat_pencetus",
-            "name": "[Erupsi obat] Hentikan obat tersangka dan jangan mencoba ulang sendiri",
+            "id": "hindari_antikolinergik_retensi_urin",
+            "name": "[Prostat] Hindari obat flu/antihistamin antikolinergik pencetus retensi urin",
             "critical": true
           },
           {

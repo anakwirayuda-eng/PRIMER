@@ -419,6 +419,38 @@ describe('PACK — validasi silang id konten', () => {
     expect(kasus.tatalaksana.edukasi).not.toContain(wajibTiada)
   })
 
+  // Audit tag-vs-penyakit 2026-08-04 (workflow 14-berkas + sanggahan
+  // adversarial independen, dipicu screenshot dr. Wirayuda: label "[Skabies/
+  // kutu]" muncul di debrief kasus Rinitis Alergi). Pola sama dgn M10.c di
+  // atas — topik ber-label kategori/penyakit SPESIFIK dipakai di kasus yang
+  // kategorinya jelas berbeda; 6 dari 9 di bawah sudah lolos sanggahan
+  // independen, 3 sisanya (serumen_prop kedua, ruptur_perineum, dermatitis_
+  // popok) diverifikasi manual langsung ke clue/anamnesis kasus.
+  it.each([
+    ['tht_serumen_prop', 'stop_cotton_bud_telinga', 'kebersihan_kulit'],
+    ['mata_hordeolum', 'higiene_kelopak_mata', 'kebersihan_kulit'],
+    ['lab_dermatitis_popok_iritan', 'perawatan_area_popok', 'higiene_genital_lembut'],
+    ['lab_peritonitis_generalisata', 'hentikan_nsaid_pencetus_ulkus', 'hentikan_obat_pencetus'],
+    ['lab_retensio_urin_akut', 'hindari_antikolinergik_retensi_urin', 'hentikan_obat_pencetus'],
+    ['lab_abortus_spontan_komplit', 'tanda_bahaya_pascakeguguran', 'tanda_bahaya_kehamilan'],
+  ])('%s: edukasi memuat %s dan TIDAK memuat %s (clue-vs-edukasi 2026-08-04)', (kasusId, wajibAda, wajibTiada) => {
+    const kasus = PACK.kasus[kasusId]!
+    expect(kasus.tatalaksana.edukasi).toContain(wajibAda)
+    expect(kasus.tatalaksana.edukasi).not.toContain(wajibTiada)
+  })
+
+  it.each([
+    ['mm_osteoartritis_lutut', 'postur_ergonomi'],
+    ['konjungtivitis_bakterial', 'kebersihan_kulit'],
+    ['lab_ruptur_perineum_derajat_1', 'tanda_bahaya_kehamilan'],
+  ])(
+    '%s: edukasi TIDAK memuat %s (tag salah-kategori dibuang, poin ajarnya sudah tertutup topik lain)',
+    (kasusId, wajibTiada) => {
+      const kasus = PACK.kasus[kasusId]!
+      expect(kasus.tatalaksana.edukasi).not.toContain(wajibTiada)
+    },
+  )
+
   it('skabies: topik baru obati_kontak_serumah dipakai (inti clue tanpa padanan katalog lama)', () => {
     expect(PACK.edukasi['obati_kontak_serumah']).toBeDefined()
     expect(PACK.kasus['skabies']!.tatalaksana.edukasi).toContain('obati_kontak_serumah')

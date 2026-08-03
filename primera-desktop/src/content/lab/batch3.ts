@@ -511,7 +511,10 @@ const DEFINITIONS: LabDefinition[] = [
       ],
       fisik: [['kulit', 'Eritema konfluens pada area cembung tertutup popok, lipatan relatif spared, tanpa pustul satelit.'], ['umum', 'Bayi aktif dan hidrasi baik.', false]],
       diagnosisBanding: ['L22', 'B37.2', 'L21'],
-      tatalaksana: { obatBenar: ['zinc_oxide_krim'], edukasi: ['higiene_genital_lembut', 'tanda_bahaya'] },
+      // Audit tag-vs-penyakit 2026-08-04: higiene_genital_lembut ber-tag
+      // [Genital] (douching, higiene vulvovaginal dewasa) diganti
+      // perawatan_area_popok — pasien bayi 3-11 bulan, "douching" mustahil.
+      tatalaksana: { obatBenar: ['zinc_oxide_krim'], edukasi: ['perawatan_area_popok', 'tanda_bahaya'] },
       clue: 'Ruam pada permukaan cembung dengan lipatan relatif bebas mendukung dermatitis popok iritan. Ganti popok sering, bilas lembut, beri waktu bebas popok dan barrier zinc oxide; candidiasis melibatkan lipatan dan pustul satelit.',
       panduanResmi: PPK,
       catatanRealita: 'Zinc oxide adalah barrier hasil pengadaan lokal/OTC dan tidak diklaim sebagai item Fornas. Bila tidak ada, petrolatum sederhana dapat dipakai sebagai barrier pengganti.',

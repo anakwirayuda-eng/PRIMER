@@ -644,7 +644,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     fisik: [['umum', 'Sadar, perfusi baik, tidak pucat berat.'], ['abdomen', 'Nyeri suprapubik minimal tanpa nyeri satu sisi atau defans.'], ['kulit', 'Perdarahan pervaginam minimal; serviks sudah menutup.', true]],
     lab: [['hb', 'Hb 11,4 g/dL.', 'normal'], ['golongan_darah', 'O rhesus positif.', 'normal']],
     diagnosisBanding: ['O03.9', 'O03.4', 'O00.9'],
-    tatalaksana: { obatBenar: [], obatOpsional: ['paracetamol_500'], edukasi: ['tanda_bahaya_kehamilan', 'kontrol_rutin', 'gizi_seimbang'], edukasiKritis: ['tanda_bahaya_kehamilan'] },
+    // Audit tag-vs-penyakit 2026-08-04: tanda_bahaya_kehamilan ber-tag
+    // [Kehamilan]/P4K (program antenatal) diganti tanda_bahaya_pascakeguguran
+    // — pasien ini SUDAH keguguran, bukan sedang hamil/bersiap bersalin.
+    tatalaksana: { obatBenar: [], obatOpsional: ['paracetamol_500'], edukasi: ['tanda_bahaya_pascakeguguran', 'kontrol_rutin', 'gizi_seimbang'], edukasiKritis: ['tanda_bahaya_pascakeguguran'] },
     clue: 'Riwayat keluarnya jaringan diikuti penurunan perdarahan/nyeri, kondisi stabil, dan serviks menutup mendukung abortus komplit. Tidak ada indikasi memberi uterotonik atau misoprostol otomatis; pastikan follow-up dan rujuk/USG bila diagnosis tidak pasti, perdarahan menetap, infeksi, atau curiga ektopik.',
     panduanResmi: `${PPK} Abortus komplit stabil dapat diobservasi dengan konseling, tetapi ketidakpastian sisa jaringan atau ektopik harus dievaluasi.`,
     catatanRealita: 'USG tidak diasumsikan tersedia di Sukamaju; akses jejaring digunakan bila temuan klinis tidak meyakinkan.',
@@ -661,7 +664,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Ibu sadar, uterus berkontraksi baik, perfusi baik.'], ['kulit', 'Robekan mukosa vagina dan kulit perineum dengan rembesan aktif; otot perineum dan sfingter ani utuh, tanpa hematoma.', true]],
     diagnosisBanding: ['O70.0', 'O70.1', 'O72.1'],
-    tatalaksana: { obatBenar: ['paracetamol_500'], prosedur: ['jahit_perineum'], edukasi: ['perawatan_perineum', 'tanda_bahaya_kehamilan'] },
+    // Audit tag-vs-penyakit 2026-08-04: tanda_bahaya_kehamilan dibuang — bayi
+    // sudah lahir, ibu tak lagi hamil. perawatan_perineum (label [Nifas])
+    // sudah menutup poin ajar "kenali infeksi/perdarahan" pascasalin.
+    tatalaksana: { obatBenar: ['paracetamol_500'], prosedur: ['jahit_perineum'], edukasi: ['perawatan_perineum'] },
     clue: 'Derajat 1 hanya melibatkan mukosa vagina dan kulit perineum. Robekan kecil tanpa perdarahan dapat sembuh tanpa jahitan, tetapi rembesan aktif pada skenario ini memerlukan pencahayaan, anestesi, hemostasis, dan penjahitan oleh tenaga kompeten; keterlibatan otot/sfingter atau hematoma besar mengubah derajat dan disposisi.',
     panduanResmi: `${PPK} Ruptur tingkat 1-2 dapat ditangani tenaga terlatih dengan set dan anestesi yang memadai.`,
     catatanRealita: 'Ruang tindakan, pencahayaan, anestesi lokal, set jahit steril, material jahit, dan operator kompeten dinyatakan ready pada encounter ini. Bila derajat tidak dapat dipastikan, sfingter/otot terlibat, perdarahan tidak terkontrol, atau resource tidak ready, lakukan hemostasis sementara dan rujuk tanpa jahitan buta.',

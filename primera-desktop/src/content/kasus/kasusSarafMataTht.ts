@@ -794,7 +794,11 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'dexamethasone_05', alasan: 'Hordeolum adalah infeksi bakteri akut kelenjar kelopak — steroid tidak diindikasikan dan berisiko memperparah/menutupi infeksi.', bahaya: 'kontraindikasi' },
         { id: 'ciprofloxacin_500', alasan: 'Antibiotik oral sistemik berlebihan untuk hordeolum tanpa komplikasi; cukup kompres hangat + higiene ± antibiotik topikal. Oral hanya bila menjadi selulitis preseptal.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['kompres_mata', 'kebersihan_kulit', 'cuci_tangan'],
+      // Audit tag-vs-penyakit 2026-08-04: kebersihan_kulit ber-tag [Kulit]
+      // (badan/pakaian) diganti higiene_kelopak_mata — clue kasus ini eksplisit
+      // "higiene kelopak", bukan kulit/pakaian. Topik ini SUDAH ada di katalog
+      // (catalogExpansion.ts), cuma belum dipakai di sini.
+      edukasi: ['kompres_mata', 'higiene_kelopak_mata', 'cuci_tangan'],
     },
     clue: 'Hordeolum (bintitan): benjolan NYERI di tepi kelopak, bola mata & visus NORMAL. Terapi utama: KOMPRES HANGAT 3-4x/hari + higiene kelopak; antibiotik topikal opsional. JANGAN dipencet/dipecah paksa (risiko sebar infeksi/selulitis). Bila jadi selulitis preseptal (demam, edema meluas, nyeri gerak bola mata) → antibiotik oral/rujuk (AAO).',
     panduanResmi: 'Divergensi: clue/AAO menilai antibiotik hanya OPSIONAL (hordeolum self-limiting). PPK 1186/2022 justru rutin memberi antibiotik topikal (salep oksitetrasiklin/kloramfenikol tiap 8 jam) DITAMBAH eritromisin oral 500 mg. Inti sama: kompres hangat 4-6x/hari, jangan dipencet.',
@@ -901,7 +905,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'amoxicillin_500', alasan: 'Tidak ada infeksi bakteri pada serumen prop tanpa komplikasi — antibiotik oral tidak diindikasikan.', bahaya: 'nonPrimer' },
       ],
       prosedur: ['ekstraksi_serumen'],
-      edukasi: ['kebersihan_kulit', 'tanda_bahaya'],
+      // Audit tag-vs-penyakit 2026-08-04: kebersihan_kulit ber-tag [Kulit]
+      // diganti stop_cotton_bud_telinga — clue eksplisit "STOP cotton bud",
+      // poin ajar utama kasus ini, tak terwakili topik manapun sebelumnya.
+      edukasi: ['stop_cotton_bud_telinga', 'tanda_bahaya'],
     },
     clue: 'Serumen prop: rasa penuh + tuli konduktif, membran timpani tertutup serumen. Tata laksana: EKSTRAKSI serumen (kuret/irigasi bila MT utuh); bila serumen KERAS lunakkan dulu dengan serumenolitik (karbogliserin) 3-5 hari lalu ekstraksi. JANGAN irigasi bila curiga perforasi/otitis. Edukasi STOP cotton bud (justru mendorong serumen makin dalam) — PPK PERHATI-KL.',
     panduanResmi: 'PPK 1186/2022 memerinci serumenolitik resmi: tetes telinga Karbogliserin 10% ATAU H2O2 3% selama 3 hari untuk melunakkan serumen keras sebelum ekstraksi; irigasi air hangat dikhususkan bila serumen sudah terdorong terlalu dalam. Rujuk bila timbul komplikasi tindakan.',

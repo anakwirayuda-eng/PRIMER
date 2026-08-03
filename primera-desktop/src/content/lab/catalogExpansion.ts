@@ -241,6 +241,11 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   layanan_pasangan_ims: { id: 'layanan_pasangan_ims', nama: '[IMS] Hubungkan pasangan ke tes-terapi secara sukarela, rahasia, dan aman dari kekerasan', kategori: 'higiene', sinonim: ['partner services', 'contact tracing', 'pasangan', 'confidential'] },
   pencegahan_ims_terintegrasi: { id: 'pencegahan_ims_terintegrasi', nama: '[IMS] Tawarkan tes HIV-sifilis, kondom, vaksinasi, dan PrEP sesuai risiko serta preferensi', kategori: 'higiene', sinonim: ['HIV', 'sifilis', 'kondom', 'PrEP', 'vaksin'] },
   higiene_genital_lembut: { id: 'higiene_genital_lembut', nama: '[Genital] Hindari douching, sabun pewangi, dan pakaian lembap', kategori: 'higiene', sinonim: ['vulvitis', 'vaginitis'] },
+  // Audit tag-vs-penyakit 2026-08-04: topik di atas ber-tag [Genital] &
+  // menyebut douching — istilah higiene vulvovaginal dewasa/remaja, dulu
+  // dipakai lagi utk dermatitis popok BAYI (3-11 bulan). Topik baru berikut
+  // spesifik utk perawatan kulit area popok.
+  perawatan_area_popok: { id: 'perawatan_area_popok', nama: '[Popok] Ganti sering, bilas lembut, beri waktu bebas popok, pakai zinc oxide', kategori: 'higiene', sinonim: ['dermatitis popok', 'ruam popok', 'napkin eczema', 'zinc oxide'] },
   perawatan_perineum: { id: 'perawatan_perineum', nama: '[Nifas] Jaga luka perineum bersih-kering dan kenali infeksi/perdarahan', kategori: 'kia', sinonim: ['ruptur perineum', 'jahitan nifas'] },
   dukungan_laktasi: { id: 'dukungan_laktasi', nama: '[Laktasi] Koreksi posisi-perlekatan dan tetap kosongkan payudara', kategori: 'kia', sinonim: ['mastitis', 'puting lecet', 'inverted nipple'] },
   sick_day_dm1: { id: 'sick_day_dm1', nama: '[DM tipe 1] Jangan hentikan insulin basal saat sakit; pantau gula-keton dan cairan lebih sering', kategori: 'kepatuhan', sinonim: ['sick day', 'keton', 'DKA', 'insulin basal'] },
@@ -280,6 +285,12 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   kontrol_luka_bakar: { id: 'kontrol_luka_bakar', nama: '[Luka bakar] Kontrol 24-72 jam; kembali segera bila nyeri/kemerahan memburuk, demam, baal, jari dingin, atau balutan kotor-tembus', kategori: 'kepatuhan', sinonim: ['burn', 'kontrol', 'red flag', 'infeksi', 'neurovaskular'] },
   perawatan_ulkus_tungkai: { id: 'perawatan_ulkus_tungkai', nama: '[Ulkus tungkai] Rawat luka, elevasi, dan kontrol penyakit vaskular/metabolik', kategori: 'tindakan', sinonim: ['venous ulcer', 'leg ulcer'] },
   hentikan_obat_pencetus: { id: 'hentikan_obat_pencetus', nama: '[Erupsi obat] Hentikan obat tersangka dan jangan mencoba ulang sendiri', kategori: 'kepatuhan', sinonim: ['drug eruption', 'fixed drug eruption'] },
+  // Audit tag-vs-penyakit 2026-08-04 (dossier serupa §47): hentikan_obat_pencetus
+  // di atas ber-tag [Erupsi obat] (khusus ruam kulit) dulu dipakai lagi utk
+  // peritonitis & retensio urin akut — penyakit yg sama sekali bukan reaksi
+  // kulit. Dua topik baru berikut menggantikannya, masing2 spesifik penyebab.
+  hentikan_nsaid_pencetus_ulkus: { id: 'hentikan_nsaid_pencetus_ulkus', nama: '[Lambung] Hentikan NSAID/obat warung pencetus tukak & perforasi', kategori: 'kepatuhan', sinonim: ['NSAID', 'ulkus peptikum', 'perforasi', 'obat pereda nyeri warung'] },
+  hindari_antikolinergik_retensi_urin: { id: 'hindari_antikolinergik_retensi_urin', nama: '[Prostat] Hindari obat flu/antihistamin antikolinergik pencetus retensi urin', kategori: 'kepatuhan', sinonim: ['BPH', 'retensi urin akut', 'antikolinergik', 'CTM', 'obat flu warung'] },
 }
 
 export const TINDAKAN_LAB_EXPANSION: Record<string, Tindakan> = {

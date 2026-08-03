@@ -2,7 +2,7 @@
 
 **Tanggal kompilasi:** 2026-08-03
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `490dd55c63a4f9249b33a6c611b0118f52f7a2cb+dirty`, artefak `672e61686bbac2ac721d841c7970acb24e82204e10db8ad847b8d7543493db4b`, pack `5048c378`, content release `gameplay-comfort-2026-08-01`, `REVISI_ENGINE=64`
+**Snapshot:** commit `2b90fe0ff76be7ae1f57eb24844f0b007e1d6163+dirty`, artefak `c3a3fe52680ccda29366623b5176144064feb179f41b154a0c1372d55cf81743`, pack `81afbd5c`, content release `gameplay-comfort-2026-08-01`, `REVISI_ENGINE=64`
 
 ## Ringkasan eksekutif
 

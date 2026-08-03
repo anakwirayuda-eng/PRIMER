@@ -195,6 +195,15 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'cuci_seprai_panas', nama: '[Skabies/kutu] Rendam seprai & handuk air panas', kategori: 'higiene',
     sinonim: ['gudik', 'tungau', 'dekontaminasi'],
   },
+  // Audit tag-vs-penyakit 2026-08-04: kasus serumen prop (sumbatan liang
+  // telinga akibat korek cotton bud) dulu memakai kebersihan_kulit
+  // ("[Kulit] Kebersihan kulit & pakaian") — telinga bukan kulit/pakaian.
+  // Poin ajar clue-nya ("STOP cotton bud, justru mendorong serumen makin
+  // dalam") tak terwakili topik manapun; dibuatkan topik sendiri.
+  stop_cotton_bud_telinga: {
+    id: 'stop_cotton_bud_telinga', nama: '[Telinga] Stop korek dengan cotton bud — serumen makin terdorong dalam', kategori: 'higiene',
+    sinonim: ['cotton bud', 'korek telinga', 'serumen prop', 'liang telinga'],
+  },
   // M10.c (dossier §47): obati SEMUA kontak serumah serentak (skabies) — clue
   // KAPITAL "OBATI SEMUA KONTAK SERUMAH"; tanpa ini reinfestasi ping-pong.
   obati_kontak_serumah: {
@@ -239,6 +248,15 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
   tanda_bahaya_kehamilan: {
     id: 'tanda_bahaya_kehamilan', nama: '[Kehamilan] Tanda bahaya — P4K', kategori: 'kia',
     sinonim: ['preeklamsia', 'perdarahan', 'persiapan persalinan'],
+  },
+  // Audit tag-vs-penyakit 2026-08-04: topik di atas ber-tag [Kehamilan] —
+  // program P4K (perencanaan persalinan) hanya berlaku SELAMA hamil. Dulu
+  // dipakai lagi utk pasien yang kehamilannya SUDAH BERAKHIR (keguguran) —
+  // tanda bahaya pasca-keguguran (sisa jaringan, infeksi, curiga ektopik)
+  // adalah topik berbeda, bukan "persiapan persalinan".
+  tanda_bahaya_pascakeguguran: {
+    id: 'tanda_bahaya_pascakeguguran', nama: '[Pascakeguguran] Kenali perdarahan menetap, demam, atau nyeri hebat — segera kontrol', kategori: 'kia',
+    sinonim: ['abortus', 'keguguran', 'pasca abortus', 'sisa jaringan'],
   },
   // CODEX (2026-07-05): kia_kb_konseling clue-nya soal PEMILIHAN METODE aman
   // (non-hormonal/progestin-only, hindari kombinasi estrogen saat menyusui),

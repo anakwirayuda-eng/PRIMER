@@ -306,7 +306,11 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       tindakanSalahUmum: [
         { id: 'bilas_lambung', alasan: 'Bilas lambung pada dugaan perforasi organ berongga dapat mendorong isi lambung keluar melalui lubang perforasi dan memperluas kontaminasi rongga perut, selain memicu muntah dan aspirasi pada pasien yang sudah syok. NGT di sini dipasang untuk DEKOMPRESI — dialirkan agar lambung kosong dan distensi berkurang, bukan untuk dibilas.', bahaya: 'berbahaya' },
       ],
-      edukasi: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif', 'tanda_bahaya', 'hentikan_obat_pencetus'],
+      // Audit tag-vs-penyakit 2026-08-04: hentikan_obat_pencetus ber-tag
+      // [Erupsi obat] (khusus ruam kulit) diganti hentikan_nsaid_pencetus_ulkus
+      // — obatSalahUmum ketorolak di atas eksplisit soal NSAID warung
+      // memicu perforasi ulkus, bukan reaksi kulit.
+      edukasi: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif', 'tanda_bahaya', 'hentikan_nsaid_pencetus_ulkus'],
       edukasiKritis: ['puasa_sambil_rujuk', 'persiapan_rujukan_operatif'],
       terapiKritis: ['resusitasi_cairan_kristaloid', 'ceftriaxone_1g_inj', 'metronidazol_inj_500'],
     },
@@ -378,8 +382,12 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
         { id: 'ciprofloxacin_500', alasan: 'Tanpa demam, tanpa nyeri pinggang, dan dengan urinalisis bersih, tidak ada infeksi yang disasar — retensi ini murni mekanis. Antibiotik refleks pasca-kateter tidak mencegah infeksi dan hanya menambah tekanan resistensi.', bahaya: 'nonPrimer' },
       ],
       prosedur: ['pemasangan_kateter_urin'],
-      edukasi: ['hentikan_obat_pencetus', 'tanda_bahaya', 'kontrol_rutin'],
-      edukasiKritis: ['hentikan_obat_pencetus'],
+      // Audit tag-vs-penyakit 2026-08-04: hentikan_obat_pencetus ber-tag
+      // [Erupsi obat] (khusus ruam kulit) diganti hindari_antikolinergik_
+      // retensi_urin — obatSalahUmum ctm_4 di atas eksplisit soal obat flu
+      // antikolinergik memicu retensi urin pada BPH, bukan reaksi kulit.
+      edukasi: ['hindari_antikolinergik_retensi_urin', 'tanda_bahaya', 'kontrol_rutin'],
+      edukasiKritis: ['hindari_antikolinergik_retensi_urin'],
     },
     stabilisasiWajib: ['pemasangan_kateter_urin'],
     clue: 'Tidak bisa berkemih sejak semalam + buli teraba dan pekak suprapubik + riwayat pancaran melemah, mengejan, menetes, dan nokturia = retensi urin akut pada pembesaran prostat, kemungkinan dipicu obat flu antikolinergik. Bila alat dan operator siap serta tidak ada dugaan cedera uretra, lakukan satu upaya kateterisasi lembut untuk dekompresi, catat volume awal, lalu pantau diuresis dan rujuk penyebabnya. Mulai tamsulosin untuk meningkatkan peluang pelepasan kateter dan hentikan pencetus. Resistensi, darah di meatus, riwayat trauma pelvis/uretra, atau upaya gagal berarti berhenti dan transfer — bukan mengulang secara traumatik.',
