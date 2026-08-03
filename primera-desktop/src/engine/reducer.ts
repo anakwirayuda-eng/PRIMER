@@ -2675,13 +2675,28 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
           dari: 'Laboratorium Puskesmas',
           judul: `Hasil ${lab?.nama ?? j.labId} — ${j.catatan ?? 'pasien kemarin'}`,
           // Kasus mendefinisikan hasil utk lab yang RELEVAN dengannya. Bila
-          // pemain memesan lab di luar itu (tak didefinisikan kasus), suratnya
-          // JANGAN kosong: tampilkan nilai rujukan sbg "dalam batas normal" +
-          // pesan stewardship (lab non-indikasi = pemborosan FKTP). Lab yang
-          // memang penting utk kasus HARUS punya entri di kasus.lab.
+          // pemain memesan lab di luar itu, suratnya JANGAN kosong — tetapi
+          // juga TIDAK BOLEH mengarang "dalam batas rujukan".
+          //
+          // Playtest 2026-08-04 (dr. Wirayuda) + pengukuran lanjutan: klaim
+          // normal yang dikarang bertentangan dengan hasil yang benar-benar
+          // ditulis kasus begitu dua pemeriksaan berbagi/berkorelasi analit.
+          // Contoh terukur: 10 kasus menulis GDS/GDP abnormal tanpa menulis
+          // HbA1c; HbA1c satu-satunya lab berkorelasi yang `hasilBesok`, jadi
+          // pasien dgn GDS 320 yang dipesankan HbA1c dulu menerima surat pagi
+          // "tidak menunjukkan kelainan bermakna" — mengajarkan hal yang salah
+          // pada momen yang justru paling diingat pemain.
+          //
+          // Sisi layar sudah diperbaiki lebih dulu (LembarPeriksa +
+          // content/labTumpangTindih.ts). Ini menutup permukaan terakhir yang
+          // masih berbohong. Sengaja diperbaiki sbg KELAS, bukan dgn menulis
+          // hasil HbA1c di 10 kasus itu: menentukan nilai HbA1c = menentukan
+          // apakah hiperglikemianya kronik atau stres akut, dan itu keputusan
+          // klinis penulis kasus, bukan pengembang. Surat kini berhenti
+          // mengklaim, dan pesan stewardship-nya dipertahankan.
           isi: hasilLab
             ? `Hasil pemeriksaan ${lab?.nama}: ${hasilLab.hasil}. Nilai rujukan: ${lab?.nilaiNormal}. Cocokkan dengan keputusan interimmu kemarin — inilah kenapa dokter FKTP harus berani menata laksana sambil menunggu hasil.`
-            : `Hasil pemeriksaan ${lab?.nama ?? j.labId}: dalam batas rujukan${lab?.nilaiNormal ? ` (${lab.nilaiNormal})` : ''} — tidak menunjukkan kelainan bermakna untuk kasus ini. Timbang indikasi sebelum memesan penunjang: pemeriksaan yang tak mengubah tata laksana adalah beban biaya bagi Puskesmas.`,
+            : `Pemeriksaan ${lab?.nama ?? j.labId} tidak tercatat pada berkas pasien ini, sehingga tidak ada nilai yang dapat dilaporkan${lab?.nilaiNormal ? ` (nilai rujukan: ${lab.nilaiNormal})` : ''}. Jangan menganggapnya normal. Timbang indikasi sebelum memesan penunjang: pemeriksaan yang tak mengubah tata laksana adalah beban biaya bagi Puskesmas.`,
         }),
       )
     } else if (j.jenis === 'rujukan_feedback' && j.episodeId && j.kasusId) {

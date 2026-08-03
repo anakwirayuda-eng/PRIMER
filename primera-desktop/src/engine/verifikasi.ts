@@ -698,7 +698,20 @@ function fnv1a(teks: string): string {
 // permanen via save yang dimodifikasi tangan. Semua mengubah skor/state
 // replay pada jalur yang sebelumnya lolos senyap → wajib jatuh ke
 // "tidak_dapat_diverifikasi" utk dossier build lama, bukan divonis tidak sah.
-export const REVISI_ENGINE = 63
+// rev 64 (2026-08-04, temuan playtest dr. Wirayuda + pengukuran lanjutan):
+// reducer.ts — surat hasil lab pagi TIDAK LAGI mengarang "dalam batas
+// rujukan" untuk lab yang tak ditulis kasus. Klaim normal yang dikarang itu
+// bertentangan dengan hasil yang benar-benar ditulis kasus begitu dua
+// pemeriksaan berbagi/berkorelasi analit: terukur 10 kasus menulis GDS/GDP
+// abnormal tanpa HbA1c, dan HbA1c satu-satunya lab berkorelasi ber-hasilBesok
+// — pasien GDS 320 yang dipesankan HbA1c menerima surat "tidak menunjukkan
+// kelainan bermakna". Sisi layar sudah diperbaiki lebih dulu (renderer +
+// content/labTumpangTindih.ts, tanpa sentuh engine); ini menutup permukaan
+// terakhir yang masih berbohong. MURNI TEKS SURAT — tak menyentuh tally,
+// skor, RNG, atau state replay mana pun; naik revisi HANYA karena reducer.ts
+// berkas beku. Dossier build lama karena itu jatuh ke
+// "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
+export const REVISI_ENGINE = 64
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

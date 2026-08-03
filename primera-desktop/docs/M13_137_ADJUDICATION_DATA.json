@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-02T09:32:59.501Z",
-  "sourceCommit": "b665e7d31fa05e8337a1d57156746f295ad47ba4+dirty",
-  "artifactFingerprint": "83c78952f198a383986dfb1772ae2bd318ee81f13dc16a8068f6e82f272a5d6b",
-  "packFingerprint": "03bd2d05",
+  "generatedAt": "2026-08-03T17:34:45.311Z",
+  "sourceCommit": "490dd55c63a4f9249b33a6c611b0118f52f7a2cb+dirty",
+  "artifactFingerprint": "672e61686bbac2ac721d841c7970acb24e82204e10db8ad847b8d7543493db4b",
+  "packFingerprint": "5048c378",
   "contentRelease": "gameplay-comfort-2026-08-01",
-  "engineRevision": 63,
+  "engineRevision": 64,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,

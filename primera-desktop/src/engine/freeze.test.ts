@@ -192,7 +192,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // ikut tercatat utk pembelian darurat pasien umum; resepBerbahaya ikut
   // interaksiTrap; verifikasi_pispk pending ikut force-evaluate di akhir
   // stase. Rincian di verifikasi.ts rev 63.
-  'reducer.ts': '24abfd9693c0d053f63ea9bd3cc47bd1489fadaf5df1d025b78073d48ae009be',
+  'reducer.ts': '477c235a1d909bed9d01ba9ea3d3f01438b77a41ec295b2b07e3538c029febde',
   'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
   'scoring.ts': '9d1568e7a8b0801400b99da68dc680087f42828ac6d584be1d7320d658a1ca0a',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
@@ -225,7 +225,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
-  'verifikasi.ts': '5259f243a991535d942ef4e7240c1fb0df57e5bed0b9db57bb6283dd26c41330',
+  'verifikasi.ts': '751ffb144e7555df72dc218d8b514b324fc946628abcebbaec8c11bd4fb9c5b3',
   'state.ts': '5eff0197fe1e671edffd7d7c97ea261ef55c8289255abb09cf27db6644bf8db6',
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): enam validasi baru
   // menutup celah NaN/tipe-salah (dex.bintang, desa.rw.bonusIks & jarak,

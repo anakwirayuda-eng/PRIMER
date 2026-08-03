@@ -1,10 +1,10 @@
 # M13-14 IGD - Snapshot Implementasi Pasca-Adjudikasi
 
-**Tanggal kompilasi:** 2026-08-02
+**Tanggal kompilasi:** 2026-08-03
 
 **Status:** **14/14 keputusan dokter tercatat dan patch telah diterapkan ke gameplay Karier**
 
-**Snapshot:** b665e7d31fa0+working-tree; content release `gameplay-comfort-2026-08-01`; `REVISI_ENGINE=63`
+**Snapshot:** 490dd55c63a4+working-tree; content release `gameplay-comfort-2026-08-01`; `REVISI_ENGINE=64`
 
 **Fingerprint:** `e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d`
 
