@@ -7,6 +7,18 @@ import { Rng } from '@engine/core/rng'
 export interface KonteksStorylet {
   punyaBinaan?: boolean
   rujukanMenunggu?: boolean
+  /**
+   * Umpan balik RS sudah KEMBALI ke Puskesmas, tetapi dokter belum
+   * menindaklanjutinya (referral.stage === 'feedback').
+   *
+   * Dipisahkan dari `rujukanTuntas` pada audit 2026-08-03: dua storylet lama
+   * hanya mengklaim ALUR INFORMASI kembali ("umpan balik sudah diterima",
+   * "tercatat dalam satu jejak") — itu benar begitu kabar tiba. Dua storylet
+   * lain mengklaim ALUR TINDAKAN selesai ("rangkaian ditutup", "keluarga
+   * menerima penjelasan"), dan itu baru benar setelah dokter mengadopsi
+   * umpan balik. Dulu keempatnya memakai satu bendera yang sama.
+   */
+  rujukanUmpanBalik?: boolean
   rujukanTuntas?: boolean
   pernahPosyandu?: boolean
   pernahProlanis?: boolean
@@ -60,10 +72,18 @@ const bersyarat: readonly Storylet[] = [
   { id: 'rujuk-tunggu-pemilik', teks: 'Kabar rujukan: status masih menunggu. Penanggung jawab dan tenggat tindak lanjut tetap terlihat dalam jejak perawatan.', boleh: (k) => k.rujukanMenunggu === true },
   { id: 'rujuk-tunggu-loop', teks: 'Kabar rujukan: rangkaian tindak lanjut masih terbuka. Tim belum menyatakan hasil sebelum keputusan dan rencana balik benar-benar diterima.', boleh: (k) => k.rujukanMenunggu === true },
 
-  { id: 'rujuk-tuntas-balik', teks: 'Kabar rujukan: umpan balik sudah diterima dan langkah berikutnya tercatat. Alur informasi benar-benar kembali ke Puskesmas.', boleh: (k) => k.rujukanTuntas === true },
+  // Dua storylet berikut hanya mengklaim ALUR INFORMASI kembali — benar sejak
+  // umpan balik tiba, termasuk saat rujukan DITOLAK RS (penolakan pun kabar
+  // yang kembali, dan langkah berikutnya memang tercatat).
+  { id: 'rujuk-tuntas-balik', teks: 'Kabar rujukan: umpan balik sudah diterima dan langkah berikutnya tercatat. Alur informasi benar-benar kembali ke Puskesmas.', boleh: (k) => k.rujukanUmpanBalik === true || k.rujukanTuntas === true },
+  { id: 'rujuk-tuntas-ledger', teks: 'Kabar rujukan: sinyal, keputusan, umpan balik, dan tindakan berikutnya kini tercatat dalam satu jejak yang dapat diaudit.', boleh: (k) => k.rujukanUmpanBalik === true || k.rujukanTuntas === true },
+
+  // Dua storylet berikut mengklaim ALUR TINDAKAN selesai. Audit 2026-08-03:
+  // keduanya dulu ikut menyala saat kabar baru TIBA — bahkan saat rujukan
+  // ditolak RS dan tak ada pelayanan sama sekali. Kini menunggu adopsi umpan
+  // balik (stage 'acted') atau episode terverifikasi.
   { id: 'rujuk-tuntas-aksi', teks: 'Kabar rujukan: hasil pelayanan sudah ditindaklanjuti. Rangkaian ditutup karena ada bukti tindakan, bukan hanya karena berkas dikirim.', boleh: (k) => k.rujukanTuntas === true },
   { id: 'rujuk-tuntas-keluarga', teks: 'Kabar rujukan: keluarga menerima penjelasan rencana lanjut setelah umpan balik tiba. Informasi tidak berhenti di meja petugas.', boleh: (k) => k.rujukanTuntas === true },
-  { id: 'rujuk-tuntas-ledger', teks: 'Kabar rujukan: sinyal, keputusan, umpan balik, dan tindakan berikutnya kini tercatat dalam satu jejak yang dapat diaudit.', boleh: (k) => k.rujukanTuntas === true },
 
   { id: 'posy-sasaran', teks: 'Sesudah Posyandu, tim meninjau siapa yang datang dan siapa yang belum terjangkau. Cakupan bukan hanya jumlah kursi yang terisi.', boleh: (k) => k.pernahPosyandu === true },
   // Audit editorial 2026-07-23 (disetujui dr. Wirayuda): "dokter kecil"

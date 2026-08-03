@@ -14,6 +14,7 @@ import { formatUsia } from '@engine/usia'
 import { hitungSkor, ringkasanHarian } from '@engine/director'
 import { kasusFormatif } from '@content/pack'
 import { storyletHariIniDetail } from './mejaKerja/storylet'
+import { benderaRujukan } from './mejaKerja/konteksRujukan'
 import { profilVisualStorylet } from './mejaKerja/storyletVisualProfiles'
 import { agendaBesok } from './mejaKerja/agendaBesok'
 import { hitungIksKeluarga } from '@engine/pispk'
@@ -391,24 +392,26 @@ export function MejaKerja() {
     (episode) => episode.status !== 'terverifikasi' && episode.status !== 'berakhir',
   )
   const episodeTerverifikasi = state.careEpisodes.some((episode) => episode.status === 'terverifikasi')
-  const rujukanMenunggu = state.careEpisodes.some(
-    (episode) =>
-      Boolean(episode.referral) &&
-      episode.status !== 'terverifikasi' &&
-      episode.status !== 'berakhir' &&
-      episode.referral?.stage !== 'feedback' &&
-      episode.referral?.stage !== 'acted',
-  )
-  const rujukanTuntas = state.careEpisodes.some(
-    (episode) =>
-      Boolean(episode.referral) &&
-      (episode.referral?.stage === 'feedback' ||
-        episode.referral?.stage === 'acted' ||
-        episode.status === 'terverifikasi'),
-  )
+  /* Audit CODEX 2026-08-03 (temuan P1-1), diverifikasi ulang di reducer asli.
+     `rujukanTuntas` dulu ikut menyala pada stage 'feedback' — yaitu saat kabar
+     BARU TIBA, bukan saat pekerjaannya selesai. Dua akibatnya nyata:
+
+     1. Rujukan yang DITOLAK RS juga memakai stage 'feedback'
+        (reducer.ts:888 "Kompetensi FKTP", :934 "Tujuan tidak sesuai"). Jadi
+        satu rujukan berlebih — kesalahan yang justru ingin diajarkan game ini
+        — langsung membuat debrief berkata rangkaian sudah ditutup, padahal
+        pasien dipulangkan RS dan harus digarap sendiri besok.
+     2. Surat penolakan dibuat tanpa episodeId (reducer.ts:869), sedangkan
+        ADOPSI_UMPAN_BALIK mensyaratkannya, sehingga episode itu tak pernah
+        bisa mencapai 'acted'. Benderanya terkunci menyala sampai stase habis.
+
+     Logikanya dipindah ke konteksRujukan.ts supaya bisa diuji langsung —
+     seluruhnya renderer, file engine beku tidak disentuh. */
+  const { rujukanMenunggu, rujukanUmpanBalik, rujukanTuntas } = benderaRujukan(state.careEpisodes)
   const storyletDebrief = storyletHariIniDetail(state.seed, state.hari, {
     punyaBinaan: state.desa.binaan.length > 0,
     rujukanMenunggu,
+    rujukanUmpanBalik,
     rujukanTuntas,
     pernahPosyandu: state.tally.posyanduSesi > 0,
     pernahProlanis: state.tally.prolanisSesi > 0,
