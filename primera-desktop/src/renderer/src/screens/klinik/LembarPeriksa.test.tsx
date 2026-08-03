@@ -85,4 +85,18 @@ describe('<LembarPeriksa /> — tidak mengarang hasil normal yang bertentangan',
     const { container } = render2Lab('mm_dislipidemia', ['foto_toraks'])
     expect(container.textContent).toContain('Dalam batas normal, tidak ada temuan bermakna.')
   })
+
+  it('glukosa berkorelasi: GDS 320 tertulis, memesan GDP TIDAK dijawab normal & TIDAK meminjam angka', () => {
+    // kulit_herpes_zoster menulis gds tinggi tanpa gdp/hba1c. GDP bukan bagian
+    // dari GDS, jadi hasilnya tak boleh dipinjam — cukup berhenti mengklaim
+    // normal dan menunjuk hasil yang sudah ada.
+    const { container } = render2Lab('kulit_herpes_zoster', ['gdp', 'gds'])
+    const teks = container.textContent ?? ''
+
+    expect(teks).not.toContain('Dalam batas normal, tidak ada temuan bermakna.')
+    expect(teks).toMatch(/Tidak dicatat terpisah pada berkas kasus ini/)
+    expect(teks).toMatch(/Hasil terkait yang sudah ada: Gula Darah Sewaktu/)
+    // dan bukan format pinjam milik pasangan-kandung:
+    expect(teks).not.toMatch(/Menyatu dengan/)
+  })
 })

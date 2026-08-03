@@ -10,7 +10,7 @@ import type { Action } from '@engine/actions'
 import { temuanUntukRegion } from '@engine/clinic'
 import { formatUsia } from '@engine/usia'
 import type { KasusKlinis, PemeriksaanLab, TandaVital } from '@content/types'
-import { pasanganAnalitUntuk } from '@content/labTumpangTindih'
+import { pasanganAnalitUntuk, korelasiAnalitUntuk } from '@content/labTumpangTindih'
 import {
   LABEL_PERSONA,
   LABEL_REGION,
@@ -58,6 +58,25 @@ function rujukanAnalit(
     const lain = labKasus.find((l) => l.id === pasanganId)
     if (lain && lain.flag !== 'normal') {
       return { nama: PACK.lab[pasanganId]?.nama ?? pasanganId, hasil: lain }
+    }
+  }
+  return undefined
+}
+
+/**
+ * Kelompok BERKORELASI (trio glukosa): hasil pasangan TIDAK boleh dipinjam —
+ * GDP bukan bagian dari GDS — tetapi "dalam batas normal" karangan tetap
+ * bohong pada pasien yang glukosa lainnya tertulis abnormal. Jawaban jujurnya:
+ * berhenti mengklaim, tunjuk hasil yang sudah ada.
+ */
+function rujukanKorelasi(
+  labId: string,
+  labKasus: readonly PemeriksaanLab[],
+): { nama: string; hasil: PemeriksaanLab } | undefined {
+  for (const saudaraId of korelasiAnalitUntuk(labId)) {
+    const lain = labKasus.find((l) => l.id === saudaraId)
+    if (lain && lain.flag !== 'normal') {
+      return { nama: PACK.lab[saudaraId]?.nama ?? saudaraId, hasil: lain }
     }
   }
   return undefined
@@ -260,8 +279,11 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                  sebagian berbahaya (proteinuria preeklampsia). Karena itu
                  hasil pasangannya dipinjam, bukan dikarang. */
               const rujukan = hasil ? undefined : rujukanAnalit(id, kasus.lab)
-              const flagDipakai = hasil?.flag ?? rujukan?.hasil.flag ?? 'normal'
-              const flag = CHIP_FLAG[flagDipakai]
+              const korelasi = hasil || rujukan ? undefined : rujukanKorelasi(id, kasus.lab)
+              // Korelasi TANPA chip: chip "normal" adalah klaim yang justru
+              // ingin dihindari, dan flag pasangannya bukan milik lab ini.
+              const flagDipakai = hasil?.flag ?? rujukan?.hasil.flag ?? (korelasi ? undefined : 'normal')
+              const flag = flagDipakai ? CHIP_FLAG[flagDipakai] : undefined
               return (
                 <div key={id} className="klinik-lembar__qa klinik-tinta">
                   <div className="baris">
@@ -274,7 +296,9 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                     {hasil?.hasil ??
                       (rujukan
                         ? `Menyatu dengan ${rujukan.nama} — ${rujukan.hasil.hasil}`
-                        : 'Dalam batas normal, tidak ada temuan bermakna.')}
+                        : korelasi
+                          ? `Tidak dicatat terpisah pada berkas kasus ini. Hasil terkait yang sudah ada: ${korelasi.nama} — ${korelasi.hasil.hasil}`
+                          : 'Dalam batas normal, tidak ada temuan bermakna.')}
                   </div>
                 </div>
               )

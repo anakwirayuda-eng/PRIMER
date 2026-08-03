@@ -9,7 +9,12 @@
  */
 import { describe, expect, it } from 'vitest'
 import { PACK } from './index'
-import { PASANGAN_ANALIT, pasanganAnalitUntuk } from './labTumpangTindih'
+import {
+  PASANGAN_ANALIT,
+  pasanganAnalitUntuk,
+  KELOMPOK_KORELASI,
+  korelasiAnalitUntuk,
+} from './labTumpangTindih'
 
 describe('peta tumpang-tindih analit lab', () => {
   it('setiap pasangan menunjuk lab yang benar-benar ada di katalog', () => {
@@ -70,6 +75,41 @@ describe('peta tumpang-tindih analit lab', () => {
     const lipid = dislipidemia!.lab.find((l) => l.id === 'profil_lipid')
     expect(lipid?.flag).not.toBe('normal')
     expect(pasanganAnalitUntuk('kolesterol').map((x) => x.pasanganId)).toContain('profil_lipid')
+  })
+
+  it('kelompok korelasi menunjuk lab yang ada di katalog dan pencariannya dua arah', () => {
+    for (const kel of KELOMPOK_KORELASI) {
+      for (const id of kel) {
+        expect(PACK.lab[id], `lab ${id} harus ada di katalog`).toBeDefined()
+        // Tiap anggota menemukan seluruh saudaranya (tanpa dirinya sendiri).
+        const saudara = korelasiAnalitUntuk(id)
+        expect(saudara).toEqual(kel.filter((x) => x !== id))
+      }
+    }
+    expect(korelasiAnalitUntuk('foto_toraks')).toEqual([])
+  })
+
+  it('trio glukosa: tiap kasus dgn satu glukosa abnormal punya jalur rujuk utk saudaranya yang kosong', () => {
+    // 11 kasus terukur 2026-08-03 (dm_tipe2, herpes zoster, kandidiasis, dll).
+    const bolong: string[] = []
+    for (const kasus of Object.values(PACK.kasus)) {
+      const perId = new Map(kasus.lab.map((l) => [l.id, l]))
+      for (const kel of KELOMPOK_KORELASI) {
+        const abnormal = kel.filter((id) => {
+          const l = perId.get(id)
+          return l !== undefined && l.flag !== 'normal'
+        })
+        if (abnormal.length === 0) continue
+        for (const kosong of kel.filter((id) => !perId.has(id))) {
+          const ketemu = korelasiAnalitUntuk(kosong).some((sId) => {
+            const l = perId.get(sId)
+            return l !== undefined && l.flag !== 'normal'
+          })
+          if (!ketemu) bolong.push(`${kasus.id}: ${kosong}`)
+        }
+      }
+    }
+    expect(bolong).toEqual([])
   })
 
   it('preeklampsia berat: memesan urinalisis tidak boleh menutupi proteinuria', () => {

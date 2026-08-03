@@ -61,3 +61,28 @@ export function pasanganAnalitUntuk(labId: string): { pasanganId: string; analit
   }
   return keluar
 }
+
+/**
+ * KELOMPOK BERKORELASI — pemeriksaan yang TIDAK saling memuat, tetapi secara
+ * klinis bergerak bersama sehingga "normal" karangan tetap bohong.
+ *
+ * Beda perlakuan dari PASANGAN_ANALIT: hasil pasangan TIDAK dipinjam (GDP
+ * bukan bagian dari GDS — menampilkan angka GDS sebagai jawaban GDP itu
+ * salah). Lembar periksa hanya BERHENTI mengklaim normal dan menunjuk hasil
+ * yang sudah ada. Terukur 2026-08-03: 11 kasus menulis salah satu trio
+ * glukosa abnormal tanpa menulis saudaranya — pasien GDS 320 yang dipesankan
+ * GDP dulu dijawab "dalam batas normal".
+ *
+ * CATATAN UNTUK dr. WIRAYUDA: sengaja HANYA trio glukosa dulu — korelasi
+ * lain (mis. ureum-kreatinin sudah satu pemeriksaan; SGOT-SGPT juga) tidak
+ * membutuhkannya. Tambah kelompok di sini bila ada trio serupa.
+ */
+export const KELOMPOK_KORELASI: readonly (readonly string[])[] = [['gds', 'gdp', 'hba1c']]
+
+/** Saudara sekelompok-korelasi dari `labId` (tanpa dirinya sendiri). */
+export function korelasiAnalitUntuk(labId: string): string[] {
+  for (const kel of KELOMPOK_KORELASI) {
+    if (kel.includes(labId)) return kel.filter((id) => id !== labId)
+  }
+  return []
+}
