@@ -9,7 +9,8 @@ import type { EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import { temuanUntukRegion } from '@engine/clinic'
 import { formatUsia } from '@engine/usia'
-import type { KasusKlinis, TandaVital } from '@content/types'
+import type { KasusKlinis, PemeriksaanLab, TandaVital } from '@content/types'
+import { pasanganAnalitUntuk } from '@content/labTumpangTindih'
 import {
   LABEL_PERSONA,
   LABEL_REGION,
@@ -40,6 +41,26 @@ const CHIP_FLAG: Record<string, { label: string; kelas: string }> = {
   rendah: { label: 'rendah', kelas: 'chip--biru' },
   tinggi: { label: 'tinggi', kelas: 'chip--merah' },
   abnormal: { label: 'abnormal', kelas: 'chip--merah' },
+}
+
+/**
+ * Bila kasus tidak menuliskan hasil untuk sebuah lab, cari pemeriksaan LAIN
+ * pada kasus yang sama yang berbagi analit dengannya (mis. Kolesterol Total
+ * vs Profil Lipid). Hanya hasil ABNORMAL yang dipinjam: bila pasangannya juga
+ * normal, teks generik "dalam batas normal" memang sudah benar dan lebih
+ * ringkas. Lihat `content/labTumpangTindih.ts` untuk alasan lengkapnya.
+ */
+function rujukanAnalit(
+  labId: string,
+  labKasus: readonly PemeriksaanLab[],
+): { nama: string; hasil: PemeriksaanLab } | undefined {
+  for (const { pasanganId } of pasanganAnalitUntuk(labId)) {
+    const lain = labKasus.find((l) => l.id === pasanganId)
+    if (lain && lain.flag !== 'normal') {
+      return { nama: PACK.lab[pasanganId]?.nama ?? pasanganId, hasil: lain }
+    }
+  }
+  return undefined
 }
 
 /**
@@ -229,7 +250,18 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
             {enc.labTersedia.map((id) => {
               const item = PACK.lab[id]
               const hasil = kasus.lab.find((l) => l.id === id)
-              const flag = hasil ? CHIP_FLAG[hasil.flag] : CHIP_FLAG['normal']
+              /* Playtest 2026-08-03: bila kasus tidak menulis hasil untuk lab
+                 ini, dulu SELALU ditampilkan "dalam batas normal". Itu benar
+                 untuk lab yang sungguh tak berhubungan, tetapi menjadi hasil
+                 KARANGAN YANG BERTENTANGAN bila ada pemeriksaan lain pada
+                 pasien yang sama yang memuat analit serupa — mis. profil
+                 lipid tertulis kolesterol 268, tetapi memesan Kolesterol
+                 Total menjawab "normal". Terukur 55 kombinasi berisiko,
+                 sebagian berbahaya (proteinuria preeklampsia). Karena itu
+                 hasil pasangannya dipinjam, bukan dikarang. */
+              const rujukan = hasil ? undefined : rujukanAnalit(id, kasus.lab)
+              const flagDipakai = hasil?.flag ?? rujukan?.hasil.flag ?? 'normal'
+              const flag = CHIP_FLAG[flagDipakai]
               return (
                 <div key={id} className="klinik-lembar__qa klinik-tinta">
                   <div className="baris">
@@ -239,7 +271,10 @@ export function LembarPeriksa({ enc, kasus, dispatch }: Props) {
                     {flag && <span className={`chip ${flag.kelas}`}>{flag.label}</span>}
                   </div>
                   <div className="tulis-tangan">
-                    {hasil?.hasil ?? 'Dalam batas normal, tidak ada temuan bermakna.'}
+                    {hasil?.hasil ??
+                      (rujukan
+                        ? `Menyatu dengan ${rujukan.nama} — ${rujukan.hasil.hasil}`
+                        : 'Dalam batas normal, tidak ada temuan bermakna.')}
                   </div>
                 </div>
               )

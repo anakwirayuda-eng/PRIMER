@@ -42,3 +42,47 @@ describe('<LembarPeriksa /> — status konten lab transparan', () => {
     expect(screen.queryByText(kasus.nama)).not.toBeInTheDocument()
   })
 })
+
+/**
+ * Playtest dr. Wirayuda 2026-08-03: satu pasien menampilkan
+ *   "Kolesterol Total — normal — Dalam batas normal, tidak ada temuan bermakna."
+ * TEPAT DI ATAS
+ *   "Profil Lipid — tinggi — Kolesterol total 268, LDL 182 (tinggi)…"
+ * Dua hasil bertentangan pada pasien yang sama, dan yang keliru justru
+ * berlabel normal. Sebabnya: lab yang tidak ditulis kasus SELALU dirender
+ * "dalam batas normal", padahal analitnya termuat di pemeriksaan lain.
+ */
+describe('<LembarPeriksa /> — tidak mengarang hasil normal yang bertentangan', () => {
+  function render2Lab(kasusId: string, labDipesan: string[]) {
+    const pasien = buatPasienDariKasus(kasusId, PACK, new Rng(7, 'lab'))
+    const enc = { ...buatEncounter(pasien), labDipesan, labTersedia: labDipesan }
+    const kasus = PACK.kasus[kasusId]!
+    return render(<LembarPeriksa enc={enc} kasus={kasus} dispatch={() => {}} />)
+  }
+
+  it('dislipidemia: memesan Kolesterol Total TIDAK lagi dijawab "dalam batas normal"', () => {
+    const { container } = render2Lab('mm_dislipidemia', ['kolesterol', 'profil_lipid'])
+    const teks = container.textContent ?? ''
+
+    expect(teks).toContain('Kolesterol Total')
+    expect(teks).not.toContain('Dalam batas normal, tidak ada temuan bermakna.')
+    // Hasil dipinjam dari pemeriksaan yang memuat analit yang sama.
+    expect(teks).toMatch(/Menyatu dengan Profil Lipid/)
+  })
+
+  it('preeklampsia berat: memesan Urinalisis tidak menutupi proteinuria', () => {
+    const { container } = render2Lab('kia_preeklampsia_berat', ['urinalisis'])
+    const teks = container.textContent ?? ''
+
+    expect(teks).toContain('Urinalisis')
+    expect(teks).not.toContain('Dalam batas normal, tidak ada temuan bermakna.')
+    expect(teks).toMatch(/Menyatu dengan Protein Urin/)
+  })
+
+  it('lab yang benar-benar tak berhubungan TETAP boleh dijawab normal', () => {
+    // Foto toraks pada dislipidemia tidak berbagi analit dengan apa pun —
+    // penyederhanaan "dalam batas normal" di sini memang benar & ringkas.
+    const { container } = render2Lab('mm_dislipidemia', ['foto_toraks'])
+    expect(container.textContent).toContain('Dalam batas normal, tidak ada temuan bermakna.')
+  })
+})
