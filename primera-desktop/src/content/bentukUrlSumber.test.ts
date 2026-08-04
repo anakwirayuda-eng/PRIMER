@@ -32,12 +32,18 @@ const POLA_BERITA = [/\/read\/\d+\//i, /\/view_artikel\//i, /\/berita\//i, /\/ar
  * Semuanya SUDAH TERVERIFIKASI MATI (404 di Chrome sungguhan, bukan sekadar
  * ditolak bot) dan menunggu keputusan pengganti dari dr. Wirayuda.
  * JANGAN menambah entri ke daftar ini — perbaiki URL-nya.
+ *
+ * 2026-08-04: ketiga entri asli sudah beres (dipicu klik dr. Wirayuda di
+ * tautan sejenis — screenshot 404 nyata). PPK 1186/2022 (5 pemakaian) &
+ * demam tifoid (1 pemakaian) diganti ke URL yang sudah terverifikasi hidup
+ * & dipakai di 10+ tempat lain proyek ini. MTBS diare (2 pemakaian, dan
+ * ternyata SAMPAI ke pemain lewat lengkapiSumberKlinis() — bukan sekadar
+ * alat internal seperti dikira sebelumnya) sementara dialihkan ke regulasi
+ * payung yang sudah terverifikasi hidup, tingkat 'terkait' — MASIH menunggu
+ * dokter menunjuk dokumen MTBS resmi yang benar (lihat komentar di
+ * scripts/generate-clinical-provenance.ts dekat 'diare_akut_anak').
  */
-const UTANG_MENUNGGU_KEPUTUSAN_DOKTER: readonly string[] = [
-  'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-  'https://keslan.kemkes.go.id/view_artikel/3492/mengenal-demam-tifoid',
-  'https://keslan.kemkes.go.id/view_artikel/737/diare-tanda-gejala-dan-cara-mengatasinya',
-]
+const UTANG_MENUNGGU_KEPUTUSAN_DOKTER: readonly string[] = []
 
 interface SumberDipakai {
   kasusId: string

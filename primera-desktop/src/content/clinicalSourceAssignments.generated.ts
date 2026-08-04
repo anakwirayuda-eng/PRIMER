@@ -661,13 +661,6 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2023,
     "jenis": "pedoman_indonesia"
   },
-  "kemenkes-mtbs-diare": {
-    "id": "kemenkes-mtbs-diare",
-    "label": "Kemenkes - MTBS: Rencana Terapi Diare Anak",
-    "url": "https://keslan.kemkes.go.id/view_artikel/737/diare-tanda-gejala-dan-cara-mengatasinya",
-    "tahun": 2022,
-    "jenis": "pedoman_indonesia"
-  },
   "kemenkes-p2-action-plan-2025": {
     "id": "kemenkes-p2-action-plan-2025",
     "label": "Kementerian Kesehatan Republik Indonesia - Rencana Aksi Program Direktorat Jenderal Penanggulangan Penyakit Tahun 2025-2029",
@@ -1027,8 +1020,8 @@ export const CLINICAL_SOURCE_REGISTRY = {
   },
   "queensland-nasal-foreign-body-2025": {
     "id": "queensland-nasal-foreign-body-2025",
-    "label": "Queensland Paediatric Guideline - Foreign Body in the Nose",
-    "url": "https://www.childrens.health.qld.gov.au/health-a-to-z/foreign-body-in-the-nose-emergency-management-in-children",
+    "label": "Queensland Paediatric Guideline - Foreign Body in the Nose (QPEC, profesional)",
+    "url": "https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/foreign-body-nose",
     "tahun": 2025,
     "jenis": "evidence_internasional"
   },
@@ -1499,8 +1492,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
   ],
   "diare_akut_anak": [
     {
-      "sourceId": "kemenkes-mtbs-diare",
-      "cakupan": "langsung"
+      "sourceId": "kemenkes-penanggulangan-penyakit-2026",
+      "cakupan": "terkait"
     },
     {
       "sourceId": "who-child-pneumonia-diarrhoea-2024",
@@ -1509,8 +1502,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
   ],
   "diare_akut_bayi_dehidrasi_berat": [
     {
-      "sourceId": "kemenkes-mtbs-diare",
-      "cakupan": "langsung"
+      "sourceId": "kemenkes-penanggulangan-penyakit-2026",
+      "cakupan": "terkait"
     },
     {
       "sourceId": "who-child-pneumonia-diarrhoea-2024",

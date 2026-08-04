@@ -119,13 +119,13 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2025,
     'pedoman_indonesia',
   ),
-  'kemenkes-mtbs-diare': sumber(
-    'kemenkes-mtbs-diare',
-    'Kemenkes - MTBS: Rencana Terapi Diare Anak',
-    'https://keslan.kemkes.go.id/view_artikel/737/diare-tanda-gejala-dan-cara-mengatasinya',
-    2022,
-    'pedoman_indonesia',
-  ),
+  // 'kemenkes-mtbs-diare' DIHAPUS 2026-08-04: URL-nya sudah 404, dan
+  // pencarian pengganti resmi (Buku Bagan/Saku MTBS-Lintas-Diare di
+  // kemkes.go.id) tidak menemukan apa pun yang bisa diverifikasi hidup —
+  // hanya salinan pihak ketiga (Academia.edu, Slideshare) yang tak memenuhi
+  // standar sumber proyek ini. diare_akut_anak/diare_akut_bayi_dehidrasi_
+  // berat sementara memakai kemenkes-penanggulangan-penyakit-2026 (terkait)
+  // di bawah. MENUNGGU dr. Wirayuda: dokumen MTBS resmi yang benar.
   'kemenkes-penanggulangan-penyakit-2026': sumber(
     'kemenkes-penanggulangan-penyakit-2026',
     'Permenkes 3/2026 - Penanggulangan Penyakit',
@@ -574,10 +574,17 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2022,
     'evidence_internasional',
   ),
+  // Audit tautan mati 2026-08-04: URL lama (halaman konsumen "health-a-to-z")
+  // sudah 404. Diganti ke jalur profesional QPEC — sama seperti
+  // 'foreign-body-inhaled' yang sudah dipakai & terverifikasi di igdSources.ts,
+  // tapi ini entri KHUSUS HIDUNG (bukan tertelan/terhirup — entitas beda).
+  // Domain ini membalas 403 ke bot (Cloudflare), TAPI hidup di browser
+  // sungguhan — pola sama dgn saudara 'foreign-body-inhaled' yang sudah lama
+  // dipakai proyek ini.
   'queensland-nasal-foreign-body-2025': sumber(
     'queensland-nasal-foreign-body-2025',
-    'Queensland Paediatric Guideline - Foreign Body in the Nose',
-    'https://www.childrens.health.qld.gov.au/health-a-to-z/foreign-body-in-the-nose-emergency-management-in-children',
+    'Queensland Paediatric Guideline - Foreign Body in the Nose (QPEC, profesional)',
+    'https://www.childrens.health.qld.gov.au/for-health-professionals/queensland-paediatric-emergency-care-qpec/queensland-paediatric-clinical-guidelines/foreign-body-nose',
     2025,
     'evidence_internasional',
   ),
@@ -715,8 +722,18 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   bronkitis_akut: [PPK_FLOOR, A('cdc-adult-outpatient-2024')],
   demam_tifoid: [PPK_DIRECT, A('cdc-typhoid-2024')],
   dengue_df: [PPK_DIRECT, A('who_arboviral_2025')],
-  diare_akut_anak: [A('kemenkes-mtbs-diare'), A('who-child-pneumonia-diarrhoea-2024')],
-  diare_akut_bayi_dehidrasi_berat: [A('kemenkes-mtbs-diare'), A('who-child-pneumonia-diarrhoea-2024')],
+  // Audit tautan mati 2026-08-04: sumber lama 'kemenkes-mtbs-diare' menunjuk
+  // artikel awam yang sudah 404 dan DIHAPUS dari registry (lihat catatan di
+  // atas). Berbeda dari 3 tautan mati lain hari ini, TIDAK ada pengganti
+  // resmi Kemenkes yang bisa diverifikasi hidup untuk Buku Bagan/Saku
+  // MTBS-Lintas-Diare spesifik — hanya salinan pihak ketiga yang tak
+  // memenuhi standar sumber proyek ini. Sementara menunggu dokter menunjuk
+  // dokumen yang benar, dialihkan ke regulasi payung yang SUDAH terverifikasi
+  // hidup & dipakai di proyek ini (askariasis di atas), pada tingkat
+  // 'terkait' — jujur bahwa ini konteks kebijakan, BUKAN bagan tata laksana
+  // diare yang spesifik.
+  diare_akut_anak: [A('kemenkes-penanggulangan-penyakit-2026', 'terkait'), A('who-child-pneumonia-diarrhoea-2024')],
+  diare_akut_bayi_dehidrasi_berat: [A('kemenkes-penanggulangan-penyakit-2026', 'terkait'), A('who-child-pneumonia-diarrhoea-2024')],
   disentri_basiler: [PPK_DIRECT, A('cdc-shigella-2024')],
   dispepsia_fungsional: [PPK_FLOOR, A('bsg-functional-dyspepsia-2022')],
   dm_tipe2: [A('pnpk-dm2-2026'), A('ada-diabetes-2026-type1')],

@@ -380,10 +380,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi acuan dasar lokal dan memuat amoksisilin/penisilin serta alternatif makrolida bila alergi; dosis tetap disesuaikan dengan usia/berat. Pedoman CDC 2025 menegaskan bahwa pemeriksaan klinis dan hitung darah tidak dapat mengonfirmasi GAS tanpa tes mikrobiologis bila gejala viral tidak jelas. Kortikosteroid bukan pengganti konfirmasi maupun antibiotik yang tepat.',
     sumber: [
       {
-        id: 'kemenkes_ppk_fktp_1186_1936_2022',
-        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
-        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-        tahun: 2023,
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {

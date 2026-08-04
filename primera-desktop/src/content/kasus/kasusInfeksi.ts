@@ -251,10 +251,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     panduanResmi: 'PPK Dokter FKTP KMK 1186/2022 menjadi acuan dasar tata laksana lokal dan memuat amoksisilin atau eritromisin bila alergi; dosis tetap harus disesuaikan dengan usia/berat pasien. Pedoman CDC 2025 menegaskan bahwa tanpa gejala viral yang jelas, pemeriksaan klinis saja tidak dapat membedakan faringitis viral dari GAS; RADT atau kultur tenggorok mengonfirmasi diagnosis bila tersedia. Dokumentasikan alasan bila fasilitas konfirmasi tidak tersedia dan jangan menyebut Centor atau hitung darah sebagai bukti pasti.',
     sumber: [
       {
-        id: 'kemenkes_ppk_fktp_1186_1936_2022',
-        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
-        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-        tahun: 2023,
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {
@@ -523,10 +523,16 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     panduanResmi: 'PPK 1186/2022 memuat pilihan antibiotik dan batas rujukan, termasuk gagal membaik atau muncul toksisitas/komplikasi; sediaan dan dosis harus mengikuti usia/berat. Kemenkes dan CDC sama-sama menempatkan kultur darah sebagai penopang diagnosis serta memperingatkan keterbatasan Widal. Karena resistensi antimikroba berubah menurut wilayah dan waktu, pilihan antibiotik harus mengikuti kebijakan program dan antibiogram lokal bila tersedia.',
     sumber: [
       {
-        id: 'kemenkes_demam_tifoid_2024',
-        label: 'Kemenkes - Mengenal Demam Tifoid',
-        url: 'https://keslan.kemkes.go.id/view_artikel/3492/mengenal-demam-tifoid',
-        tahun: 2024,
+        // Audit tautan mati 2026-08-04 (dipicu klik dr. Wirayuda di tautan
+        // sejenis): URL lama (artikel awam "Mengenal Demam Tifoid") sudah
+        // 404. panduanResmi kasus ini sendiri eksplisit merujuk PPK
+        // 1186/2022 sebagai acuan — diganti ke dokumen yang benar itu,
+        // bukan artikel awam, dan URL yang sama sudah terverifikasi hidup
+        // & dipakai di 10+ tempat lain di proyek ini.
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {

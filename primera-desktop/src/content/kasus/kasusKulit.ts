@@ -634,10 +634,10 @@ export const KASUS_KULIT: KasusKlinis[] = [
     },
     sumber: [
       {
-        id: 'kemenkes_ppk_fktp_1186_1936_2022',
-        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
-        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-        tahun: 2023,
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {
@@ -765,10 +765,10 @@ export const KASUS_KULIT: KasusKlinis[] = [
     catatanRealita: 'VZIG bukan stok rutin Puskesmas. Kontak hamil, neonatus, atau imunokompromais memerlukan koordinasi/rujukan segera untuk penilaian dan profilaksis yang sensitif waktu; catat hari pajanan. Jangan memulai profilaksis asiklovir secara improvisasi tanpa protokol lokal atau arahan spesialis.',
     sumber: [
       {
-        id: 'kemenkes_ppk_fktp_1186_1936_2022',
-        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
-        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-        tahun: 2023,
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {
@@ -1025,10 +1025,10 @@ export const KASUS_KULIT: KasusKlinis[] = [
     },
     sumber: [
       {
-        id: 'kemenkes_ppk_fktp_1186_1936_2022',
-        label: 'Kemenkes - PPK Dokter FKTP KMK 1186/2022 dan perubahannya',
-        url: 'https://keslan.kemkes.go.id/read/1035/workshop-clinical-pathway-upaya-penguatan-pelayanan-kesehatan-di-fktp',
-        tahun: 2023,
+        id: 'ppk_fktp_2022',
+        label: 'KMK 1186/2022 - PPK Dokter di FKTP (indeks publik)',
+        url: 'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
+        tahun: 2022,
         jenis: 'pedoman_indonesia',
       },
       {
