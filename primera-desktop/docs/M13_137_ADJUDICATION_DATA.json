@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-04T02:00:23.356Z",
-  "sourceCommit": "5b881d7d370b92bb91f3d1e46399636fe3d8af14+dirty",
-  "artifactFingerprint": "ce5f87f8e5dc7e65bf51e1895e9afbcb9f46b348ea3f89d8e87abeab3ad9e10c",
-  "packFingerprint": "e51d7816",
+  "generatedAt": "2026-08-04T12:51:47.714Z",
+  "sourceCommit": "b574271604841d873cad6daee0e2d3ae97ab78c7+dirty",
+  "artifactFingerprint": "657a34f647430905d71791180fd6da7898c121d46b1d49829e7c6692f34be7e2",
+  "packFingerprint": "1a62f5a7",
   "contentRelease": "gameplay-comfort-2026-08-01",
-  "engineRevision": 64,
+  "engineRevision": 65,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -528,8 +528,8 @@
         ],
         "education": [
           {
-            "id": "higiene_genital_lembut",
-            "name": "[Genital] Hindari douching, sabun pewangi, dan pakaian lembap",
+            "id": "pascareduksi_parafimosis",
+            "name": "[Kulup] Sesudah reduksi: jangan biarkan kulup tertarik ke belakang, kembali bila bengkak/nyeri memberat",
             "critical": false
           },
           {
@@ -5477,8 +5477,8 @@
         "procedures": [],
         "education": [
           {
-            "id": "higiene_genital_lembut",
-            "name": "[Genital] Hindari douching, sabun pewangi, dan pakaian lembap",
+            "id": "jangan_tarik_paksa_kulup",
+            "name": "[Kulup] Jangan tarik paksa; retraksi lembut bertahap sesuai anjuran",
             "critical": false
           },
           {

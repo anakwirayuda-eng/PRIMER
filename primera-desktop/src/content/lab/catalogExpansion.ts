@@ -241,6 +241,17 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   layanan_pasangan_ims: { id: 'layanan_pasangan_ims', nama: '[IMS] Hubungkan pasangan ke tes-terapi secara sukarela, rahasia, dan aman dari kekerasan', kategori: 'higiene', sinonim: ['partner services', 'contact tracing', 'pasangan', 'confidential'] },
   pencegahan_ims_terintegrasi: { id: 'pencegahan_ims_terintegrasi', nama: '[IMS] Tawarkan tes HIV-sifilis, kondom, vaksinasi, dan PrEP sesuai risiko serta preferensi', kategori: 'higiene', sinonim: ['HIV', 'sifilis', 'kondom', 'PrEP', 'vaksin'] },
   higiene_genital_lembut: { id: 'higiene_genital_lembut', nama: '[Genital] Hindari douching, sabun pewangi, dan pakaian lembap', kategori: 'higiene', sinonim: ['vulvitis', 'vaginitis'] },
+  // Audit CODEX 2026-08-04 (temuan 7): topik di atas ber-tag [Genital] dan
+  // menyebut douching — istilah higiene vulvovaginal perempuan (sinonimnya
+  // eksplisit vulvitis/vaginitis) — dulu juga dipakai pada fimosis (anak
+  // laki-laki 5-11 th) dan parafimosis. Douching tak berlaku sama sekali di
+  // sana, sementara poin ajar sesungguhnya (tertulis di clue kedua kasus)
+  // tak terwakili topik mana pun. Kelas yang SAMA dengan sapuan 2026-08-04
+  // pada dermatitis popok; batch2.ts lolos dari sapuan itu.
+  // Kalimat kedua topik di bawah ditranskrip dari clue kasusnya sendiri,
+  // bukan anjuran klinis baru.
+  jangan_tarik_paksa_kulup: { id: 'jangan_tarik_paksa_kulup', nama: '[Kulup] Jangan tarik paksa; retraksi lembut bertahap sesuai anjuran', kategori: 'higiene', sinonim: ['fimosis', 'preputium', 'kulup', 'retraksi'] },
+  pascareduksi_parafimosis: { id: 'pascareduksi_parafimosis', nama: '[Kulup] Sesudah reduksi: jangan biarkan kulup tertarik ke belakang, kembali bila bengkak/nyeri memberat', kategori: 'tindakan', sinonim: ['parafimosis', 'pascareduksi', 'edema glans'] },
   // Audit tag-vs-penyakit 2026-08-04: topik di atas ber-tag [Genital] &
   // menyebut douching — istilah higiene vulvovaginal dewasa/remaja, dulu
   // dipakai lagi utk dermatitis popok BAYI (3-11 bulan). Topik baru berikut

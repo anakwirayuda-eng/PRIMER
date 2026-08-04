@@ -161,9 +161,22 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2024,
     'evidence_internasional',
   ),
+  // Audit CODEX 2026-08-04 (temuan 6): label lama berbunyi "WHO ICOPE —
+  // Primary Eye Care and Refractive-error Pathways", padahal dokumen di URL
+  // itu berjudul "Integrated care for older people (ICOPE): guidance for
+  // person-centred assessment and pathways in primary care, 2nd ed" —
+  // panduan penilaian LANSIA, bukan pedoman penyakit mata/refraksi.
+  // Diverifikasi langsung ke who.int. Label kini menyebut dokumennya apa
+  // adanya; penilaian mata memang salah satu domain kapasitas intrinsik yang
+  // disaring ICOPE, jadi sumbernya tidak dibuang — tapi ia kerangka
+  // penyaringan, bukan pedoman per-penyakit. Karena itu cakupannya diturunkan
+  // dari 'langsung' ke 'terkait' pada sepuluh kasus mata (lihat di bawah).
+  // MENUNGGU DOKTER: sumber pengganti yang benar-benar per-kondisi — kandidat
+  // yang sudah ada di registry ini tapi belum dipakai kasus mana pun:
+  // 'who-vision-screening-2025'.
   'who-icope-eye-2025': sumber(
     'who-icope-eye-2025',
-    'WHO ICOPE - Primary Eye Care and Refractive-error Pathways',
+    'WHO ICOPE - Integrated Care for Older People: penilaian kapasitas intrinsik (termasuk penyaringan penglihatan)',
     'https://www.who.int/publications/i/item/9789240103726',
     2025,
     'evidence_internasional',
@@ -399,10 +412,17 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2025,
     'evidence_internasional',
   ),
+  // Audit CODEX 2026-08-04 (temuan 15): pedoman ACG GERD dulu tampil DUA
+  // baris ke pemain, keduanya berbadge LANGSUNG — satu dari sumber inline
+  // kasus (`acg_gerd_2022`, tautan PubMed) dan satu dari sini (tautan situs
+  // penerbit). Dedup di clinicalSources.ts hanya mencocokkan id/url persis,
+  // dan keduanya berbeda pada dua-duanya. Entri inline dicabut dari
+  // kasusRespGi.ts; tautannya dipindah ke sini karena PubMed selalu terbuka
+  // tanpa berbayar, sedangkan situs penerbit dapat berbayar.
   'acg-gerd-2022': sumber(
     'acg-gerd-2022',
-    'ACG Clinical Guideline for GERD',
-    'https://journals.lww.com/ajg/fulltext/2022/01000/acg_clinical_guideline_for_the_diagnosis_and.14.aspx',
+    'ACG Clinical Guideline for GERD (2022)',
+    'https://pubmed.ncbi.nlm.nih.gov/34807007/',
     2022,
     'evidence_internasional',
   ),
@@ -861,7 +881,13 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
     'lab_tinea_pedis',
     'lab_tinea_unguium_terkonfirmasi',
   ],
-  'who-icope-eye-2025': [
+  // Audit CODEX 2026-08-04 (temuan 6): sufiks ':terkait' menurunkan cakupan
+  // kesepuluh kasus mata ini dari 'langsung'. Dokumennya panduan penilaian
+  // LANSIA (penglihatan cuma satu domain kapasitas intrinsik yang disaring),
+  // bukan pedoman per-penyakit mata — jadi 'langsung' keliru secara faktual.
+  // Bukan sekadar kosmetik: 'buta senja defisiensi vitamin A' berpasien ANAK,
+  // jadi label lama sekaligus salah populasi.
+  'who-icope-eye-2025:terkait': [
     'lab_astigmatisme_ringan',
     'lab_blefaritis_anterior',
     'lab_buta_senja_defisiensi_vitamin_a',
@@ -898,6 +924,12 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
 // spt BASELINE_ASSIGNMENTS/A() 3-argumen). Dipisah di sini agar tak diam-diam
 // overclaim — lihat SumberKlinis.catatan di types.ts.
 const LAB_FALLBACK_CATATAN: Record<string, string> = {
+  // Audit CODEX 2026-08-04 (temuan 6): pasien kasus ini ANAK, sedangkan
+  // dokumen ICOPE ditujukan untuk lansia — ketidakcocokan populasi paling
+  // tajam di antara sepuluh kasus mata yang memakainya. Batasnya dinyatakan
+  // terbuka ke mahasiswa, mengikuti pola lab_stomatitis_aftosa di bawah.
+  lab_buta_senja_defisiensi_vitamin_a:
+    'Dokumen ICOPE ini ditujukan untuk penilaian kapasitas intrinsik LANSIA, sedangkan pasien kasus ini anak — dipakai sebatas kerangka penyaringan penglihatan di layanan primer, BUKAN pedoman tata laksana defisiensi vitamin A. Rujuk pedoman gizi/mata anak untuk regimen dosisnya.',
   lab_stomatitis_aftosa:
     'Tinjauan ini menilai HANYA intervensi sistemik (kortikosteroid oral, colchicine, pentoxifylline, dll) untuk RAS — tidak mencakup kortikosteroid topikal (mis. triamsinolon asetonid orabase) yang menjadi tata laksana PPK pada kasus ini; dipakai sbg rujukan diagnosis/epidemiologi RAS, bukan pembenaran regimen topikal.',
 }
@@ -951,7 +983,16 @@ function mergeRegistry(data: M13Dataset): Map<string, SourceDefinition> {
     registry.set(item.id, item)
   }
 
-  for (const item of Object.values(SUMBER_IGD)) add({ ...item })
+  // `cakupan`/`catatan` adalah properti ASSIGNMENT (relasi sumber↔kasus),
+  // bukan properti definisi sumber. SUMBER_IGD menyimpan keduanya sekaligus,
+  // jadi menyalinnya bulat-bulat membocorkan `cakupan` ke registry — dan
+  // registry di-render `satisfies Omit<SumberKlinis, 'cakupan'|'catatan'>`,
+  // sehingga 11 entri gagal typecheck setiap kali generator dijalankan.
+  // Bug pra-ada yang selama ini menghalangi regenerasi penuh (audit 2026-08-04).
+  for (const item of Object.values(SUMBER_IGD)) {
+    const { cakupan: _cakupan, catatan: _catatan, ...definisi } = item
+    add(definisi)
+  }
   for (const item of Object.values(EXTRA_SOURCES)) add(item)
 
   for (const [id, item] of Object.entries(EBM_GUIDELINE_SOURCES)) {
@@ -989,10 +1030,12 @@ function mergeRegistry(data: M13Dataset): Map<string, SourceDefinition> {
       ...EXTRA_SOURCES['pnpk-dm2-2026']!,
       id: 'pnpk-dm-tipe2-dewasa-2026',
     },
-    'stroke-2026': {
-      ...SUMBER_IGD.pnpk_stroke_2026,
-      id: 'pnpk-stroke-2026',
-    },
+    // Sama seperti catatan di loop SUMBER_IGD di atas: entri IGD membawa
+    // `cakupan`/`catatan` yang tak boleh ikut ke definisi sumber.
+    'stroke-2026': (() => {
+      const { cakupan: _c, catatan: _n, ...definisi } = SUMBER_IGD.pnpk_stroke_2026
+      return { ...definisi, id: 'pnpk-stroke-2026' }
+    })(),
   }
   for (const pnpk of data.cases.flatMap((item) => item.evidence.pnpk.sources)) {
     const id = sourceIdForPnpk(pnpk)

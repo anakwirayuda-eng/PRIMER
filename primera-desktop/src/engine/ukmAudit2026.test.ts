@@ -331,3 +331,95 @@ describe('UKM assurance - karma menyatakan risiko tanpa kausalitas deterministik
     }
   })
 })
+
+/**
+ * REGRESI — audit CODEX 2026-08-04 (temuan 3+4, REVISI_ENGINE 64→65).
+ *
+ * Blok flush akhir stase (reducer.ts, cabang `tamat`) dulu HANYA mengoreksi
+ * indikator dan membiarkan `arcSelesai: 'berhasil'` — padahal komentarnya
+ * sendiri berjanji "hasilnya identik dgn seandainya diproses persis di hari
+ * jatuh temponya", dan jalur hari-jatuh-tempo MENCABUT klaim itu saat warga
+ * ingkar. Akibatnya keluarga yang baru terbukti TIDAK berubah tetap tampil
+ * "PENDAMPINGAN TUNTAS", "Berubah" di Laporan Akhir, dan ikut dihitung
+ * lencana sahabat_desa.
+ *
+ * Test ini mengunci SIMETRI kedua jalur: keluarga & seed & id-jadwal identik,
+ * hanya harinya beda.
+ */
+describe('flush akhir stase — janji ingkar tak boleh membekukan klaim berhasil', () => {
+  const keluargaId = 'keluarga_wulan'
+  const jadwalId = 'janji_flush_tamat'
+
+  function seedIngkar(): number {
+    return Array.from({ length: 200 }, (_, i) => i).find(
+      (nilai) => !new Rng(nilai, 'verifikasi-janji', jadwalId).chance(peluangJanjiDitepati(0)),
+    )!
+  }
+
+  function siapkan(hari: number, seed: number): GameState {
+    const konten = PACK.keluarga[keluargaId]!
+    const arc = arcKunjunganAktif(PACK, konten, 'karier', CONTENT_RELEASE)
+    const indikatorJanji = arc.at(-1)!.target[0]!
+    let state = buildInitialState('Flush Tamat', seed, PACK)
+    const kelAwal = state.desa.keluarga[keluargaId]!
+    return {
+      ...state,
+      hari,
+      blok: 'sore',
+      desa: {
+        ...state.desa,
+        binaan: Array.from(new Set([...state.desa.binaan, keluargaId])),
+        keluarga: {
+          ...state.desa.keluarga,
+          [keluargaId]: {
+            ...kelAwal,
+            trust: 0,
+            arcIndex: arc.length,
+            arcSelesai: 'berhasil',
+            indikator: {
+              ...kelAwal.indikator,
+              [indikatorJanji]: {
+                status: 'ya', statusSebenarnya: 'tidak', sumber: 'janji', hariData: hari,
+              },
+            },
+          },
+        },
+      },
+      jadwal: [{
+        id: jadwalId,
+        hari: hari + 1,
+        jenis: 'verifikasi_pispk',
+        keluargaId,
+        indikatorJanji: [indikatorJanji],
+      }],
+    } as GameState
+  }
+
+  it('janji ingkar yang jatuh tempo SETELAH stase tamat mencabut klaim berhasil, sama seperti jalur harian', () => {
+    const seed = seedIngkar()
+    // Hari 90 = hari terakhir Karier; jadwal hari 91 hanya bisa diproses flush.
+    const state = siapkan(90, seed)
+    const sesudah = advance(state, { type: 'LANJUTKAN' }, PACK).state
+    const kel = sesudah.desa.keluarga[keluargaId]!
+
+    // Indikator memang dikoreksi jadi tidak terpenuhi (perilaku lama, dijaga).
+    const indikatorJanji = arcKunjunganAktif(PACK, PACK.keluarga[keluargaId]!, 'karier', CONTENT_RELEASE)
+      .at(-1)!.target[0]!
+    expect(kel.indikator[indikatorJanji]).toMatchObject({
+      statusSebenarnya: 'tidak', sumber: 'dokter',
+    })
+    // INTI PERBAIKAN: klaim keberhasilan TIDAK boleh ikut membeku.
+    expect(kel.arcSelesai).toBeUndefined()
+  })
+
+  it('janji yang DITEPATI setelah stase tamat tetap mempertahankan klaim berhasil', () => {
+    const seed = Array.from({ length: 200 }, (_, i) => i).find(
+      (nilai) => new Rng(nilai, 'verifikasi-janji', jadwalId).chance(peluangJanjiDitepati(0)),
+    )!
+    const state = siapkan(90, seed)
+    const sesudah = advance(state, { type: 'LANJUTKAN' }, PACK).state
+    const kel = sesudah.desa.keluarga[keluargaId]!
+
+    expect(kel.arcSelesai).toBe('berhasil')
+  })
+})

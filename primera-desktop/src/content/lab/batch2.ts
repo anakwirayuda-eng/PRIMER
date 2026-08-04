@@ -520,7 +520,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Anak aktif dan tidak demam.'], ['kulit', 'Cincin preputium sempit dengan jaringan parut ringan; glans tidak dapat diekspos, tanpa edema akut.', true]],
     diagnosisBanding: ['N47.1', 'N47.2', 'N48.1'],
-    tatalaksana: { obatBenar: ['betametason_krim_005'], edukasi: ['higiene_genital_lembut', 'tanda_bahaya'] },
+    // Audit CODEX 2026-08-04 (temuan 7): higiene_genital_lembut ber-tag
+    // [Genital] menyebut douching (higiene vulvovaginal perempuan) — tak
+    // berlaku pada anak laki-laki 5-11 th. Diganti topik yang justru jadi
+    // poin ajar clue kasus ini: jangan tarik paksa.
+    tatalaksana: { obatBenar: ['betametason_krim_005'], edukasi: ['jangan_tarik_paksa_kulup', 'tanda_bahaya'] },
     clue: 'Fimosis patologis dengan cincin fibrotik tetapi tanpa retensi atau infeksi berat dapat dicoba kortikosteroid topikal dan retraksi lembut terarah. Jangan menarik paksa; rujuk bila skar berat, infeksi berulang, gangguan berkemih, atau gagal terapi.',
     panduanResmi: `${PPK} Kortikosteroid topikal 0,05% selama beberapa minggu dan sirkumsisi terpilih adalah opsi.`,
   }),
@@ -536,7 +540,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['kulit', 'Preputium membentuk cincin konstriksi di belakang glans; edema sedang, glans hangat merah muda, perfusi masih baik.']],
     diagnosisBanding: ['N47.2', 'N47.1', 'N48.1'],
-    tatalaksana: { obatBenar: [], obatOpsional: ['ibuprofen_400'], prosedur: ['reduksi_parafimosis'], edukasi: ['higiene_genital_lembut', 'tanda_bahaya'] },
+    // Audit CODEX 2026-08-04 (temuan 7): sama seperti fimosis di atas —
+    // douching tak berlaku. Diganti topik perawatan pascareduksi, yang
+    // memang belum terwakili topik mana pun.
+    tatalaksana: { obatBenar: [], obatOpsional: ['ibuprofen_400'], prosedur: ['reduksi_parafimosis'], edukasi: ['pascareduksi_parafimosis', 'tanda_bahaya'] },
     clue: 'Parafimosis adalah kegawatan urologi. Beri analgesia, kompresi edema, lalu reduksi manual lembut; jangan menunda bila perfusi menurun. Reduksi gagal, jaringan iskemik, atau komplikasi memerlukan transfer urologi emergensi.',
     panduanResmi: `${PPK} Reduksi manual dilakukan segera; tindakan bedah diperlukan bila gagal.`,
     catatanRealita: 'Pada encounter ini pencahayaan, sarung tangan, kasa kompresi, pelumas steril, analgesia, serta operator terlatih dinyatakan ready. Lakukan satu upaya reduksi manual lembut; perfusi memburuk, nyeri tak terkendali, atau kegagalan upaya adalah alasan berhenti dan transfer tanpa manipulasi berulang.',

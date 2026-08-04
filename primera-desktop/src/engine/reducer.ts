@@ -2554,10 +2554,13 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
         if (kelContent && kel) {
           const rngJanji = new Rng(s.seed, 'verifikasi-janji', j.id)
           const indikator = { ...kel.indikator }
+          let adaIngkar = false
           for (const ind of j.indikatorJanji) {
             const nilai = indikator[ind]
             if (nilai.sumber !== 'janji') continue
-            indikator[ind] = rngJanji.chance(peluangJanjiDitepati(kel.trust))
+            const ditepati = rngJanji.chance(peluangJanjiDitepati(kel.trust))
+            if (!ditepati) adaIngkar = true
+            indikator[ind] = ditepati
               ? { status: 'ya', statusSebenarnya: 'ya', sumber: 'dokter', hariData: s.hari }
               : {
                   status: nilai.statusSebenarnya,
@@ -2566,7 +2569,28 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
                   hariData: s.hari,
                 }
           }
-          keluargaFlush = { ...keluargaFlush, [j.keluargaId]: { ...kel, indikator } }
+          // Audit 2026-08-04 (rev 64→65): blok ini dulu HANYA mengoreksi
+          // indikator dan membiarkan `arcSelesai: 'berhasil'` — padahal
+          // komentar di atas berjanji "hasilnya identik dgn seandainya
+          // diproses persis di hari jatuh temponya", dan jalur hari-jatuh-
+          // tempo (lihat ~3027) MENCABUT arcSelesai saat warga ingkar.
+          // Akibatnya keluarga yang baru terbukti TIDAK berubah tetap tampil
+          // "PENDAMPINGAN TUNTAS" di kartu keluarga, "Berubah" di Laporan
+          // Akhir, dan ikut dihitung lencana sahabat_desa. Diverifikasi
+          // empiris: keluarga & seed & id-jadwal identik, hanya beda hari —
+          // hari 19→20 mencabut, hari 30→31 tidak.
+          //
+          // Sengaja TIDAK memulihkan `arcIndex`/`followUpHari` seperti jalur
+          // harian: pemulihan itu gunanya membuka kembali jalur kunjungan
+          // yang bisa dimainkan, sedangkan di sini stase sudah tamat — tak
+          // ada lagi waktu bermain. Yang diperbaiki murni kejujuran status.
+          const kelBaru: KeluargaState = { ...kel, indikator }
+          if (adaIngkar && kel.arcSelesai === 'berhasil') {
+            const { arcSelesai: _selesaiLama, ...kelTanpaKlaim } = kelBaru
+            keluargaFlush = { ...keluargaFlush, [j.keluargaId]: kelTanpaKlaim }
+          } else {
+            keluargaFlush = { ...keluargaFlush, [j.keluargaId]: kelBaru }
+          }
           continue
         }
       }

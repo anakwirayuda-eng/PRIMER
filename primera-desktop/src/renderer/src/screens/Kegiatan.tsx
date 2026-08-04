@@ -206,10 +206,17 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
               sesi yang keputusannya semua salah (skor 0) tetap mengklaim "IKS
               membaik", padahal engine tak menerangkut apa pun ke wilayah bila
               tak ada keputusan tepat. Pola sama cabang KLB di bawah. */}
+          {/* Audit CODEX 2026-08-04 (temuan 14): gerbang `skor > 0` tak sejajar
+              dengan engine, yang baru memutakhirkan data KIA pada skor >= 0,5
+              (reducer.ts:2192). Akibatnya sesi 1-dari-4 benar distempel KURANG
+              di layar yang sama, tetapi tetap menjanjikan "gizi & imunisasi
+              membaik". Kini tiga tingkat, sejajar engine. */}
           {hasil.jenis === 'posyandu' &&
-            (hasil.skor > 0
+            (hasil.skor >= 0.5
               ? 'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'
-              : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
+              : hasil.skor > 0
+                ? 'Sebagian keputusanmu tepat dan menyumbang perbaikan kecil pada IKS wilayah, tetapi belum cukup untuk memutakhirkan data KIA keluarga di RW ini.'
+                : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
           {hasil.jenis === 'prolanis' &&
             'Kondisi tiap peserta bergerak mengikuti keputusanmu. Peserta yang dua bulan berturut-turut tidak terkendali akan berakhir di poli — pantau bulan depan.'}
           {hasil.jenis === 'klb' &&

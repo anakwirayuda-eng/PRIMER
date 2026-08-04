@@ -96,8 +96,8 @@ export const CLINICAL_SOURCE_REGISTRY = {
   },
   "acg-gerd-2022": {
     "id": "acg-gerd-2022",
-    "label": "ACG Clinical Guideline for GERD",
-    "url": "https://journals.lww.com/ajg/fulltext/2022/01000/acg_clinical_guideline_for_the_diagnosis_and.14.aspx",
+    "label": "ACG Clinical Guideline for GERD (2022)",
+    "url": "https://pubmed.ncbi.nlm.nih.gov/34807007/",
     "tahun": 2022,
     "jenis": "evidence_internasional"
   },
@@ -1216,7 +1216,7 @@ export const CLINICAL_SOURCE_REGISTRY = {
   },
   "who-icope-eye-2025": {
     "id": "who-icope-eye-2025",
-    "label": "WHO ICOPE - Primary Eye Care and Refractive-error Pathways",
+    "label": "WHO ICOPE - Integrated Care for Older People: penilaian kapasitas intrinsik (termasuk penyaringan penglihatan)",
     "url": "https://www.who.int/publications/i/item/9789240103726",
     "tahun": 2025,
     "jenis": "evidence_internasional"
@@ -1967,7 +1967,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_benda_asing_esofagus": [
@@ -1998,7 +1998,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_bronkiolitis_berat": [
@@ -2019,7 +2019,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait",
+      "catatan": "Dokumen ICOPE ini ditujukan untuk penilaian kapasitas intrinsik LANSIA, sedangkan pasien kasus ini anak — dipakai sebatas kerangka penyaringan penglihatan di layanan primer, BUKAN pedoman tata laksana defisiensi vitamin A. Rujuk pedoman gizi/mata anak untuk regimen dosisnya."
     }
   ],
   "lab_cacing_tambang": [
@@ -2183,7 +2184,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_erisipelas_tungkai_ringan": [
@@ -2433,7 +2434,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_hipertiroid_graves": [
@@ -2756,7 +2757,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_meningitis_bakterial_suspek": [
@@ -2786,7 +2787,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_mola_hidatidosa": [
@@ -2896,7 +2897,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_peritonitis_generalisata": [
@@ -3019,7 +3020,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_puting_lecet": [
@@ -3388,7 +3389,7 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "who-icope-eye-2025",
-      "cakupan": "langsung"
+      "cakupan": "terkait"
     }
   ],
   "lab_ulkus_tungkai_vena": [

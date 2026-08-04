@@ -711,7 +711,24 @@ function fnv1a(teks: string): string {
 // skor, RNG, atau state replay mana pun; naik revisi HANYA karena reducer.ts
 // berkas beku. Dossier build lama karena itu jatuh ke
 // "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
-export const REVISI_ENGINE = 64
+// rev 65 (2026-08-04, audit CODEX temuan 3+4 — diverifikasi ulang empiris):
+// reducer.ts — flush akhir stase untuk `verifikasi_pispk` dulu HANYA mengoreksi
+// indikator PIS-PK dan MEMBIARKAN `arcSelesai: 'berhasil'`, padahal komentar
+// blok itu sendiri berjanji hasilnya "identik dgn seandainya diproses persis di
+// hari jatuh temponya" — dan jalur hari-jatuh-tempo MENCABUT klaim itu saat
+// warga ingkar janji. Akibatnya keluarga yang baru terbukti TIDAK berubah tetap
+// tampil "PENDAMPINGAN TUNTAS" di kartu keluarga, "Berubah" di Laporan Akhir,
+// dan ikut dihitung lencana sahabat_desa. Terbukti empiris: keluarga, seed, dan
+// id jadwal identik — hari 19→20 mencabut, hari 30→31 tidak.
+//
+// TIDAK menyentuh skor: hitungSkor tak pernah membaca arcSelesai, dan
+// penghitungan ulang IKS memang dilewati saat stase tamat. Yang diperbaiki
+// murni kejujuran status yang dibaca epilog, kartu keluarga, dan lencana.
+// Sengaja TIDAK memulihkan arcIndex/followUpHari seperti jalur harian —
+// pemulihan itu gunanya membuka kunjungan yang masih bisa dimainkan, sedangkan
+// di sini stase sudah tamat. Replay lama yang membekukan klaim palsu karena itu
+// jatuh ke "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
+export const REVISI_ENGINE = 65
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

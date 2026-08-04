@@ -640,14 +640,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     },
     clue: 'Heartburn retrosternal dan regurgitasi asam yang memburuk setelah makan atau berbaring mendukung GERD. Setelah penyebab jantung dinilai pada nyeri dada, pasien tanpa alarm dapat menjalani PPI empiris 8 minggu sekali sehari sebelum makan serta modifikasi gaya hidup. Respons gejala memperkuat dugaan, tetapi tidak mengonfirmasi GERD sendirian karena spesifisitas PPI test rendah. Disfagia, perdarahan, anemia, penurunan berat badan, muntah persisten, atau respons tidak memadai memerlukan evaluasi lanjutan melalui jejaring.',
     panduanResmi: 'PPK 1186/2022 menjadi acuan dasar lokal dan memuat PPI test singkat serta pilihan PPI/H2-blocker. ACG 2022 memperbarui jalur: pada gejala klasik tanpa alarm, lakukan uji PPI 8 minggu sekali sehari sebelum makan; respons klinis mendukung, bukan membuktikan, diagnosis. Meta-analisis diagnostik 2022 menemukan sensitivitas sekitar 79% tetapi spesifisitas hanya 45%, sehingga perbaikan gejala tidak boleh disebut konfirmasi definitif. Pilihan obat pengganti mengikuti Fornas dan stok aktual, bukan otomatis memakai produk historis yang mungkin sudah tidak relevan.',
+    // Audit CODEX 2026-08-04 (temuan 15): entri inline `acg_gerd_2022` dicabut
+    // — pedoman yang SAMA sudah dipasang generator provenance sebagai
+    // `acg-gerd-2022`, sehingga pemain melihatnya dua baris (id & URL berbeda
+    // lolos dedup). Tautan PubMed-nya dipindahkan ke entri generator supaya
+    // yang bertahan tetap tautan bebas-akses.
     sumber: [
-      {
-        id: 'acg_gerd_2022',
-        label: 'ACG Clinical Guideline for GERD (2022)',
-        url: 'https://pubmed.ncbi.nlm.nih.gov/34807007/',
-        tahun: 2022,
-        jenis: 'evidence_internasional',
-      },
       {
         id: 'ppi_test_meta_2022',
         label: 'Systematic Review & Meta-analysis: Diagnostic Accuracy of the PPI Test',

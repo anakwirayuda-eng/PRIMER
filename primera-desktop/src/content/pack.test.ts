@@ -433,6 +433,12 @@ describe('PACK — validasi silang id konten', () => {
     ['lab_peritonitis_generalisata', 'hentikan_nsaid_pencetus_ulkus', 'hentikan_obat_pencetus'],
     ['lab_retensio_urin_akut', 'hindari_antikolinergik_retensi_urin', 'hentikan_obat_pencetus'],
     ['lab_abortus_spontan_komplit', 'tanda_bahaya_pascakeguguran', 'tanda_bahaya_kehamilan'],
+    // Audit CODEX 2026-08-04 (temuan 7): sisa pemakaian topik douching yang
+    // lolos dari sapuan sebelumnya — batch2.ts tak tersapu. Douching adalah
+    // higiene vulvovaginal perempuan; kedua kasus ini penyakit preputium
+    // laki-laki (fimosis pada anak 5-11 th).
+    ['lab_fimosis_patologis_ringan', 'jangan_tarik_paksa_kulup', 'higiene_genital_lembut'],
+    ['lab_parafimosis_reduksibel', 'pascareduksi_parafimosis', 'higiene_genital_lembut'],
   ])('%s: edukasi memuat %s dan TIDAK memuat %s (clue-vs-edukasi 2026-08-04)', (kasusId, wajibAda, wajibTiada) => {
     const kasus = PACK.kasus[kasusId]!
     expect(kasus.tatalaksana.edukasi).toContain(wajibAda)
