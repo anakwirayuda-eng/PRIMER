@@ -728,7 +728,17 @@ function fnv1a(teks: string): string {
 // pemulihan itu gunanya membuka kunjungan yang masih bisa dimainkan, sedangkan
 // di sini stase sudah tamat. Replay lama yang membekukan klaim palsu karena itu
 // jatuh ke "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
-export const REVISI_ENGINE = 65
+// Audit CODEX beta.16 (2026-08-06): 65 -> 66. Gerbang KLB kini mensyaratkan
+// kartu verifikasi benar, cakupan indikator Posyandu dipetakan per-kartu, dan
+// catatan Prolanis berhenti melabeli angka siklus berikutnya sebagai "hari
+// ini". Ketiganya menyentuh replay, jadi revisi wajib naik.
+//
+// Ongkos marginalnya NOL, dan itu yang membuat ketiganya layak dikerjakan
+// sekarang alih-alih dicicil: bump CONTENT_RELEASE di rilis yang sama sudah
+// memindahkan sidikJariPack (daftar hash memuat 'runtime-release-order' dan
+// 'exam-packages' yang membawa contentRelease), jadi populasi dosier yang
+// jatuh ke "tidak dapat diverifikasi" identik entah revisi ini naik atau tidak.
+export const REVISI_ENGINE = 66
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

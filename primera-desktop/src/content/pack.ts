@@ -43,7 +43,35 @@ export const CLINICAL_PROVENANCE_CONTENT_RELEASE = 'clinical-provenance-2026-07-
  * internal → bahasa manusia). Decision-facing → rilis konten baru.
  */
 export const GAMEPLAY_COMFORT_CONTENT_RELEASE = 'gameplay-comfort-2026-08-01'
-export const CONTENT_RELEASE = GAMEPLAY_COMFORT_CONTENT_RELEASE
+/**
+ * Sapuan kunci jawaban 2026-08-04 s.d. 2026-08-06 (beta.17). Yang berubah kali
+ * ini KUNCI JAWABAN, bukan kenyamanan — karena itu rilis konten wajib naik:
+ *   - 9 topik edukasi salah-tag disapu (5b881d7) dan 3 kasus berganti daftar
+ *     edukasi + clue (7598725);
+ *   - 4 kasus mendapat regio pemeriksaan fisik BARU ber-relevan (3bac514),
+ *     sehingga penyebut skorPemeriksaan bergeser;
+ *   - 17 kasus berganti sumber (7390ac4);
+ *   - gerbang KLB, cakupan indikator Posyandu, dan label waktu Prolanis
+ *     berubah pada sapuan audit 2026-08-06.
+ *
+ * KENAPA INI WAJIB, bukan sekadar rapi. Tanpa rilis baru, save dari beta.15/16
+ * lolos `rilisArsipKompatibel` (store.ts — perbandingannya CUMA satu string
+ * nama rilis) sehingga stase lama BISA DITERUSKAN dengan kunci jawaban baru.
+ * Dossier yang diekspor sesudahnya membawa sidik jari build BARU, jadi ia lolos
+ * gerbang "versi konten berbeda" di verifikasi.ts §3a — lalu replay memutar
+ * ulang jejak lama memakai kunci baru, skornya melenceng, dan mahasiswa jujur
+ * divonis `tidak_sah`: "berkas diubah setelah diekspor dari game". Itu tuduhan
+ * curang yang palsu, dan komentar verifikasi.ts sendiri berulang kali berjanji
+ * hal itu tak boleh terjadi. Terukur: aksi yang sempurna menurut kunci lama
+ * jatuh ke skorPemeriksaan 80 (kulit_morbili, mm_gagal_jantung_kongestif) dan
+ * skorEdukasi 3 (mm_mialgia) pada kunci baru — cukup menggeser C ke D.
+ *
+ * Harga yang dibayar sadar: save mid-stase dari rilis lama menjadi ARSIP
+ * (terbaca, tak bisa dilanjutkan). Itu pilihan yang benar — lebih baik
+ * kehilangan satu save playtest daripada menuduh mahasiswa memalsukan berkas.
+ */
+export const ANSWER_KEY_SWEEP_CONTENT_RELEASE = 'answer-key-sweep-2026-08-06'
+export const CONTENT_RELEASE = ANSWER_KEY_SWEEP_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -61,6 +89,7 @@ export const CONTENT_RELEASE_ORDER = [
   P1_OBSERVATION_CONTENT_RELEASE,
   CLINICAL_PROVENANCE_CONTENT_RELEASE,
   GAMEPLAY_COMFORT_CONTENT_RELEASE,
+  ANSWER_KEY_SWEEP_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {
