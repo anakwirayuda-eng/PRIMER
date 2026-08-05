@@ -515,7 +515,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
       oldcarts: ['onset', 'durasi', 'keparahan', 'penyerta'],
       variasi: {
         polos: 'Weteng kula mblendhuk dok, wis rong sasi, saya suwe saya gedhe. Sikil nggih abuh. Mripat kula dadi kuning, kula dhewe kaget.',
-        skeptis: 'Dua bulan dok. Tapi saya cuma kembung biasa kok, kebanyakan angin. Mata kuning itu kata istri saya saja, saya lihat di cermin biasa-biasa saja.',
+        skeptis: 'Dua bulan dok. Tapi saya cuma kembung biasa kok, kebanyakan angin. Mata kuning itu kata keluarga saya saja, saya lihat di cermin biasa-biasa saja.',
       },
     },
     pertanyaan: [
@@ -531,7 +531,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
         id: 'q_bingung',
         kategori: 'rps',
         tanya: 'Belakangan ada bingung, mengantuk berat di siang hari, atau salah mengenali tempat dan waktu?',
-        jawab: 'Kata istri saya begitu dok. Kadang saya ngelantur, siang tidur terus, malah malamnya melek. Pernah saya keluar rumah lalu lupa mau ke mana. Saya sendiri tidak merasa apa-apa.',
+        jawab: 'Kata keluarga saya begitu dok. Kadang saya ngelantur, siang tidur terus, malah malamnya melek. Pernah saya keluar rumah lalu lupa mau ke mana. Saya sendiri tidak merasa apa-apa.',
         esensial: true,
         oldcarts: ['onset', 'waktu'],
       },
@@ -816,7 +816,7 @@ export const LAB_BATCH_4_DALAM_CASES: KasusKlinis[] = [
         esensial: true,
         oldcarts: ['karakter', 'keparahan'],
         variasi: {
-          skeptis: 'Tidak sakit sama sekali dok. Jadi menurut saya ini tidak parah, wong tidak terasa apa-apa. Istri saya saja yang memaksa ke sini gara-gara baunya. Perlu banget ya ke rumah sakit?',
+          skeptis: 'Tidak sakit sama sekali dok. Jadi menurut saya ini tidak parah, wong tidak terasa apa-apa. Keluarga saya yang memaksa ke sini gara-gara baunya. Perlu banget ya ke rumah sakit?',
           terpelajar: 'Anehnya sama sekali tidak nyeri dok. Justru itu yang membuat saya menunda datang — saya pikir kalau tidak sakit berarti tidak serius.',
         },
       },
@@ -1100,7 +1100,7 @@ Satu catatan penting: probe-to-bone hanya bagian dari evaluasi awal osteomieliti
       jawab: 'Bulan lalu saya donor darah di kantor dok. Seminggu kemudian saya dapat surat, katanya darah saya tidak bisa dipakai, ada hepatitis B. Saya kaget sekali, padahal badan saya sehat, kerja normal, tidak ada keluhan apa pun.',
       oldcarts: ['onset', 'durasi'],
       variasi: {
-        cemas: 'Saya donor bulan lalu dok, terus dapat surat katanya darah saya ada hepatitis B. Saya langsung tidak bisa tidur seminggu. Ini menular ya dok? Anak saya bagaimana? Istri saya bagaimana? Saya browsing katanya bisa jadi kanker hati. Umur saya tinggal berapa lama dok?',
+        cemas: 'Saya donor bulan lalu dok, terus dapat surat katanya darah saya ada hepatitis B. Saya langsung tidak bisa tidur seminggu. Ini menular ya dok? Anak saya bagaimana? Pasangan saya bagaimana? Saya browsing katanya bisa jadi kanker hati. Umur saya tinggal berapa lama dok?',
         terpelajar: 'Bulan lalu saya ikut donor darah di kantor dok, lalu diberitahu hasil skriningnya HBsAg reaktif sehingga darah saya tidak dipakai. Saya benar-benar tidak merasakan keluhan apa pun. Yang ingin saya tahu: apa artinya ini, dan apa yang harus saya lakukan sekarang?',
       },
     },
@@ -1131,7 +1131,7 @@ Satu catatan penting: probe-to-bone hanya bagian dari evaluasi awal osteomieliti
         id: 'q_istri_anak',
         kategori: 'sosial',
         tanya: 'Di rumah ada istri dan anak? Apakah mereka sudah pernah diperiksa atau divaksin hepatitis B?',
-        jawab: 'Ada dok, istri dan dua anak. Yang kecil umur tiga tahun. Diperiksa hepatitis belum pernah semua. Vaksin? Anak-anak mungkin waktu bayi ya dok, saya kurang ingat. Istri saya setahu saya belum pernah.',
+        jawab: 'Ada dok, pasangan dan dua anak. Yang kecil umur tiga tahun. Diperiksa hepatitis belum pernah semua. Vaksin? Anak-anak mungkin waktu bayi ya dok, saya kurang ingat. Pasangan saya setahu saya belum pernah.',
         esensial: true,
       },
       {

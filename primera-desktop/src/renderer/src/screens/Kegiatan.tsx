@@ -4,7 +4,7 @@
  * Semua aturan (skor, drift, bridge) di engine — layar hanya menyetir sesi.
  */
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { PELUANG_KADER_BENAR } from '@engine/kegiatan'
 import type { HasilKegiatan } from '@engine/kegiatan'
@@ -52,7 +52,13 @@ export function Kegiatan() {
   }, [eventTick, lastEvents])
 
   // Reset umpan balik saat pindah kartu.
-  useEffect(() => {
+  // Bug hunt 2026-08-06: dulu `useEffect`, yang jalan SESUDAH paint — sehingga
+  // satu frame penuh menampilkan pembahasan kartu SEBELUMNYA di atas kartu yang
+  // baru. Terukur bertahan melewati 200 mikrotask. Yang bocor bukan sekadar
+  // stempel tepat/keliru, melainkan teks pembahasannya. Sapuan
+  // useEffect→useLayoutEffect 2026-08-01 (Kunjungan/PetaDesa/Klinik) melewatkan
+  // berkas ini.
+  useLayoutEffect(() => {
     setPilihanTerpilih(null)
   }, [kg?.index])
 

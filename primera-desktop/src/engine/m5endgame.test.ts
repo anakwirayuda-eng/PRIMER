@@ -10,6 +10,7 @@ import type { GameState } from './state'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
 import { jumlahPasienHarian, peluangIgd, susunAntrianHarian } from './director'
+import { HARI_STASE } from './paketUjian'
 import { hitungBadge, SEMUA_BADGE } from './badge'
 import { Rng } from './core/rng'
 
@@ -88,12 +89,14 @@ describe('M5.24 — badge', () => {
 
   it('state kosong tak meraih apa-apa; state rekayasa meraih badge yang tepat', () => {
     const kosong = buildInitialState('Uji', 1, PACK)
-    // bendahara_rapi butuh hari>=30 — state awal (hari 1) tidak memenuhinya.
+    // bendahara_rapi butuh hari >= HARI_STASE[mode] (karier 90) — state awal
+    // (hari 1) tidak memenuhinya. Bug hunt 2026-08-06: dulu literal 30, yang
+    // kebetulan sama dengan HARI_STASE.ujian sehingga cacatnya tak terlihat.
     expect(hitungBadge(kosong)).toEqual([])
 
     const jagoan: GameState = {
       ...kosong,
-      hari: 30,
+      hari: HARI_STASE.karier,
       akreditasi: 'paripurna',
       tally: {
         ...kosong.tally,

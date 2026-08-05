@@ -46,7 +46,7 @@ function keluargaDikunjungi(kel: KeluargaState, jumlah: number): KeluargaState {
 
 function episodeKeluarga(familyId: string, feedback: string): CareEpisodeLite {
   return {
-    id: `keluarga:${familyId}:pendampingan`,
+    id: `episode_keluarga_${familyId}_pendampingan`,
     subjectId: familyId,
     subjectName: PACK.keluarga[familyId]!.namaKeluarga,
     familyId,

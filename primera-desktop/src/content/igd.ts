@@ -306,14 +306,14 @@ export const KASUS_IGD = terapkanGroundingIgd([
       bridgeUkm: {
         judul: 'Obat Diminum, Makan Terlewat',
         ringkasan:
-          'Satu kakek tak sadar menandai risiko yang dipegang pasien lain: glibenklamid pada lanjut usia, aturan minum yang bergantung jadwal makan, dan dosis ganda tanpa sengaja; kumpulkan data pemakainya, perbaiki penjelasan saat obat diserahkan, dan tengok pasien lanjut usia yang jadwal makannya tak teratur.',
+          'Satu pasien lanjut usia tak sadar menandai risiko yang dipegang pasien lain: glibenklamid pada lanjut usia, aturan minum yang bergantung jadwal makan, dan dosis ganda tanpa sengaja; kumpulkan data pemakainya, perbaiki penjelasan saat obat diserahkan, dan tengok pasien lanjut usia yang jadwal makannya tak teratur.',
       },
     },
     nama: 'Hipoglikemia Berat',
     icd10: 'E16.2',
     skdi: '4A',
     pembuka:
-      'Seorang kakek diantar keluarga dalam kondisi bingung lalu tak sadar. ' +
+      'Seorang lansia diantar keluarga dalam kondisi bingung lalu tak sadar. ' +
       '"Dia diabetes, Dok, tadi sudah minum obat tapi belum sempat makan." Kulitnya dingin berkeringat.',
     demografi: { usiaMin: 50, usiaMax: 75 },
     vitalAwal: { td: '110/70', nadi: 96, rr: 18, spo2: 97, gds: 38 },

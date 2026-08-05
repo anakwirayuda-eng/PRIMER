@@ -13,6 +13,7 @@ import { hitungBadge, SEMUA_BADGE } from '@engine/badge'
 import { HARI_STASE } from '@engine/paketUjian'
 import { serialize } from '@engine/save'
 import { susunDossier } from '@engine/verifikasi'
+import { buatEpisodeId } from '@engine/bridge'
 import { PACK } from '@content/index'
 import './LaporanAkhir.css'
 
@@ -108,14 +109,22 @@ export function LaporanAkhir() {
   )
 
   /** Catatan pendampingan terakhir per keluarga, langsung dari berkas episode. */
+  // Bug hunt 2026-08-06: saringan lama `ep.source === 'keluarga'` terlalu lebar.
+  // Ia ikut menangkap episode PASIEN POLI (director menempelkan keluargaId pada
+  // sebagian pasien) dan episode karma, lalu memilih yang updatedDay-nya paling
+  // besar — sehingga 47% kartu "Belum tuntas" mengutip berkas yang salah.
+  // Yang tercetak apa adanya: "Pendampingan berhenti sebelum tuntas setelah 1
+  // kunjungan. Eko — dikembalikan RSUD Provinsi: kasus kompetensi FKTP" — nota
+  // penolakan rumah sakit disodorkan sebagai catatan pendampingan keluarga.
+  // Kini menunjuk berkas pendampingan itu sendiri, persis seperti yang sudah
+  // dijanjikan komentar di atas.
   const catatanPendampingan = useMemo(() => {
-    const peta = new Map<string, { teks: string; hari: number }>()
+    const peta = new Map<string, string>()
     for (const ep of state.careEpisodes) {
-      if (ep.source !== 'keluarga' || ep.familyId === undefined) continue
+      if (ep.familyId === undefined) continue
+      if (ep.id !== buatEpisodeId('keluarga', ep.familyId, 'pendampingan')) continue
       const teks = ep.receipt.feedback ?? ep.receipt.signal
-      if (!teks) continue
-      const lama = peta.get(ep.familyId)
-      if (lama === undefined || ep.updatedDay >= lama.hari) peta.set(ep.familyId, { teks, hari: ep.updatedDay })
+      if (teks) peta.set(ep.familyId, teks)
     }
     return peta
   }, [state.careEpisodes])
@@ -251,7 +260,7 @@ export function LaporanAkhir() {
                 {keluargaBelumTuntas.map((k) => {
                   const konten = PACK.keluarga[k.id]
                   if (!konten) return null
-                  const catatan = catatanPendampingan.get(k.id)?.teks
+                  const catatan = catatanPendampingan.get(k.id)
                   return (
                     <div key={k.id} className="kartu laporan__kel">
                       <div className="baris baris--antara">

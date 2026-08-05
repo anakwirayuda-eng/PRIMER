@@ -6,6 +6,7 @@
 
 import type { GameState } from './state'
 import { hitungSkor } from './scoring'
+import { HARI_STASE } from './paketUjian'
 
 export interface Badge {
   id: string
@@ -43,7 +44,14 @@ export function hitungBadge(state: GameState): string[] {
   if (t.karmaDicegah >= 4) raih.push('pencegah_takdir')
   if (arcBerhasil >= 5) raih.push('sahabat_desa')
   if (state.akreditasi === 'paripurna') raih.push('paripurna')
-  if (t.teguranDinkes === 0 && state.hari >= 30) raih.push('bendahara_rapi')
+  // Bug hunt 2026-08-06: literal 30 kebetulan sama dengan HARI_STASE.ujian,
+  // jadi di ujian ia benar dan cacatnya tak pernah terlihat. Di karier (90 hari)
+  // lencana berdeskripsi "TAMAT tanpa satu pun teguran Dinkes soal kas" menyala
+  // DIRAIH di sepertiga stase, lalu padam lagi begitu teguran pertama datang.
+  // Permukaan progres (3a0768f) yang mulai memanggil hitungBadge setiap saat
+  // membuatnya terlihat — commit itu justru berjanji pajangan tak pernah
+  // menjanjikan badge yang tak dihitung engine.
+  if (t.teguranDinkes === 0 && state.hari >= HARI_STASE[state.mode]) raih.push('bendahara_rapi')
   if (dexKuasai >= 25) raih.push('kolektor_dex')
   if (t.kunjunganTotal >= 15 && t.apathy === 0) raih.push('anti_apatis')
   return raih
@@ -157,8 +165,10 @@ export function progresBadge(state: GameState): ProgresBadge[] {
           : {}),
     },
     bendahara_rapi: {
-      kini: Math.min(state.hari, 30),
-      target: 30,
+      // Ikut diperbaiki bersama gerbangnya di atas: kalau hanya gerbang yang
+      // dibetulkan, chip berbunyi 30/30 sementara raih=false tanpa alasan.
+      kini: Math.min(state.hari, HARI_STASE[state.mode]),
+      target: HARI_STASE[state.mode],
       ...(t.teguranDinkes > 0
         ? { gagal: `${t.teguranDinkes} teguran Dinkes sudah tercatat` }
         : {}),

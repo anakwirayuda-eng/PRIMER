@@ -144,6 +144,36 @@ describe('M13 lab full-fledge - 144/144 katalog FKTP playable', () => {
     expect(masalah).toEqual([])
   })
 
+  /**
+   * Bug hunt 2026-08-06: sepuluh pertanyaan di tujuh kasus membuat PASIEN
+   * berkata "istri saya" padahal gender pasien diundi koin — separuh mahasiswa
+   * melihat header "Perempuan" berikut potret perempuan, lalu pasien yang sama
+   * menyebut istrinya. Yang paling tajam `lab_tia_serangan_iskemik_sesaat`:
+   * sudah disetujui dokter sehingga skor dan Dex dihitung penuh, dan
+   * pertanyaannya selalu ditanya.
+   *
+   * Penjaga lama hanya menyapu kasus prototipe lab dan hanya field `tanya`.
+   * Kini SELURUH 210 kasus dan `jawab` beserta seluruh variasinya ikut disisir —
+   * di situlah kesepuluhnya bersembunyi. Kata sapaan dokter ("Pak"/"Bu") sengaja
+   * TIDAK dilarang: itu bahasa dokter kepada pasien, bukan pasien menyebut
+   * pasangannya, dan melarangnya akan memerahkan puluhan kalimat yang benar.
+   */
+  it('pasien tak menyebut gender pasangannya bila gendernya sendiri diundi', () => {
+    const masalah: string[] = []
+    for (const kasus of Object.values(PACK.kasus)) {
+      if (kasus.demografi.jenisKelamin) continue
+      for (const pertanyaan of kasus.anamnesis) {
+        const teks = [pertanyaan.tanya, pertanyaan.jawab, ...Object.values(pertanyaan.variasi ?? {})]
+        for (const t of teks) {
+          if (typeof t === 'string' && /(istri|suami) saya/i.test(t)) {
+            masalah.push(`${kasus.id}:${pertanyaan.id}`)
+          }
+        }
+      }
+    }
+    expect(masalah).toEqual([])
+  })
+
   it('kasus anak kecil tidak mengunci sediaan dewasa sebagai satu-satunya jawaban', () => {
     const sediaanDewasa = new Set([
       'paracetamol_500',

@@ -398,7 +398,7 @@ export const LAB_BATCH_4_MTS_CASES: KasusKlinis[] = [
         id: 'q_distraktor_wortel',
         kategori: 'sosial',
         tanya: 'Apakah pola makannya kurang sayur dan wortel?',
-        jawab: 'Ya, jarang makan sayur, Dok. Istri saya juga bilang ini gara-gara kurang wortel. Perlu saya minum vitamin mata tidak?',
+        jawab: 'Ya, jarang makan sayur, Dok. Keluarga saya juga bilang ini gara-gara kurang wortel. Perlu saya minum vitamin mata tidak?',
         distraktor: true,
       },
       {
@@ -888,7 +888,7 @@ Children's Mercy Acute Mastoiditis Clinical Pathway 2026 menyebut tanda utamanya
     vital: { td: '168/96', nadi: 92, rr: 18, suhu: 36.6, spo2: 98 },
     pembuka: {
       tanya: 'Coba ceritakan persis apa yang terjadi tadi pagi, dari awal sampai pulih.',
-      jawab: 'Sekitar jam tujuh pagi saya lagi minum kopi. Tiba-tiba bicara saya jadi pelo, istri saya tidak paham saya ngomong apa. Bersamaan itu tangan kanan saya lemas, cangkirnya sampai jatuh. Kira-kira dua puluh menit lalu hilang sendiri, pelan-pelan normal lagi. Sekarang sudah tidak ada apa-apa, lihat sendiri Dok, saya baik-baik saja.',
+      jawab: 'Sekitar jam tujuh pagi saya lagi minum kopi. Tiba-tiba bicara saya jadi pelo, pasangan saya tidak paham saya ngomong apa. Bersamaan itu tangan kanan saya lemas, cangkirnya sampai jatuh. Kira-kira dua puluh menit lalu hilang sendiri, pelan-pelan normal lagi. Sekarang sudah tidak ada apa-apa, lihat sendiri Dok, saya baik-baik saja.',
       oldcarts: ['onset', 'durasi', 'karakter', 'keparahan'],
     },
     pertanyaan: [
@@ -908,7 +908,7 @@ Children's Mercy Acute Mastoiditis Clinical Pathway 2026 menyebut tanda utamanya
         id: 'q_gejala_lain',
         kategori: 'rps',
         tanya: 'Waktu itu ada wajah yang mencong, satu mata mendadak gelap seperti ditutup tirai, atau kaki kanan ikut lemas?',
-        jawab: 'Kata istri saya mulut saya agak turun sebelah kanan. Mata tidak ada yang gelap. Kaki tidak ikut lemas, saya masih bisa berdiri.',
+        jawab: 'Kata pasangan saya mulut saya agak turun sebelah kanan. Mata tidak ada yang gelap. Kaki tidak ikut lemas, saya masih bisa berdiri.',
         esensial: true,
       },
       tanya({

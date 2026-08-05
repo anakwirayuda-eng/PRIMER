@@ -137,7 +137,14 @@ export function Igd() {
             Kode Biru dan terbaca seolah respons atas RJP. Flag persisten
             `melewatiKodeBiru` kini menyembunyikannya hanya pada jalur itu;
             jalur normal langkah→disposisi tetap menampilkan feedback. */}
-        {!(igd.melewatiKodeBiru === true && igd.fase === 'disposisi') && (
+        {/* Bug hunt 2026-08-06: gerbang lama hanya menutup fase 'disposisi',
+            sedangkan 'pasca_rosc' duduk persis di tengah jalur yang komentar di
+            atas klaim sudah ditutup. Akibatnya pemain menekan RJP lalu langsung
+            melihat stempel KELIRU beserta umpan balik langkah SEBELUM henti
+            jantung. Test regresinya lolos karena memindahkan fase secara manual
+            kode_biru→disposisi, transisi yang engine tak pernah hasilkan sejak
+            fase pasca_rosc ada. */}
+        {!(igd.melewatiKodeBiru === true && (igd.fase === 'pasca_rosc' || igd.fase === 'disposisi')) && (
           <ResponsTerakhir kasusId={igd.kasusId} jawaban={igd.jawaban} />
         )}
 

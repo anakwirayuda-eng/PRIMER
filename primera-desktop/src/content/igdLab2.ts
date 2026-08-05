@@ -309,7 +309,7 @@ export const KASUS_IGD_LAB_2 = terapkanGroundingIgd([
     skdi: '3B',
     activationStatus: 'lab_prototype_unadjudicated',
     pembuka:
-      'Seorang laki-laki dipapah masuk sambil memeluk betis kanannya yang membengkak sampai melewati lutut. ' +
+      'Seorang pasien dipapah masuk sambil memeluk betis kanannya yang membengkak sampai melewati lutut. ' +
       '"Digigit ular di sawah, Dok, sejam yang lalu — sudah saya ikat pakai karet biar bisanya nggak naik!" ' +
       'Ia gemetar hebat, dan dari sela giginya tampak gusi yang terus merembeskan darah.',
     demografi: { usiaMin: 15, usiaMax: 50 },

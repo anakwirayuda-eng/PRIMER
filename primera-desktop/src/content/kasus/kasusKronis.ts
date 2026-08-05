@@ -509,7 +509,7 @@ export const KASUS_KRONIS: KasusKlinis[] = [
         id: 'as_paparan',
         kategori: 'sosial',
         tanya: 'Di rumah ada perokok, hewan berbulu, atau debu tebal?',
-        jawab: 'Suami saya merokok di dalam rumah, dan banyak debu kasur lama.',
+        jawab: 'Pasangan saya merokok di dalam rumah, dan banyak debu kasur lama.',
       },
       {
         id: 'as_pekerjaan',

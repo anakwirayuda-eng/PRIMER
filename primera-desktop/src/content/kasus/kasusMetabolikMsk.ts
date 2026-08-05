@@ -347,7 +347,7 @@ export const KASUS_METABOLIK_MSK: KasusKlinis[] = [
         id: 'q_tidur',
         kategori: 'rps',
         tanya: 'Tidurnya nyenyak? Ada mendengkur keras atau berhenti napas saat tidur?',
-        jawab: 'Kata istri saya ngorok keras dok, kadang seperti tersedak lalu terbangun.',
+        jawab: 'Kata pasangan saya ngorok keras dok, kadang seperti tersedak lalu terbangun.',
         oldcarts: ['penyerta'],
       },
       {
