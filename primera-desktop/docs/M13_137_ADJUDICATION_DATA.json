@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-05T07:55:28.928Z",
-  "sourceCommit": "7390ac4e539d91fa918efaf3b5c0df4525fca222+dirty",
-  "artifactFingerprint": "1319c8c231d2fc532fc71489cfe953474c8639fef605803a8aff0b192547167b",
-  "packFingerprint": "351b1fa4",
-  "contentRelease": "gameplay-comfort-2026-08-01",
-  "engineRevision": 65,
+  "generatedAt": "2026-08-05T19:56:56.559Z",
+  "sourceCommit": "2bd09fdb4d14aa3fdb28c22a6b6dc3fa58bb5a07",
+  "artifactFingerprint": "d77f646a8df7e8f176922e86bbe29cded0b6579d0fb6a7f259bf4b0cdabf5da6",
+  "packFingerprint": "9b741154",
+  "contentRelease": "answer-key-sweep-2026-08-06",
+  "engineRevision": 66,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -50,6 +50,8 @@
     "ppkAbsent": 29,
     "pnpkDirect": 27,
     "ebmDirect": 71,
+    "physicianApproved": 16,
+    "pendingReview": 121,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
       "emolien_petrolatum",
@@ -70,6 +72,7 @@
     {
       "ordinal": 1,
       "id": "lab_trauma_tumpul_kepala_ringan",
+      "reviewStatus": "physician_approved",
       "name": "Cedera Superfisial Kulit Kepala setelah Benturan Risiko Rendah",
       "icd10": "S00.0",
       "skdi": "4A",
@@ -232,6 +235,7 @@
     {
       "ordinal": 2,
       "id": "lab_luka_bakar_derajat2_dangkal",
+      "reviewStatus": "physician_approved",
       "name": "Luka Bakar Superficial Partial-Thickness Lengan Bawah, 2% TBSA",
       "icd10": "T22.2",
       "skdi": "4A",
@@ -619,6 +623,7 @@
     {
       "ordinal": 4,
       "id": "lab_anafilaksis_makanan",
+      "reviewStatus": "physician_approved",
       "name": "Reaksi Anafilaktik setelah Makanan",
       "icd10": "T78.2",
       "skdi": "4A",
@@ -805,6 +810,7 @@
     {
       "ordinal": 5,
       "id": "lab_trauma_abdomen_tumpul",
+      "reviewStatus": "physician_approved",
       "name": "Trauma Abdomen Tumpul dengan Curiga Cedera Organ Padat",
       "icd10": "S36.9",
       "skdi": "3B",
@@ -2106,6 +2112,7 @@
     {
       "ordinal": 11,
       "id": "lab_hiv_tanpa_komplikasi",
+      "reviewStatus": "physician_approved",
       "name": "Infeksi HIV Asimtomatik - Inisiasi ART",
       "icd10": "Z21",
       "skdi": "4A",
@@ -3837,6 +3844,7 @@
     {
       "ordinal": 19,
       "id": "lab_tetanus_generalisata_awal",
+      "reviewStatus": "physician_approved",
       "name": "Tetanus Generalisata Derajat Sedang",
       "icd10": "A35",
       "skdi": "4A",
@@ -4405,6 +4413,7 @@
     {
       "ordinal": 22,
       "id": "lab_gangguan_somatoform",
+      "reviewStatus": "physician_approved",
       "name": "Gangguan Somatoform - Keluhan Fisik Persisten",
       "icd10": "F45",
       "skdi": "4A",
@@ -5558,6 +5567,7 @@
     {
       "ordinal": 28,
       "id": "lab_gizi_buruk_komplikasi",
+      "reviewStatus": "physician_approved",
       "name": "Gizi Buruk dengan Komplikasi pada Balita",
       "icd10": "E43",
       "skdi": "4A",
@@ -13716,6 +13726,7 @@
     {
       "ordinal": 74,
       "id": "lab_benda_asing_konjungtiva",
+      "reviewStatus": "physician_approved",
       "name": "Benda Asing Konjungtiva Superfisial",
       "icd10": "T15.1",
       "skdi": "4A",
@@ -20318,6 +20329,7 @@
     {
       "ordinal": 111,
       "id": "lab_perdarahan_gi_atas",
+      "reviewStatus": "physician_approved",
       "name": "Perdarahan Saluran Cerna Atas dengan Instabilitas Hemodinamik",
       "icd10": "K92.2",
       "skdi": "3B",
@@ -22009,6 +22021,7 @@
     {
       "ordinal": 119,
       "id": "lab_bronkiolitis_berat",
+      "reviewStatus": "physician_approved",
       "name": "Bronkiolitis Bayi dengan Hipoksemia",
       "icd10": "J21.9",
       "skdi": "3B",
@@ -22952,6 +22965,7 @@
     {
       "ordinal": 125,
       "id": "lab_pneumotoraks_spontan",
+      "reviewStatus": "physician_approved",
       "name": "Pneumotoraks Spontan Primer dengan Gangguan Fisiologis",
       "icd10": "J93.9",
       "skdi": "3A",
@@ -23884,6 +23898,7 @@
     {
       "ordinal": 129,
       "id": "lab_meningitis_bakterial_suspek",
+      "reviewStatus": "physician_approved",
       "name": "Suspek Meningitis Bakterial pada Dewasa Muda",
       "icd10": "G00.9",
       "skdi": "3B",
@@ -24187,6 +24202,7 @@
     {
       "ordinal": 130,
       "id": "lab_tia_serangan_iskemik_sesaat",
+      "reviewStatus": "physician_approved",
       "name": "Suspek TIA — Defisit Fokal Sudah Pulih",
       "icd10": "G45.9",
       "skdi": "3B",
@@ -24652,6 +24668,7 @@
     {
       "ordinal": 132,
       "id": "lab_benda_asing_esofagus",
+      "reviewStatus": "physician_approved",
       "name": "Benda Asing Esofagus pada Anak — Baterai Kancing",
       "icd10": "T18.1",
       "skdi": "3B",
@@ -25115,6 +25132,7 @@
     {
       "ordinal": 135,
       "id": "lab_mastoiditis_akut",
+      "reviewStatus": "physician_approved",
       "name": "Mastoiditis Akut pada Anak",
       "icd10": "H70.0",
       "skdi": "3A",

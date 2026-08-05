@@ -2,7 +2,8 @@
 
 **Tanggal kompilasi:** 2026-08-05
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
-**Snapshot:** commit `7390ac4e539d91fa918efaf3b5c0df4525fca222+dirty`, artefak `1319c8c231d2fc532fc71489cfe953474c8639fef605803a8aff0b192547167b`, pack `351b1fa4`, content release `gameplay-comfort-2026-08-01`, `REVISI_ENGINE=65`
+**Kemajuan adjudikasi dokter:** **16** kasus sudah ditandatangani, **121** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [`docs/M13_137_DECISION_LOG.md`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
+**Snapshot:** commit `2bd09fdb4d14aa3fdb28c22a6b6dc3fa58bb5a07`, artefak `d77f646a8df7e8f176922e86bbe29cded0b6579d0fb6a7f259bf4b0cdabf5da6`, pack `9b741154`, content release `answer-key-sweep-2026-08-06`, `REVISI_ENGINE=66`
 
 ## Ringkasan eksekutif
 
@@ -11,6 +12,8 @@ Briefing menyebut “M13-103”, tetapi query runtime `activationStatus === 'lab
 | Indikator | Hasil |
 |---|---:|
 | Kasus prototipe aktual | **137** |
+| Sudah disetujui dokter | **16** |
+| Menunggu adjudikasi dokter | **121** |
 | Crosswalk PPK langsung | 93 |
 | Crosswalk PPK terkait, bukan identik | 15 |
 | Tanpa crosswalk PPK | 29 |

@@ -1,10 +1,10 @@
 {
   "schema": "primera.m13-14-igd-adjudication.v2",
-  "generatedAt": "2026-08-05T07:55:34.104Z",
-  "sourceCommit": "7390ac4e539d+working-tree",
-  "contentRelease": "gameplay-comfort-2026-08-01",
-  "engineRevision": 65,
-  "packFingerprint": "351b1fa4",
+  "generatedAt": "2026-08-05T19:57:11.818Z",
+  "sourceCommit": "2bd09fdb4d14",
+  "contentRelease": "answer-key-sweep-2026-08-06",
+  "engineRevision": 66,
+  "packFingerprint": "9b741154",
   "artifactFingerprint": "e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",
