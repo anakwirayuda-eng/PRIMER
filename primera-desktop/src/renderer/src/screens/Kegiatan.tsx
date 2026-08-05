@@ -191,7 +191,11 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
   // Engine P0-A mensyaratkan skor agregat DAN aksi spesifik benar. UI harus
   // memakai kontrak yang sama agar tidak mengumumkan kluster tuntas secara palsu.
   const aksiKlbBenar = hasil.jawaban.find((jawaban) => jawaban.kartuId === 'klb_aksi')?.benar === true
-  const klbTuntas = hasil.jenis === 'klb' && hasil.skor >= 0.66 && aksiKlbBenar
+  // Audit CODEX beta.16 (2026-08-06): gerbang engine kini menuntut kartu
+  // verifikasi ikut benar (reducer.ts). Kontrak layar harus sejajar, kalau
+  // tidak layar ini kembali mengumumkan kluster tuntas secara palsu.
+  const verifKlbBenar = hasil.jawaban.find((jawaban) => jawaban.kartuId === 'klb_verif')?.benar === true
+  const klbTuntas = hasil.jenis === 'klb' && hasil.skor >= 0.66 && aksiKlbBenar && verifKlbBenar
   return (
     <div className="kegiatan">
       <div className="kegiatan__panel kertas kegiatan__hasil">
@@ -211,9 +215,15 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
               (reducer.ts:2192). Akibatnya sesi 1-dari-4 benar distempel KURANG
               di layar yang sama, tetapi tetap menjanjikan "gizi & imunisasi
               membaik". Kini tiga tingkat, sejajar engine. */}
+          {/* Audit CODEX beta.16 (2026-08-06): kalimat lama menjanjikan "gizi &
+              imunisasi RW ini membaik". Terukur atas 320 sesi, arah datanya tak
+              selalu begitu — ASI eksklusif justru 6 naik vs 43 TURUN, karena
+              yang terjadi sebenarnya adalah MENGOREKSI laporan kader, bukan
+              memperbaiki keadaan. Kadang koreksinya ke arah yang lebih buruk,
+              dan itu memang gunanya. Kalimatnya kini menyebut yang benar. */}
           {hasil.jenis === 'posyandu' &&
             (hasil.skor >= 0.5
-              ? 'Kualitas posyandu terangkut ke IKS wilayah — gizi & imunisasi RW ini membaik sedikit demi sedikit.'
+              ? 'Data KIA keluarga di RW ini dimutakhirkan dari meja yang kamu buka hari ini — sebagian temuan bisa lebih buruk daripada laporan kader, dan itu justru gunanya.'
               : hasil.skor > 0
                 ? 'Sebagian keputusanmu tepat dan menyumbang perbaikan kecil pada IKS wilayah, tetapi belum cukup untuk memutakhirkan data KIA keluarga di RW ini.'
                 : 'Sesi posyandu ini belum menyumbang perbaikan apa pun — tak ada keputusan tepat yang terangkut ke IKS wilayah.')}
@@ -222,9 +232,11 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
           {hasil.jenis === 'klb' &&
             (klbTuntas
               ? 'Kluster ditanggulangi: penularan di wilayah diputus, IKS RW terangkat.'
-              : hasil.skor >= 0.66
-                ? 'Respons belum tuntas: verifikasi dan 5W1H cukup, tetapi aksi pengendalian spesifik keliru — kluster masih menyala.'
-                : 'Respons belum tuntas — kluster masih menyala. Coba lagi dengan pendekatan yang benar.')}
+              : !verifKlbBenar
+                ? 'Kluster masih menyala, dan urutanmu terbalik: pengendalian digerakkan sebelum wabahnya diverifikasi dan definisi kasus ditetapkan. Di lapangan langkah itu membakar anggaran wilayah dan bisa menyasar penyakit yang salah.'
+                : !aksiKlbBenar
+                  ? 'Respons belum tuntas: verifikasi dan penyelidikan cukup, tetapi aksi pengendalian spesifik keliru — kluster masih menyala.'
+                  : 'Respons belum tuntas — kluster masih menyala. Penyelidikan Orang–Tempat–Waktu belum lengkap, jadi sumber dan rute penularan hanya tertebak.')}
         </p>
         <button className="tombol tombol--utama tombol--besar" onClick={onTutup}>
           Kembali ke Peta Desa

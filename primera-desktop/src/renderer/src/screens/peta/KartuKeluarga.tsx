@@ -52,7 +52,7 @@ function judulChipIndikator(nilai: NilaiIndikator, penuh: string): string {
   // tooltip selama kalimatnya sudah jujur.
   const sumber =
     nilai.sumber === 'dokter'
-      ? 'kamu sendiri yang menegakkannya — lewat kunjungan rumah atau penimbangan Posyandu, bukan laporan kader'
+      ? 'ditegakkan atas namamu — lewat kunjungan rumah atau meja Posyandu yang kamu buka di RW ini, bukan laporan kader'
       : 'laporan kader — bisa saja keliru, verifikasi dengan kunjungan'
   return `${penuh}: ${status} (${sumber}, data hari ${nilai.hariData}).`
 }

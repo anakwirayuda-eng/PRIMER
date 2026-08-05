@@ -27,14 +27,14 @@ describe('<Kegiatan /> — KartuHasil Posyandu (audit CODEX 2026-07-11, #15)', (
   it('skor 0 (semua keputusan salah) → narasi TIDAK mengklaim IKS membaik', () => {
     pasangHasil({ jenis: 'posyandu', benar: 0, total: 4, skor: 0, jawaban: [] })
     render(<Kegiatan />)
-    expect(screen.queryByText(/IKS wilayah — gizi & imunisasi RW ini membaik/)).not.toBeInTheDocument()
+    expect(screen.queryByText(/Data KIA keluarga di RW ini dimutakhirkan/)).not.toBeInTheDocument()
     expect(screen.getByText(/belum menyumbang perbaikan/)).toBeInTheDocument()
   })
 
   it('skor > 0 (≥1 keputusan tepat) → narasi IKS membaik tetap tampil', () => {
     pasangHasil({ jenis: 'posyandu', benar: 2, total: 4, skor: 0.5, jawaban: [] })
     render(<Kegiatan />)
-    expect(screen.getByText(/IKS wilayah — gizi & imunisasi RW ini membaik/)).toBeInTheDocument()
+    expect(screen.getByText(/Data KIA keluarga di RW ini dimutakhirkan/)).toBeInTheDocument()
   })
 
   it('judul sub Posyandu (sesi aktif) mencerminkan migrasi ILP 5 Langkah, bukan label lama "Sistem 5 Meja"', () => {
@@ -108,7 +108,27 @@ describe('<Kegiatan /> — kontrak hasil KLB mengikuti aksi spesifik', () => {
     expect(screen.getByText(/aksi pengendalian spesifik keliru/)).toBeInTheDocument()
   })
 
-  it('skor 2/3 dengan klb_aksi benar mengumumkan penutupan kluster', () => {
+  // Audit CODEX beta.16 (2026-08-06): fixture ini DULU memakai klb_verif SALAH
+  // dan menuntut kluster tetap diumumkan tuntas — itu justru perilaku yang
+  // sekarang diperbaiki. Kartu yang boleh keliru kini hanya 5W1H.
+  it('skor 2/3 dengan hanya 5W1H keliru tetap mengumumkan penutupan kluster', () => {
+    pasangHasil({
+      jenis: 'klb',
+      benar: 2,
+      total: 3,
+      skor: 2 / 3,
+      jawaban: [
+        { kartuId: 'klb_verif', pilihanId: 'a', benar: true },
+        { kartuId: 'klb_5w1h', pilihanId: 'b', benar: false },
+        { kartuId: 'klb_aksi', pilihanId: 'a', benar: true },
+      ],
+    })
+    render(<Kegiatan />)
+
+    expect(screen.getByText(/Kluster ditanggulangi/)).toBeInTheDocument()
+  })
+
+  it('verifikasi keliru TIDAK boleh ditutup sebagai kluster tuntas, dan urutannya disebut', () => {
     pasangHasil({
       jenis: 'klb',
       benar: 2,
@@ -122,6 +142,7 @@ describe('<Kegiatan /> — kontrak hasil KLB mengikuti aksi spesifik', () => {
     })
     render(<Kegiatan />)
 
-    expect(screen.getByText(/Kluster ditanggulangi/)).toBeInTheDocument()
+    expect(screen.queryByText(/Kluster ditanggulangi/)).not.toBeInTheDocument()
+    expect(screen.getByText(/urutanmu terbalik/)).toBeInTheDocument()
   })
 })

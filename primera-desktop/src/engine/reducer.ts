@@ -24,14 +24,44 @@ import { SEMUA_INDIKATOR_PISPK } from './pispk'
  * #5 (audit CODEX UKM 2026-07-16): domain indikator KIA yang diverifikasi
  * langsung oleh posyandu berkualitas (penimbangan/pencatatan = pengumpulan
  * data nyata, menggantikan tebakan kader).
+ *
+ * Audit CODEX beta.16 (2026-08-06): dulu daftar ini DATAR — lima indikator
+ * dikoreksi sekaligus tanpa peduli meja mana yang benar-benar dibuka sesi itu.
+ * Terukur atas 320 sesi: `persalinan_faskes` dan `kb` ikut terangkat di 100%
+ * sesi, padahal TAK SATU PUN dari 12 kartu posyandu menghasilkan data rumah
+ * tangga tentang tempat bersalin atau pemakaian KB. Itu provenance karangan:
+ * label datanya berubah jadi "ditegakkan dokter" untuk hal yang tak pernah
+ * diamati siapa pun di sesi itu.
+ *
+ * Kini tiap indikator digantung pada kartu yang benar-benar menghasilkannya.
+ * Kartu yang TIDAK tertarik pada sesi itu tak mengoreksi apa pun. Pemetaannya
+ * sengaja konservatif — hanya yang isi kartunya sendiri menyebutkannya:
+ *   - penimbangan balita & Buku KIA  -> pemantauan tumbuh kembang
+ *   - meja imunisasi                  -> imunisasi dasar
+ *   - penyuluhan ibu balita           -> ASI eksklusif (jawaban benarnya
+ *                                        harfiah "ASI eksklusif + MPASI")
+ * `persalinan_faskes` dan `kb` sengaja TIDAK dipetakan ke kartu mana pun.
+ * Kohort ibu hamil memang memuat rencana tempat bersalin di praktik nyata,
+ * tetapi kartu itu di sini mengajarkan tanda bahaya preeklampsia, bukan
+ * rencana persalinan — memetakannya ke sana akan mengulang kelas overclaim
+ * yang justru sedang disapu. Keduanya tetap bisa ditegakkan lewat kunjungan
+ * rumah (kunjungan.ts), yang memang mengamatinya langsung.
  */
-const INDIKATOR_KIA_POSYANDU: readonly IndikatorPisPk[] = [
-  'imunisasi_dasar',
-  'asi_eksklusif',
-  'pantau_tumbuh_kembang',
-  'persalinan_faskes',
-  'kb',
-]
+const INDIKATOR_PER_KARTU_POSYANDU: Readonly<Record<string, readonly IndikatorPisPk[]>> = {
+  posy_timbang: ['pantau_tumbuh_kembang'],
+  posy_kms: ['pantau_tumbuh_kembang'],
+  posy_imunisasi: ['imunisasi_dasar'],
+  posy_penyuluhan: ['asi_eksklusif'],
+}
+
+/** Indikator yang benar-benar dikoreksi sesi ini = gabungan kartu yang tertarik. */
+function indikatorPosyanduSesi(kartuId: readonly string[]): IndikatorPisPk[] {
+  const keluar = new Set<IndikatorPisPk>()
+  for (const id of kartuId) {
+    for (const ind of INDIKATOR_PER_KARTU_POSYANDU[id] ?? []) keluar.add(ind)
+  }
+  return [...keluar]
+}
 import {
   encounterArchetypeAktif,
   kasusFormatif,
@@ -2189,14 +2219,20 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     const rwPosyandu = hasil.rw
     let keluargaPy = next.desa.keluarga
     let jumlahKeluargaTerkoreksi = 0
-    if (hasil.skor >= 0.5) {
+    // Audit CODEX beta.16: hanya indikator yang MEJANYA benar-benar dibuka sesi
+    // ini yang boleh dikoreksi. Kartu ditarik acak per sesi, jadi daftar ini
+    // berbeda tiap kali — itulah intinya. Kebenaran jawaban kartu tak jadi
+    // syarat di sini: menimbang anak tetap menghasilkan data walau keputusan
+    // klinis sesudahnya keliru; mutu keputusan sudah dihargai gerbang skor.
+    const indikatorSesi = indikatorPosyanduSesi(hasil.jawaban.map((j) => j.kartuId))
+    if (hasil.skor >= 0.5 && indikatorSesi.length > 0) {
       const terkoreksi: Record<string, KeluargaState> = { ...keluargaPy }
       for (const [id, kel] of Object.entries(keluargaPy)) {
         const kc = pack.keluarga[id]
         if (!kc || kc.rw !== rwPosyandu) continue
         const indikator = { ...kel.indikator }
         let berubah = false
-        for (const ind of INDIKATOR_KIA_POSYANDU) {
+        for (const ind of indikatorSesi) {
           const nilai = indikator[ind]
           if (nilai.sumber !== 'kader' || nilai.statusSebenarnya === 'na') continue
           indikator[ind] = { status: nilai.statusSebenarnya, statusSebenarnya: nilai.statusSebenarnya, sumber: 'dokter', hariData: s.hari }
@@ -2231,7 +2267,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       signal: `Sesi Posyandu RW ${hasil.rw} memeriksa provenance data KIA.`,
       decision: `${hasil.benar}/${hasil.total} keputusan layanan tepat.`,
       feedback: jumlahKeluargaTerkoreksi > 0
-        ? `${jumlahKeluargaTerkoreksi} keluarga mendapat koreksi data langsung dari penimbangan dan pencatatan.`
+        ? `${jumlahKeluargaTerkoreksi} keluarga: data ${indikatorSesi.map((i) => i.replace(/_/g, ' ')).join(', ')} diperbarui dari meja yang dibuka sesi ini.`
         : hasil.skor >= 0.66
           ? 'Data prioritas konsisten; tidak ada koreksi baru yang diperlukan.'
           : 'Mutu sesi belum cukup untuk memverifikasi seluruh data prioritas.',
@@ -2302,11 +2338,21 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
         problemLabel: pBaru.jenis === 'ht' ? 'Hipertensi dalam Prolanis' : 'Diabetes dalam Prolanis',
         owner: terkontrol ? 'kader' : hariEvaluasiKlinik !== undefined ? 'dokter' : 'program',
         status: terkontrol ? 'terverifikasi' : butuhKlinik ? 'menunggu' : 'ditindaklanjuti',
-        signal: `${pBaru.jenis === 'ht' ? 'TD sistolik' : 'GDP'} ${pBaru.param} ${satuan} pada sesi Prolanis.`,
+        // Audit CODEX beta.16 (2026-08-06): label WAKTU diperbaiki. Dulu
+        // catatan ini menulis angka PASCA-drift (`pBaru.param`) sebagai nilai
+        // "pada sesi Prolanis" hari itu — sehingga satu klik konseling
+        // tampak menurunkan gula darah puasa 21-34 mg/dL seketika, dan Jejak
+        // Perawatan membantah kartunya sendiri yang mengajarkan "Prolanis itu
+        // maraton, bukan sprint". Mekaniknya sebenarnya sudah benar: angka
+        // pasca-drift memang angka yang dibacakan kartu sesi BERIKUTNYA. Yang
+        // salah cuma labelnya. Kini yang terukur hari ini (`p.param`) ditulis
+        // sebagai hasil hari ini, dan angka pasca-drift disebut sebagai
+        // perkiraan saat kontrol berikutnya.
+        signal: `${pBaru.jenis === 'ht' ? 'TD sistolik' : 'GDP'} ${p.param} ${satuan} terukur pada sesi Prolanis hari ini.`,
         decision: jwb.benar ? 'Keputusan kartu Prolanis tepat.' : 'Keputusan sesi perlu dikoreksi.',
         feedback: terkontrol
-          ? 'Parameter berada di bawah ambang kontrol program.'
-          : `Belum terkontrol selama ${pBaru.takTerkontrolBerturut} sesi berturut-turut.`,
+          ? `Tata laksana sesi ini diperkirakan membawa ${pBaru.jenis === 'ht' ? 'TD sistolik' : 'GDP'} ke ${pBaru.param} ${satuan} saat kontrol berikutnya — di bawah ambang kontrol program.`
+          : `Belum terkontrol selama ${pBaru.takTerkontrolBerturut} sesi berturut-turut; perkiraan saat kontrol berikutnya ${pBaru.param} ${satuan}.`,
         nextAction: terkontrol
           ? 'Pertahankan obat, perilaku, dan pemantauan pada sesi berikutnya.'
           : hariEvaluasiKlinik !== undefined
@@ -2315,8 +2361,10 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
               ? 'Masalah turut dicatat; satu slot klinik per orang diprioritaskan pada masalah lain. Evaluasi ulang sesi berikutnya.'
             : `Ulangi pemantauan pada sesi berikutnya, hari ${s.hari + HARI_BUKA_PROLANIS[s.mode]}.`,
         dueDay: terkontrol ? null : (hariEvaluasiKlinik ?? s.hari + HARI_BUKA_PROLANIS[s.mode]),
-        eventLabel: terkontrol ? 'Parameter Prolanis terkendali' : 'Parameter Prolanis belum terkendali',
-        eventDetail: `${pBaru.param} ${satuan}; ${pBaru.takTerkontrolBerturut} sesi tak terkendali.`,
+        eventLabel: terkontrol
+          ? 'Parameter Prolanis menuju terkendali'
+          : 'Parameter Prolanis belum terkendali',
+        eventDetail: `Terukur hari ini ${p.param} ${satuan}; perkiraan kontrol berikutnya ${pBaru.param} ${satuan}; ${pBaru.takTerkontrolBerturut} sesi tak terkendali.`,
       })
       return pesertaHasil
     })
@@ -2339,7 +2387,30 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
     const aksiPengendalianBenar = hasil.jawaban.find(
       (jawaban) => jawaban.kartuId === 'klb_aksi',
     )?.benar === true
-    if (hasil.skor >= 0.66 && aksiPengendalianBenar) {
+    // Audit CODEX beta.16 (2026-08-06): syarat verifikasi ditambahkan.
+    // Gerbang lama (skor >= 0,66 + aksi benar) meloloskan pemain yang memilih
+    // "langsung fogging/tutup wilayah TANPA verifikasi" — dua dari tiga kartu
+    // sudah cukup. Kluster dibersihkan dari PWS dan kalimat penutupnya sama
+    // persis dengan pemain yang benar tiga dari tiga.
+    //
+    // Ini BUKAN membatalkan keputusan desain sebelumnya. Commit 8214e8c hanya
+    // MENAMBAH syarat aksi dan secara eksplisit membatasi diri pada "dua bug
+    // fix yang jawabannya objektif, bukan pilihan desain"; briefing yang sama
+    // justru mendiagnosis rasio datar itu sebagai bug. Jadi lolosnya kartu
+    // verifikasi adalah sisa pekerjaan yang tertinggal karena batas lingkup,
+    // bukan pedagogi yang pernah diniatkan.
+    //
+    // Efek samping yang DISENGAJA dan perlu diketahui: dengan verifikasi dan
+    // aksi sama-sama wajib benar, ambang 0,66 otomatis terpenuhi — aturannya
+    // berubah menjadi "hanya 5W1H yang boleh keliru". Itu asimetri yang
+    // dipilih sadar: memulai pengendalian tanpa memastikan wabahnya nyata
+    // membakar anggaran wilayah dan bisa menyasar penyakit yang salah,
+    // sedangkan penyelidikan yang kurang rapi tidak membatalkan pemutusan
+    // penularan yang sudah terjadi.
+    const verifikasiBenar = hasil.jawaban.find(
+      (jawaban) => jawaban.kartuId === 'klb_verif',
+    )?.benar === true
+    if (hasil.skor >= 0.66 && aksiPengendalianBenar && verifikasiBenar) {
       tally.klbTuntas += 1
       const kunciFlag = `cluster_${hasil.kasusId}_rw${hasil.rw}`
       const { [kunciFlag]: _reset, ...flagsSisa } = next.flags
@@ -2358,7 +2429,7 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       }
       events.push({ type: 'KARMA_DICEGAH', narasi: `Kluster ${pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId} di RW ${hasil.rw} berhasil ditanggulangi.` })
     }
-    const klbTuntas = hasil.skor >= 0.66 && aksiPengendalianBenar
+    const klbTuntas = hasil.skor >= 0.66 && aksiPengendalianBenar && verifikasiBenar
     const namaKasus = pack.kasus[hasil.kasusId]?.nama ?? hasil.kasusId
     careEpisodes = perbaruiEpisode(careEpisodes, {
       id: buatEpisodeId('surveilans', `rw${hasil.rw}`, hasil.kasusId),
@@ -2373,12 +2444,21 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       status: klbTuntas ? 'terverifikasi' : 'menunggu',
       signal: `Surveilans poli mendeteksi kluster ${namaKasus} di RW ${hasil.rw}.`,
       decision: `${hasil.benar}/${hasil.total} keputusan investigasi dan respons tepat.`,
+      // Audit CODEX beta.16: rekaman permanen ikut dijujurkan. Dulu kalimat
+      // ini berbunyi identik untuk run 3/3 dan run yang melewatkan verifikasi,
+      // sehingga Jejak Perawatan amnesia terhadap kartu mana yang meleset.
       feedback: klbTuntas
-        ? 'Aksi spesifik transmisi benar; sinyal kluster dibersihkan dari PWS.'
-        : 'Kluster tetap aktif karena investigasi atau pengendalian belum memadai.',
+        ? 'Verifikasi wabah dan aksi spesifik transmisi sama-sama benar; sinyal kluster dibersihkan dari PWS.'
+        : !verifikasiBenar
+          ? 'Kluster tetap aktif: pengendalian digerakkan sebelum wabahnya diverifikasi dan definisi kasus ditetapkan.'
+          : !aksiPengendalianBenar
+            ? 'Kluster tetap aktif: aksi pengendalian tidak sesuai jalur penularan penyakit ini.'
+            : 'Kluster tetap aktif karena investigasi belum memadai.',
       nextAction: klbTuntas
         ? 'Kader melanjutkan pemantauan pasca-respons.'
-        : 'Ulangi respons KLB dan pilih aksi yang sesuai jalur transmisi.',
+        : !verifikasiBenar
+          ? 'Ulangi respons KLB: verifikasi diagnosis dan tetapkan definisi kasus lebih dulu, baru gerakkan pengendalian.'
+          : 'Ulangi respons KLB dan pilih aksi yang sesuai jalur transmisi.',
       dueDay: klbTuntas ? null : s.hari + 1,
       eventLabel: klbTuntas ? 'Loop KLB ditutup' : 'Respons KLB belum menutup kluster',
       eventDetail: `${hasil.benar}/${hasil.total} keputusan tepat; aksi transmisi ${aksiPengendalianBenar ? 'sesuai' : 'tidak sesuai'}.`,
