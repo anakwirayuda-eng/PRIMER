@@ -94,6 +94,32 @@ export function LaporanAkhir() {
     .filter((k) => k.arcSelesai !== undefined)
     .sort((a, b) => (a.arcSelesai === 'berhasil' ? -1 : 1) - (b.arcSelesai === 'berhasil' ? -1 : 1))
 
+  // Audit CODEX 2026-08-04 (temuan 1), babak kedua. Sejak flush akhir stase
+  // berhenti membekukan klaim "berhasil" untuk keluarga yang terbukti ingkar
+  // janji, keluarga itu berakhir TANPA `arcSelesai` — dan saringan di atas
+  // membuatnya lenyap diam-diam dari laporan akhir. Lenyap bukan kejujuran:
+  // pendampingan yang tak tuntas justru pelajaran paling mahal di layar ini,
+  // dan pemain yang sudah berkunjung berhak tahu bagaimana ceritanya berhenti.
+  // Yang ditampilkan BUKAN epilog naratif ketiga yang dikarang di sini —
+  // menulis suara desa adalah hak penulis klinis — melainkan catatan yang
+  // memang sudah ditulis engine di berkas pendampingan keluarga itu.
+  const keluargaBelumTuntas = Object.values(state.desa.keluarga).filter(
+    (k) => k.arcSelesai === undefined && k.jumlahKunjungan > 0,
+  )
+
+  /** Catatan pendampingan terakhir per keluarga, langsung dari berkas episode. */
+  const catatanPendampingan = useMemo(() => {
+    const peta = new Map<string, { teks: string; hari: number }>()
+    for (const ep of state.careEpisodes) {
+      if (ep.source !== 'keluarga' || ep.familyId === undefined) continue
+      const teks = ep.receipt.feedback ?? ep.receipt.signal
+      if (!teks) continue
+      const lama = peta.get(ep.familyId)
+      if (lama === undefined || ep.updatedDay >= lama.hari) peta.set(ep.familyId, { teks, hari: ep.updatedDay })
+    }
+    return peta
+  }, [state.careEpisodes])
+
   const unduh = (isi: string, nama: string) => {
     const blob = new Blob([isi], { type: 'application/json' })
     const url = URL.createObjectURL(blob)
@@ -201,7 +227,7 @@ export function LaporanAkhir() {
             </div>
 
             {/* Epilog keluarga binaan */}
-            {keluargaCerita.length > 0 && (
+            {(keluargaCerita.length > 0 || keluargaBelumTuntas.length > 0) && (
               <div className="laporan__epilog">
                 <h2 className="judul-seksi">Kabar dari Desa</h2>
                 {keluargaCerita.map((k) => {
@@ -218,6 +244,23 @@ export function LaporanAkhir() {
                       </div>
                       <p className="teks-xs laporan__epilog-teks">
                         {berhasil ? konten.arc.epilogBerhasil : konten.arc.epilogGagal}
+                      </p>
+                    </div>
+                  )
+                })}
+                {keluargaBelumTuntas.map((k) => {
+                  const konten = PACK.keluarga[k.id]
+                  if (!konten) return null
+                  const catatan = catatanPendampingan.get(k.id)?.teks
+                  return (
+                    <div key={k.id} className="kartu laporan__kel">
+                      <div className="baris baris--antara">
+                        <strong className="teks-kecil">{konten.namaKeluarga}</strong>
+                        <span className="chip chip--kunyit">Belum tuntas</span>
+                      </div>
+                      <p className="teks-xs laporan__epilog-teks">
+                        Pendampingan berhenti sebelum tuntas setelah {k.jumlahKunjungan} kunjungan.{' '}
+                        {catatan ?? 'Sampai stase berakhir belum ada perubahan yang terverifikasi.'}
                       </p>
                     </div>
                   )

@@ -41,9 +41,18 @@ function judulChipIndikator(nilai: NilaiIndikator, penuh: string): string {
   if (nilai.sumber === 'janji')
     return `${penuh}: Perubahan yang dijanjikan keluarga; hasilnya diverifikasi beberapa hari lagi.`
   const status = nilai.status === 'ya' ? 'terpenuhi' : 'belum terpenuhi'
+  // Audit CODEX 2026-08-04 (temuan 6), lanjutan: kalimat lama berbunyi
+  // "diverifikasi dokter — kamu melihatnya sendiri", padahal label 'dokter'
+  // punya DUA jalur. Selain kunjungan rumah, sesi Posyandu berkualitas
+  // (skor >=0,5) menaikkan indikator KIA seluruh keluarga di RW itu menjadi
+  // 'dokter' (reducer.ts) — termasuk keluarga yang belum pernah kamu datangi,
+  // sehingga "melihatnya sendiri di rumah mereka" bisa keliru. Kalimatnya kini
+  // menyebut kedua jalur apa adanya. Membedakan jalur secara persis butuh
+  // field baru di NilaiIndikator (state.ts beku) — tidak sepadan untuk sebuah
+  // tooltip selama kalimatnya sudah jujur.
   const sumber =
     nilai.sumber === 'dokter'
-      ? 'diverifikasi dokter — kamu melihatnya sendiri'
+      ? 'kamu sendiri yang menegakkannya — lewat kunjungan rumah atau penimbangan Posyandu, bukan laporan kader'
       : 'laporan kader — bisa saja keliru, verifikasi dengan kunjungan'
   return `${penuh}: ${status} (${sumber}, data hari ${nilai.hariData}).`
 }
