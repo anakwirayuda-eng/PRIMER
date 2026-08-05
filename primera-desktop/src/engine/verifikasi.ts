@@ -728,6 +728,12 @@ function fnv1a(teks: string): string {
 // pemulihan itu gunanya membuka kunjungan yang masih bisa dimainkan, sedangkan
 // di sini stase sudah tamat. Replay lama yang membekukan klaim palsu karena itu
 // jatuh ke "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
+// Bug hunt 8 domain (2026-08-06): 66 -> 67. `ambangKluster` masuk sidik jari
+// konten (kelas sama dengan vonis palsu yang baru diperbaiki), gerbang
+// `posyanduTuntas` berhenti menyamakan "sudah diperiksa" dengan "tak pernah
+// diperiksa", dan surat Kepala Puskesmas berhenti memuji mahasiswa yang
+// pasiennya henti jantung. Ketiganya menyentuh replay.
+//
 // Audit CODEX beta.16 (2026-08-06): 65 -> 66. Gerbang KLB kini mensyaratkan
 // kartu verifikasi benar, cakupan indikator Posyandu dipetakan per-kartu, dan
 // catatan Prolanis berhenti melabeli angka siklus berikutnya sebagai "hari
@@ -738,7 +744,7 @@ function fnv1a(teks: string): string {
 // memindahkan sidikJariPack (daftar hash memuat 'runtime-release-order' dan
 // 'exam-packages' yang membawa contentRelease), jadi populasi dosier yang
 // jatuh ke "tidak dapat diverifikasi" identik entah revisi ini naik atau tidak.
-export const REVISI_ENGINE = 66
+export const REVISI_ENGINE = 67
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda
@@ -773,6 +779,20 @@ export function sidikJariPack(pack: ContentPack): string {
         // menjadwalkan pasien PRB kembali → menggeser antrian/tally hari berikut
         // → wajib di-hash (replay-affecting, sama kelas dgn harusDirujuk).
         bisaPrb: k.bisaPrb ?? false,
+        // Bug hunt 2026-08-06: `ambangKluster` ternyata TIDAK ikut di-hash,
+        // padahal ia replay-affecting persis sekelas `bisaPrb` di atas. Ia
+        // menentukan apakah kasus dicatat surveilans dan kapan kluster
+        // terbentuk, yang menggeser bobot Director ×2,5 untuk RW berkluster →
+        // komposisi antrian → tally → skor.
+        //
+        // Akibat kelalaian itu adalah kegagalan kelas terburuk, yang sama
+        // dengan yang baru diperbaiki kemarin: penulis mengubah satu angka
+        // ambang, sidik jari TIDAK bergerak, gerbang "beda versi konten" lolos,
+        // replay tetap dijalankan, hasilnya melenceng — dan verifier mencetak
+        // ke dosen "indikasi klaim skor diubah atau jejak dipangkas". Mahasiswa
+        // jujur dituduh memalsukan berkas. Terverifikasi: sidik jari tetap
+        // `16ac606a` pada semua variasi (4→2, 4→1, dihapus).
+        kluster: k.ambangKluster ?? null,
         trap: k.alergiTrap ?? null,
         // Tier-1 #7 (audit CODEX 2026-07-11): interaksiTrap score-affecting
         // sama persis spt alergiTrap (menggeser obatBenar/obatBerbahaya) —

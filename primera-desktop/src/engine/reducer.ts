@@ -54,6 +54,15 @@ const INDIKATOR_PER_KARTU_POSYANDU: Readonly<Record<string, readonly IndikatorPi
   posy_penyuluhan: ['asi_eksklusif'],
 }
 
+/**
+ * Seluruh indikator KIA yang MUNGKIN dikoreksi Posyandu — gabungan seluruh
+ * kartu. Dipakai untuk menjawab "masih adakah yang menunggu diperiksa di RW
+ * ini", terpisah dari indikator yang kebetulan tertarik pada satu sesi.
+ */
+const SEMUA_INDIKATOR_KIA_POSYANDU: readonly IndikatorPisPk[] = [
+  ...new Set(Object.values(INDIKATOR_PER_KARTU_POSYANDU).flat()),
+]
+
 /** Indikator yang benar-benar dikoreksi sesi ini = gabungan kartu yang tertarik. */
 function indikatorPosyanduSesi(kartuId: readonly string[]): IndikatorPisPk[] {
   const keluar = new Set<IndikatorPisPk>()
@@ -2057,13 +2066,29 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         })
       }
       // Prinsip SISRUTE: kasus EMERGENSI stabil selalu diterima jejaring.
+      // Bug hunt 2026-08-06: nada surat dulu ditentukan HANYA oleh
+      // `disposisiTepat`. `nilai.benar` dicetak di judul tapi tak menggerbangi
+      // apa pun, dan `melewatiKodeBiru` tak dibaca sama sekali. Akibatnya
+      // mahasiswa yang memilih opsi terburuk di TIAP langkah sampai pasiennya
+      // henti jantung, lalu benar RJP dan rujuk, menerima surat PUJIAN berjudul
+      // "tertangani baik (0/3 langkah tepat)" — judul yang membantah dirinya
+      // sendiri dalam satu baris — dan badan suratnya tak menyebut henti
+      // jantung sama sekali. Berlaku 20/20 kasus IGD, termasuk kelima kasus
+      // pool Ujian. Diperparah: `igdKodeBiruTerjadi` nol dibaca renderer, jadi
+      // surat ini satu-satunya rekaman naratif yang tersisa — dan isinya memuji.
+      const igdMulus = nilai.disposisiTepat && !igd.melewatiKodeBiru && nilai.benar * 2 >= nilai.total
       const surat: Surat = {
         id: `surat_igd_${s.hari}_${s.log.length}`,
         hari: s.hari,
-        jenis: nilai.disposisiTepat ? 'pujian_kapus' : 'teguran_kapus',
+        // Sengaja memakai ulang 'teguran_kapus': `state.ts` beku dan SURAT_META
+        // di renderer memetakan per-jenis, jadi menambah nilai baru pada union
+        // JenisSurat berongkos jauh lebih besar daripada manfaatnya.
+        jenis: igdMulus ? 'pujian_kapus' : 'teguran_kapus',
         dari: 'dr. Harsono, Kepala Puskesmas',
         judul: nilai.disposisiTepat
-          ? `IGD: ${igd.pasienNama} tertangani baik (${nilai.benar}/${nilai.total} langkah tepat)`
+          ? igd.melewatiKodeBiru
+            ? `IGD: ${igd.pasienNama} selamat setelah Kode Biru (${nilai.benar}/${nilai.total} langkah tepat; algoritme berhenti di langkah ${igd.jawaban.length})`
+            : `IGD: ${igd.pasienNama} tertangani baik (${nilai.benar}/${nilai.total} langkah tepat)`
           : `IGD: disposisi ${igd.pasienNama} keliru`,
         isi: nilai.disposisiTepat
           ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
@@ -2252,7 +2277,29 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       desa: { ...next.desa, keluarga: keluargaPy, rw: tambahBonusIks(next.desa.rw, hasil.rw, bonus) },
     }
     const namaRw = pack.rw.find((rw) => rw.nomor === hasil.rw)?.nama ?? `RW ${hasil.rw}`
-    const posyanduTuntas = hasil.skor >= 0.66 && jumlahKeluargaTerkoreksi === 0
+    // Bug hunt 2026-08-06 — REGRESI dari commit 98c378a kemarin. Saat daftar
+    // indikator dipersempit jadi per-kartu, SUMBER angkanya berubah tapi
+    // KONSUMEN-nya tidak. Gerbang ini menyamakan dua keadaan yang berlawanan:
+    // "sudah diperiksa dan ternyata konsisten" versus "tak pernah diperiksa
+    // sama sekali". Terukur: 65,4% sesi sempurna pada hari yang sah tak
+    // menyentuh satu keluarga pun — 100% di RW 2, 4, 5, dan 6 yang memang tak
+    // punya keluarga bersasaran KIA. Episode keluar 'terverifikasi', dueDay
+    // dihapus, dan Jejak Perawatan menempelkan chip hijau "Tindak lanjut
+    // tuntas" sementara di RW itu masih ada data kader yang faktual salah.
+    //
+    // `indikatorSesi.length > 0` saja tidak cukup: sesi yang cuma menarik meja
+    // penyuluhan ASI tetap lolos padahal imunisasi & tumbuh kembang masih
+    // salah. Yang jujur: tuntas hanya bila tak ada lagi indikator KIA
+    // bersumber kader yang menunggu diperiksa di RW itu.
+    const sisaKiaKader = Object.entries(keluargaPy).some(([id, kel]) => {
+      const kc = pack.keluarga[id]
+      if (!kc || kc.rw !== rwPosyandu) return false
+      return SEMUA_INDIKATOR_KIA_POSYANDU.some((ind) => {
+        const n = kel.indikator[ind]
+        return n.sumber === 'kader' && n.statusSebenarnya !== 'na'
+      })
+    })
+    const posyanduTuntas = hasil.skor >= 0.66 && indikatorSesi.length > 0 && !sisaKiaKader
     careEpisodes = perbaruiEpisode(careEpisodes, {
       id: buatEpisodeId('posyandu', `rw${hasil.rw}`, 'kia'),
       day: s.hari,
@@ -2266,11 +2313,19 @@ function selesaikanKegiatan(s: GameState, kg: GameState['kegiatan'], pack: Conte
       status: posyanduTuntas ? 'terverifikasi' : hasil.skor >= 0.5 ? 'ditindaklanjuti' : 'menunggu',
       signal: `Sesi Posyandu RW ${hasil.rw} memeriksa provenance data KIA.`,
       decision: `${hasil.benar}/${hasil.total} keputusan layanan tepat.`,
+      // Resi dipecah tiga (bug hunt 2026-08-06). Dulu "tidak ada koreksi baru
+      // yang diperlukan" dipakai untuk dua keadaan berbeda, termasuk sesi yang
+      // tak membuka satu pun meja KIA — pembacaan yang menenangkan padahal
+      // datanya belum pernah disentuh.
       feedback: jumlahKeluargaTerkoreksi > 0
         ? `${jumlahKeluargaTerkoreksi} keluarga: data ${indikatorSesi.map((i) => i.replace(/_/g, ' ')).join(', ')} diperbarui dari meja yang dibuka sesi ini.`
-        : hasil.skor >= 0.66
-          ? 'Data prioritas konsisten; tidak ada koreksi baru yang diperlukan.'
-          : 'Mutu sesi belum cukup untuk memverifikasi seluruh data prioritas.',
+        : hasil.skor < 0.66
+          ? 'Mutu sesi belum cukup untuk memverifikasi seluruh data prioritas.'
+          : indikatorSesi.length === 0
+            ? 'Sesi ini tidak membuka meja yang menghasilkan data KIA rumah tangga, jadi tak ada yang bisa dicocokkan dengan laporan kader.'
+            : sisaKiaKader
+              ? 'Yang diperiksa sesi ini sudah cocok dengan laporan kader, tetapi indikator KIA lain di RW ini masih menunggu diperiksa.'
+              : 'Seluruh data KIA prioritas di RW ini sudah diperiksa dan konsisten.',
       nextAction: posyanduTuntas
         ? 'Lanjutkan pemantauan rutin oleh kader dan bidan.'
         : `Ukur ulang dan cek tindak lanjut pada siklus Posyandu berikutnya, paling cepat hari ${s.hari + COOLDOWN_POSYANDU[s.mode]}.`,

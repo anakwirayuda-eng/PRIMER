@@ -191,6 +191,7 @@ export function Kegiatan() {
 }
 
 function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => void }) {
+  const careEpisodes = useGame((s) => s.state?.careEpisodes)
   const meta = JUDUL[hasil.jenis] ?? { label: 'KEGIATAN', sub: '' }
   const persen = Math.round(hasil.skor * 100)
   const nada = hasil.skor >= 0.8 ? 'baik' : hasil.skor >= 0.5 ? 'cukup' : 'kurang'
@@ -202,6 +203,17 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
   // tidak layar ini kembali mengumumkan kluster tuntas secara palsu.
   const verifKlbBenar = hasil.jawaban.find((jawaban) => jawaban.kartuId === 'klb_verif')?.benar === true
   const klbTuntas = hasil.jenis === 'klb' && hasil.skor >= 0.66 && aksiKlbBenar && verifKlbBenar
+  // Berapa keluarga yang BENAR-BENAR dikoreksi sesi Posyandu ini. Engine sudah
+  // menulisnya di berkas episode ("… 0 keluarga dikoreksi."), jadi layar
+  // membacanya dari sana alih-alih menebak ulang dari skor. `null` = tak ada
+  // berkasnya (mis. test lama), dan kalimat lama dipertahankan agar tak ada
+  // permukaan yang mendadak sunyi.
+  const keluargaTerkoreksiPosyandu = useMemo(() => {
+    if (hasil.jenis !== 'posyandu' || hasil.rw === undefined) return null
+    const ep = careEpisodes?.find((e) => e.id === `episode_posyandu_rw${hasil.rw}_kia`)
+    const cocok = ep?.history.at(-1)?.detail?.match(/(\d+)\s+keluarga dikoreksi/)
+    return cocok ? Number(cocok[1]) : null
+  }, [hasil, careEpisodes])
   return (
     <div className="kegiatan">
       <div className="kegiatan__panel kertas kegiatan__hasil">
@@ -227,8 +239,14 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
               yang terjadi sebenarnya adalah MENGOREKSI laporan kader, bukan
               memperbaiki keadaan. Kadang koreksinya ke arah yang lebih buruk,
               dan itu memang gunanya. Kalimatnya kini menyebut yang benar. */}
+          {/* Bug hunt 2026-08-06: layar ini memakai gerbang engine yang LAMA
+              (skor >= 0,5) sementara engine sudah bertambah syarat "ada meja
+              KIA yang benar-benar dibuka" pada commit 98c378a. Terukur 25,4%
+              dek tak menarik satu pun kartu terpetakan, dan layar tetap
+              mengumumkan data dimutakhirkan. Angka jujurnya sudah ada di
+              berkas episode, jadi dibaca dari situ — bukan ditebak ulang. */}
           {hasil.jenis === 'posyandu' &&
-            (hasil.skor >= 0.5
+            (hasil.skor >= 0.5 && keluargaTerkoreksiPosyandu !== 0
               ? 'Data KIA keluarga di RW ini dimutakhirkan dari meja yang kamu buka hari ini — sebagian temuan bisa lebih buruk daripada laporan kader, dan itu justru gunanya.'
               : hasil.skor > 0
                 ? 'Sebagian keputusanmu tepat dan menyumbang perbaikan kecil pada IKS wilayah, tetapi belum cukup untuk memutakhirkan data KIA keluarga di RW ini.'
