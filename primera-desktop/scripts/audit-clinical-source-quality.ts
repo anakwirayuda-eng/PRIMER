@@ -214,18 +214,38 @@ function periksaCakupan(
   const temuan: string[] = []
   for (const encounter of daftar) {
     const source = encounter.sumber ?? []
+    const alasan = CAKUPAN_SENGAJA_TERBATAS[encounter.id]
+    const catatan = alasan ? ` — DISENGAJA: ${alasan}` : ''
     if (!source.some((item) => item.cakupan === 'langsung')) {
-      temuan.push(`${area}/${encounter.id}: belum memiliki sumber langsung`)
+      temuan.push(`${area}/${encounter.id}: belum memiliki sumber langsung${catatan}`)
     }
     if (
       !source.some(
         (item) => item.jenis === 'evidence_internasional' && item.cakupan === 'langsung',
       )
     ) {
-      temuan.push(`${area}/${encounter.id}: EBM internasional masih terkait/floor`)
+      temuan.push(`${area}/${encounter.id}: EBM internasional masih terkait/floor${catatan}`)
     }
   }
   return temuan
+}
+
+/**
+ * Cakupan yang SENGAJA dibiarkan tidak 'langsung', dengan alasannya.
+ *
+ * Audit CODEX beta.16 (2026-08-06): dua entri di bawah dilaporkan sebagai
+ * kekurangan yang belum ditangani, padahal keduanya keputusan sadar yang diambil
+ * sehari sebelumnya (commit 7390ac4) — alasannya cuma tertulis di komentar kode
+ * generator, tempat yang tak dibaca orang yang membuka laporan mutu. Sekarang
+ * alasannya ikut tercetak di laporan. Daftar ini bukan izin menurunkan standar:
+ * menaikkan salah satunya ke 'langsung' demi memuaskan gerbang justru mengulang
+ * cacat WHO ICOPE yang sedang diperbaiki.
+ */
+const CAKUPAN_SENGAJA_TERBATAS: Record<string, string> = {
+  mm_mialgia:
+    'Mialgia mekanik pasca-aktivitas tidak punya padanan pedoman. Tinjauan Cochrane yang tersedia hanya menilai berendam air dingin pada relawan berolahraga, sedangkan panduan AAFP/ACP membahas cedera muskuloskeletal akut yang diskret — bukan pegal menyeluruh. Keduanya dipakai pada tingkat terkait dengan catatan batas.',
+  lab_parafimosis_reduksibel:
+    'Bab prepusium EAU membahas parafimosis secara langsung, tetapi dokumennya pedoman urologi ANAK sedangkan pasien kasus ini 15-70 tahun. Pedoman dewasa yang setara belum ada. Diturunkan ke terkait mengikuti kalibrasi proyek: salah populasi turun, cakupan intervensi lebih sempit tetap langsung.',
 }
 
 const encounterIssues = [

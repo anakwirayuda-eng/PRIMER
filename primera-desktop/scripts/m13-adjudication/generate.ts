@@ -28,6 +28,7 @@ function report(data: AdjudicationDataset): string {
 
 **Tanggal kompilasi:** ${data.generatedAt.slice(0, 10)}
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
+**Kemajuan adjudikasi dokter:** **${data.summary.physicianApproved}** kasus sudah ditandatangani, **${data.summary.pendingReview}** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [\`docs/M13_137_DECISION_LOG.md\`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
 **Snapshot:** commit \`${data.sourceCommit}\`, artefak \`${data.artifactFingerprint}\`, pack \`${data.packFingerprint}\`, content release \`${data.contentRelease}\`, \`REVISI_ENGINE=${data.engineRevision}\`
 
 ## Ringkasan eksekutif
@@ -37,6 +38,8 @@ Briefing menyebut “M13-103”, tetapi query runtime \`activationStatus === 'la
 | Indikator | Hasil |
 |---|---:|
 | Kasus prototipe aktual | **${data.scope.actualCaseCount}** |
+| Sudah disetujui dokter | **${data.summary.physicianApproved}** |
+| Menunggu adjudikasi dokter | **${data.summary.pendingReview}** |
 | Crosswalk PPK langsung | ${data.summary.ppkDirect} |
 | Crosswalk PPK terkait, bukan identik | ${data.summary.ppkRelated} |
 | Tanpa crosswalk PPK | ${data.summary.ppkAbsent} |

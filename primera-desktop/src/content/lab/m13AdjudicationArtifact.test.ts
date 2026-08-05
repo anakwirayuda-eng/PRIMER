@@ -134,6 +134,13 @@ describe('M13-137 adjudication artifact', () => {
   it('artefak checked-in cocok dengan fingerprint dataset terkini', () => {
     const checkedIn = JSON.parse(readFileSync(resolve(ROOT, 'docs/M13_137_ADJUDICATION_DATA.json'), 'utf8')) as typeof DATA
     const html = readFileSync(resolve(ROOT, 'docs/M13_137_ADJUDICATION.html'), 'utf8')
+    // Audit CODEX beta.16 (2026-08-06): artefak yang DI-COMMIT tak boleh
+    // berstempel commit kotor. Dulu ia berbunyi `7390ac4…+dirty` karena
+    // diregenerasi saat masih ada perubahan yang belum di-commit — stempel
+    // itulah satu-satunya alasan dokumen ini bisa dilacak ke sumbernya.
+    // Diperiksa pada berkas checked-in, bukan hasil build, jadi tree kerja
+    // yang sedang kotor tidak memerahkan test ini.
+    expect(checkedIn.sourceCommit).toMatch(/^[0-9a-f]{40}$/)
     expect(checkedIn.artifactFingerprint).toBe(DATA.artifactFingerprint)
     expect(checkedIn.cases.map((item) => item.id)).toEqual(DATA.cases.map((item) => item.id))
     expect(html).toContain(DATA.artifactFingerprint)

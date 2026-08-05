@@ -3,6 +3,7 @@ import { execFileSync } from 'node:child_process'
 import { PACK } from '../../src/content'
 import { CONTENT_RELEASE } from '../../src/content/pack'
 import { REVISI_ENGINE, sidikJariPack } from '../../src/engine/verifikasi'
+import { workingTreeDirt } from './build-data'
 
 export type IgdReviewDecision = 'setuju' | 'perlu-edit' | 'tolak' | 'nanti'
 
@@ -77,9 +78,15 @@ export interface IgdAdjudicationDataset {
 
 function gitSnapshot(): string {
   try {
-    const hash = execFileSync('git', ['rev-parse', '--short=12', 'HEAD'], { encoding: 'utf8' }).trim()
-    const dirty = execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim().length > 0
-    return `${hash}${dirty ? '+working-tree' : ''}`
+    const hash = execFileSync('git', ['rev-parse', '--short=12', 'HEAD'], {
+      cwd: process.cwd(),
+      encoding: 'utf8',
+    }).trim()
+    // Audit CODEX beta.16: dulu memakai `git status --porcelain` polos, yang
+    // SELALU kotor karena generator 137 sudah menulis tiga berkas docs/ sebelum
+    // generator ini jalan. Pakai penghitung bersama yang mengecualikan keluaran
+    // artefak (lihat build-data.ts) supaya stempelnya kembali berarti.
+    return `${hash}${workingTreeDirt(process.cwd()) ? '+working-tree' : ''}`
   } catch {
     return 'unknown'
   }

@@ -46,6 +46,11 @@ describe('M13-14 IGD adjudication artifact', () => {
   it('artefak checked-in cocok dengan fingerprint dan menyediakan re-audit opsional', () => {
     const checkedIn = JSON.parse(readFileSync(resolve(ROOT, 'docs/M13_14_IGD_ADJUDICATION_DATA.json'), 'utf8')) as typeof DATA
     const html = readFileSync(resolve(ROOT, 'docs/M13_14_IGD_ADJUDICATION.html'), 'utf8')
+    // Audit CODEX beta.16: lihat catatan kembarnya di
+    // m13AdjudicationArtifact.test.ts. Stempel IGD memakai hash pendek 12
+    // karakter, dan `+working-tree` dulu jadi konstanta karena generator 137
+    // selalu menulis docs/ lebih dulu.
+    expect(checkedIn.sourceCommit).toMatch(/^[0-9a-f]{12}$/)
     expect(checkedIn.artifactFingerprint).toBe(DATA.artifactFingerprint)
     expect(checkedIn.cases.map((item) => item.id)).toEqual(DATA.cases.map((item) => item.id))
     expect(html).toContain(DATA.artifactFingerprint)

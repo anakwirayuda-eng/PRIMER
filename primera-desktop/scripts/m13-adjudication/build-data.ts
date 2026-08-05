@@ -65,6 +65,16 @@ interface ResourceItem {
 export interface AdjudicationCase {
   ordinal: number
   id: string
+  /**
+   * Audit CODEX beta.16 (2026-08-06): status sign-off dokter ikut dirambatkan.
+   * Sebelumnya generator IGD sudah membawanya tetapi generator 137 tidak —
+   * asimetri, bukan kebijakan. Akibatnya dokter membuka alat review dan melihat
+   * "0/137" padahal 16 kasus sudah disetujui sejak 27 Juli, dengan risiko
+   * mengerjakan ulang yang sudah selesai. Ini FAKTA sign-off yang memang sudah
+   * hidup di types.ts, BUKAN nilai radio `physicianDecision` — yang itu tetap
+   * dilarang masuk dataset kompilasi (dijaga m13AdjudicationArtifact.test.ts).
+   */
+  reviewStatus?: 'physician_approved'
   name: string
   icd10: string
   skdi: string
@@ -210,6 +220,10 @@ export interface AdjudicationDataset {
     ppkAbsent: number
     pnpkDirect: number
     ebmDirect: number
+    /** Sudah ditandatangani dokter (M13_137_DECISION_LOG.md). */
+    physicianApproved: number
+    /** Sisa yang masih menunggu adjudikasi dokter. */
+    pendingReview: number
     nonFornasDrugIds: string[]
     resourceTierCOrD: number
     resourceGrounded: number
@@ -742,6 +756,7 @@ function caseRecord(kasus: KasusKlinis, ordinal: number): AdjudicationCase {
   return {
     ordinal,
     id: kasus.id,
+    ...(kasus.reviewStatus ? { reviewStatus: kasus.reviewStatus } : {}),
     name: kasus.nama,
     icd10: kasus.icd10,
     skdi: kasus.skdi,
@@ -793,11 +808,42 @@ function caseRecord(kasus: KasusKlinis, ordinal: number): AdjudicationCase {
   }
 }
 
+/**
+ * Keluaran artefak M13 sengaja DIKECUALIKAN dari perhitungan "kotor".
+ *
+ * Audit CODEX beta.16 (2026-08-06): stempel `+dirty`/`+working-tree` sudah
+ * berhenti berarti apa-apa, dan ada dua sebabnya. (i) Generator 137 menulis
+ * tiga berkas di `docs/` lebih dulu, sehingga generator IGD yang jalan
+ * sesudahnya SELALU melihat tree kotor — `+working-tree` jadi konstanta, bukan
+ * laporan keadaan. (ii) Akar git repositori ini adalah monorepo
+ * PRIMER-CODEX-lab, bukan primera-desktop, jadi coretan proyek tetangga ikut
+ * menodai stempel artefak klinis.
+ *
+ * Pathspec '.' menutup sebab kedua, daftar pengecualian menutup sebab pertama.
+ * Stempel ini satu-satunya alasan dokumen adjudikasi bisa dilacak ke sumbernya,
+ * jadi ia harus jujur atau tak usah ada sama sekali.
+ */
+const ARTIFACT_OUTPUTS = [
+  'docs/M13_137_ADJUDICATION.html',
+  'docs/M13_137_ADJUDICATION_DATA.json',
+  'docs/M13_137_ADJUDICATION_REPORT.md',
+  'docs/M13_14_IGD_ADJUDICATION.html',
+  'docs/M13_14_IGD_ADJUDICATION_DATA.json',
+  'docs/M13_14_IGD_ADJUDICATION_REPORT.md',
+] as const
+
+export function workingTreeDirt(cwd: string): string {
+  return execFileSync(
+    'git',
+    ['status', '--porcelain', '--', '.', ...ARTIFACT_OUTPUTS.map((p) => `:(exclude)${p}`)],
+    { cwd, encoding: 'utf8' },
+  ).trim()
+}
+
 function currentCommit(): string {
   try {
     const commit = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim()
-    const dirty = execFileSync('git', ['status', '--porcelain'], { cwd: ROOT, encoding: 'utf8' }).trim()
-    return dirty ? `${commit}+dirty` : commit
+    return workingTreeDirt(ROOT) ? `${commit}+dirty` : commit
   } catch {
     return 'unknown'
   }
@@ -870,6 +916,8 @@ export function buildAdjudicationDataset(generatedAt = new Date().toISOString())
       ppkAbsent: cases.filter((item) => !item.evidence.ppk.relation).length,
       pnpkDirect: cases.filter((item) => item.evidence.pnpk.sources.some((source) => source.relation === 'direct')).length,
       ebmDirect: cases.filter((item) => item.evidence.ebm.sources.some((source) => source.relation === 'direct')).length,
+      physicianApproved: cases.filter((item) => item.reviewStatus === 'physician_approved').length,
+      pendingReview: cases.filter((item) => item.reviewStatus !== 'physician_approved').length,
       nonFornasDrugIds: uniqueDrugs.filter((id) => PACK.obat[id]?.fornas === false).sort(),
       resourceTierCOrD: cases.filter((item) => item.evidence.aspak.highestTier === 'C' || item.evidence.aspak.highestTier === 'D').length,
       resourceGrounded: cases.filter((item) => (

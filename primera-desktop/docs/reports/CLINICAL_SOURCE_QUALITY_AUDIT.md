@@ -1,6 +1,6 @@
 # Audit Mutu Sumber Klinis PRIMERA
 
-Dihasilkan: 2026-08-05T07:46:52.217Z
+Dihasilkan: 2026-08-05T19:41:56.892Z
 
 ## Ringkasan
 
@@ -70,7 +70,7 @@ belum memiliki pengganti yang lebih kuat untuk keputusan yang sama.
 
 ## Kandidat Penguatan Cakupan Poli
 
-- poli/mm_mialgia: belum memiliki sumber langsung
-- poli/mm_mialgia: EBM internasional masih terkait/floor
-- poli/lab_parafimosis_reduksibel: EBM internasional masih terkait/floor
+- poli/mm_mialgia: belum memiliki sumber langsung — DISENGAJA: Mialgia mekanik pasca-aktivitas tidak punya padanan pedoman. Tinjauan Cochrane yang tersedia hanya menilai berendam air dingin pada relawan berolahraga, sedangkan panduan AAFP/ACP membahas cedera muskuloskeletal akut yang diskret — bukan pegal menyeluruh. Keduanya dipakai pada tingkat terkait dengan catatan batas.
+- poli/mm_mialgia: EBM internasional masih terkait/floor — DISENGAJA: Mialgia mekanik pasca-aktivitas tidak punya padanan pedoman. Tinjauan Cochrane yang tersedia hanya menilai berendam air dingin pada relawan berolahraga, sedangkan panduan AAFP/ACP membahas cedera muskuloskeletal akut yang diskret — bukan pegal menyeluruh. Keduanya dipakai pada tingkat terkait dengan catatan batas.
+- poli/lab_parafimosis_reduksibel: EBM internasional masih terkait/floor — DISENGAJA: Bab prepusium EAU membahas parafimosis secara langsung, tetapi dokumennya pedoman urologi ANAK sedangkan pasien kasus ini 15-70 tahun. Pedoman dewasa yang setara belum ada. Diturunkan ke terkait mengikuti kalibrasi proyek: salah populasi turun, cakupan intervensi lebih sempit tetap langsung.
 
