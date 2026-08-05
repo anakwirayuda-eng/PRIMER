@@ -39,7 +39,46 @@ const AKRONIM_DIIZINKAN = new Set([
   'IGD', 'IKS', 'IM', 'IV', 'JKN', 'KB', 'KIA', 'KIE', 'KLB', 'MI', 'NGT', 'OAT',
   'ORS', 'PIS-PK', 'PMO', 'PNPK', 'PONED', 'PPK', 'PRB', 'RW', 'SAJI', 'SABA',
   'SD', 'SMA', 'SMP', 'TB', 'TTM', 'UGD', 'UKM', 'UKP', 'USG', 'WHO',
+  // Sapuan 2026-08-06: 71 temuan "kapital berlebihan" ditelusuri satu per satu,
+  // dan ternyata TIGA kelas berbeda tercampur jadi satu. Kelas terbesarnya
+  // singkatan lembaga & istilah baku sepanjang >=5 huruf — bukan teriakan,
+  // hanya kebetulan lolos ambang panjang. Didaftarkan di sini supaya temuan
+  // yang tersisa benar-benar layak dibaca dokter, bukan tenggelam di derau.
+  'AACE', 'AAN', 'AAP', 'ACE-I', 'ACR', 'ADA', 'AHA', 'AKDR', 'ARB', 'ARIA', 'ASA',
+  'ATLS', 'BKKBN', 'CBT-I', 'CDC', 'CPR', 'DMARD', 'DTS', 'EASD', 'ECC', 'EPOS',
+  'EULAR', 'FIGO', 'FT3', 'FT4', 'GINA', 'IACS', 'ICM', 'IDAI', 'IMCI', 'IUD',
+  'JBDS', 'MDR', 'MDR-TB', 'MTBS', 'MTP-1', 'NSAID', 'OAINS', 'PAPDI', 'PDPI',
+  'PERDAMI', 'PERDOSSI', 'PERHATI-KL', 'PERKENI', 'PERKI', 'PPGD', 'RR-TB',
+  'SGOT', 'SGPT', 'SNNOOP10', 'TB-RO',
 ])
+
+/**
+ * Kata yang SENGAJA dibesarkan sebagai penekanan keselamatan — gaya rumah
+ * proyek ini, bukan cacat penulisan. Dipisahkan dari daftar akronim supaya
+ * niatnya tetap terbaca: ini keputusan editorial, dan mencabutnya berarti
+ * menghapus penanda yang membuat kata berbahaya menonjol di layar debrief.
+ *
+ * Yang TIDAK didaftarkan di sini dan karenanya tetap muncul sebagai temuan:
+ * kata sambung dan kata biasa yang dibesarkan tanpa muatan keselamatan
+ * (DENGAN, SAMBIL, MASIH, HANYA, SANGAT, dsb). Itu memang penekanan berlebih.
+ */
+const PENEKANAN_KLINIS_DIIZINKAN = new Set([
+  'RUJUK', 'JANGAN', 'TIDAK', 'TANPA', 'BUKAN', 'WAJIB', 'HINDARI', 'DIHINDARI',
+  'SINGKIRKAN', 'PUASAKAN', 'ULANGI', 'OBATI', 'SEGERA', 'MASASE', 'KOMPRESI',
+  'BIMANUAL', 'KONTRAINDIKASI', 'RESUSITASI', 'NEBULISASI',
+])
+
+/** Singkatan majemuk seperti "AHA/AAP" atau "PPK/PNPK" dinilai per bagian. */
+function kapitalTakDikenal(word: string): boolean {
+  const bagian = word.split('/').filter(Boolean)
+  return bagian.some(
+    (b) =>
+      // Tahun/angka di dalam singkatan majemuk (mis. "2009/PAPDI") bukan teriakan.
+      !/^\d+$/.test(b) &&
+      !AKRONIM_DIIZINKAN.has(b) &&
+      !PENEKANAN_KLINIS_DIIZINKAN.has(b),
+  )
+}
 
 function add(entries: TextEntry[], path: string, register: Register, value: unknown): void {
   if (typeof value !== 'string') return
@@ -239,7 +278,7 @@ export function audit(entries: TextEntry[]): Finding[] {
         }
       }
     }
-    const caps = words(entry.text).filter((word) => /\p{L}/u.test(word) && word.length >= 5 && word === word.toLocaleUpperCase('id-ID') && !AKRONIM_DIIZINKAN.has(word))
+    const caps = words(entry.text).filter((word) => /\p{L}/u.test(word) && word.length >= 5 && word === word.toLocaleUpperCase('id-ID') && kapitalTakDikenal(word))
     if (caps.length >= 3 || (entry.register === 'pasien' && caps.length >= 2)) {
       push(entry, 'kapital_berlebihan', 'sedang', [...new Set(caps)].join(', '))
     }

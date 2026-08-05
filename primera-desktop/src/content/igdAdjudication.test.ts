@@ -84,22 +84,14 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
   // DINILAI: pool Ujian 5 dari 5 kasus tanpa debrief — nol persen berdebrief.
   // Panel "Yang Perlu Menetap" memang dibuka pemain ujian dan memang kosong.
   // Kini berlaku untuk SELURUH kasus IGD.
-  /**
-   * Satu-satunya kasus yang BOLEH kosong, dan alasannya bukan kelalaian.
-   * `igd_stemi_anterior_hipoksemik` terikat amplop tanda tangan dokter di
-   * m13_1a (reviewRecords.ts, hash `fcb978e1…`). Menambahkan debrief mengubah
-   * payload yang sudah ditandatangani, sehingga gerbang aktivasi fail-closed —
-   * dan itu memang gunanya. Menyegel ulang amplopnya bukan wewenang pengembang.
-   * Debriefnya sudah disusun dan menunggu dokter menandatangani ulang slice
-   * m13-1a; sampai itu terjadi, kasus ini sengaja dikecualikan. Kerugiannya
-   * paling kecil di antara enam kasus baseline: ia career-only, sedangkan lima
-   * lainnya justru pool Ujian yang defisitnya seratus persen.
-   */
-  const IGD_MENUNGGU_TANDA_TANGAN_ULANG = new Set(['igd_stemi_anterior_hipoksemik'])
-
+  // Pengecualian `igd_stemi_anterior_hipoksemik` DICABUT 2026-08-06. Kasus itu
+  // terikat amplop tanda tangan dokter di m13_1a, sehingga menambah debrief
+  // sempat memerahkan gerbang aktivasi — dan itu memang gunanya. dr. Wirayuda
+  // menyegel ulang slice-nya, jadi kini SELURUH 20 kasus IGD wajib berdebrief
+  // tanpa kecuali. Bila kelak ada kasus baru yang terikat amplop, jalurnya
+  // sama: tunggu penyegelan ulang, jangan melonggarkan invariant ini.
   it('setiap kasus IGD membawa debrief FKTP, kontinuitas, dan bridge UKM yang utuh', () => {
     for (const id of Object.keys(PACK.kasusIgd)) {
-      if (IGD_MENUNGGU_TANDA_TANGAN_ULANG.has(id)) continue
       const debrief = PACK.kasusIgd[id]!.debrief
       expect(debrief, id).toBeDefined()
       expect(debrief!.poinKunci.length, id).toBeGreaterThanOrEqual(3)
@@ -117,9 +109,28 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
     }
   })
 
-  // Kedalaman sitasi sengaja MASIH dibatasi ke 14 kasus teradjudikasi: enam
-  // kasus baseline rata-rata membawa 2,2 rujukan, dan menaikkannya adalah
-  // pekerjaan sumber tersendiri, bukan bagian dari melengkapi debrief.
+  /**
+   * Kedalaman sitasi sengaja MASIH dibatasi ke 14 kasus teradjudikasi.
+   *
+   * Diukur 2026-08-06: enam kasus baseline rata-rata 2,17 rujukan versus 4,64
+   * pada yang teradjudikasi. Tetapi angka itu menyesatkan bila dibaca sebagai
+   * "kurang berdasar" — SETIAP kasus baseline sudah punya satu sumber
+   * internasional bercakupan 'langsung' yang kuat: RCUK anafilaksis 2025, GINA
+   * 2026, ADA hipoglikemia 2026, WHO arboviral 2025, IDAI kejang demam, dan
+   * ACC/AHA sindrom koroner akut 2025. Yang kurang KEDALAMANNYA, bukan
+   * dasarnya.
+   *
+   * Percobaan menambah, dan kenapa berhenti: pencarian pedoman profesi
+   * Indonesia untuk melengkapi sisi nasional (PDPI asma, PERKENI hipoglikemia)
+   * hanya menemukan katalog perpustakaan dan salinan pihak ketiga
+   * (Scribd/Slideshare) — persis jebakan yang membuat tautan MTBS diare mati
+   * dan harus diperbaiki dua kali. PNPK IDAI dengue anak-remaja (idai.or.id,
+   * hidup, populasi 8-17 cocok persis dengan kasus DSS ini) adalah kandidat
+   * terkuat, TETAPI hanya halaman mukanya yang bisa dibaca; isi pedomannya
+   * tidak. Aturan proyek ini melarang menyitir dokumen yang tak dibaca
+   * sendiri, dan aturan itu tidak dilonggarkan hanya karena kandidatnya
+   * menarik. Menunggu berkas yang benar-benar bisa dibuka.
+   */
   it('kasus teradjudikasi membawa minimal tiga sumber', () => {
     for (const id of IGD_ADJUDICATED_IDS) {
       expect(PACK.kasusIgd[id]!.sumber.length, id).toBeGreaterThanOrEqual(3)

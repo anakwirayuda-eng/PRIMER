@@ -461,6 +461,10 @@ describe('PACK — validasi silang id konten', () => {
     // mengangkat lemari, tetapi nyerinya lengan-bahu-betis, dan pelajaran
     // teknik mengangkat beban tetap hidup di kasus nyeri punggung bawah.
     ['mm_mialgia', 'postur_ergonomi'],
+    // Sapuan 2026-08-06: nyeri kepala tegang, alasan yang sama. Nyeri tekannya
+    // di otot perikranial dan trapezius — leher-bahu, bukan punggung, bukan sendi.
+    ['saraf_tension_headache', 'postur_ergonomi'],
+    ['saraf_tension_headache', 'peregangan_sendi'],
     // Trauma sudah disingkirkan eksplisit oleh anamnesis kasus ini, sehingga
     // nasihat pelindung mata saat bekerja nol relevansi.
     ['lab_ablasio_retina', 'perlindungan_mata'],

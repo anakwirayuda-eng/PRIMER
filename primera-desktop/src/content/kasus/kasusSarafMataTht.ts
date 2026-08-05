@@ -119,7 +119,10 @@ export const KASUS_SARAF_MATA_THT: KasusKlinis[] = [
         { id: 'amitriptilin_25', alasan: 'Amitriptilin adalah profilaksis untuk TTH KRONIK (>15 hari/bulan); pada TTH episodik cukup analgetik simtomatik + manajemen stres, jangan langsung antidepresan.', bahaya: 'nonPrimer' },
         { id: 'tramadol_50', alasan: 'Opioid tidak diindikasikan pada TTH — berisiko ketergantungan dan medication-overuse headache; berlebihan untuk nyeri kepala primer ringan.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['manajemen_stres', 'higiene_tidur', 'postur_ergonomi', 'peregangan_sendi'],
+      // Sapuan tag-vs-penyakit 2026-08-06: dua topik ditukar ke alamat yang
+      // benar (lihat katalogM3.ts). Jumlahnya tetap empat supaya kelonggaran
+      // pilihan pemain tidak berubah — baki edukasi hanya tiga slot.
+      edukasi: ['manajemen_stres', 'higiene_tidur', 'postur_leher_bahu', 'peregangan_leher_bahu'],
     },
     clue: 'TTH: nyeri bilateral, kualitas MENEKAN/diikat (bukan berdenyut), TANPA mual/fotofobia, pemeriksaan neurologis NORMAL. Cukup analgetik + manajemen stres + perbaikan tidur/postur. TIDAK ada indikasi CT-scan tanpa red flag (SNNOOP10) — neuroimaging pada TTH tipikal justru pemborosan (PPK PERDOSSI).',
     panduanResmi: 'Di luar isu imaging, PPK 1186/2022 menekankan skrining kecemasan/depresi penyerta (diobati antidepresan Amitriptilin) dan membatasi analgesik kombinasi kafein/sedatif maksimal 2 hari/minggu dengan pengawasan dokter — sisi manajemen yang tak disorot clue.',

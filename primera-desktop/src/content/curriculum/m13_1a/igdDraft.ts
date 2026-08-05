@@ -3,6 +3,43 @@ import { terapkanGroundingIgd } from '../../igdSources'
 export const M13_1A_IGD_DRAFTS = terapkanGroundingIgd([
   {
     id: 'igd_stemi_anterior_hipoksemik',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Nyeri dada tipikal lebih dari 20 menit dengan elevasi ST anterior adalah STEMI sampai terbukti lain; EKG 12 sadapan direkam dalam 10 menit tanpa menunggu troponin.',
+        'Oksigen diberikan karena SpO2 88%; pada normoksemia oksigen bukan terapi rutin.',
+        'Aspirin tidak bersalut 160-320 mg dikunyah setelah alergi, perdarahan aktif, dan riwayat perdarahan intrakranial disingkirkan.',
+        'Tujuan rujukan ditentukan oleh kemampuan menjalankan reperfusi, bukan oleh jarak atau oleh adanya dokter penyakit dalam saja.',
+      ],
+      realitaFktp:
+        'Sukamaju dapat merekam EKG 12 sadapan, memberi oksigen, memasang monitor dan akses IV, memberi aspirin kunyah, serta mengirim EKG dan SBAR ke penerima. Reperfusi, baik PCI primer maupun fibrinolisis, adalah syarat rumah sakit tujuan dan tidak dikerjakan di sini. Observasi dua jam dengan EKG dan troponin serial hanya memperpanjang waktu iskemik, dan nitrat tidak menggantikan atau menunda aspirin.',
+      sumberDaya: {
+        ready: [
+          'EKG 12 sadapan',
+          'oksigen, monitor, dan akses IV',
+          'aspirin tidak bersalut 160-320 mg',
+          'komunikasi rujukan dengan kiriman EKG/SBAR',
+        ],
+        melaluiJejaring: [
+          'ambulans jejaring reperfusi',
+          'PCI primer 24 jam atau fibrinolisis STEMI',
+          'rawat lanjut spesialis penyakit dalam',
+        ],
+      },
+      kontinuitas:
+        'Saat rujuk balik, pastikan surat menyebut diagnosis akhir, strategi reperfusi yang dijalankan, dan obat yang sudah diberikan di ruang tindakan; pantau nyeri dada berulang serta sesak, dan pastikan pasien dan keluarga tahu bahwa nyeri dada yang kembali tidak ditunggu di rumah.',
+      bridgeUkm: {
+        judul: 'Rantai Waktu Nyeri Dada',
+        ringkasan:
+          'Ukur rantai waktu tiap nyeri dada: keluhan mulai sampai tiba, tiba sampai EKG terekam, dan keputusan sampai ambulans berangkat, termasuk apakah tujuan benar-benar mampu reperfusi. Angka agregat mengarahkan latihan tim, kesepakatan jejaring, dan edukasi warga agar nyeri dada tidak ditunggu di rumah.',
+      },
+    },
     nama: 'STEMI Anterior dengan Hipoksemia',
     icd10: 'I21.0',
     skdi: '3B',

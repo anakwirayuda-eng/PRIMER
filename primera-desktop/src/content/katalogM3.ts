@@ -242,6 +242,25 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'tanda_bahaya_otot', nama: '[Otot] Segera kembali bila urin gelap seperti teh, demam, atau otot melemah', kategori: 'kepatuhan',
     sinonim: ['rabdomiolisis', 'urin gelap', 'mialgia statin', 'miositis', 'otot lemah'],
   },
+  // Sapuan tag-vs-penyakit 2026-08-06, lanjutan mialgia. Nyeri kepala tegang
+  // dulu memakai postur_ergonomi ([Punggung], sinonimnya nyeri punggung bawah
+  // dan cara mengangkat beban) serta peregangan_sendi ([Sendi]) — padahal
+  // pemeriksaan fisik kasus itu menulis "nyeri tekan otot perikranial dan
+  // trapezius, terutama regio oksipital dan bahu". Yang bermasalah bukan poin
+  // ajarnya (clue-nya memang menyebut perbaikan postur) melainkan alamatnya:
+  // itu otot leher-bahu, bukan punggung, dan bukan sendi. Dua topik di bawah
+  // memindahkannya ke alamat yang benar. Tiga pemakai lain kedua topik lama
+  // (osteoartritis lutut, nyeri punggung bawah, artritis reumatoid) memang
+  // tepat dan TIDAK disentuh — pola 5b881d7 diikuti: id baru, pemakaian salah
+  // ditukar, makna label lama nol berubah.
+  postur_leher_bahu: {
+    id: 'postur_leher_bahu', nama: '[Leher-bahu] Sesuaikan tinggi layar dan sandaran; beri jeda dari menunduk lama', kategori: 'tindakan',
+    sinonim: ['postur kerja', 'layar', 'menunduk', 'leher', 'bahu', 'meja kerja'],
+  },
+  peregangan_leher_bahu: {
+    id: 'peregangan_leher_bahu', nama: '[Leher-bahu] Peregangan lembut otot leher, bahu, dan pundak', kategori: 'tindakan',
+    sinonim: ['peregangan leher', 'trapezius', 'pundak kaku', 'oksipital'],
+  },
   manajemen_stres: {
     id: 'manajemen_stres', nama: '[Stres] Relaksasi & manajemen stres', kategori: 'gaya_hidup',
     sinonim: ['napas dalam', 'relaksasi', 'coping'],

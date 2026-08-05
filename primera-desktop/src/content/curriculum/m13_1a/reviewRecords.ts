@@ -31,7 +31,18 @@ export const M13_1A_REVIEW_HASHES: Record<string, string> = {
   // Refresh 2026-07-28: provenance player-facing berpindah dari domain NICE
   // yang memberi 403 ke ACS/BOAST; keputusan klinis F1 tidak berubah.
   'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': 'f5faf0d79418ea53d029f08e742d2e2f94f6720a27fc7facfe8c63f54e4f1550',
-  'm13-1a-review-igd-igd_stemi_anterior_hipoksemik': 'fcb978e12e49f9e955bc6203b9e6d4845dea07537801e0640a28040fd1be4f02',
+  // Refresh 2026-08-06 atas instruksi langsung dr. Wirayuda ("tanda tangan
+  // ulang slice m13-1a"). Yang berubah HANYA penambahan lapisan `debrief`
+  // (poin kunci, realita FKTP, sumber daya, kontinuitas, jembatan UKM) yang
+  // sebelumnya kosong pada kasus ini. Mengikuti aturan hash-di-bagian-6 dan
+  // preseden dua refresh pasca-sign-off di atas: envelope berubah karena
+  // kontennya berubah, sedangkan KEPUTUSAN KLINISNYA tidak — tiap kalimat
+  // debrief ditelusuri ke isi kasus yang sudah ditandatangani (clue,
+  // panduanResmi, label & respons tiap langkah, disposisi), bukan diagnosis,
+  // obat, dosis, atau disposisi baru. Gerbang fail-closed sempat menolak
+  // penambahan ini pada beta.17 dan itu memang benar; penyegelan ulang
+  // menunggu dokter, dan dokter sudah memerintahkannya.
+  'm13-1a-review-igd-igd_stemi_anterior_hipoksemik': '1533f69101d359376c52568fd35542814db25ca82057ec7e37a02fab8d04a884',
   'm13-1a-review-ukm-keluarga_gunawan-gunawan_k2': '4a36c4ff0a0ef1296fc6e2609948228381bfd0c30c8e794f4030d4c87249e922',
 }
 
