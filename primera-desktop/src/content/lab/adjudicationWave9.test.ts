@@ -91,7 +91,13 @@ describe('M13-137 adjudication wave 9: infeksi THT dan source control', () => {
     expect(kasus.tatalaksana.prosedur).toEqual(['pemantauan_ketat_vital'])
     expect(kasus.clue).toMatch(/source control/i)
     expect(kasus.clue).toMatch(/bukan aspirasi buta di FKTP/i)
-    expect(kasus.panduanResmi).toMatch(/CHOP.*2025.*jejaring rumah sakit/is)
+    // Sapuan sitasi 2026-08-05: slot sumber utama pindah ke Merck (populasi
+    // remaja-dewasa) sementara CHOP bertahan sebagai kerangka simpul keputusan
+    // dengan batas populasinya dinyatakan terbuka. Kunci ini sengaja tetap
+    // mengunci sesuatu — bukan dihapus — supaya teks yang dibaca mahasiswa
+    // tidak pernah melayang tanpa sumber.
+    expect(kasus.panduanResmi).toMatch(/Merck.*2026.*jejaring rumah sakit/is)
+    expect(kasus.panduanResmi).toMatch(/CHOP 2025.*disusun untuk pasien anak/is)
     expect(kasus.catatanRealita).toMatch(/jangan memaksa obat oral/i)
   })
 

@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-04T12:51:47.714Z",
-  "sourceCommit": "b574271604841d873cad6daee0e2d3ae97ab78c7+dirty",
-  "artifactFingerprint": "657a34f647430905d71791180fd6da7898c121d46b1d49829e7c6692f34be7e2",
-  "packFingerprint": "1a62f5a7",
+  "generatedAt": "2026-08-05T07:47:51.801Z",
+  "sourceCommit": "38edccb4e212c037a44caa2043790fbefef26006+dirty",
+  "artifactFingerprint": "3db4b586f22aca1552386ee611dacfaaca99a3855ec2b3d3b8e91c6d69aa1487",
+  "packFingerprint": "71247a85",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 65,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -15510,7 +15510,7 @@
             {
               "sourceId": "acog-aub-2013",
               "relation": "related",
-              "title": "Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women",
+              "title": "Committee Opinion No. 557: Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women (reafirmasi 2026)",
               "authority": "American College of Obstetricians and Gynecologists",
               "year": 2013,
               "officialUrl": "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women",
@@ -15715,7 +15715,7 @@
             },
             {
               "sourceId": "aabb-rbc-transfusion-2023",
-              "relation": "direct",
+              "relation": "related",
               "title": "Red Blood Cell Transfusion: 2023 AABB International Guidelines",
               "authority": "Association for the Advancement of Blood and Biotherapies",
               "year": 2023,
@@ -15726,8 +15726,8 @@
             },
             {
               "sourceId": "acog-aub-2013",
-              "relation": "direct",
-              "title": "Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women",
+              "relation": "related",
+              "title": "Committee Opinion No. 557: Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women (reafirmasi 2026)",
               "authority": "American College of Obstetricians and Gynecologists",
               "year": 2013,
               "officialUrl": "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women",
@@ -24528,7 +24528,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri unilateral, trismus, suara hot-potato, pembengkakan peritonsil, dan deviasi uvula mendukung abses peritonsil. Nilai jalan napas, sepsis, hidrasi, dan kemampuan menelan; beri analgesia serta antibiotik awal bila rute oral aman, pantau selama menunggu, lalu transfer untuk evaluasi THT dan source control. Drainase biasanya menjadi bagian tata laksana abses terkonfirmasi, tetapi teknik dan tempatnya bergantung pada kompetensi, toleransi pasien, anatomi, serta kesiapan suction dan jalan napas - bukan aspirasi buta di FKTP.",
-        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi acuan dasar terkait, bukan pedoman definitif. CHOP Peritonsillar Abscess Pathway, direvisi 2025, menempatkan risiko jalan napas dan sepsis, kemampuan minum, kontrol nyeri, toleransi drainase, serta konsultasi THT sebagai simpul keputusan. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.",
+        "officialGuidance": "Acuan dasar kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022). Bila pedoman yang lebih baru menggeser keselamatan atau efektivitas terapi, pedoman baru itulah yang diikuti. PPK 1186/2022 tidak memiliki bab abses peritonsil; bab tonsilitis hanya menjadi acuan dasar terkait, bukan pedoman definitif. Merck Manual Professional 2026 menempatkan kondisi ini paling sering pada remaja dan dewasa muda, dan menempatkan drainasenya di instalasi gawat darurat atau rumah sakit dengan anestesi serta kesiapan jalan napas. Jalur klinis CHOP 2025 dipertahankan sebagai kerangka simpul keputusan — risiko jalan napas dan infeksi berat, kemampuan minum, kontrol nyeri, toleransi drainase, dan konsultasi THT — dengan catatan jalur itu disusun untuk pasien anak. Suspek abses peritonsil tidak dikelola sebagai faringitis biasa dan perlu jejaring rumah sakit.",
         "realityNote": "Pasien ini masih dapat menelan, tidak stridor, dan tidak sepsis, sehingga antibiotik oral pra-rujuk dimodelkan tanpa menunda transfer. Bila ludah sama sekali tidak dapat ditelan, ada stridor, hipoksia, kelelahan napas, toksisitas, atau pembengkakan leher cepat, jangan memaksa obat oral atau pemeriksaan agresif; prioritaskan jalan napas, monitoring, dan transfer emergensi.",
         "ebmPearl": "Deviasi uvula membantu, tetapi bukan satu-satunya penentu dan tidak membedakan abses dari selulitis peritonsil dengan sempurna. Kombinasi nyeri unilateral, trismus, perubahan suara, palatal fullness, kemampuan menelan, serta tanda perluasan leher menentukan urgensi; pencitraan tidak rutin diperlukan pada presentasi klasik dan tidak boleh menunda rujukan bila komplikasi dicurigai."
       },
@@ -24588,15 +24588,26 @@
           "status": "cocok",
           "sources": [
             {
-              "sourceId": "chop-peritonsillar-abscess-2025",
+              "sourceId": "merck-peritonsillar-abscess-2026",
               "relation": "direct",
+              "title": "Peritonsillar Abscess and Cellulitis",
+              "authority": "Merck Manual Professional Edition",
+              "year": 2026,
+              "officialUrl": "https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/oral-and-pharyngeal-disorders/peritonsillar-abscess-and-cellulitis",
+              "population": "Remaja dan dewasa muda; puncak kejadian usia 20 sampai 40 tahun",
+              "facilityScope": "Pengenalan klinis, pembedaan selulitis dari abses, antibiotik, serta drainase di instalasi gawat darurat atau rumah sakit dengan anestesi lokal atau sedasi; tonsilektomi elektif pada kasus berulang.",
+              "locator": "Epidemiology, diagnosis, and treatment sections: most common in adolescents and young adults with a peak at 20-40 years; distinguish cellulitis from abscess, give streptococcal plus anaerobic cover, and drain in an emergency-department or hospital setting with local anaesthesia or procedural sedation."
+            },
+            {
+              "sourceId": "chop-peritonsillar-abscess-2025",
+              "relation": "related",
               "title": "Suspected Pharyngitis or Peritonsillar Abscess Clinical Pathway",
               "authority": "Children's Hospital of Philadelphia",
               "year": 2025,
               "officialUrl": "https://www.chop.edu/clinical-pathway/pharyngitis-clinical-pathway",
               "population": "Children and adolescents with suspected pharyngitis, peritonsillar cellulitis, or peritonsillar abscess",
               "facilityScope": "Emergency and inpatient assessment, complication screening, drainage tolerance, ENT consultation, treatment, and disposition.",
-              "locator": "Clinical-PTA branch: assess complications and drainage tolerance, involve ENT for controlled drainage, and base disposition on oral intake, pain control, sepsis, and airway risk."
+              "locator": "Clinical-PTA branch: assess complications and drainage tolerance, involve ENT for controlled drainage, and base disposition on oral intake, pain control, sepsis, and airway risk. Population is paediatric; retained for its explicit decision nodes, not as an adult reference."
             }
           ],
           "limitation": "Sumber EBM melengkapi atau memperbarui floor lokal; penerapan tetap harus melalui graceful degradation FKTP."

@@ -124,8 +124,32 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
   // kemkes.go.id) tidak menemukan apa pun yang bisa diverifikasi hidup —
   // hanya salinan pihak ketiga (Academia.edu, Slideshare) yang tak memenuhi
   // standar sumber proyek ini. diare_akut_anak/diare_akut_bayi_dehidrasi_
-  // berat sementara memakai kemenkes-penanggulangan-penyakit-2026 (terkait)
-  // di bawah. MENUNGGU dr. Wirayuda: dokumen MTBS resmi yang benar.
+  // berat sementara memakai kemenkes-penanggulangan-penyakit-2026 (terkait).
+  //
+  // 2026-08-05 — UTANG ITU LUNAS. Dokumennya ketemu bukan di kemkes.go.id
+  // melainkan di lemari dokumen kebijakan WHO (platform.who.int/docs,
+  // repositori naskah kebijakan nasional bidang kesehatan ibu-anak): berkas
+  // PDF 2,9 MB yang berhasil diunduh dan DIBACA HALAMANNYA satu per satu,
+  // bukan sekadar ditebak dari judul tautan. Isinya benar-benar Buku Bagan
+  // MTBS terbitan Kementerian Kesehatan, Jakarta 2015, bertanda tangan lima
+  // direktur, dan daftar isinya memuat persis yang diklaim label sitasi ini:
+  // Rencana Terapi A (diare di rumah), B (dehidrasi ringan/sedang dengan
+  // oralit), dan C (dehidrasi berat). Ini penerbit aslinya, bukan salinan
+  // pihak ketiga — memenuhi standar sumber proyek ini.
+  //
+  // Kejujuran yang harus ikut tercatat: revisi nasional yang lebih baru
+  // memang ada (beredar sebagai berkas 2022), tetapi salinan resminya yang
+  // hidup tidak ditemukan. Karena itu tahun ditulis apa adanya 2015 dan
+  // batas itu dinyatakan terbuka lewat `catatan` pada kedua kasus diare —
+  // mengikuti kebiasaan proyek ini menahan bukti lama secara sadar, bukan
+  // diam-diam.
+  'kemenkes-mtbs-2015': sumber(
+    'kemenkes-mtbs-2015',
+    'Kemenkes - Buku Bagan MTBS 2015: Rencana Terapi A, B, dan C untuk diare anak',
+    'https://platform.who.int/docs/default-source/mca-documents/policy-documents/guideline/IDN-CH-20-01-GUIDELINE-2015-ind-Chart-Book-of-Integrated-Management-of-Sick-Toddler.pdf',
+    2015,
+    'pedoman_indonesia',
+  ),
   'kemenkes-penanggulangan-penyakit-2026': sumber(
     'kemenkes-penanggulangan-penyakit-2026',
     'Permenkes 3/2026 - Penanggulangan Penyakit',
@@ -171,9 +195,14 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
   // disaring ICOPE, jadi sumbernya tidak dibuang — tapi ia kerangka
   // penyaringan, bukan pedoman per-penyakit. Karena itu cakupannya diturunkan
   // dari 'langsung' ke 'terkait' pada sepuluh kasus mata (lihat di bawah).
-  // MENUNGGU DOKTER: sumber pengganti yang benar-benar per-kondisi — kandidat
-  // yang sudah ada di registry ini tapi belum dipakai kasus mana pun:
-  // 'who-vision-screening-2025'.
+  // KOREKSI 2026-08-05: id 'who-vision-screening-2025' tidak pernah ada di
+  // registry ini (yang nyata 'who-eye-screening-2024', di atas), DAN dokumen
+  // di baliknya adalah buku panduan MENYELENGGARAKAN penyaringan penglihatan
+  // — satu kelas dengan ICOPE, jadi memindahkan kasus ke sana tidak menaikkan
+  // kejujuran cakupan sama sekali. Kesepuluh kasus mata kini dipindah ke tujuh
+  // sumber per-kondisi (lihat klaster sapuan mata di bawah). Definisi ICOPE
+  // ini sengaja dibiarkan menganggur: render() hanya memancarkan sumber yang
+  // benar-benar terpakai, jadi menghapusnya cuma melebarkan diff.
   'who-icope-eye-2025': sumber(
     'who-icope-eye-2025',
     'WHO ICOPE - Integrated Care for Older People: penilaian kapasitas intrinsik (termasuk penyaringan penglihatan)',
@@ -331,7 +360,12 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
   'eau-paediatric-urology-2026': sumber(
     'eau-paediatric-urology-2026',
     'EAU Guidelines on Paediatric Urology 2026',
-    'https://uroweb.org/guidelines/paediatric-urology',
+    // Sapuan 2026-08-05: dulu menunjuk halaman payung berisi daftar 32 bab —
+    // dua agen memfetchnya dan teks parafimosis TIDAK muncul di sana sama
+    // sekali, jadi mahasiswa mendarat di daftar isi dan tak bisa memverifikasi
+    // apa pun. Kini menunjuk bab prepusiumnya langsung (memuat fimosis DAN
+    // parafimosis), tempat batas populasinya bisa dibaca sendiri.
+    'https://uroweb.org/guidelines/paediatric-urology/chapter/phimosis-and-other-abnormalities-of-the-penile-skin',
     2026,
     'evidence_internasional',
   ),
@@ -526,7 +560,10 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
   ),
   'who-low-back-pain-2023': sumber(
     'who-low-back-pain-2023',
-    'WHO Guideline for Chronic Primary Low Back Pain',
+    // Label 2026-08-05 dipertegas: kata KRONIK dibuat mencolok supaya penelaah
+    // berikutnya tidak lagi memasangnya sebagai sumber 'langsung' pada nyeri
+    // punggung yang baru mulai. Itu persis yang terjadi sebelumnya.
+    'WHO: Non-surgical Management of CHRONIC PRIMARY Low Back Pain in Adults (2023)',
     'https://www.who.int/publications/i/item/9789240081789',
     2023,
     'evidence_internasional',
@@ -621,6 +658,74 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2023,
     'evidence_internasional',
   ),
+  // ---------------------------------------------------------------------
+  // Sapuan sitasi mata 2026-08-05. Sepuluh kasus mata dilepas dari ICOPE
+  // (dokumen penilaian lansia) ke tujuh sumber per-kondisi. Tiap URL
+  // diverifikasi hidup DUA KALI oleh agen yang berbeda dan saling menyanggah;
+  // yang gugur dicatat di bawah supaya tak dicoba lagi.
+  // ---------------------------------------------------------------------
+  'aao-refractive-errors-ppp-2022': sumber(
+    'aao-refractive-errors-ppp-2022',
+    'AAO Preferred Practice Pattern: Refractive Errors (2022, diperbarui 2025)',
+    'https://www.aao.org/education/preferred-practice-pattern/refractive-errors-ppp-2022',
+    2022,
+    'evidence_internasional',
+  ),
+  // Slug URL di bawah generik bawaan CMS AAO dan TIDAK memuat nama penyakit.
+  // Diverifikasi 2026-08-05: halaman benar berjudul "Blepharitis PPP 2023".
+  // JANGAN ditebak-ganti ke slug 'blepharitis-ppp-2023' — slug itu belum
+  // pernah diverifikasi. Ini satu-satunya sitasi mata yang identitasnya
+  // bergantung pada isi halaman, bukan alamatnya; periksa ulang berkala.
+  'aao-blepharitis-ppp-2023': sumber(
+    'aao-blepharitis-ppp-2023',
+    'AAO Preferred Practice Pattern: Blepharitis (2023)',
+    'https://www.aao.org/education/preferred-practice-pattern/new-preferredpracticepatternguideline-4',
+    2023,
+    'evidence_internasional',
+  ),
+  'aao-dry-eye-syndrome-ppp-2023': sumber(
+    'aao-dry-eye-syndrome-ppp-2023',
+    'AAO Preferred Practice Pattern: Dry Eye Syndrome (2023)',
+    'https://www.aao.org/education/preferred-practice-pattern/dry-eye-syndrome-ppp-2023',
+    2023,
+    'evidence_internasional',
+  ),
+  // Edisi WHO 1997 sempat diusulkan karena memuat tabel dosis, TAPI penyanggah
+  // membuka halamannya sendiri dan tidak menemukan tabel itu — jadi tidak
+  // dipakai. Proyek ini tidak menyitir isi yang tak dibaca sendiri.
+  'who-xerophthalmia-assessment-2014': sumber(
+    'who-xerophthalmia-assessment-2014',
+    'WHO - Xerophthalmia and Night Blindness for the Assessment of Clinical Vitamin A Deficiency in Individuals and Populations',
+    'https://www.who.int/publications/i/item/WHO-NMH-NHD-EPG-14.4',
+    2014,
+    'evidence_internasional',
+  ),
+  // Tiga kondisi berikut TIDAK punya pedoman badan profesi mana pun — dicari
+  // AAO PPP dan Cochrane, nihil. StatPearls (perpustakaan NIH) dipakai karena
+  // ia benar-benar per-penyakit, dan batas kelasnya (tinjauan tersier, bukan
+  // pedoman) dinyatakan terbuka ke mahasiswa lewat `catatan`, bukan disimpan
+  // sendiri.
+  'statpearls-episcleritis-2023': sumber(
+    'statpearls-episcleritis-2023',
+    'StatPearls (NIH Bookshelf) - Episcleritis',
+    'https://www.ncbi.nlm.nih.gov/books/NBK534796/',
+    2023,
+    'evidence_internasional',
+  ),
+  'statpearls-subconjunctival-hemorrhage-2025': sumber(
+    'statpearls-subconjunctival-hemorrhage-2025',
+    'StatPearls (NIH Bookshelf) - Subconjunctival Hemorrhage',
+    'https://www.ncbi.nlm.nih.gov/books/NBK551666/',
+    2025,
+    'evidence_internasional',
+  ),
+  'statpearls-diseases-of-eyelashes-2023': sumber(
+    'statpearls-diseases-of-eyelashes-2023',
+    'StatPearls (NIH Bookshelf) - Diseases of the Eyelashes (memuat trikiasis)',
+    'https://www.ncbi.nlm.nih.gov/books/NBK537100/',
+    2023,
+    'evidence_internasional',
+  ),
   'kyoto-consensus-hpylori-gastritis-2015': sumber(
     'kyoto-consensus-hpylori-gastritis-2015',
     'Kyoto Global Consensus Report on Helicobacter pylori Gastritis (Gut, mirror PMC/NIH)',
@@ -684,6 +789,28 @@ const EXTRA_SOURCES: Record<string, SourceDefinition> = {
     2022,
     'evidence_internasional',
   ),
+  // Sapuan 2026-08-05. Batas yang harus diketahui sebelum memakai ulang
+  // sumber ini: berbeda dari saudaranya di atas yang terbuka penuh, artikel
+  // AFP 2025 ini baru membuka abstrak dan tabel derajat buktinya kepada
+  // pembaca tanpa langganan. AFP biasa membuka teks penuh sekitar setahun
+  // sesudah terbit, jadi artikel November 2025 diperkirakan terbuka menjelang
+  // akhir 2026. Tetap dipilih karena satu-satunya alternatifnya adalah
+  // membiarkan kasus nyeri punggung akut tanpa sumber yang benar-benar
+  // membahas fase akut sama sekali.
+  'aafp-acute-low-back-pain-2025': sumber(
+    'aafp-acute-low-back-pain-2025',
+    'AAFP/AFP: Acute Low Back Pain - Diagnosis and Management (2025)',
+    'https://www.aafp.org/pubs/afp/issues/2025/1100/acute-low-back-pain.html',
+    2025,
+    'evidence_internasional',
+  ),
+  'aafp-acp-nyeri-msk-akut-2020': sumber(
+    'aafp-acp-nyeri-msk-akut-2020',
+    'AAFP/ACP - Management of Acute Pain from Non-Low Back Musculoskeletal Injuries (2020)',
+    'https://www.aafp.org/pubs/afp/issues/2020/1201/p697.html',
+    2020,
+    'evidence_internasional',
+  ),
   'cochrane-systemic-ras-2012': sumber(
     'cochrane-systemic-ras-2012',
     'Cochrane Review: Systemic Interventions for Recurrent Aphthous Stomatitis',
@@ -720,6 +847,10 @@ const A = (
   catatan?: string,
 ): Assignment => ({ sourceId, cakupan, ...(catatan ? { catatan } : {}) })
 
+/** Batas edisi bagan MTBS — dinyatakan ke mahasiswa, bukan disimpan sendiri. */
+const CATATAN_MTBS =
+  'Edisi yang dapat diverifikasi hidup adalah terbitan 2015 (mengikuti rekomendasi WHO 2014 dan protokol UKK IDAI 2015). Revisi nasional yang lebih baru beredar, tetapi salinan resminya tidak ditemukan; periksa edisi terbaru di fasilitas sebelum memakai angka yang bergantung waktu.'
+
 const PPK_DIRECT = A('ppk-fktp-1936-2022', 'langsung')
 const PPK_RELATED = A(
   'ppk-fktp-1936-2022',
@@ -742,18 +873,15 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   bronkitis_akut: [PPK_FLOOR, A('cdc-adult-outpatient-2024')],
   demam_tifoid: [PPK_DIRECT, A('cdc-typhoid-2024')],
   dengue_df: [PPK_DIRECT, A('who_arboviral_2025')],
-  // Audit tautan mati 2026-08-04: sumber lama 'kemenkes-mtbs-diare' menunjuk
-  // artikel awam yang sudah 404 dan DIHAPUS dari registry (lihat catatan di
-  // atas). Berbeda dari 3 tautan mati lain hari ini, TIDAK ada pengganti
-  // resmi Kemenkes yang bisa diverifikasi hidup untuk Buku Bagan/Saku
-  // MTBS-Lintas-Diare spesifik — hanya salinan pihak ketiga yang tak
-  // memenuhi standar sumber proyek ini. Sementara menunggu dokter menunjuk
-  // dokumen yang benar, dialihkan ke regulasi payung yang SUDAH terverifikasi
-  // hidup & dipakai di proyek ini (askariasis di atas), pada tingkat
-  // 'terkait' — jujur bahwa ini konteks kebijakan, BUKAN bagan tata laksana
-  // diare yang spesifik.
-  diare_akut_anak: [A('kemenkes-penanggulangan-penyakit-2026', 'terkait'), A('who-child-pneumonia-diarrhoea-2024')],
-  diare_akut_bayi_dehidrasi_berat: [A('kemenkes-penanggulangan-penyakit-2026', 'terkait'), A('who-child-pneumonia-diarrhoea-2024')],
+  // 2026-08-05: pengalihan sementara ke regulasi payung (tingkat 'terkait')
+  // DICABUT — bagan MTBS aslinya sudah ditemukan & dibaca, lihat catatan
+  // 'kemenkes-mtbs-2015' di registry. Kedua kasus ini persis sasaran bagan
+  // itu: diare_akut_anak berpasien 3-5 tahun (bagan menyasar 2 bulan sampai
+  // 5 tahun) dan kasus bayi dehidrasi berat jatuh ke Rencana Terapi C.
+  // Karena itu tingkatnya naik ke 'langsung'; batas edisinya dinyatakan
+  // terbuka lewat catatan, bukan disembunyikan.
+  diare_akut_anak: [A('kemenkes-mtbs-2015', 'langsung', CATATAN_MTBS), A('who-child-pneumonia-diarrhoea-2024')],
+  diare_akut_bayi_dehidrasi_berat: [A('kemenkes-mtbs-2015', 'langsung', CATATAN_MTBS), A('who-child-pneumonia-diarrhoea-2024')],
   disentri_basiler: [PPK_DIRECT, A('cdc-shigella-2024')],
   dispepsia_fungsional: [PPK_FLOOR, A('bsg-functional-dyspepsia-2022')],
   dm_tipe2: [A('pnpk-dm2-2026'), A('ada-diabetes-2026-type1')],
@@ -811,8 +939,41 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
   mm_gout_artritis_akut: [PPK_DIRECT, A('acr-gout-2020')],
   mm_hipertensi_urgensi: [A('pnpk-hipertensi-2026'), A('esc-hypertension-2024')],
   mm_isk_bawah: [A('pnpk-isk-2025'), A('eau-urological-infections-2026')],
-  mm_low_back_pain: [PPK_FLOOR, A('who-low-back-pain-2023')],
-  mm_mialgia: [PPK_FLOOR, A('cochrane-doms-cold-water-immersion-2022')],
+  // Sapuan 2026-08-05: pedoman WHO itu hanya berlaku untuk nyeri yang sudah
+  // menetap lebih dari tiga bulan, sedangkan pasien kasus ini baru sakit sejak
+  // kemarin sesudah mengangkat galon. Cakupan 'langsung' lahir semata karena
+  // argumen kedua A() dikosongkan dan bawaannya memang 'langsung'.
+  mm_low_back_pain: [
+    PPK_FLOOR,
+    A('aafp-acute-low-back-pain-2025'),
+    A(
+      'who-low-back-pain-2023',
+      'terkait',
+      'Pedoman WHO ini hanya untuk nyeri punggung bawah yang sudah menetap lebih dari tiga bulan, sedangkan pasien di kasus ini baru sakit sejak kemarin. Dipakai sebagai konteks arah tata laksana di layanan primer, bukan acuan langsung untuk nyeri baru ini.',
+    ),
+  ],
+  // Sapuan 2026-08-05: kasus ini SENGAJA dibiarkan tanpa sumber 'langsung'.
+  // Mialgia mekanik pasca-aktivitas memang tak punya padanan pedoman — tinjauan
+  // Cochrane itu hanya menilai berendam air dingin pada relawan berolahraga
+  // (nol menyentuh parasetamol, NSAID, istirahat, maupun peregangan yang jadi
+  // seluruh isi kunci jawaban kasus ini), sedangkan panduan AAFP/ACP membahas
+  // cedera muskuloskeletal akut yang diskret, bukan pegal menyeluruh. Dua
+  // temuan periksaCakupan di audit:provenance:quality untuk mm_mialgia adalah
+  // konsekuensi yang disengaja; JANGAN "diperbaiki" dengan menaikkan salah satu
+  // ke 'langsung' hanya demi memuaskan gerbang audit.
+  mm_mialgia: [
+    PPK_FLOOR,
+    A(
+      'aafp-acp-nyeri-msk-akut-2020',
+      'terkait',
+      'Panduan ini dipakai sebagai acuan cara meredakan nyeri otot akut di layanan primer, bukan sebagai padanan diagnosis kasus ini: yang dibahas di sana cedera muskuloskeletal akut di luar punggung bawah, sedangkan kasus ini pegal menyeluruh setelah kerja fisik berat. Yang menyambung: obat minum pereda nyeri, baik parasetamol maupun NSAID, sama-sama masuk akal dan tidak perlu digabung; pilihan pertama panduan itu sendiri justru NSAID bentuk oles, yang tidak dipakai di sini.',
+    ),
+    A(
+      'cochrane-doms-cold-water-immersion-2022',
+      'terkait',
+      'Tinjauan ini menilai berendam air dingin pada relawan yang berolahraga, dengan mutu penelitian rendah — bukan dasar tata laksana kasus ini. Dipakai sebatas rujukan fenomena pegal otot setelah aktivitas berlebih; tidak ada satu pun tindakan di kunci jawaban kasus ini yang dinilai olehnya.',
+    ),
+  ],
   mm_obesitas: [PPK_DIRECT, A('vadod-obesity-2025')],
   mm_osteoartritis_lutut: [PPK_DIRECT, A('vadod-osteoarthritis-2026')],
   otitis_eksterna_akut_ringan: [PPK_DIRECT, A('aao-hns-otitis-externa-2014')],
@@ -835,10 +996,19 @@ const BASELINE_ASSIGNMENTS: Record<string, Assignment[]> = {
 }
 
 const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
-  'eau-paediatric-urology-2026': [
-    'lab_parafimosis_reduksibel',
-    'lab_fimosis_patologis_ringan',
-  ],
+  'eau-paediatric-urology-2026': ['lab_fimosis_patologis_ringan'],
+  // Sapuan 2026-08-05: bab prepusium pedoman ini MEMANG membahas parafimosis
+  // dan memberi rekomendasi kuat "reduksi manual dulu, bedah bila gagal" —
+  // topiknya cocok. Yang tidak cocok POPULASINYA: dokumennya pedoman urologi
+  // ANAK sedangkan pasien kasus parafimosis 15-70 tahun. Mengikuti kalibrasi
+  // proyek ini — salah populasi turun ke 'terkait' (preseden buta senja),
+  // cakupan intervensi lebih sempit tetap 'langsung' + catatan (preseden
+  // hordeolum & stomatitis aftosa). Kasus fimosis (5-11 th) tetap 'langsung'.
+  // Bacaan tandingan yang sah dan sengaja tidak dipilih: karena parafimosis
+  // adalah padanan diagnosis yang persis, ada argumen mempertahankan
+  // 'langsung' dan menaruh seluruh batasnya di catatan. Yang menentukan
+  // adalah aturan tie-break proyek ini: bila ragu, merendah.
+  'eau-paediatric-urology-2026:terkait': ['lab_parafimosis_reduksibel'],
   who_bec: [
     'lab_trauma_tajam_kulit_kepala',
     'lab_vulnus_laseratum_lengan',
@@ -881,24 +1051,24 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
     'lab_tinea_pedis',
     'lab_tinea_unguium_terkonfirmasi',
   ],
-  // Audit CODEX 2026-08-04 (temuan 6): sufiks ':terkait' menurunkan cakupan
-  // kesepuluh kasus mata ini dari 'langsung'. Dokumennya panduan penilaian
-  // LANSIA (penglihatan cuma satu domain kapasitas intrinsik yang disaring),
-  // bukan pedoman per-penyakit mata — jadi 'langsung' keliru secara faktual.
-  // Bukan sekadar kosmetik: 'buta senja defisiensi vitamin A' berpasien ANAK,
-  // jadi label lama sekaligus salah populasi.
-  'who-icope-eye-2025:terkait': [
-    'lab_astigmatisme_ringan',
-    'lab_blefaritis_anterior',
-    'lab_buta_senja_defisiensi_vitamin_a',
-    'lab_episkleritis_ringan',
-    'lab_hipermetropia',
-    'lab_mata_kering',
+  // Sapuan sitasi mata 2026-08-05, kelanjutan audit CODEX temuan 6. Kemarin
+  // kesepuluh kasus ini cuma DITURUNKAN ke 'terkait' karena ICOPE dokumen
+  // penilaian lansia; hari ini akar masalahnya dibereskan — mereka ternyata
+  // enam entitas penyakit yang berbeda, dan tak ada satu dokumen pun yang
+  // membahas keenamnya. Kini tiap kelompok memakai sumber per-kondisinya
+  // sendiri, sehingga tujuh dari sepuluh kasus jujur berstatus 'langsung'.
+  'aao-refractive-errors-ppp-2022': [
     'lab_miopia_ringan',
-    'lab_perdarahan_subkonjungtiva',
+    'lab_hipermetropia',
+    'lab_astigmatisme_ringan',
     'lab_presbiopia',
-    'lab_trikiasis',
   ],
+  'aao-blepharitis-ppp-2023': ['lab_blefaritis_anterior'],
+  'aao-dry-eye-syndrome-ppp-2023': ['lab_mata_kering'],
+  'who-xerophthalmia-assessment-2014': ['lab_buta_senja_defisiensi_vitamin_a'],
+  'statpearls-episcleritis-2023': ['lab_episkleritis_ringan'],
+  'statpearls-subconjunctival-hemorrhage-2025': ['lab_perdarahan_subkonjungtiva'],
+  'statpearls-diseases-of-eyelashes-2023': ['lab_trikiasis'],
   'tif-thalassaemia-2021': ['lab_talasemia_beta_mayor_anak'],
   'rcht-paediatric-forearm-fracture-2025': ['lab_fraktur_tertutup_antebrachii_anak'],
   'aafp-soft-tissue-masses-2022': ['lab_lipoma_lengan'],
@@ -924,14 +1094,43 @@ const LAB_FALLBACK_BY_SOURCE: Record<string, string[]> = {
 // spt BASELINE_ASSIGNMENTS/A() 3-argumen). Dipisah di sini agar tak diam-diam
 // overclaim — lihat SumberKlinis.catatan di types.ts.
 const LAB_FALLBACK_CATATAN: Record<string, string> = {
-  // Audit CODEX 2026-08-04 (temuan 6): pasien kasus ini ANAK, sedangkan
-  // dokumen ICOPE ditujukan untuk lansia — ketidakcocokan populasi paling
-  // tajam di antara sepuluh kasus mata yang memakainya. Batasnya dinyatakan
-  // terbuka ke mahasiswa, mengikuti pola lab_stomatitis_aftosa di bawah.
+  // Sapuan sitasi mata 2026-08-05: dokumennya kini benar-benar membahas
+  // kondisi kasus, jadi catatan tak lagi perlu meminta maaf soal populasi
+  // lansia — yang tersisa adalah batas isi (mengenali, bukan menakar obat)
+  // dan batas program suplementasi nasional.
   lab_buta_senja_defisiensi_vitamin_a:
-    'Dokumen ICOPE ini ditujukan untuk penilaian kapasitas intrinsik LANSIA, sedangkan pasien kasus ini anak — dipakai sebatas kerangka penyaringan penglihatan di layanan primer, BUKAN pedoman tata laksana defisiensi vitamin A. Rujuk pedoman gizi/mata anak untuk regimen dosisnya.',
+    'Dokumen ini membahas persis kondisi kasus, yaitu kekurangan vitamin A pada mata termasuk buta senja. Isinya cara mengenali dan menilai derajatnya, bukan takaran pengobatan — untuk dosis kapsul vitamin A ikuti pedoman gizi nasional yang berlaku. Perlu diketahui, program pemberian kapsul rutin secara nasional menyasar balita, sedangkan pasien kasus ini sudah usia sekolah.',
+  lab_presbiopia:
+    'Pedoman ini juga membahas lensa tanam dan pilihan bedah yang berada di luar kewenangan layanan primer; bagian yang dipakai kasus ini hanya penentuan tambahan lensa baca dari hasil pemeriksaan refraksi.',
+  lab_episkleritis_ringan:
+    'Ini bab tinjauan ringkas per-penyakit dari perpustakaan NIH, bukan pedoman badan profesi — untuk episkleritis memang belum ada pedoman badan profesi maupun tinjauan sistematik. Dipakai sebagai rujukan pengenalan dan pembedaan dari radang lapisan mata yang lebih dalam, bukan sebagai standar terapi.',
+  lab_perdarahan_subkonjungtiva:
+    'Ini bab tinjauan ringkas per-penyakit dari perpustakaan NIH, bukan pedoman badan profesi; untuk kondisi ini memang belum ada pedoman badan profesi. Dipakai sebagai rujukan pengenalan dan perjalanan penyakit.',
+  lab_trikiasis:
+    'Judul dokumennya adalah penyakit bulu mata secara umum, bukan pedoman khusus trikiasis — babnya memuat trikiasis dari berbagai sebab, termasuk radang tepi kelopak menahun seperti pada kasus ini. Ini tinjauan ringkas dari perpustakaan NIH, bukan pedoman badan profesi.',
+  lab_parafimosis_reduksibel:
+    'Bab prepusium pedoman ini membahas parafimosis secara langsung dan memberi rekomendasi kuat "reduksi manual dulu, bedah bila gagal" — langkah yang sama juga berlaku pada dewasa. Yang perlu diketahui: dokumennya pedoman urologi ANAK, sedangkan pasien kasus ini 15 sampai 70 tahun, sehingga angka kejadian dan penyebab yang tertulis di sana untuk anak. Dipakai sebagai dasar langkah reduksinya, bukan sebagai rujukan populasi dewasa. Pedoman dewasa yang setara memang belum ada: pedoman EAU untuk laki-laki dewasa hanya mencakup hipogonadisme, gangguan ereksi dan ejakulasi, bentuk dan ukuran penis, priapismus, serta kesuburan — tanpa bab kulup.',
   lab_stomatitis_aftosa:
     'Tinjauan ini menilai HANYA intervensi sistemik (kortikosteroid oral, colchicine, pentoxifylline, dll) untuk RAS — tidak mencakup kortikosteroid topikal (mis. triamsinolon asetonid orabase) yang menjadi tata laksana PPK pada kasus ini; dipakai sbg rujukan diagnosis/epidemiologi RAS, bukan pembenaran regimen topikal.',
+}
+
+/**
+ * Daftar-izin catatan untuk sumber EBM internasional yang datang lewat berkas
+ * adjudikasi (bukan lewat fallbackMap). Dua fungsi sekaligus:
+ *   1. memberi slot catatan yang selama ini memang tidak ada di jalur itu, dan
+ *   2. menjadi gerbang — sumber internasional KEDUA dan seterusnya hanya
+ *      didaftarkan bila pasangan kasus::sumber-nya punya catatan tertulis di
+ *      sini, sehingga tak ada sumber baru yang bisa menyelinap ke mata
+ *      mahasiswa tanpa batas interpretasinya ikut terbaca.
+ * Ditambahkan pada sapuan sitasi 2026-08-05.
+ */
+const EBM_CATATAN: Record<string, string> = {
+  'lab_anemia_berat_perlu_transfusi::aabb-rbc-transfusion-2023':
+    'Pedoman AABB ini mengatur keputusan transfusi untuk pasien dewasa yang sudah dirawat inap di rumah sakit dan kondisinya stabil, bukan untuk Puskesmas. Ambang hemoglobin di bawah 7 yang disebutnya adalah ambang yang nanti dipakai tim rumah sakit penerima rujukan, bukan izin mentransfusi di sini. Tugas layanan primer pada kasus ini mengenali kegawatan, menyiapkan rujukan, dan mengirim data yang dibutuhkan tim penerima.',
+  'lab_anemia_berat_perlu_transfusi::acog-aub-2013':
+    'Dokumen ini membahas perdarahan rahim AKUT, yaitu perdarahan yang menurut penilaian klinisi butuh tindakan segera untuk menghentikan kehilangan darah, sedangkan pasien ini haid banyak menahun delapan bulan yang menurut definisi dokumen itu sendiri tergolong menahun. Dipakai sebatas kerangka menilai kestabilan dan menelusuri sumber perdarahan; obat dan tindakan penghenti perdarahan yang disebutnya adalah ranah rumah sakit, bukan layanan primer.',
+  'lab_abses_peritonsil::chop-peritonsillar-abscess-2025':
+    'Jalur klinis ini disusun untuk pasien anak dan remaja: simpul masuknya anak, ambang usianya anak, dan takaran obatnya menurut berat badan. Pasien kasus ini 15 sampai 50 tahun. Dipakai sebagai kerangka simpul keputusan — risiko jalan napas, tanda infeksi berat, kemampuan minum, kontrol nyeri, dan kapan melibatkan spesialis THT — bukan sebagai rujukan populasi dewasa.',
 }
 
 function fallbackMap(): Map<string, Assignment> {
@@ -1113,9 +1312,33 @@ function buildLabAssignments(data: M13Dataset): Record<string, Assignment[]> {
 
     const international = kasus.evidence.ebm.sources
       .filter((item) => !isIndonesianEbm(item))
-      .sort((a, b) => Number(b.relation === 'direct') - Number(a.relation === 'direct'))[0]
-    if (international?.sourceId) {
-      assignments.push(A(international.sourceId, relation(international.relation)))
+      // Sortir HANYA pada peringkat relasi. Sempat dicoba menambah kunci kedua
+      // berupa abjad sourceId, dengan alasan urutan array di config.ts membuat
+      // pemenang jadi kebetulan. Dibatalkan setelah hasilnya diperiksa: sort
+      // JavaScript sudah stabil, jadi di antara sumber sederajat yang menang
+      // adalah yang ditulis lebih dulu — dan itu URUTAN KURASI PENULIS, bukan
+      // kebetulan. Abjad justru merusaknya: pneumotoraks tertukar dari pedoman
+      // pneumotoraks BTS 2023 ke pedoman oksigen BTS 2017, somatoform dari
+      // ICD-11 CDDR 2024 ke pedoman Jerman 2019, dan TIA dari pedoman TIA AHA
+      // 2023 ke pencegahan stroke 2021. Semuanya lebih buruk.
+      .sort((a, b) => Number(b.relation === 'direct') - Number(a.relation === 'direct'))
+    const [utama, ...sisa] = international
+    if (utama?.sourceId) {
+      assignments.push(
+        A(utama.sourceId, relation(utama.relation), EBM_CATATAN[`${kasus.id}::${utama.sourceId}`]),
+      )
+      // Sumber internasional kedua dan seterusnya hanya ikut bila pasangan
+      // kasus::sumber-nya punya catatan batas yang ditulis manusia. Gerbang
+      // ini disengaja: 30 dari 137 kasus punya lebih dari satu sumber
+      // internasional, jadi "ambil semua" akan mendorong puluhan sumber baru
+      // ke layar mahasiswa tanpa catatan — persis pola cacat ICOPE, tapi
+      // sekaligus di banyak kasus.
+      for (const tambahan of sisa) {
+        if (!tambahan.sourceId) continue
+        const catatan = EBM_CATATAN[`${kasus.id}::${tambahan.sourceId}`]
+        if (!catatan) continue
+        assignments.push(A(tambahan.sourceId, relation(tambahan.relation), catatan))
+      }
     } else {
       const fallbackSource = fallback.get(kasus.id)
       if (!fallbackSource) {

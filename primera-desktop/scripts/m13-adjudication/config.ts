@@ -346,7 +346,11 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     facilityScope: 'Initial oral dosing, early haemoglobin-response monitoring, duration after Hb normalization, and investigation of the cause.',
   },
   'acog-aub-2013': {
-    title: 'Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women',
+    // Status "Reaffirmed 2026" hanya terbaca di halaman acog.org lewat browser
+    // sungguhan; domain ini membalas 402 ke bot, sama seperti
+    // acog-uti-pregnancy-2023 yang sudah lama diterima. Bukan tautan mati —
+    // jangan disimpulkan tak terverifikasi hanya karena WebFetch gagal.
+    title: 'Committee Opinion No. 557: Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women (reafirmasi 2026)',
     authority: 'American College of Obstetricians and Gynecologists',
     year: 2013,
     officialUrl: 'https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women',
@@ -800,6 +804,14 @@ export const EBM_GUIDELINE_SOURCES: Record<string, EbmGuidelineSource> = {
     officialUrl: 'https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/nose-and-paranasal-sinus-disorders/bacterial-nasal-infections',
     population: 'People with bacterial nasal vestibulitis or furuncles of the nasal vestibule',
     facilityScope: 'Clinical recognition, warm compresses, topical mupirocin, systemic antistaphylococcal therapy, culture-guided MRSA care, and drainage considerations.',
+  },
+  'merck-peritonsillar-abscess-2026': {
+    title: 'Peritonsillar Abscess and Cellulitis',
+    authority: 'Merck Manual Professional Edition',
+    year: 2026,
+    officialUrl: 'https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/oral-and-pharyngeal-disorders/peritonsillar-abscess-and-cellulitis',
+    population: 'Remaja dan dewasa muda; puncak kejadian usia 20 sampai 40 tahun',
+    facilityScope: 'Pengenalan klinis, pembedaan selulitis dari abses, antibiotik, serta drainase di instalasi gawat darurat atau rumah sakit dengan anestesi lokal atau sedasi; tonsilektomi elektif pada kasus berulang.',
   },
   'who-cataract-quality-2026': {
     title: 'Summary of recommendations for quality of care in cataract surgery management',
@@ -1446,10 +1458,22 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     locator: 'Adult mild-TBI checklist and discharge materials: do not image routinely, give danger signs and follow-up instructions, use brief relative rest, and resume activity gradually according to symptoms.',
     rationale: 'Supports conditional recovery advice if concussion symptoms emerge; the vignette itself is a superficial scalp injury without current mTBI symptoms.',
   }],
+  // Sapuan sitasi 2026-08-05: jalur klinis CHOP disusun untuk anak & remaja
+  // (simpul masuk "Child with Suspected Pharyngitis", ambang usia anak, dosis
+  // per berat badan) sedangkan pasien kasus ini 15-50 tahun. CHOP TIDAK
+  // dibuang — ia satu-satunya dokumen bersimpul keputusan eksplisit di sini —
+  // melainkan turun ke 'related' dengan catatan populasi, dan Merck Manual
+  // Professional (yang populasinya remaja & dewasa muda, puncak 20-40 tahun)
+  // mengambil alih slot 'direct'. Preseden kelas dokumen sudah ada di gerbong
+  // yang sama: merck-nasal-infections-2025 dipakai 'direct' untuk furunkel hidung.
   lab_abses_peritonsil: [{
-    sourceId: 'chop-peritonsillar-abscess-2025',
+    sourceId: 'merck-peritonsillar-abscess-2026',
     relation: 'direct',
-    locator: 'Clinical-PTA branch: assess complications and drainage tolerance, involve ENT for controlled drainage, and base disposition on oral intake, pain control, sepsis, and airway risk.',
+    locator: 'Epidemiology, diagnosis, and treatment sections: most common in adolescents and young adults with a peak at 20-40 years; distinguish cellulitis from abscess, give streptococcal plus anaerobic cover, and drain in an emergency-department or hospital setting with local anaesthesia or procedural sedation.',
+  }, {
+    sourceId: 'chop-peritonsillar-abscess-2025',
+    relation: 'related',
+    locator: 'Clinical-PTA branch: assess complications and drainage tolerance, involve ENT for controlled drainage, and base disposition on oral intake, pain control, sepsis, and airway risk. Population is paediatric; retained for its explicit decision nodes, not as an adult reference.',
   }],
   lab_mastoiditis_akut: [{
     sourceId: 'childrens-mercy-mastoiditis-2026',
@@ -1500,12 +1524,20 @@ export const EBM_GUIDELINE_CROSSWALK: Record<string, EbmGuidelineCrosswalkEntry[
     relation: 'direct',
     locator: 'Updated normative haemoglobin cutoffs and severity classification for non-pregnant women; severity classification does not replace clinical assessment.',
   }, {
+    // Sapuan sitasi 2026-08-05: dua sumber di bawah turun dari 'direct' ke
+    // 'related'. AABB mengunci dirinya pada "hospitalized adult patients",
+    // sedangkan poin ajar kasus ini justru Puskesmas TIDAK mentransfusi;
+    // ACOG 557 mengunci perdarahan AKUT sedangkan pasien ini haid banyak
+    // menahun delapan bulan, yang menurut definisi dokumen itu sendiri
+    // tergolong menahun. Keduanya tetap dipakai karena benar-benar menopang
+    // keputusan rujukan, tapi batasnya kini dinyatakan ke mahasiswa lewat
+    // catatan (EBM_CATATAN di generate-clinical-provenance.ts).
     sourceId: 'aabb-rbc-transfusion-2023',
-    relation: 'direct',
+    relation: 'related',
     locator: 'Recommendation 1 and good-practice statement: for hemodynamically stable hospitalized adults, consider transfusion below 7 g/dL while incorporating symptoms, comorbidity, alternatives, and overall context.',
   }, {
     sourceId: 'acog-aub-2013',
-    relation: 'direct',
+    relation: 'related',
     locator: 'Initial assessment and management: determine haemodynamic stability, evaluate anaemia and bleeding cause, and choose medical, procedural, or specialist treatment according to severity, contraindications, and patient goals.',
   }],
   lab_tb_paru_putus_obat_suspek_mdr: [{

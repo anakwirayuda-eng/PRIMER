@@ -47,6 +47,15 @@ const RETAINED_OLDER_EVIDENCE: Record<string, string> = {
     'Definisi waktu status epileptikus yang fondasional; terapi akut ditopang PNPK Epilepsi 2026 dan sumber resusitasi yang lebih baru.',
   'ata-hyperthyroidism-2016':
     'Masih tercantum sebagai guideline aktif ATA untuk hipertiroidisme; kasus membatasi penggunaannya pada populasi dewasa nonhamil.',
+  // Dua entri di bawah masuk saat sapuan sitasi 2026-08-05. Keduanya tepat
+  // menyentuh ambang kemutakhiran, jadi tanpa alasan tertulis di sini mereka
+  // akan muncul sebagai "kandidat review" tiap audit tanpa penjelasan.
+  'who-xerophthalmia-assessment-2014':
+    'Dokumen penilaian WHO yang masih menjadi rujukan definisi stadium kekurangan vitamin A pada mata; takaran obatnya sengaja diserahkan ke pedoman gizi nasional lewat catatan kasus.',
+  'aafp-acp-nyeri-msk-akut-2020':
+    'Pedoman bersama AAFP/ACP yang masih berlaku untuk nyeri muskuloskeletal akut di luar punggung bawah, dan belum ada penggantinya untuk keputusan yang sama.',
+  'acog-aub-2013':
+    'Committee Opinion ACOG yang masih berstatus reafirmasi 2026 di halaman resminya; dipakai hanya sebagai kerangka penilaian kestabilan dan penelusuran sumber perdarahan, dengan batas fase akut vs menahun dinyatakan terbuka lewat catatan kasus.',
   sepsis3_2016:
     'Definisi konsensus fondasional; keputusan tata laksana akut juga ditopang PNPK dan Surviving Sepsis Campaign yang lebih baru.',
   who_mhgap_ig2_2016:

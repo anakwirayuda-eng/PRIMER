@@ -17,11 +17,32 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2015,
     "jenis": "evidence_internasional"
   },
+  "aabb-rbc-transfusion-2023": {
+    "id": "aabb-rbc-transfusion-2023",
+    "label": "Association for the Advancement of Blood and Biotherapies - Red Blood Cell Transfusion: 2023 AABB International Guidelines",
+    "url": "https://doi.org/10.1001/jama.2023.12914",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
   "aad-acne-2024": {
     "id": "aad-acne-2024",
     "label": "American Academy of Dermatology - Acne Clinical Guideline",
     "url": "https://www.aad.org/member/clinical-quality/guidelines/acne",
     "tahun": 2024,
+    "jenis": "evidence_internasional"
+  },
+  "aafp-acp-nyeri-msk-akut-2020": {
+    "id": "aafp-acp-nyeri-msk-akut-2020",
+    "label": "AAFP/ACP - Management of Acute Pain from Non-Low Back Musculoskeletal Injuries (2020)",
+    "url": "https://www.aafp.org/pubs/afp/issues/2020/1201/p697.html",
+    "tahun": 2020,
+    "jenis": "evidence_internasional"
+  },
+  "aafp-acute-low-back-pain-2025": {
+    "id": "aafp-acute-low-back-pain-2025",
+    "label": "AAFP/AFP: Acute Low Back Pain - Diagnosis and Management (2025)",
+    "url": "https://www.aafp.org/pubs/afp/issues/2025/1100/acute-low-back-pain.html",
+    "tahun": 2025,
     "jenis": "evidence_internasional"
   },
   "aafp-soft-tissue-masses-2022": {
@@ -31,10 +52,24 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2022,
     "jenis": "evidence_internasional"
   },
+  "aao-blepharitis-ppp-2023": {
+    "id": "aao-blepharitis-ppp-2023",
+    "label": "AAO Preferred Practice Pattern: Blepharitis (2023)",
+    "url": "https://www.aao.org/education/preferred-practice-pattern/new-preferredpracticepatternguideline-4",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
   "aao-conjunctivitis-ppp-2023": {
     "id": "aao-conjunctivitis-ppp-2023",
     "label": "AAO Preferred Practice Pattern: Conjunctivitis 2023 (bakterial, viral, alergi)",
     "url": "https://www.aao.org/education/preferred-practice-pattern/conjunctivitis-ppp-2023",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "aao-dry-eye-syndrome-ppp-2023": {
+    "id": "aao-dry-eye-syndrome-ppp-2023",
+    "label": "AAO Preferred Practice Pattern: Dry Eye Syndrome (2023)",
+    "url": "https://www.aao.org/education/preferred-practice-pattern/dry-eye-syndrome-ppp-2023",
     "tahun": 2023,
     "jenis": "evidence_internasional"
   },
@@ -87,6 +122,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2024,
     "jenis": "evidence_internasional"
   },
+  "aao-refractive-errors-ppp-2022": {
+    "id": "aao-refractive-errors-ppp-2022",
+    "label": "AAO Preferred Practice Pattern: Refractive Errors (2022, diperbarui 2025)",
+    "url": "https://www.aao.org/education/preferred-practice-pattern/refractive-errors-ppp-2022",
+    "tahun": 2022,
+    "jenis": "evidence_internasional"
+  },
   "acep-mtbi-2023": {
     "id": "acep-mtbi-2023",
     "label": "American College of Emergency Physicians - Clinical Policy: Mild Traumatic Brain Injury",
@@ -113,6 +155,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "NSW Agency for Clinical Innovation, Statewide Burn Injury Service - Burn Patient Management - Clinical Practice Guide, 5th Edition",
     "url": "https://aci.health.nsw.gov.au/__data/assets/pdf_file/0009/250020/ACI-Burn-Patient-Management-Clinical-Practice-Guide.pdf",
     "tahun": 2026,
+    "jenis": "evidence_internasional"
+  },
+  "acog-aub-2013": {
+    "id": "acog-aub-2013",
+    "label": "American College of Obstetricians and Gynecologists - Committee Opinion No. 557: Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women (reafirmasi 2026)",
+    "url": "https://www.acog.org/clinical/clinical-guidance/committee-opinion/articles/2013/04/management-of-acute-abnormal-uterine-bleeding-in-nonpregnant-reproductive-aged-women",
+    "tahun": 2013,
     "jenis": "evidence_internasional"
   },
   "acog-uti-pregnancy-2023": {
@@ -461,7 +510,7 @@ export const CLINICAL_SOURCE_REGISTRY = {
   "eau-paediatric-urology-2026": {
     "id": "eau-paediatric-urology-2026",
     "label": "EAU Guidelines on Paediatric Urology 2026",
-    "url": "https://uroweb.org/guidelines/paediatric-urology",
+    "url": "https://uroweb.org/guidelines/paediatric-urology/chapter/phimosis-and-other-abnormalities-of-the-penile-skin",
     "tahun": 2026,
     "jenis": "evidence_internasional"
   },
@@ -661,6 +710,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2023,
     "jenis": "pedoman_indonesia"
   },
+  "kemenkes-mtbs-2015": {
+    "id": "kemenkes-mtbs-2015",
+    "label": "Kemenkes - Buku Bagan MTBS 2015: Rencana Terapi A, B, dan C untuk diare anak",
+    "url": "https://platform.who.int/docs/default-source/mca-documents/policy-documents/guideline/IDN-CH-20-01-GUIDELINE-2015-ind-Chart-Book-of-Integrated-Management-of-Sick-Toddler.pdf",
+    "tahun": 2015,
+    "jenis": "pedoman_indonesia"
+  },
   "kemenkes-p2-action-plan-2025": {
     "id": "kemenkes-p2-action-plan-2025",
     "label": "Kementerian Kesehatan Republik Indonesia - Rencana Aksi Program Direktorat Jenderal Penanggulangan Penyakit Tahun 2025-2029",
@@ -701,6 +757,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "label": "Merck Manual Professional Edition - Bacterial Nasal Infections",
     "url": "https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/nose-and-paranasal-sinus-disorders/bacterial-nasal-infections",
     "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
+  "merck-peritonsillar-abscess-2026": {
+    "id": "merck-peritonsillar-abscess-2026",
+    "label": "Merck Manual Professional Edition - Peritonsillar Abscess and Cellulitis",
+    "url": "https://www.merckmanuals.com/professional/ear-nose-and-throat-disorders/oral-and-pharyngeal-disorders/peritonsillar-abscess-and-cellulitis",
+    "tahun": 2026,
     "jenis": "evidence_internasional"
   },
   "niddk-lactose-intolerance-2018": {
@@ -1081,6 +1144,27 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2024,
     "jenis": "evidence_internasional"
   },
+  "statpearls-diseases-of-eyelashes-2023": {
+    "id": "statpearls-diseases-of-eyelashes-2023",
+    "label": "StatPearls (NIH Bookshelf) - Diseases of the Eyelashes (memuat trikiasis)",
+    "url": "https://www.ncbi.nlm.nih.gov/books/NBK537100/",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "statpearls-episcleritis-2023": {
+    "id": "statpearls-episcleritis-2023",
+    "label": "StatPearls (NIH Bookshelf) - Episcleritis",
+    "url": "https://www.ncbi.nlm.nih.gov/books/NBK534796/",
+    "tahun": 2023,
+    "jenis": "evidence_internasional"
+  },
+  "statpearls-subconjunctival-hemorrhage-2025": {
+    "id": "statpearls-subconjunctival-hemorrhage-2025",
+    "label": "StatPearls (NIH Bookshelf) - Subconjunctival Hemorrhage",
+    "url": "https://www.ncbi.nlm.nih.gov/books/NBK551666/",
+    "tahun": 2025,
+    "jenis": "evidence_internasional"
+  },
   "tif-thalassaemia-2021": {
     "id": "tif-thalassaemia-2021",
     "label": "Thalassaemia International Federation Guidelines, fourth edition",
@@ -1214,13 +1298,6 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2024,
     "jenis": "evidence_internasional"
   },
-  "who-icope-eye-2025": {
-    "id": "who-icope-eye-2025",
-    "label": "WHO ICOPE - Integrated Care for Older People: penilaian kapasitas intrinsik (termasuk penyaringan penglihatan)",
-    "url": "https://www.who.int/publications/i/item/9789240103726",
-    "tahun": 2025,
-    "jenis": "evidence_internasional"
-  },
   "who-influenza-2024": {
     "id": "who-influenza-2024",
     "label": "WHO Clinical Practice Guidelines for Influenza",
@@ -1237,7 +1314,7 @@ export const CLINICAL_SOURCE_REGISTRY = {
   },
   "who-low-back-pain-2023": {
     "id": "who-low-back-pain-2023",
-    "label": "WHO Guideline for Chronic Primary Low Back Pain",
+    "label": "WHO: Non-surgical Management of CHRONIC PRIMARY Low Back Pain in Adults (2023)",
     "url": "https://www.who.int/publications/i/item/9789240081789",
     "tahun": 2023,
     "jenis": "evidence_internasional"
@@ -1368,6 +1445,13 @@ export const CLINICAL_SOURCE_REGISTRY = {
     "tahun": 2023,
     "jenis": "evidence_internasional"
   },
+  "who-xerophthalmia-assessment-2014": {
+    "id": "who-xerophthalmia-assessment-2014",
+    "label": "WHO - Xerophthalmia and Night Blindness for the Assessment of Clinical Vitamin A Deficiency in Individuals and Populations",
+    "url": "https://www.who.int/publications/i/item/WHO-NMH-NHD-EPG-14.4",
+    "tahun": 2014,
+    "jenis": "evidence_internasional"
+  },
   "wses-appendicitis-2025": {
     "id": "wses-appendicitis-2025",
     "label": "World Society of Emergency Surgery - Diagnosis and Treatment of Acute Appendicitis: 2025 Edition of the WSES Jerusalem Guidelines",
@@ -1492,8 +1576,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
   ],
   "diare_akut_anak": [
     {
-      "sourceId": "kemenkes-penanggulangan-penyakit-2026",
-      "cakupan": "terkait"
+      "sourceId": "kemenkes-mtbs-2015",
+      "cakupan": "langsung",
+      "catatan": "Edisi yang dapat diverifikasi hidup adalah terbitan 2015 (mengikuti rekomendasi WHO 2014 dan protokol UKK IDAI 2015). Revisi nasional yang lebih baru beredar, tetapi salinan resminya tidak ditemukan; periksa edisi terbaru di fasilitas sebelum memakai angka yang bergantung waktu."
     },
     {
       "sourceId": "who-child-pneumonia-diarrhoea-2024",
@@ -1502,8 +1587,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
   ],
   "diare_akut_bayi_dehidrasi_berat": [
     {
-      "sourceId": "kemenkes-penanggulangan-penyakit-2026",
-      "cakupan": "terkait"
+      "sourceId": "kemenkes-mtbs-2015",
+      "cakupan": "langsung",
+      "catatan": "Edisi yang dapat diverifikasi hidup adalah terbitan 2015 (mengikuti rekomendasi WHO 2014 dan protokol UKK IDAI 2015). Revisi nasional yang lebih baru beredar, tetapi salinan resminya tidak ditemukan; periksa edisi terbaru di fasilitas sebelum memakai angka yang bergantung waktu."
     },
     {
       "sourceId": "who-child-pneumonia-diarrhoea-2024",
@@ -1892,8 +1978,13 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Bab PPK terkait, bukan padanan diagnosis yang identik."
     },
     {
-      "sourceId": "chop-peritonsillar-abscess-2025",
+      "sourceId": "merck-peritonsillar-abscess-2026",
       "cakupan": "langsung"
+    },
+    {
+      "sourceId": "chop-peritonsillar-abscess-2025",
+      "cakupan": "terkait",
+      "catatan": "Jalur klinis ini disusun untuk pasien anak dan remaja: simpul masuknya anak, ambang usianya anak, dan takaran obatnya menurut berat badan. Pasien kasus ini 15 sampai 50 tahun. Dipakai sebagai kerangka simpul keputusan — risiko jalan napas, tanda infeksi berat, kemampuan minum, kontrol nyeri, dan kapan melibatkan spesialis THT — bukan sebagai rujukan populasi dewasa."
     }
   ],
   "lab_akne_vulgaris_ringan": [
@@ -1934,6 +2025,16 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     {
       "sourceId": "who-haemoglobin-cutoffs-2024",
       "cakupan": "langsung"
+    },
+    {
+      "sourceId": "aabb-rbc-transfusion-2023",
+      "cakupan": "terkait",
+      "catatan": "Pedoman AABB ini mengatur keputusan transfusi untuk pasien dewasa yang sudah dirawat inap di rumah sakit dan kondisinya stabil, bukan untuk Puskesmas. Ambang hemoglobin di bawah 7 yang disebutnya adalah ambang yang nanti dipakai tim rumah sakit penerima rujukan, bukan izin mentransfusi di sini. Tugas layanan primer pada kasus ini mengenali kegawatan, menyiapkan rujukan, dan mengirim data yang dibutuhkan tim penerima."
+    },
+    {
+      "sourceId": "acog-aub-2013",
+      "cakupan": "terkait",
+      "catatan": "Dokumen ini membahas perdarahan rahim AKUT, yaitu perdarahan yang menurut penilaian klinisi butuh tindakan segera untuk menghentikan kehilangan darah, sedangkan pasien ini haid banyak menahun delapan bulan yang menurut definisi dokumen itu sendiri tergolong menahun. Dipakai sebatas kerangka menilai kestabilan dan menelusuri sumber perdarahan; obat dan tindakan penghenti perdarahan yang disebutnya adalah ranah rumah sakit, bukan layanan primer."
     }
   ],
   "lab_anemia_defisiensi_besi_nonhamil": [
@@ -1966,8 +2067,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-refractive-errors-ppp-2022",
+      "cakupan": "langsung"
     }
   ],
   "lab_benda_asing_esofagus": [
@@ -1997,8 +2098,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-blepharitis-ppp-2023",
+      "cakupan": "langsung"
     }
   ],
   "lab_bronkiolitis_berat": [
@@ -2018,9 +2119,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait",
-      "catatan": "Dokumen ICOPE ini ditujukan untuk penilaian kapasitas intrinsik LANSIA, sedangkan pasien kasus ini anak — dipakai sebatas kerangka penyaringan penglihatan di layanan primer, BUKAN pedoman tata laksana defisiensi vitamin A. Rujuk pedoman gizi/mata anak untuk regimen dosisnya."
+      "sourceId": "who-xerophthalmia-assessment-2014",
+      "cakupan": "langsung",
+      "catatan": "Dokumen ini membahas persis kondisi kasus, yaitu kekurangan vitamin A pada mata termasuk buta senja. Isinya cara mengenali dan menilai derajatnya, bukan takaran pengobatan — untuk dosis kapsul vitamin A ikuti pedoman gizi nasional yang berlaku. Perlu diketahui, program pemberian kapsul rutin secara nasional menyasar balita, sedangkan pasien kasus ini sudah usia sekolah."
     }
   ],
   "lab_cacing_tambang": [
@@ -2183,8 +2284,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "statpearls-episcleritis-2023",
+      "cakupan": "langsung",
+      "catatan": "Ini bab tinjauan ringkas per-penyakit dari perpustakaan NIH, bukan pedoman badan profesi — untuk episkleritis memang belum ada pedoman badan profesi maupun tinjauan sistematik. Dipakai sebagai rujukan pengenalan dan pembedaan dari radang lapisan mata yang lebih dalam, bukan sebagai standar terapi."
     }
   ],
   "lab_erisipelas_tungkai_ringan": [
@@ -2433,8 +2535,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-refractive-errors-ppp-2022",
+      "cakupan": "langsung"
     }
   ],
   "lab_hipertiroid_graves": [
@@ -2756,8 +2858,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-dry-eye-syndrome-ppp-2023",
+      "cakupan": "langsung"
     }
   ],
   "lab_meningitis_bakterial_suspek": [
@@ -2786,8 +2888,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-refractive-errors-ppp-2022",
+      "cakupan": "langsung"
     }
   ],
   "lab_mola_hidatidosa": [
@@ -2832,7 +2934,8 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
     },
     {
       "sourceId": "eau-paediatric-urology-2026",
-      "cakupan": "langsung"
+      "cakupan": "terkait",
+      "catatan": "Bab prepusium pedoman ini membahas parafimosis secara langsung dan memberi rekomendasi kuat \"reduksi manual dulu, bedah bila gagal\" — langkah yang sama juga berlaku pada dewasa. Yang perlu diketahui: dokumennya pedoman urologi ANAK, sedangkan pasien kasus ini 15 sampai 70 tahun, sehingga angka kejadian dan penyebab yang tertulis di sana untuk anak. Dipakai sebagai dasar langkah reduksinya, bukan sebagai rujukan populasi dewasa. Pedoman dewasa yang setara memang belum ada: pedoman EAU untuk laki-laki dewasa hanya mencakup hipogonadisme, gangguan ereksi dan ejakulasi, bentuk dan ukuran penis, priapismus, serta kesuburan — tanpa bab kulup."
     }
   ],
   "lab_parotitis_mumps": [
@@ -2896,8 +2999,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "statpearls-subconjunctival-hemorrhage-2025",
+      "cakupan": "langsung",
+      "catatan": "Ini bab tinjauan ringkas per-penyakit dari perpustakaan NIH, bukan pedoman badan profesi; untuk kondisi ini memang belum ada pedoman badan profesi. Dipakai sebagai rujukan pengenalan dan perjalanan penyakit."
     }
   ],
   "lab_peritonitis_generalisata": [
@@ -3019,8 +3123,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "aao-refractive-errors-ppp-2022",
+      "cakupan": "langsung",
+      "catatan": "Pedoman ini juga membahas lensa tanam dan pilihan bedah yang berada di luar kewenangan layanan primer; bagian yang dipakai kasus ini hanya penentuan tambahan lensa baca dari hasil pemeriksaan refraksi."
     }
   ],
   "lab_puting_lecet": [
@@ -3388,8 +3493,9 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "cakupan": "langsung"
     },
     {
-      "sourceId": "who-icope-eye-2025",
-      "cakupan": "terkait"
+      "sourceId": "statpearls-diseases-of-eyelashes-2023",
+      "cakupan": "langsung",
+      "catatan": "Judul dokumennya adalah penyakit bulu mata secara umum, bukan pedoman khusus trikiasis — babnya memuat trikiasis dari berbagai sebab, termasuk radang tepi kelopak menahun seperti pada kasus ini. Ini tinjauan ringkas dari perpustakaan NIH, bukan pedoman badan profesi."
     }
   ],
   "lab_ulkus_tungkai_vena": [
@@ -3545,8 +3651,13 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Tidak ada bab diagnosis yang dipetakan langsung; dokumen ini hanya menjadi batas bawah praktik FKTP."
     },
     {
-      "sourceId": "who-low-back-pain-2023",
+      "sourceId": "aafp-acute-low-back-pain-2025",
       "cakupan": "langsung"
+    },
+    {
+      "sourceId": "who-low-back-pain-2023",
+      "cakupan": "terkait",
+      "catatan": "Pedoman WHO ini hanya untuk nyeri punggung bawah yang sudah menetap lebih dari tiga bulan, sedangkan pasien di kasus ini baru sakit sejak kemarin. Dipakai sebagai konteks arah tata laksana di layanan primer, bukan acuan langsung untuk nyeri baru ini."
     }
   ],
   "mm_mialgia": [
@@ -3556,8 +3667,14 @@ export const CLINICAL_SOURCE_ASSIGNMENTS = {
       "catatan": "Tidak ada bab diagnosis yang dipetakan langsung; dokumen ini hanya menjadi batas bawah praktik FKTP."
     },
     {
+      "sourceId": "aafp-acp-nyeri-msk-akut-2020",
+      "cakupan": "terkait",
+      "catatan": "Panduan ini dipakai sebagai acuan cara meredakan nyeri otot akut di layanan primer, bukan sebagai padanan diagnosis kasus ini: yang dibahas di sana cedera muskuloskeletal akut di luar punggung bawah, sedangkan kasus ini pegal menyeluruh setelah kerja fisik berat. Yang menyambung: obat minum pereda nyeri, baik parasetamol maupun NSAID, sama-sama masuk akal dan tidak perlu digabung; pilihan pertama panduan itu sendiri justru NSAID bentuk oles, yang tidak dipakai di sini."
+    },
+    {
       "sourceId": "cochrane-doms-cold-water-immersion-2022",
-      "cakupan": "langsung"
+      "cakupan": "terkait",
+      "catatan": "Tinjauan ini menilai berendam air dingin pada relawan yang berolahraga, dengan mutu penelitian rendah — bukan dasar tata laksana kasus ini. Dipakai sebatas rujukan fenomena pegal otot setelah aktivitas berlebih; tidak ada satu pun tindakan di kunci jawaban kasus ini yang dinilai olehnya."
     }
   ],
   "mm_obesitas": [

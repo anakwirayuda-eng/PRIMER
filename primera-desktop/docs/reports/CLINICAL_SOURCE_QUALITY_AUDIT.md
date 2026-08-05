@@ -1,17 +1,17 @@
 # Audit Mutu Sumber Klinis PRIMERA
 
-Dihasilkan: 2026-08-02T06:42:19.134Z
+Dihasilkan: 2026-08-05T07:46:52.217Z
 
 ## Ringkasan
 
 - Encounter poli: 210
 - Encounter IGD: 20
-- Pemakaian sumber: 566
-- Identitas sumber unik: 258
+- Pemakaian sumber: 570
+- Identitas sumber unik: 266
 - Tautan dari domain yang gagal di browser pemain: 0
-- Sumber lama yang dipertahankan dengan alasan eksplisit: 33
+- Sumber lama yang dipertahankan dengan alasan eksplisit: 36
 - Kandidat review kemutakhiran (EBM <= 2020): 0
-- Kandidat penguatan cakupan (poli + IGD): 0
+- Kandidat penguatan cakupan (poli + IGD): 3
 
 Tahun lama adalah pemicu review, bukan vonis kedaluwarsa. Sumber lama dapat
 dipertahankan bila masih merupakan pedoman aktif, dokumen fondasional, atau
@@ -30,9 +30,11 @@ belum memiliki pengganti yang lebih kuat untuk keputusan yang sama.
 | Cochrane Review: Systemic Interventions for Recurrent Aphthous Stomatitis | 2012 | Tinjauan sistemik RAS pub2 (2012), tidak ditemukan pub3/penarikan; hanya mencakup intervensi sistemik (lihat catatan pada assignment), bukan kortikosteroid topikal yang dipakai kasus. | poli:lab_stomatitis_aftosa |
 | WHO - CBT-principle Treatment for Bodily Distress Complaints | 2012 | Dipertahankan untuk menunjukkan bahwa rekomendasi CBT-principle bersifat kondisional dan buktinya sangat rendah, bukan untuk mengalahkan ICD-11 CDDR 2024. | poli:lab_gangguan_somatoform |
 | AAO-HNSF Guideline - Bell Palsy | 2013 | Masih menjadi guideline aktif AAO-HNSF untuk Bell palsy; keputusan obat tetap dibaca bersama bukti yang lebih baru bila tersedia. | poli:saraf_bells_palsy |
+| American College of Obstetricians and Gynecologists - Committee Opinion No. 557: Management of Acute Abnormal Uterine Bleeding in Nonpregnant Reproductive-Aged Women (reafirmasi 2026) | 2013 | Committee Opinion ACOG yang masih berstatus reafirmasi 2026 di halaman resminya; dipakai hanya sebagai kerangka penilaian kestabilan dan penelusuran sumber perdarahan, dengan batas fase akut vs menahun dinyatakan terbuka lewat catatan kasus. | poli:lab_anemia_berat_perlu_transfusi |
 | AAO-HNSF Guideline - Acute Otitis Externa | 2014 | Masih menjadi guideline aktif AAO-HNSF untuk acute otitis externa. | poli:otitis_eksterna_akut_ringan |
 | Cochrane - Antiviral Treatment for Preventing Postherpetic Neuralgia | 2014 | Review Cochrane diagnosis-spesifik yang menopang batas klaim: antivirus akut tidak terbukti mencegah neuralgia pascaherpes. | poli:kulit_herpes_zoster |
 | Infectious Diseases Society of America - Practice Guidelines for the Diagnosis and Management of Skin and Soft Tissue Infections | 2014 | Guideline IDSA yang masih aktif untuk SSTI; dipakai pada simpul source-control yang spesifik. | poli:kulit_pioderma_impetigo, poli:lab_abses_folikel_rambut, poli:lab_ektima_tungkai, poli:lab_folikulitis_superfisialis, poli:lab_furunkel_fluktuatif |
+| WHO - Xerophthalmia and Night Blindness for the Assessment of Clinical Vitamin A Deficiency in Individuals and Populations | 2014 | Dokumen penilaian WHO yang masih menjadi rujukan definisi stadium kekurangan vitamin A pada mata; takaran obatnya sengaja diserahkan ke pedoman gizi nasional lewat catatan kasus. | poli:lab_buta_senja_defisiensi_vitamin_a |
 | AAAAI/ACAAI/JCAAI Practice Parameter Update: Contact Dermatitis (2015) | 2015 | Practice parameter AAAAI/ACAAI/JCAAI masih menjadi rujukan aktif utk patch testing dan diferensiasi ACD/ICD; tidak ditemukan update penuh yang menggantikannya. | poli:kulit_dermatitis_kontak |
 | Cochrane Review: Antibiotics for Acute Laryngitis in Adults | 2015 | Update pub5 (23 Mei 2015) dari review 2005; tidak ditemukan pub6. Diagnosis-spesifik "acute laryngitis" — lebih tepat drpd guideline umbrella "hoarseness/dysphonia" yang lebih baru tapi tidak eksplisit membahas laringitis akut. | poli:lab_laringitis_akut |
 | ILAE Definition and Classification of Status Epilepticus | 2015 | Definisi waktu status epileptikus yang fondasional; terapi akut ditopang PNPK Epilepsi 2026 dan sumber resusitasi yang lebih baru. | igd:igd_status_epileptikus |
@@ -54,6 +56,7 @@ belum memiliki pengganti yang lebih kuat untuk keputusan yang sama.
 | World Society of Emergency Surgery ASBO Working Group - Bologna guidelines for diagnosis and management of adhesive small bowel obstruction: 2017 update | 2018 | Bologna guideline masih menjadi rujukan diagnosis-spesifik WSES untuk adhesive small-bowel obstruction. | poli:lab_ileus_obstruktif |
 | ATS/IDSA Guideline - Community-acquired Pneumonia in Adults | 2019 | Masih menjadi guideline ATS/IDSA aktif untuk CAP dewasa dan dipakai hanya pada populasi yang sesuai. | poli:lab_pneumonia_komunitas_dewasa |
 | German S3 Guideline 2019 - Functional Somatic Symptoms | 2019 | Sumber stepped-care dan komunikasi diagnosis-spesifik; dibaca bersama ICD-11 CDDR 2024 dan review komunikasi 2022. | poli:lab_gangguan_somatoform |
+| AAFP/ACP - Management of Acute Pain from Non-Low Back Musculoskeletal Injuries (2020) | 2020 | Pedoman bersama AAFP/ACP yang masih berlaku untuk nyeri muskuloskeletal akut di luar punggung bawah, dan belum ada penggantinya untuk keputusan yang sama. | poli:mm_mialgia |
 | AAO-HNSF Guideline - Nosebleed (Epistaxis) | 2020 | Guideline AAO-HNSF aktif dan diagnosis-spesifik untuk epistaksis. | poli:tht_epistaksis_anterior |
 | ACOG Practice Bulletin No. 224: Diagnosis and Management of Vulvar Skin Disorders (2020) | 2020 | Practice Bulletin No. 224 (2020) untuk kelainan kulit vulva termasuk vulvitis kontak/iritan; tidak ditemukan nomor bulletin pengganti per Agustus 2026. | poli:lab_vulvitis_iritan |
 | American College of Rheumatology Guideline for Gout | 2020 | Masih menjadi guideline ACR aktif untuk gout dan tetap menopang keputusan antiinflamasi yang dinilai. | poli:mm_gout_artritis_akut |
@@ -67,5 +70,7 @@ belum memiliki pengganti yang lebih kuat untuk keputusan yang sama.
 
 ## Kandidat Penguatan Cakupan Poli
 
-Tidak ada.
+- poli/mm_mialgia: belum memiliki sumber langsung
+- poli/mm_mialgia: EBM internasional masih terkait/floor
+- poli/lab_parafimosis_reduksibel: EBM internasional masih terkait/floor
 

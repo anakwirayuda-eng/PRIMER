@@ -661,9 +661,12 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
     ],
     diagnosisBanding: ['M54.5', 'M51.1', 'M54.4'],
     tatalaksana: {
-      // WHO 2023: parasetamol tunggal tidak efektif untuk LBP tanpa
-      // sciatica. NSAID dosis efektif terendah dan sesingkat mungkin menjadi
+      // AAFP 2025 (nyeri punggung bawah AKUT): parasetamol tunggal tidak
+      // dianjurkan. NSAID dosis efektif terendah dan sesingkat mungkin menjadi
       // pilihan farmakologis; edukasi tetap aktif adalah inti tata laksana.
+      // Atribusi dikoreksi 2026-08-05 dari "WHO 2023" — dokumen itu khusus
+      // nyeri yang sudah menetap lebih dari tiga bulan, sedangkan pasien ini
+      // baru sakit sejak kemarin; sumbernya kini bercakupan 'terkait'.
       obatBenar: ['natrium_diklofenak_50'],
       obatOpsional: ['paracetamol_500'],
       obatSalahUmum: [
@@ -672,13 +675,13 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
       edukasi: ['postur_ergonomi', 'aktivitas_fisik', 'peregangan_sendi'],
     },
     clue: 'Low back pain mekanik akut tanpa red flag → yakinkan, dorong tetap aktif, beri panduan kembali bekerja/ergonomi, dan hindari tirah baring total. Bila obat diperlukan, gunakan NSAID pada dosis efektif terendah selama sesingkat mungkin setelah menilai risiko gastrointestinal, ginjal, dan kardiovaskular; parasetamol tunggal tidak dianjurkan. Jangan lakukan pencitraan rutin tanpa kecurigaan patologi serius.',
-    panduanResmi: 'PPK 1186/2022 tidak memuat jalur low back pain nonspesifik tersendiri. WHO 2023 menempatkan edukasi, tetap aktif, latihan, dan intervensi nonfarmakologis sebagai inti; pencitraan tidak dilakukan rutin tanpa red flag, sedangkan obat dipilih secara hati-hati menurut risiko dan manfaat.',
+    panduanResmi: 'PPK 1186/2022 tidak memuat jalur low back pain nonspesifik tersendiri. Rujukan utama untuk nyeri baru seperti ini adalah AAFP 2025: cari tanda bahaya, jangan foto rontgen rutin, dorong pasien tetap bergerak, dan bila perlu obat gunakan NSAID pada dosis efektif terendah selama sesingkat mungkin. Pedoman WHO 2023 baru berlaku bila nyeri sudah menetap lebih dari tiga bulan.',
     konsekuensi: {
       narasi: 'Rontgen & rujukan rutin tanpa red flag membuang biaya, meningkatkan kecemasan ("takut tulang rusak"), dan mendorong tirah baring berlebih yang justru memperlambat pemulihan.',
       kembaliHariMin: 7,
       kembaliHariMax: 21,
       kondisiKembali: 'Pasien kembali karena terlalu takut bergerak akibat nasihat keliru, otot makin kaku dan nyeri berkepanjangan (fear-avoidance).',
-      guideline: 'PPK FKTP / WHO 2023 — hindari pencitraan rutin tanpa red flag, tetap aktif, dan utamakan terapi konservatif.',
+      guideline: 'PPK FKTP / AAFP 2025 — hindari pencitraan rutin tanpa tanda bahaya, tetap aktif, dan utamakan terapi konservatif.',
     },
   },
 
@@ -1154,6 +1157,12 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
       },
     ],
     pemeriksaanFisik: [
+      // Audit CODEX 2026-08-04 (temuan 3): tanpa regio `umum`, memeriksa
+      // Keadaan Umum pada pasien RR 26 & SpO2 92 dijawab "dalam batas normal".
+      // Kalimat ini ditranskrip dari data kasus yang sudah ada — ortopnea
+      // (q_ortopnea), RR/SpO2 (vital & temuan paru), akral hangat tanpa
+      // sianosis (temuan kulit) — bukan penilaian klinis baru.
+      { region: 'umum', temuan: 'Sadar penuh dan kooperatif, tetapi tampak sesak dan lebih nyaman setengah duduk daripada berbaring. Napas cepat 26 kali per menit dengan saturasi 92% pada udara ruang; akral hangat, tidak sianosis.', relevan: true },
       { region: 'jantung', temuan: 'Iktus kordis bergeser ke lateral-inferior (kardiomegali), takikardia, S3 gallop (+), tekanan vena jugularis meningkat (JVP ↑).', relevan: true },
       { region: 'toraks_paru', temuan: 'Ronki basah halus di kedua basal paru (kongesti), takipnea, SpO2 92% udara ruang.', relevan: true },
       { region: 'ekstremitas', temuan: 'Edema pitting derajat 2 kedua tungkai hingga pretibial.', relevan: true },
