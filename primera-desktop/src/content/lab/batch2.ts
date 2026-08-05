@@ -850,7 +850,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_bahaya', 'rps', 'Sulit menelan/napas, leher kaku, atau demam tinggi?', 'Tidak ada.', true],
       ['q_kucing', 'sosial', 'Ada cakaran kucing atau luka kulit?', 'Tidak ada.', false],
     ],
-    fisik: [['kepala_leher', 'KGB submandibula kanan 2 cm, nyeri, mobile, hangat; tidak fluktuatif. Gigi molar karies.'], ['tht_mulut', 'Tidak ada abses peritonsil atau obstruksi jalan napas.', true]],
+    // Audit CODEX 2026-08-04 (temuan 3): regio `umum` ditambahkan supaya
+    // memeriksa Keadaan Umum pada anak bersuhu 38,0 tidak lagi dijawab
+    // "dalam batas normal". Isinya persis tiga jawaban negatif q_bahaya
+    // (sulit menelan / sulit napas / leher kaku) — tanpa tanda klinis baru.
+    fisik: [['umum', 'Anak sadar penuh dan tampak sakit ringan; demam teraba. Menelan tanpa kesulitan, tidak sesak, dan leher masih dapat digerakkan bebas.'], ['kepala_leher', 'KGB submandibula kanan 2 cm, nyeri, mobile, hangat; tidak fluktuatif. Gigi molar karies.'], ['tht_mulut', 'Tidak ada abses peritonsil atau obstruksi jalan napas.', true]],
     diagnosisBanding: ['L04.0', 'A18.2', 'C77.0'],
     tatalaksana: { obatBenar: ['cefadroxil_sirup_125'], obatOpsional: ['paracetamol_sirup'], edukasi: ['kepatuhan_obat', 'kontrol_rutin', 'tanda_bahaya'] },
     clue: 'KGB akut unilateral nyeri dengan fokus infeksi lokal mendukung limfadenitis bakterial. Tata sumber infeksi dan antibiotik yang sesuai; evaluasi ulang. Kronik, keras/fiksasi, supraklavikula, gejala TB/keganasan, fluktuasi, atau gagal respons memerlukan pemeriksaan lanjut.',

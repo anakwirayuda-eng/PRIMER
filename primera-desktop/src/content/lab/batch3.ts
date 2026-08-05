@@ -193,7 +193,12 @@ const DEFINITIONS: LabDefinition[] = [
         ['q_hiv', 'rpd', 'Pernah tes HIV atau punya gangguan imun?', 'Belum pernah tes HIV.', true],
         ['q_obat', 'rpd', 'Sudah minum antibiotik atau OAT?', 'Antibiotik biasa tidak memperbaiki, belum pernah OAT.', true],
       ],
-      fisik: [['kepala_leher', 'Nodus servikal matted, sebagian fluktuatif, dengan sinus dan tepi undermined.'], ['toraks_paru', 'Suara napas vesikuler; tidak menyingkirkan TB ekstra paru.', true]],
+      // Audit CODEX 2026-08-04 (temuan 3): ini kasus TB KULIT tetapi tak ada
+      // satu pun temuan regio `kulit` — memeriksa kulit dijawab "dalam batas
+      // normal" pada pasien yang justru datang karena luka kulit. Kalimat ini
+      // hanya memindahkan sisi kulit dari temuan kepala-leher yang sudah ada
+      // (sinus, tepi bergaung) dan menyatakan bagian tubuh lain bersih.
+      fisik: [['kulit', 'Kelainan kulit terbatas pada leher: lubang sinus yang mengeluarkan cairan dengan tepi bergaung di atas nodus, sesuai temuan kepala-leher. Di badan dan anggota gerak tidak ditemukan ruam atau lesi kulit lain.'], ['kepala_leher', 'Nodus servikal matted, sebagian fluktuatif, dengan sinus dan tepi undermined.'], ['toraks_paru', 'Suara napas vesikuler; tidak menyingkirkan TB ekstra paru.', true]],
       lab: [['tcm_spesimen_lesi', 'Aspirat nodus/jaringan dari layanan jejaring: MTB terdeteksi; resistensi rifampisin tidak terdeteksi. Bukan swab cairan sinus permukaan.', 'abnormal']],
       diagnosisBanding: ['A18.4', 'L04.0', 'C77.0'],
       tatalaksana: { obatBenar: [], edukasi: ['alur_tb_ekstraparu', 'investigasi_kontak_tb', 'kepatuhan_obat', 'tanda_bahaya'], edukasiKritis: ['alur_tb_ekstraparu', 'investigasi_kontak_tb'] },

@@ -1246,6 +1246,14 @@ export const KASUS_KULIT: KasusKlinis[] = [
       },
     ],
     pemeriksaanFisik: [
+      // Audit CODEX 2026-08-04 (temuan 3): dulu regio `umum` tak ditulis
+      // sehingga memeriksa Keadaan Umum dijawab "dalam batas normal" pada
+      // anak bersuhu 39,0 — jawaban yang tidak jujur. Kalimat di bawah tidak
+      // menambah fakta klinis baru: semuanya ditranskrip dari anamnesis kasus
+      // ini sendiri (q_makan: masih mau minum, tak sesak, tak kejang;
+      // q_telinga: napas cepat karena demam) dan dari temuan abdomen
+      // (tak ada dehidrasi berat).
+      { region: 'umum', temuan: 'Anak tampak sakit sedang dan rewel, tetapi sadar penuh dan masih mau minum. Demam tinggi teraba; napas cepat mengikuti demam, tanpa tarikan dinding dada. Tidak letargi, tidak kejang, dan tidak ada tanda dehidrasi berat.', relevan: true },
       { region: 'kulit', temuan: 'Ruam makulopapular eritematosa (morbiliformis) konfluen, distribusi SEFALOKAUDAL — terpadat di wajah & leher, menyebar ke badan dan ekstremitas.', relevan: true },
       { region: 'tht_mulut', temuan: 'KOPLIK SPOTS: bercak putih keabuan kecil dikelilingi eritema di mukosa bukal berhadapan geraham (patognomonik). Faring hiperemis.', relevan: true },
       { region: 'mata', temuan: 'Konjungtiva hiperemis bilateral, berair (conjunctivitis) — bagian dari trias 3C, tanpa sekret purulen.', relevan: true },
