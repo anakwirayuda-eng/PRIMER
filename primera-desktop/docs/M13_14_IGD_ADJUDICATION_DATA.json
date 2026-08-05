@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-14-igd-adjudication.v2",
-  "generatedAt": "2026-08-05T21:38:27.851Z",
-  "sourceCommit": "db25f0075e90",
+  "generatedAt": "2026-08-05T23:32:08.628Z",
+  "sourceCommit": "a661cfded16f",
   "contentRelease": "answer-key-sweep-2026-08-06",
-  "engineRevision": 66,
-  "packFingerprint": "16ac606a",
-  "artifactFingerprint": "e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d",
+  "engineRevision": 67,
+  "packFingerprint": "6531bc01",
+  "artifactFingerprint": "3cfe00482d9bb286973ab93cc02c7bbb64c92a103838ca7bbca12ef878eab0d1",
   "reviewQuestions": [
     "Apakah diagnosis, ICD-10, SKDI, populasi, dan derajat kegawatan konsisten?",
     "Apakah urutan ABC/stabilisasi awal benar, tidak menunda tindakan penyelamat nyawa, dan masuk akal di FKTP?",
@@ -576,7 +576,7 @@
       "reviewStatus": "physician_approved",
       "icd10": "T63.0",
       "skdi": "3B",
-      "opening": "Seorang laki-laki dipapah masuk sambil memeluk betis kanannya yang membengkak sampai melewati lutut. \"Digigit ular di sawah, Dok, sejam yang lalu — sudah saya ikat pakai karet biar bisanya nggak naik!\" Ia gemetar hebat, dan dari sela giginya tampak gusi yang terus merembeskan darah.",
+      "opening": "Seorang pasien dipapah masuk sambil memeluk betis kanannya yang membengkak sampai melewati lutut. \"Digigit ular di sawah, Dok, sejam yang lalu — sudah saya ikat pakai karet biar bisanya nggak naik!\" Ia gemetar hebat, dan dari sela giginya tampak gusi yang terus merembeskan darah.",
       "demography": {
         "ageMin": 15,
         "ageMax": 50

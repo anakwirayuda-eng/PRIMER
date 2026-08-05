@@ -4,9 +4,9 @@
 
 **Status:** **14/14 keputusan dokter tercatat dan patch telah diterapkan ke gameplay Karier**
 
-**Snapshot:** db25f0075e90; content release `answer-key-sweep-2026-08-06`; `REVISI_ENGINE=66`
+**Snapshot:** a661cfded16f; content release `answer-key-sweep-2026-08-06`; `REVISI_ENGINE=67`
 
-**Fingerprint:** `e5b713ef11750962f28d3d8a7e3619cd8de7444e1d2d5a72e46922370239da5d`
+**Fingerprint:** `3cfe00482d9bb286973ab93cc02c7bbb64c92a103838ca7bbca12ef878eab0d1`
 
 ## Tujuan
 
