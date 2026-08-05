@@ -7,7 +7,7 @@ import {
   CONTENT_RELEASE,
   CONTENT_RELEASE_ORDER,
   IGD_ADJUDICATION_CONTENT_RELEASE,
-  GAMEPLAY_COMFORT_CONTENT_RELEASE,
+  ANSWER_KEY_SWEEP_CONTENT_RELEASE,
   encounterArchetypeAktif,
 } from './pack'
 
@@ -42,8 +42,8 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
     expect(approved).toHaveLength(14)
     expect(Object.values(PACK.kasusIgd).filter((kasus) => kasus.activationStatus)).toHaveLength(0)
     expect(CONTENT_RELEASE_ORDER).toContain(IGD_ADJUDICATION_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE).toBe(GAMEPLAY_COMFORT_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(GAMEPLAY_COMFORT_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
   })
 
   it('tidak mengubah id pilihan, kunci benar, atau efek stabilitas dari prototipe yang direview', () => {
@@ -78,18 +78,50 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
     expect(encounterArchetypeAktif(PACK, 'igd', 'igd_stemi_anterior_hipoksemik', 'ujian', CONTENT_RELEASE)).toBe(false)
   })
 
-  it('setiap kasus membawa debrief FKTP, kontinuitas, dan bridge UKM yang utuh', () => {
-    for (const id of IGD_ADJUDICATED_IDS) {
+  // Audit CODEX beta.16 (2026-08-06): invariant ini dulu HANYA melintasi 14
+  // kasus teradjudikasi, sehingga enam kasus baseline boleh kosong tanpa ada
+  // yang memerah. Diukur per mode, akibatnya paling tajam justru di mode yang
+  // DINILAI: pool Ujian 5 dari 5 kasus tanpa debrief — nol persen berdebrief.
+  // Panel "Yang Perlu Menetap" memang dibuka pemain ujian dan memang kosong.
+  // Kini berlaku untuk SELURUH kasus IGD.
+  /**
+   * Satu-satunya kasus yang BOLEH kosong, dan alasannya bukan kelalaian.
+   * `igd_stemi_anterior_hipoksemik` terikat amplop tanda tangan dokter di
+   * m13_1a (reviewRecords.ts, hash `fcb978e1…`). Menambahkan debrief mengubah
+   * payload yang sudah ditandatangani, sehingga gerbang aktivasi fail-closed —
+   * dan itu memang gunanya. Menyegel ulang amplopnya bukan wewenang pengembang.
+   * Debriefnya sudah disusun dan menunggu dokter menandatangani ulang slice
+   * m13-1a; sampai itu terjadi, kasus ini sengaja dikecualikan. Kerugiannya
+   * paling kecil di antara enam kasus baseline: ia career-only, sedangkan lima
+   * lainnya justru pool Ujian yang defisitnya seratus persen.
+   */
+  const IGD_MENUNGGU_TANDA_TANGAN_ULANG = new Set(['igd_stemi_anterior_hipoksemik'])
+
+  it('setiap kasus IGD membawa debrief FKTP, kontinuitas, dan bridge UKM yang utuh', () => {
+    for (const id of Object.keys(PACK.kasusIgd)) {
+      if (IGD_MENUNGGU_TANDA_TANGAN_ULANG.has(id)) continue
       const debrief = PACK.kasusIgd[id]!.debrief
       expect(debrief, id).toBeDefined()
       expect(debrief!.poinKunci.length, id).toBeGreaterThanOrEqual(3)
       expect(debrief!.poinKunci.length, id).toBeLessThanOrEqual(4)
+      // Teks poin sempat dipakai sebagai kunci daftar di renderer; duplikat
+      // membuat React membuang salah satunya diam-diam. Kuncinya sudah diganti
+      // indeks, tapi dua poin berbunyi sama tetap cacat penulisan.
+      expect(new Set(debrief!.poinKunci).size, id).toBe(debrief!.poinKunci.length)
       expect(debrief!.realitaFktp.length, id).toBeGreaterThan(80)
       expect(debrief!.sumberDaya.ready.length, id).toBeGreaterThan(0)
       expect(debrief!.sumberDaya.melaluiJejaring.length, id).toBeGreaterThan(0)
       expect(debrief!.kontinuitas.length, id).toBeGreaterThan(60)
       expect(debrief!.bridgeUkm.judul.length, id).toBeGreaterThan(3)
       expect(debrief!.bridgeUkm.ringkasan.length, id).toBeGreaterThan(60)
+    }
+  })
+
+  // Kedalaman sitasi sengaja MASIH dibatasi ke 14 kasus teradjudikasi: enam
+  // kasus baseline rata-rata membawa 2,2 rujukan, dan menaikkannya adalah
+  // pekerjaan sumber tersendiri, bukan bagian dari melengkapi debrief.
+  it('kasus teradjudikasi membawa minimal tiga sumber', () => {
+    for (const id of IGD_ADJUDICATED_IDS) {
       expect(PACK.kasusIgd[id]!.sumber.length, id).toBeGreaterThanOrEqual(3)
     }
   })

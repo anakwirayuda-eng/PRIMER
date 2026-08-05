@@ -45,7 +45,12 @@ export function BuktiKlinis({
           <section className="bukti-klinis__pengayaan" aria-label="Debrief kasus IGD">
             <div className="bukti-klinis__subjudul mono">YANG PERLU MENETAP</div>
             <ul className="bukti-klinis__poin">
-              {debrief.poinKunci.map((poin) => <li key={poin}>{poin}</li>)}
+              {/* Audit CODEX beta.16 (2026-08-06): kunci dulu memakai teks poin
+                  itu sendiri. Selama 14 debrief lama semua poinnya unik, jadi
+                  belum menggigit — tapi ia akan menggigit begitu ada dua poin
+                  berbunyi sama, dan React membuang salah satunya diam-diam.
+                  Indeks aman di sini: daftar ini statis, tak diurut ulang. */}
+              {debrief.poinKunci.map((poin, i) => <li key={i}>{poin}</li>)}
             </ul>
 
             <details className="bukti-klinis__lapisan">

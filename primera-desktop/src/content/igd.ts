@@ -10,6 +10,42 @@ export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_syok_anafilaksis',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Adrenalin 0,3-0,5 mg ke otot paha anterolateral adalah tindakan pertama; antihistamin dan steroid hanya lini kedua.',
+        'Baringkan pasien dengan tungkai ditinggikan; mendudukkan tegak memperburuk syok.',
+        'Adrenalin disiapkan untuk diulang tiap 5-15 menit bila reaksi belum teratasi atau kambuh.',
+        'Membaik bukan berarti boleh pulang: reaksi bifasik dapat muncul beberapa jam kemudian, jadi pasien dirujuk.',
+      ],
+      realitaFktp:
+        'Sukamaju dinyatakan memiliki adrenalin suntik, oksigen aliran tinggi, akses infus dengan cairan, serta pemantauan tekanan darah dan saturasi; ada tidaknya antihistamin dan steroid tidak mengubah urutan. Observasi berkepanjangan untuk reaksi bifasik ada di jejaring, sehingga rujukan dikerjakan setelah pasien stabil, bukan setelah sekadar terlihat membaik.',
+      sumberDaya: {
+        ready: [
+          'adrenalin suntik IM',
+          'oksigen aliran tinggi',
+          'akses infus dan cairan',
+          'pemantauan tekanan darah dan saturasi',
+        ],
+        melaluiJejaring: [
+          'observasi berkepanjangan reaksi bifasik',
+          'rawat lanjut penyakit dalam',
+        ],
+      },
+      kontinuitas:
+        'Setelah pasien kembali, pastikan suntikan antibiotik pemicu tercatat sebagai alergi obat di rekam medis dan diingat pasien serta keluarga, lalu sepakati apa yang dilakukan bila bengkak atau sesak muncul lagi.',
+      bridgeUkm: {
+        judul: 'Jejak Anafilaksis ke Ruang Suntik',
+        ringkasan:
+          'Reaksi ini muncul setelah suntikan di fasilitas lain. Periksa apakah tempat penyuntikan menanyakan riwayat alergi, menyimpan adrenalin siap pakai, mengenali bengkak dan sesak sebagai tanda awal, dan tahu ke mana merujuk.',
+      },
+    },
     nama: 'Syok Anafilaksis',
     // Veto-table §3b (M10.5, 2026-07-12, keputusan 8B): T78.2→T88.6 — pemicu
     // di narasi (pembuka) adalah SUNTIKAN ANTIBIOTIK, jadi ini reaksi anafilaktik
@@ -62,6 +98,42 @@ export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_kejang_demam',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Kejang yang masih berlangsung lewat lima menit adalah kegawatan, bukan sesuatu yang ditunggu berhenti sendiri.',
+        'Jalan napas lebih dulu: miringkan anak, jangan tahan gerakannya, jangan masukkan benda apa pun ke mulut.',
+        'Penghenti kejang di FKTP adalah diazepam rektal 0,5 mg/kg, bukan penurun panas; obat lewat mulut berisiko masuk ke jalan napas.',
+        'Kejang kedua dalam sehari dan berlangsung lebih dari sepuluh menit termasuk kejang demam kompleks — wajib dirujuk.',
+      ],
+      realitaFktp:
+        'Sukamaju sanggup mengerjakan bagian yang menentukan: memiringkan anak, memberi oksigen, memberikan diazepam rektal, menurunkan demam, dan memasang infus. Yang tidak bisa diselesaikan di sini adalah mencari penyebab kejang kompleks ini; itu memerlukan evaluasi lanjut di rumah sakit anak, sehingga rujukan termasuk tata laksana, bukan tambahan.',
+      sumberDaya: {
+        ready: [
+          'posisi pemulihan dan oksigen',
+          'diazepam rektal',
+          'parasetamol penurun demam',
+          'pemasangan infus',
+        ],
+        melaluiJejaring: [
+          'evaluasi lanjut kejang demam kompleks di rumah sakit anak',
+          'pencarian penyebab, termasuk kecurigaan infeksi susunan saraf pusat',
+        ],
+      },
+      kontinuitas:
+        'Sesudah anak kembali dari rumah sakit, FKTP menindaklanjuti hasil pencarian penyebabnya, memantau demam dan kejang berikutnya, lalu melatih keluarga: miringkan, jangan ditahan, jangan masukkan benda ke mulut, segera dibawa bila kejang lewat lima menit.',
+      bridgeUkm: {
+        judul: 'Sendok di Mulut Bukan Pertolongan',
+        ringkasan:
+          'Satu anak datang setelah kejang lewat sepuluh menit. Sasarannya orang tua balita dan kader: pertolongan pertama saat anak kejang di rumah, termasuk tindakan yang justru melukai seperti memasukkan benda ke mulut, serta ambang waktu untuk segera membawa. Ketersediaan diazepam rektal ikut diaudit.',
+      },
+    },
     nama: 'Kejang Demam Kompleks',
     icd10: 'R56.0',
     skdi: '4A',
@@ -107,6 +179,43 @@ export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_asma_berat',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Bicara sepatah-sepatah, RR 32, SpO2 89%, dan otot bantu napas menegang sudah cukup menyebut serangan ini berat; mengi keras bisa menipu, sebab dada yang justru senyap berarti henti napas mengancam.',
+        'Oksigen dan nebulisasi salbutamol didahulukan; ini bronkospasme, bukan infeksi, sehingga obat batuk dan antibiotik salah sasaran.',
+        'Kortikosteroid sistemik diberikan dini dan nebulisasi diulang; efek steroid baru muncul dalam hitungan jam, jadi berhenti di satu nebulisasi lalu menunggu adalah risiko.',
+        'Saturasi naik ke 94% tetapi kalimat penuh masih sulit berarti respons parsial: rujuk, jangan pulangkan dengan inhaler.',
+      ],
+      realitaFktp:
+        'Yang bisa dikerjakan Sukamaju hanya tiga: oksigen, bronkodilator kerja cepat yang diulang, dan kortikosteroid sistemik — sambil rujukan disiapkan sejak awal, bukan setelah pasien jatuh ke gagal napas. Ipratropium tidak wajib di sini; pedoman FKTP (PPK 1186/2022) tidak mencantumkannya dan panduan internasional pun menaruhnya sebagai tambahan bila tersedia, sehingga salbutamol tunggal tetap dinilai benar. Aminofilin bolus cepat bukan jalan pintas: bukan lini pertama dan berisiko aritmia.',
+      sumberDaya: {
+        ready: [
+          'oksigen',
+          'nebulisasi salbutamol berulang',
+          'kortikosteroid sistemik',
+          'penilaian ulang saturasi dan sesak',
+        ],
+        melaluiJejaring: [
+          'observasi ketat dan perawatan lanjutan di RS',
+          'layanan paru',
+          'penanganan bila jatuh ke gagal napas',
+        ],
+      },
+      kontinuitas:
+        'Setelah pasien kembali dari RS, telusuri kenapa inhaler di rumah sudah tidak menolong dan tinjau ulang obat asmanya. Sepakati tanda bahaya dan kapan harus langsung datang, sebab serangan berat dengan respons parsial berisiko kambuh fatal di rumah.',
+      bridgeUkm: {
+        judul: 'Inhaler yang Sudah Tak Mempan',
+        ringkasan:
+          'Catat berapa penyandang asma yang baru terlihat saat serangan sudah berat dan berapa yang berakhir dirujuk, lalu audit stok salbutamol, kortikosteroid, oksigen, dan kesiapan alat nebulisasi. Angka agregatnya mengarahkan penguatan kontrol rutin dan pesan kapan harus segera datang.',
+      },
+    },
     nama: 'Serangan Asma Berat',
     icd10: 'J46',
     skdi: '4A',
@@ -160,6 +269,46 @@ export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_hipoglikemia',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Pada pengguna obat diabetes, GDS 38 dengan penurunan kesadaran berarti gula dikoreksi, bukan insulin ditambah.',
+        'Pasien tak sadar dikoreksi dengan dekstrosa 40% lewat infus; air gula lewat mulut berisiko tersedak.',
+        'GDS ulang 95 dan mata mulai terbuka belum berarti selesai: beri karbohidrat, cari pencetus, tanyakan jenis obatnya.',
+        'Glibenklamid kerja panjang bisa membuat hipoglikemia kambuh berjam-jam; rujuk untuk observasi, jangan pulangkan cepat.',
+      ],
+      realitaFktp:
+        'Sukamaju memasang infus, memberi dekstrosa 40%, mengulang pemeriksaan GDS, dan menyiapkan karbohidrat saat pasien aman menelan. Yang melampaui kapasitas IGD FKTP dasar adalah observasi ketat berkepanjangan dengan pantau GDS berkala, dekstrosa rumatan, dan oktreotid di RS. Karena itu pasien dirujuk untuk dirawat, bukan dipulangkan begitu angkanya membaik.',
+      sumberDaya: {
+        ready: [
+          'glukometer untuk GDS awal dan ulang',
+          'akses infus dan dekstrosa 40%',
+          'karbohidrat oral saat aman menelan',
+          'penelusuran obat yang dibawa keluarga',
+        ],
+        melaluiJejaring: [
+          'rawat dan pantau di penyakit dalam',
+          'dekstrosa rumatan',
+          'oktreotid bila diperlukan',
+        ],
+        tidakReady: [
+          'observasi ketat berkepanjangan di IGD Sukamaju',
+        ],
+      },
+      kontinuitas:
+        'Setelah kembali dari RS, tutup dua celah yang membawanya ke sini: obat diminum tanpa sempat makan dan glibenklamid dosis ganda tak sengaja. Ulangi pemeriksaan GDS dan latih keluarga mengenali fase bingung sebagai tanda awal, bukan menunggu sampai tak sadar.',
+      bridgeUkm: {
+        judul: 'Obat Diminum, Makan Terlewat',
+        ringkasan:
+          'Satu kakek tak sadar menandai risiko yang dipegang pasien lain: glibenklamid pada lanjut usia, aturan minum yang bergantung jadwal makan, dan dosis ganda tanpa sengaja; kumpulkan data pemakainya, perbaiki penjelasan saat obat diserahkan, dan tengok pasien lanjut usia yang jadwal makannya tak teratur.',
+      },
+    },
     nama: 'Hipoglikemia Berat',
     icd10: 'E16.2',
     skdi: '4A',
@@ -207,6 +356,43 @@ export const KASUS_IGD = terapkanGroundingIgd([
   /* ====================================================================== */
   {
     id: 'igd_dengue_syok',
+    // Audit CODEX beta.16 (2026-08-06): debrief ditambahkan. Enam kasus IGD
+    // baseline tak punya lapisan ini sama sekali, dan invariant lama hanya
+    // melintasi 14 kasus teradjudikasi sehingga tak ada yang memerah. Diukur
+    // per mode, defisitnya paling tajam justru di mode yang DINILAI: pool
+    // Ujian 5 dari 5 kasus kosong. Tiap kalimat di bawah ditelusuri ke isi
+    // kasus ini sendiri (clue, panduanResmi, label & respons tiap langkah,
+    // disposisi, spesialis rujukan) — tak ada fakta klinis baru yang ditambah.
+    debrief: {
+      poinKunci: [
+        'Demam yang turun di hari kelima bukan tanda sembuh; akral dingin dan nadi cepat-lemah menandai fase kritis.',
+        'Tekanan darah yang masih terukur dengan tekanan nadi menyempit berarti syok terkompensasi: kristaloid 5-10 mL/kgBB/jam, bukan bolus cepat.',
+        'Nyeri dan demam pada dengue hanya diatasi parasetamol; ibuprofen atau asam mefenamat menambah risiko perdarahan.',
+        'Perfusi yang membaik bukan izin pulang; syok dengue dirujuk ke rawat anak dengan cairan berjalan dan pemantauan.',
+      ],
+      realitaFktp:
+        'Sukamaju mampu memasang infus, menjalankan kristaloid RL atau NaCl 0,9% dengan laju terukur, dan memberi parasetamol. Penilaian ulang tekanan nadi, perfusi, dan diuresis memandu titrasi laju turun agar pasien tidak berpindah ke kelebihan cairan dan edema paru. Pemantauan hematokrit berkala dan perawatan fase kritis ada di rumah sakit.',
+      sumberDaya: {
+        ready: [
+          'infus dan kristaloid RL atau NaCl 0,9%',
+          'parasetamol',
+          'pemantauan tekanan nadi, perfusi, dan diuresis',
+          'rujukan dengan cairan berjalan',
+        ],
+        melaluiJejaring: [
+          'rawat inap anak di rumah sakit',
+          'pemantauan hematokrit berkala',
+          'transfusi bila ada perdarahan bermakna',
+        ],
+      },
+      kontinuitas:
+        'Setelah kembali dari rumah sakit, nilai pemulihan tenaga dan tanda perdarahan. Pastikan keluarga tahu demam berikutnya cukup parasetamol, bukan ibuprofen atau asam mefenamat. Ajarkan satu tanda untuk kembali segera: demam turun tetapi tangan dingin dan badan lemas.',
+      bridgeUkm: {
+        judul: 'Saat Demam Turun, Bahaya Justru Mulai',
+        ringkasan:
+          'Pasien ini digotong justru ketika demamnya turun dan ia merasa sudah enakan. Pesan fase kritis harus sampai ke keluarga sebelum demam turun, bukan sesudah pasien lemas. Di sisi Puskesmas: stok kristaloid, disiplin laju cairan dan penilaian ulang, serta kecepatan rujukan ke rawat anak.',
+      },
+    },
     nama: 'Sindrom Syok Dengue (DSS)',
     icd10: 'A91',
     skdi: '4A',
