@@ -421,8 +421,15 @@ const DEFINITIONS: LabDefinition[] = [
       ],
       fisik: [['kulit', 'Kutu dan nits melekat pada rambut pubis dengan ekskoriasi, tanpa infeksi sekunder.'], ['mata', 'Tidak ada infestasi bulu mata.', true]],
       diagnosisBanding: ['B85.3', 'B86', 'L24'],
-      tatalaksana: { obatBenar: ['permetrin_losion_1'], edukasi: ['cegah_ims_pasangan', 'cuci_seprai_panas'] },
-      clue: 'Identifikasi kutu/nits pada rambut pubis menegakkan pedikulosis pubis. Terapi pedikulisida sesuai petunjuk, obati pasangan/kontak, cuci pakaian dan seprai, skrining IMS, dan evaluasi ulang bila masih ada kutu hidup.',
+      // Sapuan tag-vs-penyakit 2026-08-05: 'cegah_ims_pasangan' ditukar. Label
+      // lamanya menganjurkan kondom, padahal kutu kelamin menular lewat kontak
+      // kulit erat sehingga kondom tak menjangkau area berambutnya. Skrining
+      // IMS TIDAK diberi id baru — 'pencegahan_ims_terintegrasi' yang sudah ada
+      // memang topik itu. 'cuci_seprai_panas' sengaja DIPERTAHANKAN: tagnya
+      // memang menyebut kutu dan dekontaminasi seprai-pakaian adalah anjuran
+      // resmi untuk kondisi ini; asumsi awal bahwa ia nyasar di sini keliru.
+      tatalaksana: { obatBenar: ['permetrin_losion_1'], edukasi: ['cegah_kutu_kelamin_kontak', 'pencegahan_ims_terintegrasi', 'cuci_seprai_panas'] },
+      clue: 'Identifikasi kutu/nits pada rambut pubis menegakkan pedikulosis pubis. Terapi pedikulisida sesuai petunjuk, obati pasangan/kontak, cuci pakaian dan seprai, skrining IMS, dan evaluasi ulang bila masih ada kutu hidup. Kutu ini menular lewat kontak kulit yang erat, bukan lewat cairan tubuh, sehingga kondom tidak melindungi area berambut — jangan menjanjikannya sebagai pencegahan di sini.',
       panduanResmi: PPK,
       catatanRealita: 'Permetrin 1% adalah pilihan EBM tetapi Fornas 1199/2025 hanya mencantumkan krim 5%. Skenario menyatakan losio 1% tersedia melalui pengadaan lokal; jangan menukar konsentrasi diam-diam.',
     },

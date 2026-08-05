@@ -225,6 +225,23 @@ export const EDUKASI_M3: Record<string, TopikEdukasi> = {
     id: 'peregangan_sendi', nama: '[Sendi] Peregangan & penguatan ringan', kategori: 'tindakan',
     sinonim: ['stretching', 'penguatan otot', 'latihan lutut'],
   },
+  // Sapuan tag-vs-penyakit 2026-08-05. mm_mialgia dulu memakai peregangan_sendi
+  // ([Sendi]) dan postur_ergonomi ([Punggung]/LBP), padahal kasusnya sendiri
+  // menegaskan "nyeri OTOT difus (bukan sendi)" — pasiennya bahkan menjawab
+  // "bukan di sendinya, tapi di dagingnya" — dan keluhannya lengan-bahu-betis,
+  // bukan punggung. Alasan pembuangan postur_ergonomi identik dengan
+  // mm_osteoartritis_lutut pada commit 5b881d7; pelajaran teknik mengangkat
+  // beban tetap hidup di kasus nyeri punggung bawah, tempat tagnya benar.
+  // Tak satu pun dari 403 label katalog menyentuh otot/DOMS/rabdomiolisis,
+  // jadi id baru memang perlu — bukan menduplikasi yang sudah ada.
+  pegal_otot_pascaaktivitas: {
+    id: 'pegal_otot_pascaaktivitas', nama: '[Otot] Pegal pascakerja berat mereda sendiri beberapa hari; tetap bergerak ringan', kategori: 'gaya_hidup',
+    sinonim: ['DOMS', 'pegal linu', 'nyeri otot', 'pasca olahraga', 'kecapekan'],
+  },
+  tanda_bahaya_otot: {
+    id: 'tanda_bahaya_otot', nama: '[Otot] Segera kembali bila urin gelap seperti teh, demam, atau otot melemah', kategori: 'kepatuhan',
+    sinonim: ['rabdomiolisis', 'urin gelap', 'mialgia statin', 'miositis', 'otot lemah'],
+  },
   manajemen_stres: {
     id: 'manajemen_stres', nama: '[Stres] Relaksasi & manajemen stres', kategori: 'gaya_hidup',
     sinonim: ['napas dalam', 'relaksasi', 'coping'],

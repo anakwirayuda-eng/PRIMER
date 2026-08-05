@@ -285,7 +285,16 @@ export const LAB_BATCH_4_MTS_CASES: KasusKlinis[] = [
         { id: 'air_mata_buatan', alasan: 'Keluhan bintik melayang sering disalahartikan sebagai "mata kering". Pelumas permukaan mata tidak berpengaruh sedikit pun pada robekan retina di dalam bola mata.', bahaya: 'nonPrimer' },
       ],
       prosedur: ['uji_visus_refraksi'],
-      edukasi: ['tanda_bahaya_mata', 'perlindungan_mata', 'kontrol_rutin'],
+      // Sapuan tag-vs-penyakit 2026-08-05. 'perlindungan_mata' dicabut karena
+      // isinya nasihat cedera kerja sedangkan q_trauma kasus ini dijawab
+      // "tidak ada benturan" — trauma sudah disingkirkan eksplisit.
+      // 'kontrol_rutin' dicabut karena kalimatnya persis yang dihukum
+      // konsekuensi kasus ini ("diminta kontrol minggu berikutnya"), sementara
+      // clue menuntut penilaian spesialis mata pada hari yang sama.
+      // edukasiKritis SENGAJA tetap satu: menambah chip kritis kedua yang
+      // artinya sama ("pergi sekarang") menghukum pemain dua kali untuk satu
+      // poin ajar, dan memaksanya menebak dua cara mengatakan hal yang sama.
+      edukasi: ['tanda_bahaya_mata', 'rujuk_mata_hari_ini', 'pantau_mata_sebelah_miopia'],
       edukasiKritis: ['tanda_bahaya_mata'],
     },
     clue: 'Kilatan cahaya dan hujan bintik melayang yang mendadak, diikuti tirai gelap progresif pada mata putih tanpa nyeri, sangat mencurigakan ablasio retina regmatogen, terlebih pada miopia tinggi. Penglihatan sentral yang masih tersisa membuat makula mungkin belum terlibat, tetapi status macula-on tidak boleh dipastikan tanpa pemeriksaan retina pupil lebar. Yang benar di FKTP: dokumentasikan tajam penglihatan dan lapang pandang kasar, jangan mencoba tetes mata, lalu atur penilaian spesialis mata pada hari yang sama.',

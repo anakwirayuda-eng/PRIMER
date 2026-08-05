@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-05T07:47:51.801Z",
-  "sourceCommit": "38edccb4e212c037a44caa2043790fbefef26006+dirty",
-  "artifactFingerprint": "3db4b586f22aca1552386ee611dacfaaca99a3855ec2b3d3b8e91c6d69aa1487",
-  "packFingerprint": "71247a85",
+  "generatedAt": "2026-08-05T07:55:28.928Z",
+  "sourceCommit": "7390ac4e539d91fa918efaf3b5c0df4525fca222+dirty",
+  "artifactFingerprint": "1319c8c231d2fc532fc71489cfe953474c8639fef605803a8aff0b192547167b",
+  "packFingerprint": "351b1fa4",
   "contentRelease": "gameplay-comfort-2026-08-01",
   "engineRevision": 65,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -11507,8 +11507,13 @@
         "procedures": [],
         "education": [
           {
-            "id": "cegah_ims_pasangan",
-            "name": "[IMS] Obati pasangan, gunakan kondom, dan tunda hubungan sampai terapi selesai",
+            "id": "cegah_kutu_kelamin_kontak",
+            "name": "[Kutu kelamin] Obati pasangan seksual 1 bulan terakhir; tunda hubungan sampai keduanya tuntas",
+            "critical": false
+          },
+          {
+            "id": "pencegahan_ims_terintegrasi",
+            "name": "[IMS] Tawarkan tes HIV-sifilis, kondom, vaksinasi, dan PrEP sesuai risiko serta preferensi",
             "critical": false
           },
           {
@@ -11526,7 +11531,7 @@
         "stabilizationRequired": []
       },
       "currentEditorial": {
-        "clue": "Identifikasi kutu/nits pada rambut pubis menegakkan pedikulosis pubis. Terapi pedikulisida sesuai petunjuk, obati pasangan/kontak, cuci pakaian dan seprai, skrining IMS, dan evaluasi ulang bila masih ada kutu hidup.",
+        "clue": "Identifikasi kutu/nits pada rambut pubis menegakkan pedikulosis pubis. Terapi pedikulisida sesuai petunjuk, obati pasangan/kontak, cuci pakaian dan seprai, skrining IMS, dan evaluasi ulang bila masih ada kutu hidup. Kutu ini menular lewat kontak kulit yang erat, bukan lewat cairan tubuh, sehingga kondom tidak melindungi area berambut — jangan menjanjikannya sebagai pencegahan di sini.",
         "officialGuidance": "Acuan dasar keputusan kasus ini adalah PPK Dokter di FKTP (KMK 1186/2022); sumber yang lebih baru dipakai bila mengubah keselamatan atau efektivitas.",
         "realityNote": "Permetrin 1% adalah pilihan EBM tetapi Fornas 1199/2025 hanya mencantumkan krim 5%. Skenario menyatakan losio 1% tersedia melalui pengadaan lokal; jangan menukar konsentrasi diam-diam."
       },
@@ -13512,13 +13517,13 @@
             "critical": true
           },
           {
-            "id": "perlindungan_mata",
-            "name": "[Mata] Hindari mengucek dan gunakan pelindung saat bekerja",
+            "id": "rujuk_mata_hari_ini",
+            "name": "[Mata] Tirai gelap mendadak dinilai dokter mata HARI INI, bukan kontrol minggu depan",
             "critical": false
           },
           {
-            "id": "kontrol_rutin",
-            "name": "Kontrol rutin sesuai jadwal & cegah komplikasi",
+            "id": "pantau_mata_sebelah_miopia",
+            "name": "[Mata] Mata sebelah ikut berisiko pada miopia tinggi; laporkan kilatan atau bintik melayang baru",
             "critical": false
           }
         ],

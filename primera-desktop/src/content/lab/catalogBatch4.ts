@@ -546,6 +546,25 @@ export const EDUKASI_LAB_BATCH4: Record<string, TopikEdukasi> = {
     kategori: 'gaya_hidup',
     sinonim: ['tirai hitam', 'kilatan cahaya', 'buta mendadak'],
   },
+  // Sapuan tag-vs-penyakit 2026-08-05, untuk lab_ablasio_retina. Dua topik
+  // lama dicabut dari kasus itu: 'perlindungan_mata' berbicara tentang cedera
+  // kerja padahal kasusnya sendiri sudah menyingkirkan trauma ("tidak ada
+  // benturan"), dan 'kontrol_rutin' berbunyi "kontrol rutin sesuai jadwal"
+  // padahal konsekuensi kasus justru MENGHUKUM "kontrol minggu berikutnya".
+  // Dua topik di bawah menggantikannya. Poin ajarnya beda dari tanda bahaya
+  // mata: yang satu mengenali, yang ini soal WAKTU dan mata sebelah.
+  rujuk_mata_hari_ini: {
+    id: 'rujuk_mata_hari_ini',
+    nama: '[Mata] Tirai gelap mendadak dinilai dokter mata HARI INI, bukan kontrol minggu depan',
+    kategori: 'tindakan',
+    sinonim: ['ablasio retina', 'rujukan segera', 'hari yang sama', 'tirai hitam', 'makula'],
+  },
+  pantau_mata_sebelah_miopia: {
+    id: 'pantau_mata_sebelah_miopia',
+    nama: '[Mata] Mata sebelah ikut berisiko pada miopia tinggi; laporkan kilatan atau bintik melayang baru',
+    kategori: 'kepatuhan',
+    sinonim: ['mata sebelah', 'fellow eye', 'miopia tinggi', 'floaters baru', 'kilatan cahaya'],
+  },
   skrining_retinopati_diabetik: {
     id: 'skrining_retinopati_diabetik',
     nama: '[Diabetes] Jadwal skrining retina dan tindak lanjut hasil',

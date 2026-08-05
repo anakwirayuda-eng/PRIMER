@@ -232,6 +232,15 @@ export const EDUKASI_LAB_EXPANSION: Record<string, TopikEdukasi> = {
   adaptasi_kacamata: { id: 'adaptasi_kacamata', nama: '[Refraksi] Gunakan koreksi optik sesuai hasil refraksi dan kontrol bila berubah', kategori: 'tindakan', sinonim: ['kacamata', 'miopia', 'presbiopia'] },
   perawatan_tali_pusat_kering: { id: 'perawatan_tali_pusat_kering', nama: '[Neonatus] Jaga tali pusat bersih-kering dan kenali kemerahan yang meluas', kategori: 'kia', sinonim: ['umbilikus', 'omfalitis'] },
   cegah_ims_pasangan: { id: 'cegah_ims_pasangan', nama: '[IMS] Obati pasangan, gunakan kondom, dan tunda hubungan sampai terapi selesai', kategori: 'higiene', sinonim: ['gonore', 'sifilis', 'partner treatment'] },
+  // Sapuan tag-vs-penyakit 2026-08-05. Topik di atas TIDAK diubah maknanya —
+  // pada radang panggul ia tepat, karena gonore/klamidia memang menular lewat
+  // cairan tubuh dan kondom melindungi. Yang keliru cuma pemakaiannya pada
+  // kutu kelamin, yang menular lewat kontak kulit erat sehingga kondom tak
+  // menjangkau area berambutnya. Fakta kondom itu sengaja TIDAK dimasukkan ke
+  // label: chip lain di kasus yang sama justru menyuruh menawarkan kondom
+  // untuk IMS lain, dan dua chip yang saling membantah di satu layar
+  // mengajarkan kebalikannya. Tempatnya di clue kasus, bukan di chip.
+  cegah_kutu_kelamin_kontak: { id: 'cegah_kutu_kelamin_kontak', nama: '[Kutu kelamin] Obati pasangan seksual 1 bulan terakhir; tunda hubungan sampai keduanya tuntas', kategori: 'higiene', sinonim: ['pedikulosis pubis', 'kutu pubis', 'phthirus pubis', 'pasangan', 'kontak seksual'] },
   tindak_lanjut_sifilis: { id: 'tindak_lanjut_sifilis', nama: '[Sifilis] Catat titer RPR awal, ulang sesuai jadwal program, dan nilai penurunan titer', kategori: 'kepatuhan', sinonim: ['RPR', 'titer', 'serologi', 'follow-up'] },
   layanan_pasangan_sifilis: { id: 'layanan_pasangan_sifilis', nama: '[Sifilis] Tawarkan layanan pasangan secara rahasia, sukarela, dan aman sesuai waktu pajanan', kategori: 'higiene', sinonim: ['partner services', 'contact', 'pasangan', 'IMS'] },
   reaksi_jarisch_herxheimer: { id: 'reaksi_jarisch_herxheimer', nama: '[Sifilis] Kenali demam-nyeri sementara pascaterapi; kehamilan memerlukan evaluasi segera', kategori: 'tindakan', sinonim: ['Jarisch-Herxheimer', 'demam setelah penisilin', 'kehamilan'] },

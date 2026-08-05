@@ -788,9 +788,14 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
         { id: 'amoxicillin_500', alasan: 'Mialgia mekanik pasca-aktivitas bukan infeksi; antibiotik tidak ada indikasinya sama sekali.', bahaya: 'nonPrimer' },
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid untuk pegal otot biasa adalah overtreatment berbahaya — efek samping jauh melebihi manfaat pada keluhan swasirna.', bahaya: 'nonPrimer' },
       ],
-      edukasi: ['istirahat_cukup', 'peregangan_sendi', 'postur_ergonomi'],
+      edukasi: ['istirahat_cukup', 'pegal_otot_pascaaktivitas', 'tanda_bahaya_otot'],
     },
-    clue: 'Mialgia pasca-aktivitas: nyeri OTOT difus (bukan sendi), pemicu kerja fisik/olahraga berlebih, TANPA demam/bengkak sendi/urin gelap. Simtomatik (parasetamol/NSAID) + istirahat + peregangan; self-limiting beberapa hari. Waspadai bendera merah: urin seperti teh (rabdomiolisis), demam (miositis viral), atau riwayat statin.',
+    // Clue ikut disapu 2026-08-05 bersama topik edukasinya. Kalau kata
+    // "peregangan" dibiarkan di sini sementara topiknya dicabut, debrief
+    // mengajarkan sesuatu yang tak lagi dinilai kunci jawaban — persis kelas
+    // desync yang melahirkan tatalaksanaClue.test.ts. Bendera merahnya tidak
+    // berubah sedikit pun; yang berubah cuma satu tindakan kenyamanan.
+    clue: 'Mialgia pasca-aktivitas: nyeri OTOT difus (bukan sendi), pemicu kerja fisik/olahraga berlebih, TANPA demam/bengkak sendi/urin gelap. Simtomatik (parasetamol/NSAID) + istirahat, tetap bergerak ringan tanpa tirah baring total; self-limiting beberapa hari. Waspadai bendera merah: urin seperti teh (rabdomiolisis), demam (miositis viral), atau riwayat statin.',
     panduanResmi: 'PPK 1186/2022 tidak memiliki algoritme mialgia mekanik sebagai penyakit tersendiri. Karena ini sindrom gejala, acuan dasar FKTP adalah menilai penyebab dan red flag, memberi perawatan konservatif singkat, serta tidak memberi antibiotik atau kortikosteroid empiris. Kelemahan objektif, urin gelap, demam sistemik, atau nyeri progresif memerlukan pemeriksaan/rujukan sesuai penyebab.',
     konsekuensi: {
       narasi: 'Overtreatment (antibiotik/steroid) pada keluhan swasirna hanya menambah risiko efek samping dan menormalkan harapan pasien akan obat berlebih.',

@@ -439,6 +439,13 @@ describe('PACK — validasi silang id konten', () => {
     // laki-laki (fimosis pada anak 5-11 th).
     ['lab_fimosis_patologis_ringan', 'jangan_tarik_paksa_kulup', 'higiene_genital_lembut'],
     ['lab_parafimosis_reduksibel', 'pascareduksi_parafimosis', 'higiene_genital_lembut'],
+    // Sapuan 2026-08-05. Kutu kelamin: label lama menganjurkan kondom padahal
+    // penularannya kontak kulit erat, bukan cairan tubuh. Ablasio retina:
+    // label lama berbunyi "kontrol rutin sesuai jadwal" padahal konsekuensi
+    // kasusnya justru menghukum "kontrol minggu berikutnya".
+    ['lab_pedikulosis_pubis', 'cegah_kutu_kelamin_kontak', 'cegah_ims_pasangan'],
+    ['lab_ablasio_retina', 'rujuk_mata_hari_ini', 'kontrol_rutin'],
+    ['mm_mialgia', 'pegal_otot_pascaaktivitas', 'peregangan_sendi'],
   ])('%s: edukasi memuat %s dan TIDAK memuat %s (clue-vs-edukasi 2026-08-04)', (kasusId, wajibAda, wajibTiada) => {
     const kasus = PACK.kasus[kasusId]!
     expect(kasus.tatalaksana.edukasi).toContain(wajibAda)
@@ -449,6 +456,14 @@ describe('PACK — validasi silang id konten', () => {
     ['mm_osteoartritis_lutut', 'postur_ergonomi'],
     ['konjungtivitis_bakterial', 'kebersihan_kulit'],
     ['lab_ruptur_perineum_derajat_1', 'tanda_bahaya_kehamilan'],
+    // Sapuan 2026-08-05: alasan yang sama dengan osteoartritis lutut di atas —
+    // tag [Punggung] pada keluhan yang bukan punggung. Pemicu mialgia memang
+    // mengangkat lemari, tetapi nyerinya lengan-bahu-betis, dan pelajaran
+    // teknik mengangkat beban tetap hidup di kasus nyeri punggung bawah.
+    ['mm_mialgia', 'postur_ergonomi'],
+    // Trauma sudah disingkirkan eksplisit oleh anamnesis kasus ini, sehingga
+    // nasihat pelindung mata saat bekerja nol relevansi.
+    ['lab_ablasio_retina', 'perlindungan_mata'],
   ])(
     '%s: edukasi TIDAK memuat %s (tag salah-kategori dibuang, poin ajarnya sudah tertutup topik lain)',
     (kasusId, wajibTiada) => {
