@@ -36,7 +36,14 @@ describe('M13-137 adjudication wave 20: first-contact tanpa over-testing', () =>
     expect(kolik.nama).toMatch(/Suspek Batu Obstruktif/i)
     expect(kolik.tatalaksana.obatBenar).not.toContain('tamsulosin_04')
     expect(kolik.clue).toMatch(/ukuran\/lokasi belum diketahui|imaging/i)
-    expect(kolik.panduanResmi).toMatch(/PPK.*tidak mempunyai.*PNPK/is)
+    // Bug hunt 2026-08-06: dulu menuntut kata "PNPK" muncul, yang justru
+    // mengunci atribusi keliru — nomor 1936/2022 disebut "PNPK Batu Saluran
+    // Kemih" padahal ia dokumen perubahan PPK dan nol menyebut batu saluran
+    // kemih. Yang dijaga sekarang: PPK diakui tak punya bab spesifiknya, DAN
+    // ada sumber langsung yang benar-benar membahas batu saluran kemih.
+    expect(kolik.panduanResmi).toMatch(/PPK.*tidak mempunyai bab diagnosis-spesifik/is)
+    expect(kolik.panduanResmi).toMatch(/EAU 2026/i)
+    expect(kolik.panduanResmi).not.toMatch(/PNPK.*1936/i)
   })
 
   it('menghindari diuretik buta pada sirosis dengan ensefalopati overt', () => {

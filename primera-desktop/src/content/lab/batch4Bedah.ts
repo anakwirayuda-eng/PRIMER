@@ -463,7 +463,13 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       edukasiKritis: ['tanda_bahaya'],
     },
     clue: 'Nyeri pinggang kolik menjalar ke selangkangan, pasien gelisah tak bisa diam, riwayat batu, dan hematuria mikroskopik sangat mendukung kolik ureter. Tata laksana FKTP adalah analgesia NSAID lini pertama bila aman, antiemetik/cairan untuk kehilangan aktual bila perlu, lalu rujuk sesuai kompetensi 3A untuk memastikan ukuran, lokasi, dan derajat obstruksi. Jangan memberi hidrasi paksa atau diuretik untuk "mendorong" batu. Tamsulosin tidak dijadikan jawaban sebelum imaging karena manfaat terapi ekspulsif bergantung pada batu ureter distal yang terkonfirmasi dan ukurannya. Demam/menggigil, ginjal tunggal, anuria, penurunan fungsi ginjal, atau nyeri tak teratasi mengubahnya menjadi rujukan emergensi.',
-    panduanResmi: 'PPK FKTP KMK 1186/2022 tidak mempunyai bab diagnosis-spesifik kolik ureter pada crosswalk 167 bab; jangan mengatribusikan rincian ukuran batu atau terapi ekspulsif ke PPK. PNPK Tata Laksana Batu Saluran Kemih KMK HK.01.07/MENKES/1936/2022 menjadi sumber langsung: tangani nyeri, nilai infeksi/obstruksi dan faktor ginjal, gunakan imaging di layanan berkemampuan, lalu tentukan observasi, terapi ekspulsif, atau intervensi menurut ukuran serta lokasi batu.',
+    // Bug hunt 2026-08-06 (temuan A2, sisa): kalimat lama menyebut "PNPK Tata
+    // Laksana Batu Saluran Kemih KMK HK.01.07/MENKES/1936/2022". Nomor itu
+    // BUKAN PNPK batu saluran kemih — ia dokumen perubahan PPK Dokter di FKTP,
+    // dan kata "batu saluran kemih", "nefrolitiasis", maupun "urolitiasis" nol
+    // kemunculan di teksnya. Atribusi itu dicabut; yang menjadi sumber langsung
+    // adalah pedoman EAU yang memang sudah terdaftar untuk kasus ini.
+    panduanResmi: 'PPK FKTP KMK 1186/2022 tidak mempunyai bab diagnosis-spesifik kolik ureter pada crosswalk 167 bab; jangan mengatribusikan rincian ukuran batu atau terapi ekspulsif ke PPK. Sumber langsungnya adalah pedoman batu saluran kemih EAU 2026: tangani nyeri, nilai infeksi/obstruksi dan faktor ginjal, gunakan imaging di layanan berkemampuan, lalu tentukan observasi, terapi ekspulsif, atau intervensi menurut ukuran serta lokasi batu.',
     catatanRealita: 'USG abdomen dan fungsi ginjal tidak diasumsikan tersedia di Sukamaju; keduanya ditempuh lewat jejaring dan tidak menunda analgesia atau rujukan. Karena ukuran/lokasi belum diketahui, tamsulosin tidak diwajibkan. Ketorolak hanya diberikan setelah kontraindikasi NSAID disaring; pasien dengan sepsis obstruktif tidak boleh dipulangkan hanya karena nyeri membaik.',
     mutiaraEbm: 'Cara pasien MENAHAN nyeri adalah petunjuk diagnostik yang sering diabaikan. Pasien kolik ureter gelisah, berguling, dan tak menemukan posisi nyaman — nyerinya berasal dari otot polos yang berkontraksi melawan sumbatan, dan gerakan tidak memperburuknya. Bandingkan dengan peritonitis: pasien berbaring kaku dan menolak bergerak karena setiap guncangan menggeser permukaan peritoneum yang meradang. Karena itu "pasien yang berguling-guling kesakitan" hampir tidak pernah peritonitis, dan sebaliknya nyeri perut hebat pada pasien yang membeku harus dianggap perut akut sampai terbukti bukan. Jebakan kedua: hematuria TIDAK selalu ada — sekitar 10-15% kolik batu memiliki urinalisis tanpa darah sama sekali (terutama bila ureter tersumbat total), sehingga urinalisis bersih tidak menyingkirkan batu.',
     konsekuensi: {
@@ -471,7 +477,7 @@ export const LAB_BATCH_4_BEDAH_CASES: KasusKlinis[] = [
       kembaliHariMin: 2,
       kembaliHariMax: 7,
       kondisiKembali: 'Pasien kembali dengan demam tinggi, menggigil, nyeri pinggang hebat, dan tekanan darah turun — obstruksi yang terinfeksi berkembang menjadi urosepsis.',
-      guideline: 'PNPK Tata Laksana Batu Saluran Kemih KMK HK.01.07/MENKES/1936/2022 — analgesia lebih dulu; imaging dan fungsi ginjal melalui jejaring; obstruksi terinfeksi membutuhkan drainase segera.',
+      guideline: 'Pedoman batu saluran kemih EAU 2026 — analgesia lebih dulu; imaging dan fungsi ginjal melalui jejaring; obstruksi terinfeksi membutuhkan drainase segera.',
     },
   }),
 

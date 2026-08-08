@@ -63,10 +63,33 @@ function sumber(
 }
 
 const EXTRA_SOURCES: Record<string, SourceDefinition> = {
+  /**
+   * Bug hunt 2026-08-06 (temuan A2): identitas dokumen ini DIPERBAIKI atas
+   * keputusan dr. Wirayuda.
+   *
+   * Yang salah sebelumnya: 132 kasus menempelkan badge "LANGSUNG" pada KMK
+   * 1936/2022, sementara legenda di layar yang sama menjelaskan LANGSUNG =
+   * "sumber yang langsung membahas kasus ini". Mahasiswa membuka skabies,
+   * mengeklik, lalu mendarat di PDF yang tidak memuat satu kata pun tentang
+   * skabies — karena 1936 adalah dokumen PERUBAHAN yang hanya mengubah 15 bab
+   * dan menambah 5. Lewat peta bab otoritatif (docs/references/ppk1186/
+   * ppk_match.json), 125 dari 132 kasus berbadge LANGSUNG babnya di luar
+   * cakupan amandemen itu.
+   *
+   * Bab penyakitnya hidup di KMK 1186/2022; 1936 mengubah sebagiannya. Karena
+   * itu identitasnya kini ditulis sebagai satu keluarga dokumen, persis seperti
+   * hierarki resmi proyek ini sudah menuliskannya ("1186 sebagaimana diubah
+   * 1936") dan persis seperti seluruh 205 locator adjudikasi menyitirnya
+   * ("PPK 1186/2022, bab N" — nol menyebut 1936).
+   *
+   * URL memakai indeks paralegal.id yang SUDAH jadi preseden di enam tempat
+   * lain di proyek ini (igdSources.ts + lima kasus inline), karena PDF resmi
+   * 1186 di JDIH sudah mati — tercatat di sourceRegistry.ts.
+   */
   'ppk-fktp-1936-2022': sumber(
     'ppk-fktp-1936-2022',
-    'KMK 1936/2022 - perubahan PPK Dokter di FKTP',
-    'https://jdih.kemkes.go.id/storage/documents/pdfs/2022kepmenkes1936.pdf',
+    'KMK 1186/2022 - PPK Dokter di FKTP (sebagaimana diubah KMK 1936/2022)',
+    'https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/',
     2022,
     'pedoman_indonesia',
   ),

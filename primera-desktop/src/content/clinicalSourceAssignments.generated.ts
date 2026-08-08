@@ -1069,8 +1069,8 @@ export const CLINICAL_SOURCE_REGISTRY = {
   },
   "ppk-fktp-1936-2022": {
     "id": "ppk-fktp-1936-2022",
-    "label": "KMK 1936/2022 - perubahan PPK Dokter di FKTP",
-    "url": "https://jdih.kemkes.go.id/storage/documents/pdfs/2022kepmenkes1936.pdf",
+    "label": "KMK 1186/2022 - PPK Dokter di FKTP (sebagaimana diubah KMK 1936/2022)",
+    "url": "https://paralegal.id/peraturan/keputusan-menteri-kesehatan-nomor-hk-01-07-menkes-1186-2022/",
     "tahun": 2022,
     "jenis": "pedoman_indonesia"
   },
