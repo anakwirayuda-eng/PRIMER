@@ -32,7 +32,9 @@
     "pack": "npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --win --dir",
     "dist": "npm run check:provenance && npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --win && npm run checksum",
     "check:provenance": "node scripts/prarilis-provenance.js",
-    "checksum": "node scripts/checksum-rilis.js"
+    "checksum": "node scripts/checksum-rilis.js",
+    "dist:mac": "npm run check:provenance && npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --mac && npm run checksum",
+    "dist:linux": "npm run check:provenance && npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --linux && npm run checksum"
   },
   "build": {
     "appId": "id.ac.its.medics.primer.testbeta",
@@ -59,6 +61,40 @@
     },
     "portable": {
       "artifactName": "PRIMERA-test-beta-Portable-${version}.${ext}"
+    },
+    "mac": {
+      "icon": "build/icon.png",
+      "category": "public.app-category.education",
+      "target": [
+        {
+          "target": "dmg",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        },
+        {
+          "target": "zip",
+          "arch": [
+            "x64",
+            "arm64"
+          ]
+        }
+      ],
+      "darkModeSupport": true,
+      "identity": null,
+      "artifactName": "PRIMERA-test-beta-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "artifactName": "PRIMERA-test-beta-${version}-${arch}.${ext}"
+    },
+    "linux": {
+      "icon": "build/icon.png",
+      "category": "Education",
+      "target": [
+        "AppImage"
+      ],
+      "artifactName": "PRIMERA-test-beta-${version}-${arch}.${ext}"
     }
   },
   "dependencies": {

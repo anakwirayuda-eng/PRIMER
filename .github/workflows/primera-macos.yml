@@ -1,0 +1,72 @@
+name: PRIMERA macOS build
+
+# Kenapa lewat CI, bukan dari mesin pengembang.
+# Mesin pengembang proyek ini Windows, dan artefak macOS (.dmg) TIDAK bisa
+# dibuat dari Windows: electron-builder memakai `hdiutil` milik macOS untuk
+# merakit disk image. Runner macOS GitHub adalah jalur yang tersedia.
+#
+# Artefaknya TIDAK ditandatangani (`identity: null`) dan TIDAK dinotarisasi —
+# sama seperti build Windows yang juga belum bertanda tangan. Konsekuensinya
+# di macOS lebih keras daripada SmartScreen: Gatekeeper menolak membuka
+# aplikasi yang diunduh dari internet tanpa notarisasi. Prosedur membukanya
+# ada di docs/PANDUAN_INSTALASI_MACOS.md dan WAJIB dibaca mahasiswa Mac
+# sebelum mencoba.
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag rilis yang dibangun (mis. test-beta-98c298d). Kosong = HEAD cabang ini.'
+        required: false
+        type: string
+  push:
+    tags:
+      - 'test-beta-*'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: primera-desktop
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: primera-desktop/package-lock.json
+
+      - run: npm ci
+
+      # Gerbang mutu yang sama dengan build Windows — sebuah binari macOS yang
+      # lolos tanpa gerbang ini akan menjadi jalur belakang yang mengelak
+      # disiplin "satu versi = satu binari yang bisa dilacak".
+      - run: npm run typecheck
+      - run: npm test
+
+      # Membangun dari tag berarti tree bersih; bila dijalankan manual di atas
+      # cabang, gerbang provenance boleh dilewati secara eksplisit agar tetap
+      # bisa menghasilkan binari uji coba yang TIDAK untuk dibagikan.
+      - name: Build macOS (dmg + zip, Intel & Apple Silicon)
+        run: npm run dist:mac
+        env:
+          IZINKAN_RILIS_KOTOR: ${{ github.ref_type == 'tag' && '' || '1' }}
+          # Matikan upaya notarisasi: tanpa Apple Developer ID, percobaan
+          # notarisasi hanya membuat build gagal di menit terakhir.
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      - name: Unggah artefak macOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: primera-macos-${{ github.ref_name }}
+          path: |
+            primera-desktop/dist/*.dmg
+            primera-desktop/dist/*.zip
+            primera-desktop/dist/SHA256SUMS-*.txt
+          if-no-files-found: error
+          retention-days: 30
