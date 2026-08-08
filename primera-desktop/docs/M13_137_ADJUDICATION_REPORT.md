@@ -1,9 +1,9 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-08-05
+**Tanggal kompilasi:** 2026-08-08
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
 **Kemajuan adjudikasi dokter:** **16** kasus sudah ditandatangani, **121** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [`docs/M13_137_DECISION_LOG.md`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
-**Snapshot:** commit `a661cfded16f5f90216f6378a7da889779f50c19`, artefak `861492555d2baf16dd2124ce567aa0569a771420c2188b819e80a4a588927aae`, pack `6531bc01`, content release `answer-key-sweep-2026-08-06`, `REVISI_ENGINE=67`
+**Snapshot:** commit `a071607f3a71275d733b022c1a11b7f4565e7267`, artefak `d5dfe64ca4fa8b6aeca5dbd99c3faf5d6c6994e9841aea5f134a456349ce93f1`, pack `aef54c57`, content release `answer-key-sweep-2026-08-06`, `REVISI_ENGINE=67`
 
 ## Ringkasan eksekutif
 
@@ -71,7 +71,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-08-05.
+- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-08-08.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 

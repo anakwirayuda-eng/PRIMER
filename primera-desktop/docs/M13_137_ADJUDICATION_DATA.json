@@ -1,9 +1,9 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-05T23:32:01.651Z",
-  "sourceCommit": "a661cfded16f5f90216f6378a7da889779f50c19",
-  "artifactFingerprint": "861492555d2baf16dd2124ce567aa0569a771420c2188b819e80a4a588927aae",
-  "packFingerprint": "6531bc01",
+  "generatedAt": "2026-08-08T04:13:20.542Z",
+  "sourceCommit": "a071607f3a71275d733b022c1a11b7f4565e7267",
+  "artifactFingerprint": "d5dfe64ca4fa8b6aeca5dbd99c3faf5d6c6994e9841aea5f134a456349ce93f1",
+  "packFingerprint": "aef54c57",
   "contentRelease": "answer-key-sweep-2026-08-06",
   "engineRevision": 67,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
@@ -20072,7 +20072,7 @@
       },
       "currentEditorial": {
         "clue": "Nyeri pinggang kolik menjalar ke selangkangan, pasien gelisah tak bisa diam, riwayat batu, dan hematuria mikroskopik sangat mendukung kolik ureter. Tata laksana FKTP adalah analgesia NSAID lini pertama bila aman, antiemetik/cairan untuk kehilangan aktual bila perlu, lalu rujuk sesuai kompetensi 3A untuk memastikan ukuran, lokasi, dan derajat obstruksi. Jangan memberi hidrasi paksa atau diuretik untuk \"mendorong\" batu. Tamsulosin tidak dijadikan jawaban sebelum imaging karena manfaat terapi ekspulsif bergantung pada batu ureter distal yang terkonfirmasi dan ukurannya. Demam/menggigil, ginjal tunggal, anuria, penurunan fungsi ginjal, atau nyeri tak teratasi mengubahnya menjadi rujukan emergensi.",
-        "officialGuidance": "PPK FKTP KMK 1186/2022 tidak mempunyai bab diagnosis-spesifik kolik ureter pada crosswalk 167 bab; jangan mengatribusikan rincian ukuran batu atau terapi ekspulsif ke PPK. PNPK Tata Laksana Batu Saluran Kemih KMK HK.01.07/MENKES/1936/2022 menjadi sumber langsung: tangani nyeri, nilai infeksi/obstruksi dan faktor ginjal, gunakan imaging di layanan berkemampuan, lalu tentukan observasi, terapi ekspulsif, atau intervensi menurut ukuran serta lokasi batu.",
+        "officialGuidance": "PPK FKTP KMK 1186/2022 tidak mempunyai bab diagnosis-spesifik kolik ureter pada crosswalk 167 bab; jangan mengatribusikan rincian ukuran batu atau terapi ekspulsif ke PPK. Sumber langsungnya adalah pedoman batu saluran kemih EAU 2026: tangani nyeri, nilai infeksi/obstruksi dan faktor ginjal, gunakan imaging di layanan berkemampuan, lalu tentukan observasi, terapi ekspulsif, atau intervensi menurut ukuran serta lokasi batu.",
         "realityNote": "USG abdomen dan fungsi ginjal tidak diasumsikan tersedia di Sukamaju; keduanya ditempuh lewat jejaring dan tidak menunda analgesia atau rujukan. Karena ukuran/lokasi belum diketahui, tamsulosin tidak diwajibkan. Ketorolak hanya diberikan setelah kontraindikasi NSAID disaring; pasien dengan sepsis obstruktif tidak boleh dipulangkan hanya karena nyeri membaik.",
         "ebmPearl": "Cara pasien MENAHAN nyeri adalah petunjuk diagnostik yang sering diabaikan. Pasien kolik ureter gelisah, berguling, dan tak menemukan posisi nyaman — nyerinya berasal dari otot polos yang berkontraksi melawan sumbatan, dan gerakan tidak memperburuknya. Bandingkan dengan peritonitis: pasien berbaring kaku dan menolak bergerak karena setiap guncangan menggeser permukaan peritoneum yang meradang. Karena itu \"pasien yang berguling-guling kesakitan\" hampir tidak pernah peritonitis, dan sebaliknya nyeri perut hebat pada pasien yang membeku harus dianggap perut akut sampai terbukti bukan. Jebakan kedua: hematuria TIDAK selalu ada — sekitar 10-15% kolik batu memiliki urinalisis tanpa darah sama sekali (terutama bila ureter tersumbat total), sehingga urinalisis bersih tidak menyingkirkan batu."
       },
