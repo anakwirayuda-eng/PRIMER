@@ -63,7 +63,7 @@
       "artifactName": "PRIMERA-test-beta-Portable-${version}.${ext}"
     },
     "mac": {
-      "icon": "build/icon.png",
+      "icon": "build/icon-mac.png",
       "category": "public.app-category.education",
       "target": [
         {
@@ -89,7 +89,7 @@
       "artifactName": "PRIMERA-test-beta-${version}-${arch}.${ext}"
     },
     "linux": {
-      "icon": "build/icon.png",
+      "icon": "build/icon-mac.png",
       "category": "Education",
       "target": [
         "AppImage"
