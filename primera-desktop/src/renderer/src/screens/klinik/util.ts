@@ -141,10 +141,21 @@ export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
   // deck netralnya hidup di NAMA_DECK; `kasus.nama` yang kaya tetap dipakai di
   // Buku Saku/Dex, debrief, dan laporan.
   if (icd10 === kasus.icd10) return NAMA_DECK[kasus.id] ?? kasus.nama
-  const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
-  if (entri) return entri.nama
+  // Audit 2026-08-22 (lanjutan): KAMUS kini di atas SKDI-144 untuk kode
+  // distraktor. Nama di skdi144 adalah BARIS KURIKULUM kompetensi dokter umum,
+  // bukan nama diagnosis: ia kerap memuat beberapa entitas sekaligus
+  // ("Pneumonia, Bronkopneumonia" — 12 deck; "Gastroenteritis (termasuk Kolera,
+  // Giardiasis)") atau kualifikasi CAKUPAN KOMPETENSI yang bukan makna kode
+  // ("Miopia Ringan", "Herpes Zoster Tanpa Komplikasi"). Sebagai label PILIHAN
+  // keduanya merusak — satu opsi memuat dua penyakit, dan kata "Ringan" bisa
+  // dicoret tanpa menalar klinis. Nama skdi144 tak bisa sekadar diedit karena
+  // bertugas rangkap sebagai judul Buku Saku/Dex dan `judulResmi` kurikulum,
+  // jadi yang dibalik adalah prioritasnya. SKDI tetap dipakai untuk kode yang
+  // belum punya entri kamus.
   const tambahan = NAMA_ICD[icd10]
   if (tambahan) return tambahan
+  const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
+  if (entri) return entri.nama
   return `Kode ${icd10}`
 }
 

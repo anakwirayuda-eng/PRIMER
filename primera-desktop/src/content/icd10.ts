@@ -124,17 +124,29 @@ export const NAMA_ICD: Record<string, string> = {
   'J34.0': 'Abses atau Furunkel Hidung',
   'L01.0': 'Impetigo',
   'J30.0': 'Rinitis Vasomotor',
-  K12: 'Stomatitis dan Lesi Terkait',
+  // Audit label 2026-08-22: kata intinya dipertahankan ('Ulkus Mulut'), bundel
+  // kurung SKDI dibuang. Judul blok registri tak menyebut satu temuan pun yang
+  // bisa ditalar mahasiswa, dan 'stomatitis' justru memayungi jawaban benarnya.
+  K12: 'Ulkus Mulut',
   'B00.2': 'Gingivostomatitis Herpetik',
   'C06.9': 'Keganasan Mulut, Tidak Spesifik',
-  'B37.9': 'Kandidiasis, Tidak Spesifik',
+  // MENUNGGU DOKTER: kandidiasis mulut sebenarnya B37.0 (candidal stomatitis);
+  // B37.9 = kandidiasis tanpa keterangan. Baik skdi144 maupun kasus
+  // lab_kandidiasis_mulut sudah terlanjur memakai B37.9, jadi kamus mengikuti
+  // pemakaian de-facto sampai dokter memutuskan recode ke B37.0.
+  'B37.9': 'Kandidiasis Mulut',
   'D37.0': 'Neoplasma Mulut dengan Perilaku Tidak Pasti',
   B26: 'Parotitis Epidemika (Mumps)',
   'K11.2': 'Sialadenitis',
   'L04.0': 'Limfadenitis Akut Kepala dan Leher',
   'K90.4': 'Malabsorpsi akibat Intoleransi Makanan',
   'K58.0': 'Irritable Bowel Syndrome dengan Diare',
-  'L27.2': 'Dermatitis akibat Makanan',
+  // MENUNGGU DOKTER: L27.2 sesungguhnya dermatitis akibat makanan tertelan;
+  // alergi makanan adalah T78.1. Kasus lab_alergi_makanan_ringan terlanjur
+  // berkode L27.2, dan satu-satunya deck yang memakainya sebagai distraktor
+  // (intoleransi laktosa) mengajarkan 'intoleransi versus ALERGI' — mengganti
+  // labelnya membuat clue & pemeriksaan fisik kasus itu kehilangan sasaran.
+  'L27.2': 'Alergi Makanan',
   'T78.2': 'Syok Anafilaktik',
   T62: 'Efek Berbahaya Zat dalam Makanan',
   'B76.0': 'Ankilostomiasis / Cacing Tambang',
@@ -220,7 +232,10 @@ export const NAMA_ICD: Record<string, string> = {
   // adalah konjungtivitis bakterial — kosakata SKDI/PPK dan bangsal.
   'H10.0': 'Konjungtivitis Mukopurulen (Bakterial)',
   'H10.1': 'Konjungtivitis Alergika Akut',
-  'H10.9': 'Konjungtivitis, tidak spesifik',
+  // Akhiran ', tidak spesifik' dilepas: di ketujuh deck tempat kode ini jadi
+  // distraktor, tak satu pun opsi tetangga berpenanda format seperti itu —
+  // ia justru akan jadi satu-satunya opsi berkoma sekaligus terpanjang.
+  'H10.9': 'Konjungtivitis',
   'H00.1': 'Kalazion',
   'H16.9': 'Keratitis',
   'H25.9': 'Katarak Senilis, Tidak Spesifik',
@@ -326,6 +341,25 @@ export const NAMA_ICD: Record<string, string> = {
   'Z30.4': 'Pengawasan Kontrasepsi (Kunjungan KB)',
   Z33: 'Status Hamil (temuan insidental)',
   'Z39.1': 'Perawatan & Pemeriksaan Ibu Menyusui',
+
+  /* -- Audit label 2026-08-22: entri baru agar label distraktor berhenti
+   * memakai BARIS KURIKULUM SKDI-144. Nama SKDI bertugas rangkap (judul Buku
+   * Saku + judulResmi kurikulum) sehingga tak boleh diedit; yang dinaikkan
+   * adalah prioritas kamus. Kualifikasi CAKUPAN KOMPETENSI ("Ringan", "Tanpa
+   * Komplikasi", "Kecuali Rekalsitran") sengaja tidak dibawa: itu batas
+   * wewenang dokter umum, bukan makna kode ICD, dan sebagai label pilihan ia
+   * bisa dieliminasi tanpa menalar klinis. -------------------------------- */
+  'H52.1': 'Miopia',
+  'H52.2': 'Astigmatisme',
+  'L70.0': 'Akne Vulgaris',
+  L20: 'Dermatitis Atopik',
+  L02: 'Abses Kulit (Furunkel)',
+  'T14.1': 'Luka Terbuka, Lokasi Tidak Spesifik',
+  'B00.9': 'Herpes Simpleks',
+  'B01.9': 'Varisela (Cacar Air)',
+  'B02.9': 'Herpes Zoster',
+  'B37.2': 'Kandidiasis Kutis',
+  N10: 'Pielonefritis Akut',
 
   /* -- Jiwa ------------------------------------------------------------------------ */
   'F23.9': 'Gangguan Psikotik Akut Sementara',

@@ -41,8 +41,10 @@ describe('namaDiagnosis — semua banding bernama', () => {
     const namaKasusLain = new Map<string, string>(
       Object.values(PACK.kasus).map((k) => [k.icd10, k.nama]),
     )
+    // Urutan sumber kurasi mengikuti namaDiagnosis: sejak 2026-08-22 KAMUS di
+    // atas SKDI-144 untuk kode distraktor.
     const sumberKurasi = (kode: string): string | undefined =>
-      PACK.skdi144.find((e) => e.icd10 === kode)?.nama ?? NAMA_ICD[kode]
+      NAMA_ICD[kode] ?? PACK.skdi144.find((e) => e.icd10 === kode)?.nama
 
     const meminjam: string[] = []
     for (const k of Object.values(PACK.kasus)) {

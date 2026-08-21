@@ -60,10 +60,10 @@ for (const k of kasusList) {
 function resolusi(icd10: string, kasus: (typeof kasusList)[number]): { label: string; lapisan: Lapisan } {
   if (icd10 === kasus.icd10)
     return { label: NAMA_DECK[kasus.id] ?? kasus.nama, lapisan: 'jawaban-sendiri' }
-  const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
-  if (entri) return { label: entri.nama, lapisan: 'skdi144' }
   const tambahan = NAMA_ICD[icd10]
   if (tambahan) return { label: tambahan, lapisan: 'kamus' }
+  const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
+  if (entri) return { label: entri.nama, lapisan: 'skdi144' }
   return { label: `Kode ${icd10}`, lapisan: 'kode-telanjang' }
 }
 
@@ -152,7 +152,7 @@ const formatTell = kasusList
       .map((kode) => ({
         kode,
         label:
-          PACK.skdi144.find((e) => e.icd10 === kode)?.nama ?? NAMA_ICD[kode] ?? `Kode ${kode}`,
+          NAMA_ICD[kode] ?? PACK.skdi144.find((e) => e.icd10 === kode)?.nama ?? `Kode ${kode}`,
       }))
     if (distraktor.length === 0) return undefined
 
