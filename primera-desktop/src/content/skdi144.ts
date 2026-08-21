@@ -87,7 +87,11 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
     id: 'pneumonia_bacterial',
     nama: 'Pneumonia, Bronkopneumonia',
     icd10: 'J18.9',
-    kasusId: 'pneumonia_balita',
+    // `kasusId: 'pneumonia_balita'` DIBUANG (audit label 2026-08-22): index.ts
+    // menautkan entri ini ke lab_pneumonia_komunitas_dewasa lewat
+    // LAB_CASE_ID_BY_FKTP_ITEM, dan tautan lab itu MENANG di atas kasusId yang
+    // ditulis di sini (index.ts:99-101). Literalnya tak pernah terpakai dan
+    // hanya menyesatkan pembaca berikutnya.
   },
   { id: 'tb_pulmonary', nama: 'Tuberkulosis Paru Tanpa Komplikasi', icd10: 'A15', kasusId: 'tb_paru' },
 

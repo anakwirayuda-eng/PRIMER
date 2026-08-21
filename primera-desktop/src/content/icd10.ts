@@ -103,9 +103,9 @@ export const NAMA_ICD: Record<string, string> = {
   'L51.1': 'Sindrom Stevens-Johnson',
   'S51.8': 'Luka Terbuka Lain pada Lengan Bawah',
   'S56.9': 'Cedera Otot atau Tendon Lengan Bawah, Tidak Spesifik',
-  'T22.1': 'Luka Bakar Derajat Satu Bahu dan Lengan, kecuali Pergelangan dan Tangan',
-  'T22.2': 'Luka Bakar Derajat Dua Bahu dan Lengan, kecuali Pergelangan dan Tangan',
-  'T22.3': 'Luka Bakar Derajat Tiga Bahu dan Lengan, kecuali Pergelangan dan Tangan',
+  'T22.1': 'Luka Bakar Derajat Satu (Bahu/Lengan)',
+  'T22.2': 'Luka Bakar Derajat Dua (Bahu/Lengan)',
+  'T22.3': 'Luka Bakar Derajat Tiga (Bahu/Lengan)',
   'T31.0': 'Luka Bakar Kurang dari 10 Persen Luas Tubuh',
   'S00.0': 'Cedera Superfisial Kulit Kepala',
   'S02.9': 'Fraktur Tengkorak atau Tulang Wajah, Tidak Spesifik',
@@ -183,11 +183,11 @@ export const NAMA_ICD: Record<string, string> = {
 
   /* -- Neurologi & gawat --------------------------------------------------- */
   I63: 'Stroke Iskemik (Infark Serebri)',
-  'I63.9': 'Stroke Iskemik (Infark Serebri), tidak spesifik',
+  'I63.9': 'Stroke Iskemik (Infark Serebri), Tidak Spesifik',
   'I61.9': 'Perdarahan Intraserebral',
   'I60.9': 'Perdarahan Subaraknoid, Tidak Spesifik',
   I61: 'Perdarahan Intraserebral',
-  I64: 'Stroke, tidak spesifik',
+  I64: 'Stroke, Tidak Spesifik',
   // Audit label 2026-08-22: dulu meminjam nama kasus saraf_epilepsi_kejang
   // ('Epilepsi Dewasa ...') dan bocor sebagai distraktor di kasus BALITA
   // kejang demam.
@@ -223,8 +223,8 @@ export const NAMA_ICD: Record<string, string> = {
   'B06.9': 'Rubela (Campak Jerman)',
   'B02.2': 'Herpes Zoster dengan Neuralgia',
   'B30.9': 'Konjungtivitis Viral',
-  'B34.9': 'Infeksi Virus, tidak spesifik',
-  'R50.9': 'Demam, tidak spesifik',
+  'B34.9': 'Infeksi Virus, Tidak Spesifik',
+  'R50.9': 'Demam, Tidak Spesifik',
 
   /* -- Mata & THT ---------------------------------------------------------- */
   // Glosa '(Bakterial)' dipertahankan: 'mukopurulen' setia pada kode, tetapi
@@ -232,7 +232,7 @@ export const NAMA_ICD: Record<string, string> = {
   // adalah konjungtivitis bakterial — kosakata SKDI/PPK dan bangsal.
   'H10.0': 'Konjungtivitis Mukopurulen (Bakterial)',
   'H10.1': 'Konjungtivitis Alergika Akut',
-  // Akhiran ', tidak spesifik' dilepas: di ketujuh deck tempat kode ini jadi
+  // Akhiran ', Tidak Spesifik' dilepas: di ketujuh deck tempat kode ini jadi
   // distraktor, tak satu pun opsi tetangga berpenanda format seperti itu —
   // ia justru akan jadi satu-satunya opsi berkoma sekaligus terpanjang.
   'H10.9': 'Konjungtivitis',
@@ -247,7 +247,7 @@ export const NAMA_ICD: Record<string, string> = {
   'H34.1': 'Oklusi Arteri Retina Sentral',
   'H36.0': 'Retinopati Diabetik',
   'H43.1': 'Perdarahan Vitreus',
-  'H66.9': 'Otitis Media, tidak spesifik',
+  'H66.9': 'Otitis Media, Tidak Spesifik',
   'H65.9': 'Otitis Media Efusi',
   'H60.9': 'Otitis Eksterna',
   'H60.3': 'Otitis Eksterna Difus',
@@ -257,14 +257,14 @@ export const NAMA_ICD: Record<string, string> = {
   J00: 'Nasofaringitis Akut (Common Cold)',
   'J02.9': 'Faringitis Akut',
   'J03.9': 'Tonsilitis Akut',
-  'J06.9': 'ISPA Atas Akut, tidak spesifik',
-  'J18.9': 'Pneumonia, tidak spesifik',
+  'J06.9': 'ISPA Atas Akut, Tidak Spesifik',
+  'J18.9': 'Pneumonia, Tidak Spesifik',
   'J15.9': 'Pneumonia Bakterial',
   'J21.9': 'Bronkiolitis Akut',
   'J01.9': 'Sinusitis Akut',
   'J20.9': 'Bronkitis Akut',
   'J30.1': 'Rinitis Alergi Musiman (Polen)',
-  'J44.9': 'PPOK, tidak spesifik',
+  'J44.9': 'PPOK, Tidak Spesifik',
   'J45.9': 'Asma Bronkial',
   'J44.1': 'PPOK Eksaserbasi Akut',
 
@@ -275,10 +275,10 @@ export const NAMA_ICD: Record<string, string> = {
   'I13.9': 'Penyakit Jantung dan Ginjal Hipertensif',
   'I15.9': 'Hipertensi Sekunder',
   'I16.0': 'Krisis Hipertensi — Urgensi',
-  'I16.9': 'Krisis Hipertensi, tidak spesifik',
+  'I16.9': 'Krisis Hipertensi, Tidak Spesifik',
   'I50.0': 'Gagal Jantung Kongestif',
   'I50.1': 'Gagal Jantung Kiri',
-  'I50.9': 'Gagal Jantung, tidak spesifik',
+  'I50.9': 'Gagal Jantung, Tidak Spesifik',
   'E11.9': 'Diabetes Melitus Tipe 2',
   'E10.9': 'Diabetes Melitus Tipe 1',
   'E13.9': 'Diabetes Melitus Tipe Lain',
@@ -314,14 +314,14 @@ export const NAMA_ICD: Record<string, string> = {
 
   /* -- Hematologi & kulit ------------------------------------------------------ */
   'D50.9': 'Anemia Defisiensi Besi',
-  'D64.9': 'Anemia, tidak spesifik',
+  'D64.9': 'Anemia, Tidak Spesifik',
   'D56.9': 'Talasemia',
-  'D53.9': 'Anemia Nutrisional, tidak spesifik',
-  'D69.9': 'Purpura/Kelainan Perdarahan, tidak spesifik',
+  'D53.9': 'Anemia Nutrisional, Tidak Spesifik',
+  'D69.9': 'Purpura/Kelainan Perdarahan, Tidak Spesifik',
   'O99.0': 'Anemia dalam Kehamilan',
   'L20.9': 'Dermatitis Atopik',
-  'L29.9': 'Pruritus, tidak spesifik',
-  'L30.9': 'Dermatitis, tidak spesifik',
+  'L29.9': 'Pruritus, Tidak Spesifik',
+  'L30.9': 'Dermatitis, Tidak Spesifik',
   'L23.9': 'Dermatitis Kontak Alergika',
   'L24.9': 'Dermatitis Kontak Iritan',
   'L21.0': 'Dermatitis Seboroik',
@@ -336,7 +336,7 @@ export const NAMA_ICD: Record<string, string> = {
   'O01.9': 'Mola Hidatidosa (Hamil Anggur)',
   O13: 'Hipertensi Gestasional',
   'O15.0': 'Eklampsia dalam Kehamilan',
-  'O26.9': 'Penyulit Kehamilan, tidak spesifik',
+  'O26.9': 'Penyulit Kehamilan, Tidak Spesifik',
   'N83.2': 'Kista Ovarium',
   'Z30.4': 'Pengawasan Kontrasepsi (Kunjungan KB)',
   Z33: 'Status Hamil (temuan insidental)',
