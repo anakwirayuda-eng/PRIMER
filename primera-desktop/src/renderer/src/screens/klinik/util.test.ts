@@ -7,6 +7,7 @@
 
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
+import { NAMA_ICD } from '@content/icd10'
 import { cocokLab, cocokObat, namaDiagnosis, normalisasiNamaObat } from './util'
 
 describe('namaDiagnosis — semua banding bernama', () => {
@@ -25,6 +26,36 @@ describe('namaDiagnosis — semua banding bernama', () => {
       }
     }
     expect(telanjang).toEqual([])
+  })
+
+  // Audit label 2026-08-22: label DISTRAKTOR tak boleh lagi bersumber dari nama
+  // kasus playable lain. Lapisan itu membuat identitas kasus lain — berikut
+  // penanda demografi & narasi gejalanya — bocor ke deck kasus yang
+  // demografinya bertolak belakang ("Epilepsi Dewasa" di deck balita kejang
+  // demam, "Mastoiditis Akut pada Anak" di deck pasien 15-40 th). Penjaga ini
+  // memastikan lapisan itu tidak bisa dipasang kembali diam-diam: nama tiap
+  // distraktor wajib SAMA PERSIS dengan sumber kurasi (SKDI-144 atau kamus
+  // icd10.ts), bukan dengan nama kasus mana pun.
+  it('label distraktor TIDAK PERNAH meminjam nama kasus playable lain', () => {
+    const namaKasusLain = new Map<string, string>(
+      Object.values(PACK.kasus).map((k) => [k.icd10, k.nama]),
+    )
+    const sumberKurasi = (kode: string): string | undefined =>
+      PACK.skdi144.find((e) => e.icd10 === kode)?.nama ?? NAMA_ICD[kode]
+
+    const meminjam: string[] = []
+    for (const k of Object.values(PACK.kasus)) {
+      for (const kode of k.diagnosisBanding) {
+        if (kode === k.icd10) continue // jawaban benar memang pakai nama kasusnya sendiri
+        const tampil = namaDiagnosis(kode, k)
+        const kurasi = sumberKurasi(kode)
+        const pinjaman = namaKasusLain.get(kode)
+        if (kurasi === undefined || tampil !== kurasi) {
+          meminjam.push(`${k.id}:${kode} tampil "${tampil}" (kurasi: ${kurasi ?? 'TIDAK ADA'}, nama kasus lain: ${pinjaman ?? '-'})`)
+        }
+      }
+    }
+    expect(meminjam).toEqual([])
   })
 
   // Temuan playtest 2026-07-04: dua kode banding berbeda (D50.9 & O99.0) tampil

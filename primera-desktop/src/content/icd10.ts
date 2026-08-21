@@ -119,7 +119,7 @@ export const NAMA_ICD: Record<string, string> = {
   'J04.0': 'Laringitis Akut',
   'J38.7': 'Gangguan Laring Lain',
   'T75.3': 'Mabuk Perjalanan',
-  'H81.1': 'Vertigo Posisi Paroksismal Jinak',
+  'H81.1': 'Vertigo Posisi Paroksismal Jinak (BPPV)',
   'H81.2': 'Neuronitis Vestibular',
   'J34.0': 'Abses atau Furunkel Hidung',
   'L01.0': 'Impetigo',
@@ -176,6 +176,10 @@ export const NAMA_ICD: Record<string, string> = {
   'I60.9': 'Perdarahan Subaraknoid, Tidak Spesifik',
   I61: 'Perdarahan Intraserebral',
   I64: 'Stroke, tidak spesifik',
+  // Audit label 2026-08-22: dulu meminjam nama kasus saraf_epilepsi_kejang
+  // ('Epilepsi Dewasa ...') dan bocor sebagai distraktor di kasus BALITA
+  // kejang demam.
+  'G40.9': 'Epilepsi, Tidak Spesifik',
   'G45.9': 'Transient Ischemic Attack (TIA)',
   'E16.2': 'Hipoglikemia',
   'R56.0': 'Kejang Demam',
@@ -195,7 +199,12 @@ export const NAMA_ICD: Record<string, string> = {
   'A08.0': 'Enteritis Rotavirus',
   'A06.0': 'Disentri Ameba Akut',
   'K52.9': 'Kolitis Non-infektif',
-  'A15.0': 'TB Paru, konfirmasi BTA (+)',
+  // Audit label 2026-08-22: nama lama 'TB Paru, konfirmasi BTA (+)' menggendong
+  // HASIL PEMERIKSAAN di dalam sebuah PILIHAN diagnosis. Mahasiswa yang sadar
+  // belum pernah menerima hasil BTA mencoretnya lewat logika format, bukan
+  // penalaran klinis — dan pada kasus efusi pleura itu menutup diferensial TB
+  // yang justru paling penting di Indonesia.
+  'A15.0': 'Tuberkulosis Paru',
   'A16.2': 'TB Paru, tanpa konfirmasi bakteriologis',
   B86: 'Skabies',
   B80: 'Enterobiasis (Cacing Kremi)',
@@ -206,13 +215,20 @@ export const NAMA_ICD: Record<string, string> = {
   'R50.9': 'Demam, tidak spesifik',
 
   /* -- Mata & THT ---------------------------------------------------------- */
-  'H10.0': 'Konjungtivitis Mukopurulen',
+  // Glosa '(Bakterial)' dipertahankan: 'mukopurulen' setia pada kode, tetapi
+  // entitas yang harus ditimbang mahasiswa pada kasus konjungtivitis alergi
+  // adalah konjungtivitis bakterial — kosakata SKDI/PPK dan bangsal.
+  'H10.0': 'Konjungtivitis Mukopurulen (Bakterial)',
   'H10.1': 'Konjungtivitis Alergika Akut',
   'H10.9': 'Konjungtivitis, tidak spesifik',
   'H00.1': 'Kalazion',
   'H16.9': 'Keratitis',
   'H25.9': 'Katarak Senilis, Tidak Spesifik',
   'H33.0': 'Ablasio Retina dengan Robekan Retina',
+  'H40.2': 'Glaukoma Sudut Tertutup Primer',
+  // Dulu meminjam nama kasus lab_mastoiditis_akut ('Mastoiditis Akut pada
+  // Anak') dan bocor sebagai distraktor di kasus pasien 15-40 tahun.
+  'H70.0': 'Mastoiditis Akut',
   'H34.1': 'Oklusi Arteri Retina Sentral',
   'H36.0': 'Retinopati Diabetik',
   'H43.1': 'Perdarahan Vitreus',
@@ -230,6 +246,7 @@ export const NAMA_ICD: Record<string, string> = {
   'J18.9': 'Pneumonia, tidak spesifik',
   'J15.9': 'Pneumonia Bakterial',
   'J21.9': 'Bronkiolitis Akut',
+  'J01.9': 'Sinusitis Akut',
   'J20.9': 'Bronkitis Akut',
   'J30.1': 'Rinitis Alergi Musiman (Polen)',
   'J44.9': 'PPOK, tidak spesifik',
@@ -244,6 +261,8 @@ export const NAMA_ICD: Record<string, string> = {
   'I15.9': 'Hipertensi Sekunder',
   'I16.0': 'Krisis Hipertensi — Urgensi',
   'I16.9': 'Krisis Hipertensi, tidak spesifik',
+  'I50.0': 'Gagal Jantung Kongestif',
+  'I50.1': 'Gagal Jantung Kiri',
   'I50.9': 'Gagal Jantung, tidak spesifik',
   'E11.9': 'Diabetes Melitus Tipe 2',
   'E10.9': 'Diabetes Melitus Tipe 1',
@@ -264,11 +283,19 @@ export const NAMA_ICD: Record<string, string> = {
   'K27.9': 'Ulkus Peptikum',
   'K60.2': 'Fisura Ani',
   'K62.5': 'Perdarahan Anus/Rektum',
+  'K35.9': 'Apendisitis Akut',
 
   /* -- Muskuloskeletal -------------------------------------------------------- */
   'M00.9': 'Artritis Piogenik (Septik)',
   'M51.1': 'HNP Lumbal dengan Radikulopati',
   'M54.4': 'Lumbago dengan Skiatika',
+  // Audit label 2026-08-22: enam kode di bawah ini dulu meminjam nama kasus
+  // playable lain (lapisan yang kini dihapus dari namaDiagnosis). Nama kamus
+  // sengaja netral — tanpa fase ('Serangan Akut'), tanpa demografi.
+  'M06.9': 'Artritis Reumatoid',
+  'M10.9': 'Artritis Gout (Pirai)',
+  'M17.9': 'Osteoartritis Lutut',
+  'M54.5': 'Nyeri Punggung Bawah (Low Back Pain)',
 
   /* -- Hematologi & kulit ------------------------------------------------------ */
   'D50.9': 'Anemia Defisiensi Besi',
@@ -291,6 +318,7 @@ export const NAMA_ICD: Record<string, string> = {
 
   /* -- Kebidanan & KB ------------------------------------------------------------ */
   'O00.9': 'Kehamilan Ektopik',
+  'O01.9': 'Mola Hidatidosa (Hamil Anggur)',
   O13: 'Hipertensi Gestasional',
   'O15.0': 'Eklampsia dalam Kehamilan',
   'O26.9': 'Penyulit Kehamilan, tidak spesifik',
@@ -302,7 +330,9 @@ export const NAMA_ICD: Record<string, string> = {
   /* -- Jiwa ------------------------------------------------------------------------ */
   'F23.9': 'Gangguan Psikotik Akut Sementara',
   'F25.9': 'Gangguan Skizoafektif',
+  'F32.0': 'Episode Depresif Ringan',
   'F34.1': 'Distimia (Depresi Persisten)',
   'F41.0': 'Gangguan Panik',
+  'F41.1': 'Gangguan Cemas Menyeluruh (GAD)',
   'F43.2': 'Gangguan Penyesuaian',
 }

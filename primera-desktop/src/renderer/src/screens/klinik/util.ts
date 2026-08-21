@@ -110,14 +110,10 @@ export function jawabanPasien(
 /**
  * Nama ramah untuk kode ICD-10 pilihan diagnosis banding — SEMUA pilihan harus
  * bernama setara (anti-bocor: pemain tak boleh menebak jawaban dari pilihan
- * mana yang 'punya nama'). Berlapis: SKDI-144 -> nama kasus playable lain
- * dengan ICD sama -> kamus content/icd10.ts -> fallback kode telanjang
- * (pack.test.ts menjaga fallback ini tak pernah tampil di konten produksi).
+ * mana yang 'punya nama'). Berlapis: SKDI-144 -> kamus content/icd10.ts ->
+ * fallback kode telanjang (pack.test.ts menjaga fallback ini tak pernah tampil
+ * di konten produksi).
  */
-const namaKasusPerIcd: Map<string, string> = new Map(
-  Object.values(PACK.kasus).map((k) => [k.icd10, k.nama]),
-)
-
 export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
   // Jawaban BENAR kasus ini selalu pakai nama presisinya sendiri — DULUAN
   // dari SKDI (audit 2026-07-04: skdi144 dicek lebih dulu membuat 27 kasus
@@ -125,11 +121,20 @@ export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
   // "Hipertensi Urgensi" tertampil "Hipertensi Esensial"). SKDI tetap prioritas
   // utk kode LAIN (distraktor/banding) — nama kompetensi standar lebih pas
   // di situ drpd nama spesifik kasus lain yg kebetulan sama kode.
+  //
+  // Audit label 2026-08-22: lapisan "nama kasus playable lain dgn ICD sama"
+  // DIHAPUS. Lapisan itu membuat nama kasus lain — berikut penanda demografi
+  // dan narasi gejalanya — bocor jadi label distraktor di kasus yang
+  // demografinya bertolak belakang: kasus BALITA kejang demam menampilkan
+  // "Epilepsi Dewasa (Bangkitan Tonik-Klonik Berulang)", kasus dewasa 15-40 th
+  // menampilkan "Mastoiditis Akut pada Anak", dan "Ablasio Retina Regmatogen —
+  // Tirai Hitam Tanpa Nyeri" membocorkan temuan klinis lewat labelnya sendiri.
+  // Pemenangnya pun arbitrer: Map dibangun dari seluruh kasus, jadi bila dua
+  // kasus berbagi kode, yang menang semata-mata yang terakhir didefinisikan.
+  // Semua 49 label yang dulu bersumber dari sana kini punya entri kamus netral.
   if (icd10 === kasus.icd10) return kasus.nama
   const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
   if (entri) return entri.nama
-  const dariKasusLain = namaKasusPerIcd.get(icd10)
-  if (dariKasusLain) return dariKasusLain
   const tambahan = NAMA_ICD[icd10]
   if (tambahan) return tambahan
   return `Kode ${icd10}`

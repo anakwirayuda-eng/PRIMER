@@ -22,16 +22,26 @@ describe('PACK — validasi silang id konten', () => {
   })
 
   it('SEMUA kode diagnosisBanding punya nama (temuan playtest: "Kode M06.9" telanjang)', () => {
-    // Berlapis persis seperti util.namaDiagnosis: kasus playable → skdi144 → kamus icd10.ts.
-    const bisaResolve = new Set<string>([
-      ...Object.values(PACK.kasus).map((k) => k.icd10),
+    // Berlapis PERSIS seperti util.namaDiagnosis, dan sengaja dinilai PER
+    // KASUS — bukan sebagai satu himpunan global.
+    //
+    // Audit label 2026-08-22: versi lama memasukkan `icd10` SELURUH kasus
+    // playable ke satu himpunan, sehingga kode banding yang menumpang identitas
+    // kasus LAIN ikut dianggap "punya nama". Itulah celah yang membiarkan
+    // "Epilepsi Dewasa (Bangkitan Tonik-Klonik Berulang)" tampil sebagai
+    // distraktor di deck BALITA kejang demam selama berbulan-bulan: test hijau,
+    // labelnya bocor. Kini hanya icd10 kasus ITU SENDIRI yang sah (lapisan-1
+    // namaDiagnosis); kode lain WAJIB bernama dari sumber kurasi (SKDI-144 atau
+    // kamus icd10.ts).
+    const sumberKurasi = new Set<string>([
       ...PACK.skdi144.map((e) => e.icd10),
       ...Object.keys(NAMA_ICD),
     ])
     const telanjang: string[] = []
     for (const k of Object.values(PACK.kasus)) {
       for (const kode of k.diagnosisBanding) {
-        if (!bisaResolve.has(kode)) telanjang.push(`${k.id}: ${kode}`)
+        if (kode === k.icd10) continue
+        if (!sumberKurasi.has(kode)) telanjang.push(`${k.id}: ${kode}`)
       }
     }
     expect(telanjang).toEqual([])
