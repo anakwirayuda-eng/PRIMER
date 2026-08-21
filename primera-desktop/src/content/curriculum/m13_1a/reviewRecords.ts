@@ -17,20 +17,29 @@ const TECHNICAL_CREDENTIALS = 'AI coding agent; bukan physician reviewer'
 
 /** SHA-256 JSON.stringify(review envelope kanonik), dihitung setelah technical review. */
 export const M13_1A_REVIEW_HASHES: Record<string, string> = {
-  'm13-1a-review-clinic-diare_akut_bayi_dehidrasi_berat': '0348ca09a7ab95c381af9b21d6321e30c19da9b35dc2fa788d26d8f711b7ddd0',
+  // Refresh 2026-08-21 atas instruksi langsung dr. Wirayuda, mencakup EMPAT
+  // envelope: diare, asma, otitis, dan fraktur. Yang berubah MURNI redaksional
+  // — nama pasien hardcode ("Nayla", "Dimas") dibuang karena pasien di-roll
+  // acak saat runtime sehingga namanya tak pernah cocok, dan jargon authoring
+  // ("Draf ini", "answer-key", "Resolusi pilot", "resep runtime") ditulis ulang
+  // jadi bahasa yang wajar dibaca mahasiswa. Diagnosis, obat, dosis, prosedur,
+  // disposisi, dan seluruh sitasi pedoman tidak tersentuh; diperiksa baris demi
+  // baris terhadap physicianSignoff yang sudah ada. Mengikuti aturan
+  // hash-di-bagian-6 dan preseden refresh pasca-sign-off di bawah.
+  'm13-1a-review-clinic-diare_akut_bayi_dehidrasi_berat': '504187ee349d56761fb54d05a08dfe7e34b87132606f8421642cbd9a577299f6',
   // Hash Nayla, asma, dan fraktur di-refresh 2026-07-15 (post-signoff): clue
   // Nayla, catatanRealita Dimas, dan panduanResmi fraktur direkonsiliasi thd physicianSignoff yang
   // sudah ada (bukan keputusan klinis baru — lihat physicianSignoffs.ts) —
   // envelope berubah krn kontennya berubah, sesuai aturan hash-di-bagian-6.
-  'm13-1a-review-clinic-asma_eksaserbasi_berat_anak': '5c81d35ff3bfca14d41f934b624a96d912a5c3038a68ee3c6ccc3ced73f9b762',
+  'm13-1a-review-clinic-asma_eksaserbasi_berat_anak': '93fb5222085c795d952cff46fd08836c8f0248f5654fe60c5f9511b218253928',
   // Refresh 2026-07-28: pemeriksaan ulang 15 menit yang sudah diwajibkan
   // physicianSignoff H1 kini direpresentasikan sebagai observasi terstruktur.
   'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': '7c7ad727638d083253bfd7b0cefc3412a15a9d2c85e92e8ae3a20d88f706edd0',
   'm13-1a-review-clinic-benda_asing_hidung_anak': '3d684ef2da6606685568b3a051f251915a6990bfc10b31f584b64ecb6a3d497f',
-  'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'de4c265f093d6d303be9aac966e6fdf88f066f560b7ea660ae2b230130da2411',
+  'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'c3abaee5ebfdcaf639113dbf6d180c56f9c7285a2773f574d9fe53929db203a5',
   // Refresh 2026-07-28: provenance player-facing berpindah dari domain NICE
   // yang memberi 403 ke ACS/BOAST; keputusan klinis F1 tidak berubah.
-  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': 'f5faf0d79418ea53d029f08e742d2e2f94f6720a27fc7facfe8c63f54e4f1550',
+  'm13-1a-review-clinic-fraktur_terbuka_tibia_stabil': '341fcc74ae887605be0f45e522b52606b5f952f33360b908caa2f9dc86eb99b5',
   // Refresh 2026-08-06 atas instruksi langsung dr. Wirayuda ("tanda tangan
   // ulang slice m13-1a"). Yang berubah HANYA penambahan lapisan `debrief`
   // (poin kunci, realita FKTP, sumber daya, kontinuitas, jembatan UKM) yang
