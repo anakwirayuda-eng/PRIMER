@@ -1,4 +1,5 @@
 import { app, BrowserWindow, ipcMain, nativeTheme, shell, Menu } from 'electron'
+import type { MenuItemConstructorOptions } from 'electron'
 import { join } from 'path'
 import { pathToFileURL } from 'url'
 import { promises as fs } from 'fs'
@@ -37,7 +38,11 @@ let pemulihanRendererTertunda: RuntimeRecoveryNotice | null = null
 function sanitizeSlot(slot: string): string {
   // Slot menjadi nama file; tolak apa pun selain [a-z0-9_-]
   if (!/^[a-z0-9_-]{1,64}$/i.test(slot)) throw new Error(`Slot tidak valid: ${slot}`)
-  return slot
+  // Dinormalkan ke huruf kecil: NTFS & APFS tak membedakan kapital, jadi
+  // 'Autosave' dan 'autosave' adalah SATU file di disk. Tanpa normalisasi,
+  // keduanya memakai kunci antrean berbeda — dua rantai tulis menyerbu file
+  // yang sama dan jaminan urutan per-slot di bawah ini bocor.
+  return slot.toLowerCase()
 }
 
 async function ensureSaveDir(): Promise<string> {
@@ -56,6 +61,11 @@ async function ensureSaveDir(): Promise<string> {
 // konkuren lain di masa depan, tmp tak pernah dishare.
 const antreanTulis = new Map<string, Promise<void>>()
 let tmpCounter = 0
+// Penanda antrean: naik setiap kali SATU pekerjaan disk masuk (tulis, hapus,
+// telemetri). Fase flush saat keluar membandingkan angka ini sebelum & sesudah
+// menunggu — bila bertambah, ada pekerjaan yang masuk setelah snapshot diambil
+// dan harus ikut ditunggu.
+let tulisanMasuk = 0
 // Fix #31d: rantai promise telemetri, ditunggu before-quit spt antreanTulis di atas.
 let telemetriPending: Promise<void> = Promise.resolve()
 // Fix #1 (audit CODEX 2026-07-11, regresi dari fix #31d): dulu ada guard
@@ -69,6 +79,20 @@ let telemetriPending: Promise<void> = Promise.resolve()
 // -> ... siklus tanpa henti, app TAK PERNAH benar-benar keluar.
 let sedangKeluar = false
 
+/**
+ * Rantai pekerjaan disk di belakang giliran slot yang sama. Tulis DAN hapus
+ * memakai antrean yang sama: hapus yang menyalip rename yang masih tertunda
+ * akan menghidupkan kembali file yang baru saja dihapus.
+ */
+function antrikanSlot(kunci: string, kerja: () => Promise<void>): Promise<void> {
+  // Error pekerjaan sebelumnya TIDAK boleh memblokir antrean (catch → lanjut).
+  const sebelumnya = antreanTulis.get(kunci) ?? Promise.resolve()
+  const giliran = sebelumnya.catch(() => {}).then(kerja)
+  antreanTulis.set(kunci, giliran)
+  tulisanMasuk++
+  return giliran
+}
+
 function registerIpc(): void {
   ipcMain.handle('save:write', async (_e, slot: string, json: string) => {
     const kunci = sanitizeSlot(slot)
@@ -80,12 +104,7 @@ function registerIpc(): void {
       await fs.writeFile(tmp, json, 'utf-8')
       await fs.rename(tmp, file)
     }
-    // Rantai di belakang tulisan slot yang sama; error tulisan sebelumnya
-    // TIDAK boleh memblokir antrean (catch → lanjut).
-    const sebelumnya = antreanTulis.get(kunci) ?? Promise.resolve()
-    const giliran = sebelumnya.catch(() => {}).then(kerja)
-    antreanTulis.set(kunci, giliran)
-    await giliran
+    await antrikanSlot(kunci, kerja)
     return true
   })
 
@@ -125,8 +144,11 @@ function registerIpc(): void {
   })
 
   ipcMain.handle('save:delete', async (_e, slot: string) => {
-    const dir = await ensureSaveDir()
-    await fs.rm(join(dir, `${sanitizeSlot(slot)}.json`), { force: true })
+    const kunci = sanitizeSlot(slot)
+    await antrikanSlot(kunci, async () => {
+      const dir = await ensureSaveDir()
+      await fs.rm(join(dir, `${kunci}.json`), { force: true })
+    })
     return true
   })
 
@@ -146,6 +168,7 @@ function registerIpc(): void {
     }
     const giliran = telemetriPending.catch(() => {}).then(tulis)
     telemetriPending = giliran
+    tulisanMasuk++
     await giliran
     return true
   })
@@ -154,8 +177,13 @@ function registerIpc(): void {
     try {
       const isi = await fs.readFile(TELEMETRI_FILE(), 'utf-8')
       return isi.split('\n').filter((b) => b.trim().length > 0)
-    } catch {
-      return []
+    } catch (error) {
+      // Sama seperti save:read di atas: hanya file-tak-ada (belum ada satu pun
+      // baris telemetri) yang sah dianggap kosong. Kegagalan lain (EACCES/disk
+      // rusak) harus terlihat pemanggil — log forensik yang GAGAL dibaca tak
+      // boleh menyamar jadi log yang memang bersih.
+      if ((error as NodeJS.ErrnoException).code === 'ENOENT') return []
+      throw error
     }
   })
 
@@ -267,6 +295,55 @@ function registerIpc(): void {
   })
 }
 
+/**
+ * Menu aplikasi untuk build kelas (non-DEV).
+ *
+ * Windows/Linux: `null` — pintasan penyuntingan teks ditangani Chromium
+ * sendiri di sana, jadi menu bar hanya menambah permukaan (akselerator
+ * DevTools/reload bawaan) tanpa manfaat.
+ *
+ * macOS: menu WAJIB ada. Cmd+C/V/X/A/Z dan Cmd+Q di sana didispatch lewat
+ * role menu aplikasi — tanpa menu, menempel NIM/nama, menyalin stack trace ke
+ * laporan bug, sampai menutup aplikasi mati total (jendela tak punya tombol
+ * keluar yang mengakhiri proses; `window-all-closed` sengaja tak quit di
+ * darwin). Isi menu sengaja hanya role bawaan yang tak menyentuh integritas
+ * asesmen: TANPA `viewMenu` (memuat reload & toggleDevTools) dan tanpa item
+ * DevTools mana pun.
+ */
+function menuProduksi(): Menu | null {
+  if (process.platform !== 'darwin') return null
+  return Menu.buildFromTemplate([{ role: 'appMenu' }, { role: 'editMenu' }, { role: 'windowMenu' }])
+}
+
+/**
+ * Menu konteks salin/tempel. Klik-kanan adalah satu-satunya jalan menempel
+ * yang tersedia lintas platform tanpa menu bar, dan jalur pemulihan bila
+ * pintasan papan ketik tak sampai ke kolom isian (kios/keyboard tanpa Cmd).
+ */
+function pasangMenuKonteks(win: BrowserWindow): void {
+  win.webContents.on('context-menu', (_e, params) => {
+    const bendera = params.editFlags
+    const item: MenuItemConstructorOptions[] = []
+    if (params.isEditable) {
+      item.push(
+        { role: 'undo', enabled: bendera.canUndo },
+        { role: 'redo', enabled: bendera.canRedo },
+        { type: 'separator' },
+        { role: 'cut', enabled: bendera.canCut },
+        { role: 'copy', enabled: bendera.canCopy },
+        { role: 'paste', enabled: bendera.canPaste },
+        { type: 'separator' },
+        { role: 'selectAll', enabled: bendera.canSelectAll },
+      )
+    } else if (params.selectionText.trim().length > 0) {
+      // Teks tak bisa disunting (mis. stack trace di layar galat) — salin saja.
+      item.push({ role: 'copy', enabled: bendera.canCopy })
+    }
+    if (item.length === 0) return
+    Menu.buildFromTemplate(item).popup({ window: win })
+  })
+}
+
 function createWindow(): void {
   const win = new BrowserWindow({
     width: 1440,
@@ -346,8 +423,14 @@ function createWindow(): void {
     win.webContents.on('devtools-opened', () => win.webContents.closeDevTools())
   }
 
+  pasangMenuKonteks(win)
+
   // Mode verifikasi: PRIMER_SHOT=<path.png> → potret jendela lalu keluar.
-  const shotPath = process.env['PRIMER_SHOT']
+  // Sama seperti ELECTRON_RENDERER_URL & PRIMER_DEV, hanya dihormati pada build
+  // TAK-dipaket (jalankan lewat `npm run dev`/`npm run preview`): pada installer
+  // kelas, env var tak boleh membuat aplikasi menulis berkas ke path pilihan
+  // siapa pun lalu menutup dirinya di tengah sesi ujian.
+  const shotPath = !app.isPackaged ? process.env['PRIMER_SHOT'] : undefined
   if (shotPath) {
     win.webContents.once('did-finish-load', () => {
       setTimeout(async () => {
@@ -421,9 +504,10 @@ if (!app.requestSingleInstanceLock()) {
   })
 
   app.whenReady().then(() => {
-    // Buang menu aplikasi bawaan (juga menghapus akselerator DevTools/reload
-    // dari menu) di produksi — game kelas tak butuh menu bar.
-    if (!DEV) Menu.setApplicationMenu(null)
+    // Ganti menu aplikasi bawaan (yang membawa akselerator DevTools/reload)
+    // dengan menu produksi: kosong di Windows/Linux, minimal-berbasis-role di
+    // macOS. Lihat menuProduksi().
+    if (!DEV) Menu.setApplicationMenu(menuProduksi())
     registerIpc()
     createWindow()
     app.on('activate', () => {
@@ -445,13 +529,28 @@ if (!app.requestSingleInstanceLock()) {
   app.on('before-quit', (e) => {
     if (sedangKeluar) return // panggilan kedua (dipicu app.quit() di bawah) — biarkan lolos
     sedangKeluar = true
-    // Fix #31d: telemetriPending ikut ditunggu di sini sekarang, sama spt
-    // tulisan save — satu titik flush-on-quit, bukan dua mekanisme berbeda.
-    const tertunda = [...antreanTulis.values(), telemetriPending]
     e.preventDefault()
-    const semua = Promise.allSettled(tertunda.map((p) => p.catch(() => {})))
-    const batasWaktu = new Promise<void>((res) => setTimeout(res, 5000))
-    Promise.race([semua, batasWaktu]).then(() => {
+    // Renderer TETAP hidup & interaktif selama fase flush ini (mis. quit dari
+    // Dock macOS saat jendela masih terbuka), dan autosave dipicu hampir tiap
+    // aksi — tulisan baru bisa masuk antrean SETELAH snapshot diambil. Karena
+    // itu antrean disnapshot berulang sampai tak ada pekerjaan baru yang masuk
+    // selama satu putaran penungguan; `tulisanMasuk` yang menandainya.
+    // Fix #31d: telemetriPending ikut ditunggu di sini, sama spt tulisan save —
+    // satu titik flush-on-quit, bukan dua mekanisme berbeda.
+    const kuras = async (): Promise<void> => {
+      for (;;) {
+        const tanda = tulisanMasuk
+        const tertunda = [...antreanTulis.values(), telemetriPending]
+        await Promise.allSettled(tertunda.map((p) => p.catch(() => {})))
+        if (tulisanMasuk === tanda) return
+      }
+    }
+    let idBatas: NodeJS.Timeout | undefined
+    const batasWaktu = new Promise<void>((res) => {
+      idBatas = setTimeout(res, 5000)
+    })
+    Promise.race([kuras(), batasWaktu]).then(() => {
+      clearTimeout(idBatas)
       antreanTulis.clear()
       app.quit()
     })

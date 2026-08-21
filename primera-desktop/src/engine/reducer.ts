@@ -1715,7 +1715,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       if (cek) return err(s, cek)
       const terakhir = s.posyanduRwTerakhir[String(action.rw)]
       if (terakhir !== undefined && s.hari - terakhir < COOLDOWN_POSYANDU[s.mode]) {
-        return err(s, `Posyandu RW ${action.rw} baru digelar — jadwalnya bulanan (tiap 30 hari).`)
+        return err(
+          s,
+          `Posyandu RW ${action.rw} baru digelar — jadwal berikutnya ${COOLDOWN_POSYANDU[s.mode]} hari sejak sesi terakhir.`,
+        )
       }
       // Fix D5 (migrasi ILP, triase DeepThink 2026-07-11): kartuPosyandu() kini
       // menarik 1 kartu per Langkah 2/3/4 dari pool 12-kartu lintas-siklus-hidup
@@ -1865,6 +1868,11 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
     case 'AKSI_IGD': {
       const igd = s.igd
       if (!igd) return err(s, 'Tidak ada pasien IGD.')
+      // Penjaga fase sejajar RJP_IGD/STABILISASI_LANJUTAN_IGD/DISPOSISI_IGD:
+      // di fase 'kode_biru' `aksiIgd` early-return mengembalikan state UTUH
+      // (fase tetap 'kode_biru') — tanpa penjaga ini dispatch berulang lolos
+      // gerbang tally di bawah dan menghitung Kode Biru yang sama berkali-kali.
+      if (igd.fase !== 'langkah') return err(s, 'Bukan fase langkah IGD.')
       const kasus = pack.kasusIgd[igd.kasusId]
       if (!kasus) return err(s, 'Kasus IGD tidak dikenal.')
       const hasil = aksiIgd(igd, kasus, action.langkahId, action.pilihanId)
@@ -1941,11 +1949,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       const rs = action.rumahSakitId
         ? pack.rumahSakit.find((item) => item.id === action.rumahSakitId)
         : undefined
+      // Rujukan IGD adalah keputusan LENGKAP: "rujuk" + tujuan jejaring yang
+      // sanggup menangani kasusnya. Tanpa RS tujuan (tak dinyatakan, atau id
+      // yang tak ada di jejaring) tak ada yang bisa dicocokkan dgn
+      // spesialisRujukan/kapabilitas kasus — jadi rujukan itu TIDAK dihitung
+      // sebagai disposisi tepat, sejajar dgn tujuan yang salah pilih.
       const tujuanCocok =
-        action.jenis !== 'rujuk' ||
-        (rs
-          ? rumahSakitCocokUntukIgd(kasus, rs)
-          : (kasus.kapabilitasRujukanSalahSatu ?? []).length === 0)
+        action.jenis !== 'rujuk' || (rs !== undefined && rumahSakitCocokUntukIgd(kasus, rs))
       const nilaiDasar = nilaiIgd({ ...igd, hasil: 'stabil' }, kasus, action.jenis)
       const nilai = {
         ...nilaiDasar,
@@ -2059,7 +2069,13 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             : 'Debrief pemilihan tujuan dan batas kemampuan FKTP sebelum kasus berikutnya.',
           dueDay: null,
           ...(action.jenis === 'rujuk'
-            ? { referral: { stage: 'completed' as const, hospitalName: rsNama, note: 'Tujuan tidak sesuai' } }
+            ? {
+                referral: {
+                  stage: 'completed' as const,
+                  ...(rs ? { hospitalName: rs.nama } : {}),
+                  note: rs ? 'Tujuan tidak sesuai' : 'Tujuan rujukan tidak ditetapkan',
+                },
+              }
             : {}),
           eventLabel: nilai.disposisiTepat ? 'Episode IGD ditutup' : 'Episode IGD berakhir dengan near-miss',
           eventDetail: nilai.disposisiTepat ? 'Outcome dan disposisi tepat.' : 'Pasien selamat, tetapi disposisi keliru.',
@@ -2092,7 +2108,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
           : `IGD: disposisi ${igd.pasienNama} keliru`,
         isi: nilai.disposisiTepat
           ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
-          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? `${rsNama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
+          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? (rs ? `${rs.nama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : `rujukan diberangkatkan tanpa RS tujuan yang ditetapkan — ${kasus.nama} butuh jejaring yang sanggup menanganinya, bukan sekadar "dirujuk". Tetapkan tujuannya sebelum pasien berangkat.`) : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
         dibaca: false,
         kaitKasusIgdId: kasus.id,
       }
@@ -2591,6 +2607,7 @@ function lanjutkan(s: GameState, pack: ContentPack): HasilAdvance {
               catatan: `${pasienSkip.nama} — kemarin dilewatkan di antrian. ${kasusSkip.konsekuensi.kondisiKembali}`,
               nama: pasienSkip.nama,
               usia: pasienSkip.usia,
+              ...(pasienSkip.usiaBulan !== undefined ? { usiaBulan: pasienSkip.usiaBulan } : {}),
               jenisKelamin: pasienSkip.jenisKelamin,
               rw: pasienSkip.rw,
               bpjs: pasienSkip.bpjs,

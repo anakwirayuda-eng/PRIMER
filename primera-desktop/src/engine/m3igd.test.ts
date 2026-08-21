@@ -9,6 +9,7 @@ import type { Action } from './actions'
 import { advance } from './reducer'
 import { buildInitialState } from './init'
 import { hitungSkor } from './scoring'
+import { rumahSakitCocokUntukIgd } from './igd'
 import { serialize, deserialize } from './save'
 
 function base(igd?: IgdState): GameState {
@@ -26,6 +27,13 @@ function igdKasus(kasusId: string, stabilitas = 50): IgdState {
 }
 
 const KASUS = 'igd_syok_anafilaksis'
+/**
+ * Rujukan = "rujuk" + tujuan jejaring yang sanggup menerima kasusnya; engine
+ * tidak menghitung rujukan tanpa RS tujuan sebagai disposisi tepat (penjaga di
+ * `DISPOSISI_IGD`, diuji tersendiri di reducer.test.ts). Layar IGD juga
+ * mensyaratkan pilihan RS sebelum tombol Rujuk aktif.
+ */
+const RS_TUJUAN = PACK.rumahSakit.find((rs) => rumahSakitCocokUntukIgd(PACK.kasusIgd[KASUS]!, rs))!.id
 
 describe('M3.14 — alur IGD', () => {
   it('jawaban benar menstabilkan; tuntas semua langkah → fase disposisi', () => {
@@ -43,7 +51,7 @@ describe('M3.14 — alur IGD', () => {
     let s = base(igdKasus(KASUS))
     const kasus = PACK.kasusIgd[KASUS]!
     for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
-    s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+    s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
     expect(s.tally.igdStabil).toBe(1)
     expect(s.igd).toBeUndefined()
     expect(s.inbox.some((m) => m.dari.includes('Harsono') && m.jenis === 'pujian_kapus')).toBe(true)
@@ -136,7 +144,7 @@ describe('M3.14 — alur IGD', () => {
       expect(s.igd?.fase).toBe('disposisi')
       expect(s.igd?.stabilitas).toBe(55) // 25+30, melewati AMBANG_STABIL_RUJUK=50
 
-      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
       expect(s.tally.igdMeninggal).toBe(0)
       expect(s.tally.igdStabil).toBe(1)
       expect(s.igd).toBeUndefined()
@@ -148,7 +156,7 @@ describe('M3.14 — alur IGD', () => {
       const kasus = PACK.kasusIgd[KASUS]!
       for (const l of kasus.langkah) s = run(s, { type: 'AKSI_IGD', langkahId: l.id, pilihanId: l.pilihan.find((p) => p.benar)!.id })
       expect(s.igd!.stabilitas).toBeGreaterThanOrEqual(50)
-      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
       expect(s.tally.igdStabil).toBe(1)
       expect(s.tally.igdMeninggal).toBe(0)
     })

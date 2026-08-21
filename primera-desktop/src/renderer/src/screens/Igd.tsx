@@ -115,14 +115,17 @@ export function Igd() {
           </div>
         </div>
 
-        {/* Vital awal */}
+        {/* Vital awal. Guard `!== undefined`, BUKAN truthiness: 0 adalah nilai
+            vital yang sah dan justru paling menentukan (asfiksia neonatorum
+            rr 0 = apnea, alasan seluruh algoritme VTP). Truthiness menelan
+            chip-nya sekaligus menempelkan angka '0' telanjang ke strip. */}
         <div className="igd__vital mono">
-          {kasus.vitalAwal.td && <span>TD {kasus.vitalAwal.td}</span>}
-          {kasus.vitalAwal.nadi && <span>N {kasus.vitalAwal.nadi}×</span>}
-          {kasus.vitalAwal.rr && <span>RR {kasus.vitalAwal.rr}×</span>}
-          {kasus.vitalAwal.spo2 && <span>SpO₂ {kasus.vitalAwal.spo2}%</span>}
-          {kasus.vitalAwal.suhu && <span>S {kasus.vitalAwal.suhu}°</span>}
-          {kasus.vitalAwal.gds && <span>GDS {kasus.vitalAwal.gds}</span>}
+          {kasus.vitalAwal.td !== undefined && <span>TD {kasus.vitalAwal.td}</span>}
+          {kasus.vitalAwal.nadi !== undefined && <span>N {kasus.vitalAwal.nadi}×</span>}
+          {kasus.vitalAwal.rr !== undefined && <span>RR {kasus.vitalAwal.rr}×</span>}
+          {kasus.vitalAwal.spo2 !== undefined && <span>SpO₂ {kasus.vitalAwal.spo2}%</span>}
+          {kasus.vitalAwal.suhu !== undefined && <span>S {kasus.vitalAwal.suhu}°</span>}
+          {kasus.vitalAwal.gds !== undefined && <span>GDS {kasus.vitalAwal.gds}</span>}
         </div>
 
         {/* CODEX audit UI/UX 2026-07-10 (#7c): dulu hanya dirender di dalam

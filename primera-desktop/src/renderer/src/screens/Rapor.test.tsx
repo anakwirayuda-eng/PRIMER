@@ -113,6 +113,26 @@ describe('<Rapor />', () => {
     expect(screen.getByText(/Belum ada catatan/)).toBeInTheDocument()
   })
 
+  // Yang divalidasi saat load hanya KONTAINER refleksi; nilai per-entri bisa
+  // datang non-string dari save yang diedit tangan. Rapor satu-satunya konsumen
+  // yang memanggil method string atasnya, jadi crash-nya mengunci seluruh tab
+  // ini untuk save tersebut — setiap kali dibuka.
+  it('jurnal refleksi: nilai entri non-string dilewati, entri sah tetap terbaca', () => {
+    const state = buildInitialState('Uji Rapor', 1, PACK)
+    useGame.setState({
+      state: {
+        ...state,
+        refleksi: { 3: null, 4: 7, 5: 'Catatan yang sah.' } as unknown as typeof state.refleksi,
+      },
+    })
+
+    expect(() => render(<Rapor />)).not.toThrow()
+    expect(screen.getByText(/Jurnal Refleksi — 1 catatan/)).toBeInTheDocument()
+    expect(screen.getByText('Catatan yang sah.')).toBeInTheDocument()
+    expect(screen.queryByText('Hari 3')).not.toBeInTheDocument()
+    expect(screen.queryByText('Hari 4')).not.toBeInTheDocument()
+  })
+
   // Permukaan progres badge (2026-08-01): badge dulu HANYA terungkap di
   // LaporanAkhir pasca-tamat — pemain baru tahu "kurang satu lagi" ketika
   // skor sudah beku. Kini progresnya terlihat selagi masih bisa dikejar.

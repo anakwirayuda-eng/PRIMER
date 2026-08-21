@@ -364,6 +364,10 @@ export function MejaKerja() {
   // (useHotkeyNavigasi.ts): abaikan saat ada modifier, saat pemain mengetik,
   // dan saat modal [role="dialog"] mana pun terbuka (termasuk rekap slice,
   // Lokmin, dan DialogGame di layar ini — ketiganya role="dialog").
+  // Plus e.repeat (pola PanelHasil.tsx): hotkey 1-5 aman ditahan karena
+  // idempotent, sedangkan CTA di sini tidak — tiap ulangan auto-repeat
+  // menjalankan aksi ireversibel (LANJUTKAN + autosave) dgn label yang sudah
+  // berganti, jadi tombol yang tertahan bisa melewati satu blok penuh.
   // Gate alasanTabNonaktif tidak diperlukan: komponen ini hanya ter-mount
   // saat state.layar === 'meja' (routing App.tsx), dan listener ikut lepas
   // saat unmount — tak mungkin menembus layar lain. Ref menjaga aksi CTA
@@ -374,7 +378,7 @@ export function MejaKerja() {
   })
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.defaultPrevented || e.ctrlKey || e.altKey || e.metaKey) return
+      if (e.defaultPrevented || e.repeat || e.ctrlKey || e.altKey || e.metaKey) return
       if (e.key !== 'l' && e.key !== 'L') return
       if (sedangMengetik(document.activeElement)) return
       if (document.querySelector('[role="dialog"]') !== null) return
@@ -387,7 +391,18 @@ export function MejaKerja() {
 
   /* -- Debrief sore & rekap slice ------------------------------------------------ */
 
-  const debrief = state.blok === 'sore' ? ringkasanHarian(state) : null
+  // Entri `selesaiHariIni` tak disaring per-item di hulu seperti antrian, padahal
+  // debrief men-dereference tiap fieldnya (ringkasanHarian + chip pasien di
+  // bawah) — satu entri korup dari save yang diedit tangan menjatuhkan seluruh
+  // layar hub, termasuk satu-satunya jalur mengakhiri hari.
+  const selesaiHariIni = useMemo(() => {
+    const daftar = state.klinik.selesaiHariIni
+    return Array.isArray(daftar) ? daftar.filter((p) => p !== null && typeof p === 'object') : []
+  }, [state.klinik.selesaiHariIni])
+  const debrief =
+    state.blok === 'sore'
+      ? ringkasanHarian({ ...state, klinik: { ...state.klinik, selesaiHariIni } })
+      : null
   const episodeAktif = state.careEpisodes.some(
     (episode) => episode.status !== 'terverifikasi' && episode.status !== 'berakhir',
   )
@@ -593,7 +608,7 @@ export function MejaKerja() {
             <h3 className="mk__sub-judul mono">ANTRIAN POLI HARI INI</h3>
             {antrianN === 0 ? (
               <p className="mk__kosong teks-lembut teks-kecil">
-                {state.klinik.selesaiHariIni.length > 0
+                {selesaiHariIni.length > 0
                   ? 'Semua pasien yang perlu kamu periksa hari ini sudah selesai. Kerja bagus.'
                   : 'Pagi ini belum ada pasien yang perlu kamu periksa.'}
               </p>
@@ -888,14 +903,14 @@ export function MejaKerja() {
               </span>
               <div className="kolom mk__debrief-tally">
                 <span className="teks-kecil">
-                  Pasien selesai diperiksa: <strong className="mono">{state.klinik.selesaiHariIni.length}</strong>
+                  Pasien selesai diperiksa: <strong className="mono">{selesaiHariIni.length}</strong>
                   {state.klinik.autoHariIni.jumlah > 0 && (
                     <span className="teks-lembut"> (+{state.klinik.autoHariIni.jumlah} dilewati, ditangani instingmu)</span>
                   )}
                 </span>
-                {state.klinik.selesaiHariIni.length > 0 && (
+                {selesaiHariIni.length > 0 && (
                   <span className="baris mk__debrief-pasien">
-                    {state.klinik.selesaiHariIni.map((p, i) => (
+                    {selesaiHariIni.map((p, i) => (
                       // Audit Q6 (2026-07-23): tooltip dulu menampilkan kasusId
                       // internal mentah ("lab_anafilaksis_makanan") — ganti nama
                       // kasus manusiawi. Aman anti-bocor: encounter sudah

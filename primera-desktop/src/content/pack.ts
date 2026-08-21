@@ -460,6 +460,27 @@ export function validasiPack(pack: ContentPack): string[] {
       }
       if (adaObat && !pack.obat[tk]) masalah.push(`Kasus ${k.id}: terapiKritis obat '${tk}' tidak ada di formularium`)
       if (adaProsedur && !pack.tindakan[tk]) masalah.push(`Kasus ${k.id}: terapiKritis tindakan '${tk}' tidak ada di katalog`)
+      // Gerbang `terapiKritisTerlewat` (clinic.ts) mencocokkan id MENTAH ke
+      // enc.resep/enc.tindakan — ia tidak pernah membaca pergeseran standar
+      // emas saat trap menyala, padahal pasien kasus ber-trap SELALU membawa
+      // alergi/faktor risikonya (director.ts). Terapi kritis yang bertabrakan
+      // dgn trap membuat gerbang mustahil dipenuhi tanpa hukuman untuk SETIAP
+      // pemain: obat sekelas alergi diblokir firewall sebelum masuk resep (cap
+      // D dijamin walau alternatif yang benar diresepkan), sedangkan obat
+      // terlarang interaksi baru memuaskan gerbang dgn harga kontraindikasi
+      // absolut (cap D juga). Selektabilitas di atas tak menangkapnya: obat
+      // terlarang trap justru WAJIB terdaftar di obatBenar/alternatif.
+      const obatKritis = pack.obat[tk]
+      if (
+        k.alergiTrap &&
+        (k.alergiTrap.obatTerlarang.includes(tk) ||
+          (obatKritis?.golonganAlergi ?? '').toLowerCase() === k.alergiTrap.kelas.toLowerCase())
+      ) {
+        masalah.push(`Kasus ${k.id}: terapiKritis '${tk}' terlarang oleh alergiTrap '${k.alergiTrap.kelas}' — firewall memblokirnya, gerbang terapi kritis mustahil dipenuhi`)
+      }
+      if (k.interaksiTrap?.obatTerlarang.includes(tk)) {
+        masalah.push(`Kasus ${k.id}: terapiKritis '${tk}' juga terlarang oleh interaksiTrap '${k.interaksiTrap.faktor}' — wajib sekaligus kontraindikasi absolut`)
+      }
     }
     for (const item of k.tatalaksana.tindakanSalahUmum ?? []) {
       if (!pack.tindakan[item.id]) masalah.push(`Kasus ${k.id}: tindakan salah '${item.id}' tidak ada di katalog`)
@@ -512,6 +533,18 @@ export function validasiPack(pack: ContentPack): string[] {
       for (const f of k.pemeriksaanFisik) {
         regionHitungan.set(f.region, (regionHitungan.get(f.region) ?? 0) + 1)
       }
+      // Pertanyaan pengungkap trap: satu-satunya kanal in-game yang memberi
+      // tahu pemain bahwa pasien membawa alergi kelas jebakan (pasien kasus
+      // ber-alergiTrap SELALU membawanya, director.ts). Varian presentasi
+      // adalah lapisan KOSMETIK — menimpa jawaban pertanyaan itu memindahkan
+      // kunci jawaban: jawaban pengganti bisa MENYANGKAL alergi yang tetap
+      // dibawa pasien, lalu pemain yang bernalar benar dari apa yang ia dengar
+      // dihukum firewall + pergeseran standar emas (clinic.ts).
+      const idPengungkapTrap = new Set(
+        k.alergiTrap
+          ? k.anamnesis.filter((q) => q.tanya.toLowerCase().includes('alergi')).map((q) => q.id)
+          : [],
+      )
       const idVarianTerpakai = new Set<string>()
       for (const v of k.varianPresentasi) {
         if (v.id === '_dasar') {
@@ -524,6 +557,8 @@ export function validasiPack(pack: ContentPack): string[] {
         for (const idQ of Object.keys(v.jawabanBerubah ?? {})) {
           if (!idAnamnesisAda.has(idQ)) {
             masalah.push(`Kasus ${k.id}: varian '${v.id}' jawabanBerubah mengacu id pertanyaan '${idQ}' yang tak ada di anamnesis dasar`)
+          } else if (idPengungkapTrap.has(idQ)) {
+            masalah.push(`Kasus ${k.id}: varian '${v.id}' menimpa jawaban pertanyaan alergi '${idQ}' — riwayat alergi kasus ber-alergiTrap adalah kunci jawaban, bukan presentasi kosmetik`)
           }
         }
         for (const region of Object.keys(v.temuanBerubah ?? {})) {

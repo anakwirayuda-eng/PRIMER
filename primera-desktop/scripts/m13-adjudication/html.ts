@@ -87,7 +87,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
     .metric span { display: block; color: var(--muted); font-size: .78rem; margin-top: .2rem; }
     .toolbar-wrap { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 94%, transparent); border-bottom: 1px solid var(--line); backdrop-filter: blur(8px); }
     .toolbar { width: min(1180px, calc(100% - 2rem)); margin: 0 auto; padding: .75rem 0; display: grid; gap: .65rem; }
-    .filters { display: grid; grid-template-columns: minmax(13rem, 2fr) repeat(4, minmax(8rem, 1fr)); gap: .55rem; }
+    .filters { display: grid; grid-template-columns: minmax(13rem, 2fr) repeat(5, minmax(8rem, 1fr)); gap: .55rem; }
     .actions { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; }
     input, select, textarea { width: 100%; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: .65rem .75rem; }
     button, .file-label { display: inline-flex; align-items: center; justify-content: center; gap: .35rem; color: var(--ink); background: var(--surface); border: 1px solid var(--line); border-radius: 4px; padding: .55rem .8rem; cursor: pointer; text-decoration: none; }
@@ -107,6 +107,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
     .case-card { background: var(--surface); border: 1px solid var(--line); border-left: 6px solid var(--accent); box-shadow: var(--shadow); margin-bottom: 1rem; padding: 1rem 1.1rem; scroll-margin-top: 15rem; }
     .case-card[data-suggestion="perlu-koreksi"] { border-left-color: var(--warn); }
     .case-card[data-suggestion="tak-ada-sumber"] { border-left-color: var(--danger); }
+    .case-card[data-approved="true"] { border-left-color: var(--accent-strong); background: color-mix(in srgb, var(--accent-soft) 30%, var(--surface)); }
     .case-head { display: grid; grid-template-columns: 1fr auto; gap: 1rem; align-items: start; }
     .case-head h2 { font-size: 1.12rem; margin: 0 0 .25rem; line-height: 1.35; }
     .case-id { color: var(--muted); font: .78rem ui-monospace, Consolas, monospace; overflow-wrap: anywhere; }
@@ -194,6 +195,8 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       <div class="scope-alert"><strong>Rekonsiliasi lingkup:</strong> ${data.scope.reconciliation}</div>
       <div class="summary-grid" aria-label="Ringkasan inventaris">
         <div class="metric"><strong>${data.scope.actualCaseCount}</strong><span>kasus aktual</span></div>
+        <div class="metric"><strong>${data.summary.physicianApproved}</strong><span>sudah ditandatangani dokter</span></div>
+        <div class="metric"><strong>${data.summary.pendingReview}</strong><span>menunggu adjudikasi</span></div>
         <div class="metric"><strong>${data.summary.ppkDirect}</strong><span>PPK langsung</span></div>
         <div class="metric"><strong>${data.summary.ppkRelated}</strong><span>PPK terkait</span></div>
         <div class="metric"><strong>${data.summary.ppkAbsent}</strong><span>tanpa crosswalk PPK</span></div>
@@ -212,7 +215,8 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         <select id="category" aria-label="Filter kategori"><option value="">Semua kategori</option></select>
         <select id="skdi" aria-label="Filter SKDI"><option value="">Semua SKDI</option></select>
         <select id="suggestion" aria-label="Filter saran kompilator"><option value="">Semua saran</option><option value="cocok">Cocok</option><option value="perlu-koreksi">Perlu koreksi</option><option value="tak-ada-sumber">Tak ada sumber</option></select>
-        <select id="decision-filter" aria-label="Filter keputusan dokter"><option value="">Semua keputusan</option><option value="belum">Belum diputuskan</option><option value="setuju">Setuju</option><option value="perlu-edit">Perlu edit</option><option value="tolak">Tolak</option><option value="nanti">Nanti</option></select>
+        <select id="approval" aria-label="Filter status tanda tangan dokter"><option value="">Semua status tanda tangan</option><option value="menunggu">Menunggu adjudikasi</option><option value="disetujui">Sudah ditandatangani dokter</option></select>
+        <select id="decision-filter" aria-label="Filter keputusan sesi ini"><option value="">Semua keputusan</option><option value="belum">Belum diputuskan</option><option value="setuju">Setuju</option><option value="perlu-edit">Perlu edit</option><option value="tolak">Tolak</option><option value="nanti">Nanti</option></select>
       </div>
       <div class="reviewer" aria-label="Identitas reviewer">
         <input id="reviewer-name" type="text" placeholder="Nama reviewer" aria-label="Nama reviewer">
@@ -220,7 +224,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         <input id="review-date" type="date" aria-label="Tanggal review">
       </div>
       <div class="actions">
-        <button class="primary" type="button" id="next-undecided">Kasus belum diputuskan berikutnya</button>
+        <button class="primary" type="button" id="next-undecided">Kasus menunggu adjudikasi berikutnya</button>
         <button type="button" id="export-json">Ekspor JSON</button>
         <label class="file-label" for="import-json">Impor JSON</label>
         <input class="visually-hidden" id="import-json" type="file" accept="application/json,.json">
@@ -263,6 +267,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
     const LABEL = { cocok: 'Cocok', 'perlu-koreksi': 'Perlu koreksi', 'tak-ada-sumber': 'Tak ada sumber' }
     const DECISION_LABEL = { setuju: 'Setuju', 'perlu-edit': 'Perlu edit', tolak: 'Tolak', nanti: 'Nanti' }
     const el = (id) => document.getElementById(id)
+    const isApproved = (item) => item.reviewStatus === 'physician_approved'
     let page = 1
     let state = loadState()
 
@@ -318,8 +323,8 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
     function ebmBlock(item) {
       const group = item.evidence.ebm
       if (!group.sources.length) return '<p>' + fmtStatus(group.status) + '</p><p class="limitation">' + esc(group.limitation) + '</p>'
-      return '<p>' + fmtStatus(group.status) + '</p>' + group.sources.map((source) => '<div class="source"><div class="source-title">' + esc(source.title) + ' Â· ' + esc(source.relation.toUpperCase()) + '</div>' +
-        '<div class="limitation">' + esc(source.authority + ' Â· ' + source.year) + '</div>' +
+      return '<p>' + fmtStatus(group.status) + '</p>' + group.sources.map((source) => '<div class="source"><div class="source-title">' + esc(source.title) + ' · ' + esc(source.relation.toUpperCase()) + '</div>' +
+        '<div class="limitation">' + esc(source.authority + ' · ' + source.year) + '</div>' +
         '<a href="' + esc(source.officialUrl) + '" target="_blank" rel="noreferrer">Buka sumber primer</a>' +
         '<p><strong>Locator:</strong> ' + esc(source.locator) + '</p>' +
         '<p class="limitation">' + esc(source.population + '. ' + source.facilityScope) + '</p>' +
@@ -340,9 +345,10 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       const findingClass = item.compiler.suggestion === 'cocok' ? 'good' : item.compiler.suggestion === 'tak-ada-sumber' ? 'bad' : ''
       const drugs = [...item.currentManagement.requiredDrugs, ...item.currentManagement.alternativeDrugs.flat(), ...item.currentManagement.optionalDrugs]
       const choices = ['setuju', 'perlu-edit', 'tolak', 'nanti'].map((value) => '<div class="decision-option"><input type="radio" name="decision-' + esc(item.id) + '" id="decision-' + esc(item.id) + '-' + value + '" value="' + value + '" ' + (decision.value === value ? 'checked' : '') + '><label for="decision-' + esc(item.id) + '-' + value + '">' + DECISION_LABEL[value] + '</label></div>').join('')
-      return '<article class="case-card" id="case-' + esc(item.id) + '" data-suggestion="' + esc(item.compiler.suggestion) + '">' +
-        '<div class="case-head"><div><h2>' + item.ordinal + '. ' + esc(item.name) + '</h2><div class="case-id">' + esc(item.id) + '</div></div><div class="badges"><span class="badge">' + esc(item.icd10) + '</span><span class="badge">SKDI ' + esc(item.skdi) + '</span><span class="badge">' + esc(item.category) + '</span>' + (item.mustRefer ? '<span class="badge warn">Rujuk</span>' : '<span class="badge good">Kelola FKTP</span>') + '</div></div>' +
+      return '<article class="case-card" id="case-' + esc(item.id) + '" data-suggestion="' + esc(item.compiler.suggestion) + '"' + (isApproved(item) ? ' data-approved="true"' : '') + '>' +
+        '<div class="case-head"><div><h2>' + item.ordinal + '. ' + esc(item.name) + '</h2><div class="case-id">' + esc(item.id) + '</div></div><div class="badges">' + (isApproved(item) ? '<span class="badge good">Disetujui dokter</span>' : '') + '<span class="badge">' + esc(item.icd10) + '</span><span class="badge">SKDI ' + esc(item.skdi) + '</span><span class="badge">' + esc(item.category) + '</span>' + (item.mustRefer ? '<span class="badge warn">Rujuk</span>' : '<span class="badge good">Kelola FKTP</span>') + '</div></div>' +
         '<p class="case-meta">' + esc(item.demographics) + ' · fktp144=' + esc(item.fktp144) + '</p><p class="complaint"><strong>Pembuka:</strong> ' + esc(item.openingComplaint) + '</p>' +
+        (isApproved(item) ? '<div class="finding good"><strong>Sudah ditandatangani dokter</strong><span>Keputusan final beserta catatan editnya ada di <code>docs/M13_137_DECISION_LOG.md</code>. Jangan diadjudikasi ulang kecuali audit baru menemukan koreksi.</span></div>' : '') +
         '<div class="finding ' + findingClass + '"><strong>Saran kompilator: ' + esc(LABEL[item.compiler.suggestion]) + '</strong>' + (item.compiler.reasons.length ? '<ul>' + item.compiler.reasons.map((reason) => '<li>' + esc(reason) + '</li>').join('') + '</ul>' : '<span>Tidak ada red flag provenance otomatis. Ini belum merupakan persetujuan klinis.</span>') + '</div>' +
         '<details><summary>Tatalaksana runtime saat ini</summary><div class="detail-body columns"><section class="section"><h3>Obat</h3>' + drugRows(drugs) + '</section><section class="section"><h3>Tindakan</h3>' + list(item.currentManagement.procedures, (x) => '<strong>' + esc(x.name) + '</strong><span class="locator">' + esc(x.id) + '</span>') + '<h3>Edukasi</h3>' + list(item.currentManagement.education, (x) => esc(x.name) + (x.critical ? ' <strong>(kritis)</strong>' : '') + '<span class="locator">' + esc(x.id) + '</span>') + '<h3>Lab relevan</h3>' + list(item.currentManagement.relevantLabs, (x) => '<strong>' + esc(x.name) + ':</strong> ' + esc(x.result) + '<span class="locator">' + esc(x.id) + '</span>') + '</section></div></details>' +
         '<details><summary>PPK 1186/2022</summary><div class="detail-body">' + ppkBlock(item) + '</div></details>' +
@@ -354,17 +360,18 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
         '<section class="decision"><fieldset><legend>Keputusan dokter untuk kasus ini</legend><div class="decision-options">' + choices + '</div></fieldset><label class="visually-hidden" for="note-' + esc(item.id) + '">Catatan keputusan ' + esc(item.name) + '</label><textarea id="note-' + esc(item.id) + '" placeholder="Catatan, koreksi, sumber tambahan, atau syarat waiver...">' + esc(decision.note || '') + '</textarea><div class="saved" id="saved-' + esc(item.id) + '">' + (decision.updatedAt ? 'Tersimpan ' + esc(decision.updatedAt) : '') + '</div></section></article>'
     }
     function searchable(item) {
-      return [item.id, item.name, item.icd10, item.category, item.skdi, item.openingComplaint, ...item.currentManagement.requiredDrugs.map((x) => x.name), ...item.currentManagement.optionalDrugs.map((x) => x.name)].join(' ').toLowerCase()
+      return [item.id, item.name, item.icd10, item.category, item.skdi, item.openingComplaint, ...item.currentManagement.requiredDrugs.map((x) => x.name), ...item.currentManagement.alternativeDrugs.flat().map((x) => x.name), ...item.currentManagement.optionalDrugs.map((x) => x.name)].join(' ').toLowerCase()
     }
     function filteredCases() {
       const query = el('search').value.trim().toLowerCase()
       const category = el('category').value
       const skdi = el('skdi').value
       const suggestion = el('suggestion').value
+      const approval = el('approval').value
       const decision = el('decision-filter').value
       return DATA.cases.filter((item) => {
         const current = state.decisions[item.id]?.value || 'belum'
-        return (!query || searchable(item).includes(query)) && (!category || item.category === category) && (!skdi || item.skdi === skdi) && (!suggestion || item.compiler.suggestion === suggestion) && (!decision || current === decision)
+        return (!query || searchable(item).includes(query)) && (!category || item.category === category) && (!skdi || item.skdi === skdi) && (!suggestion || item.compiler.suggestion === suggestion) && (!approval || isApproved(item) === (approval === 'disetujui')) && (!decision || current === decision)
       })
     }
     function render() {
@@ -401,7 +408,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       const decided = DATA.cases.filter((item) => state.decisions[item.id]?.value).length
       const percent = Math.round(decided / DATA.cases.length * 100)
       el('progress-fill').style.width = percent + '%'
-      el('progress-label').textContent = decided + '/' + DATA.cases.length + ' diputuskan (' + percent + '%)'
+      el('progress-label').textContent = decided + '/' + DATA.cases.length + ' diputuskan sesi ini (' + percent + '%) · ' + DATA.summary.physicianApproved + ' kasus sudah ditandatangani dokter sebelumnya, ' + DATA.summary.pendingReview + ' menunggu'
       el('progress-fill').parentElement.setAttribute('aria-valuenow', String(decided))
     }
     function fillFilters() {
@@ -422,7 +429,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       const payload = {
         schema: 'primera.m13-137-physician-decisions.v1',
         exportedAt: new Date().toISOString(),
-        dataset: { artifactFingerprint: DATA.artifactFingerprint, packFingerprint: DATA.packFingerprint, contentRelease: DATA.contentRelease, engineRevision: DATA.engineRevision, sourceCommit: DATA.sourceCommit, caseCount: DATA.cases.length },
+        dataset: { artifactFingerprint: DATA.artifactFingerprint, packFingerprint: DATA.packFingerprint, contentRelease: DATA.contentRelease, engineRevision: DATA.engineRevision, sourceCommit: DATA.sourceCommit, caseCount: DATA.cases.length, physicianApproved: DATA.summary.physicianApproved },
         reviewer: state.reviewer,
         summary: Object.fromEntries(['setuju', 'perlu-edit', 'tolak', 'nanti', 'belum'].map((value) => [value, DATA.cases.filter((item) => (state.decisions[item.id]?.value || 'belum') === value).length])),
         decisions: DATA.cases.map((item) => ({ caseId: item.id, decision: state.decisions[item.id]?.value || null, note: state.decisions[item.id]?.note || '', updatedAt: state.decisions[item.id]?.updatedAt || null })),
@@ -446,7 +453,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
       persist(); applyPreferences(); render()
     }
     fillFilters(); applyPreferences(); render()
-    ;['search', 'category', 'skdi', 'suggestion', 'decision-filter'].forEach((id) => el(id).addEventListener(id === 'search' ? 'input' : 'change', () => { page = 1; render() }))
+    ;['search', 'category', 'skdi', 'suggestion', 'approval', 'decision-filter'].forEach((id) => el(id).addEventListener(id === 'search' ? 'input' : 'change', () => { page = 1; render() }))
     ;['reviewer-name', 'reviewer-credential', 'review-date'].forEach((id) => el(id).addEventListener('input', () => {
       state.reviewer = { name: el('reviewer-name').value, credential: el('reviewer-credential').value, date: el('review-date').value }
       persist()
@@ -454,7 +461,7 @@ export function renderAdjudicationHtml(data: AdjudicationDataset): string {
     el('prev-page').addEventListener('click', () => { page--; render(); el('case-list').focus() })
     el('next-page').addEventListener('click', () => { page++; render(); el('case-list').focus() })
     el('next-undecided').addEventListener('click', () => {
-      el('decision-filter').value = 'belum'; el('search').value = ''; page = 1
+      el('decision-filter').value = 'belum'; el('approval').value = 'menunggu'; el('search').value = ''; page = 1
       const cases = filteredCases(); const first = cases[0]
       render(); if (first) document.getElementById('case-' + first.id)?.scrollIntoView({ block: 'start' })
     })

@@ -123,9 +123,6 @@ export function DexSkdi() {
   const jumlahTersertifikasi = entriDex.filter((d) => d.benar >= 1).length
   const jumlahDikuasai = entriDex.filter((d) => d.bintang >= 3).length
   const jumlahBelum = TOTAL_ENTRI - jumlahDijumpai
-  // Metrik "utama" = tersertifikasi (jujur: benar-benar pernah tepat), bukan
-  // sekadar berjumpa. Meter progres ikut ini.
-  const jumlahDikenal = jumlahTersertifikasi
 
   // Reuse pola cariLab/daftarLab/cocokLab (DeckPemeriksaan.tsx) — normalisasi
   // toleran-ejaan yang sama, bukan pencocokan case-insensitive baru.
@@ -485,10 +482,13 @@ export function DexSkdi() {
                 Pilih entri yang sudah dikenali untuk membuka catatanmu: kode ICD-10,
                 riwayat penanganan, dan mutiara klinisnya.
               </p>
+              {/* "Terbuka" di layar ini = siluet ??? sudah terungkap, yaitu
+                  DIJUMPAI (kartu benar===0 pun terbuka & bisa diklik) — bukan
+                  tersertifikasi, yang dipakai meter progres di header. */}
               <p className="teks-xs teks-lembut dexskdi-detail__hint mono">
-                {jumlahDikenal === 0
+                {jumlahDijumpai === 0
                   ? 'Belum ada entri terbuka — mulailah dari antrian pagi.'
-                  : `${jumlahDikenal} entri sudah terbuka.`}
+                  : `${jumlahDijumpai} entri sudah terbuka.`}
               </p>
             </div>
           )}

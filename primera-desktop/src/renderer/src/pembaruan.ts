@@ -32,29 +32,67 @@ export interface InfoPembaruan {
   judul: string
 }
 
+interface VersiTerpecah {
+  /** major.minor.patch */
+  inti: number[]
+  /** Identifier prarilis; null = rilis final (lebih baru dari prarilis mana pun). */
+  pra: (string | number)[] | null
+}
+
+function pecahVersi(v: string): VersiTerpecah {
+  // Metadata build (+sesuatu) tak ikut menentukan urutan versi.
+  const bersih = (v.trim().replace(/^v/i, '').split('+')[0] ?? '')
+  const batas = bersih.indexOf('-')
+  const inti = (batas === -1 ? bersih : bersih.slice(0, batas))
+    .split('.')
+    .map((n) => Number.parseInt(n, 10) || 0)
+  const praMentah = batas === -1 ? '' : bersih.slice(batas + 1)
+  const pra =
+    praMentah === ''
+      ? null
+      : praMentah.split('.').map((id) => (/^\d+$/.test(id) ? Number.parseInt(id, 10) : id))
+  return { inti, pra }
+}
+
 /**
  * Bandingkan dua versi semver-dengan-prerelease (mis. 1.1.0-beta.9 vs
  * 1.1.0-beta.10). Mengembalikan true bila `kandidat` LEBIH BARU dari `sekarang`.
  *
  * Perbandingan string biasa GAGAL di sini: "beta.9" > "beta.10" secara
  * leksikografis, padahal beta.10 yang lebih baru — persis kasus rilis ini.
+ *
+ * Sebaliknya, membandingkan ANGKAnya saja juga gagal begitu skema penamaan
+ * berganti: 1.1.0-rc.1 vs 1.1.0-beta.19 akan terbaca 1 vs 19 sehingga rc
+ * dianggap lebih lama. Karena itu identifier prarilis dibandingkan sesuai
+ * semver §11: per segmen, angka secara numerik, teks secara leksikografis,
+ * angka selalu di bawah teks, dan yang segmennya lebih sedikit lebih rendah.
  */
 export function lebihBaru(kandidat: string, sekarang: string): boolean {
-  const pecah = (v: string): number[] => {
-    const bersih = v.trim().replace(/^v/i, '')
-    const [inti = '', pra = ''] = bersih.split('-')
-    const angkaInti = inti.split('.').map((n) => Number.parseInt(n, 10) || 0)
-    // Rilis final > prarilis pada inti yang sama: tandai dgn Infinity.
-    const angkaPra = pra === '' ? [Number.POSITIVE_INFINITY] : (pra.match(/\d+/g) ?? ['0']).map((n) => Number.parseInt(n, 10))
-    return [...angkaInti, ...angkaPra]
-  }
-  const a = pecah(kandidat)
-  const b = pecah(sekarang)
-  const n = Math.max(a.length, b.length)
+  const a = pecahVersi(kandidat)
+  const b = pecahVersi(sekarang)
+
+  const n = Math.max(a.inti.length, b.inti.length)
   for (let i = 0; i < n; i++) {
-    const x = a[i] ?? 0
-    const y = b[i] ?? 0
+    const x = a.inti[i] ?? 0
+    const y = b.inti[i] ?? 0
     if (x !== y) return x > y
+  }
+
+  // Inti sama: rilis final mengalahkan prarilis.
+  if (a.pra === null || b.pra === null) return a.pra === null && b.pra !== null
+
+  const m = Math.max(a.pra.length, b.pra.length)
+  for (let i = 0; i < m; i++) {
+    const x = a.pra[i]
+    const y = b.pra[i]
+    if (x === undefined) return false // "beta" < "beta.1"
+    if (y === undefined) return true
+    if (x === y) continue
+    if (typeof x === 'number' && typeof y === 'number') return x > y
+    // Segmen angka selalu lebih rendah dari segmen teks.
+    if (typeof x === 'number') return false
+    if (typeof y === 'number') return true
+    return x > y
   }
   return false
 }

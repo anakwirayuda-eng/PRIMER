@@ -12,6 +12,8 @@ import { serialize, deserialize } from './save'
 import { advance } from './reducer'
 import { buatEncounter } from './clinic'
 import { buatPasienDariKasus } from './director'
+import { driftProlanis } from './kegiatan'
+import { ringkasanHarian } from './scoring'
 import { Rng } from './core/rng'
 
 const SEED = 777
@@ -332,6 +334,9 @@ describe('deserialize — flags/refleksi/desa.kader/prolanis.roster (CODEX ronde
     expect(hasil).not.toBeNull()
     expect(hasil.prolanis.roster).toHaveLength(1)
     expect(hasil.prolanis.roster[0]?.id).toBe('p1')
+    // Fixture di atas sengaja tanpa `takTerkontrolBerturut` (peserta save lama):
+    // entri TETAP dipertahankan, tapi fieldnya wajib terisi angka.
+    expect(hasil.prolanis.roster[0]?.takTerkontrolBerturut).toBe(0)
   })
 })
 
@@ -748,5 +753,330 @@ describe('deserialize — pemulihan kegiatan korup & IGD langkahIndex di luar ba
     const hasil = deserialize(json, PACK)!
     expect(hasil.igd).not.toBeUndefined()
     expect(hasil.igd!.langkahIndex).toBe(0)
+  })
+})
+
+describe('deserialize — sesi non-objek truthy (bug hunt 2026-08-21)', () => {
+  it('igd berupa string dikosongkan — LANJUTKAN tak lagi ditolak "Pasien IGD menunggumu"', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['igd'] = 'rusak'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.igd).toBeUndefined()
+    const setelah = advance(hasil, { type: 'LANJUTKAN' }, PACK)
+    expect(setelah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+
+  it('kegiatan berupa string dikosongkan — PINDAH_LAYAR tak lagi terkunci selamanya', () => {
+    const s: GameState = { ...buildInitialState('Uji', SEED, PACK), hari: 2 }
+    const json = rusak(serialize(s), (st) => {
+      st['kegiatan'] = 'rusak'
+      st['layar'] = 'kegiatan'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kegiatan).toBeUndefined()
+    // layar sesi yang sudah tak ada ikut dikembalikan ke meja kerja.
+    expect(hasil.layar).toBe('meja')
+    const setelahPindah = advance(hasil, { type: 'PINDAH_LAYAR', layar: 'peta' }, PACK)
+    expect(setelahPindah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+    expect(setelahPindah.state.layar).toBe('peta')
+  })
+
+  it('kunjungan (angka) & klinik.aktif (string) dikosongkan — hari tetap bisa dilanjutkan', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = 7
+      ;(st['klinik'] as Record<string, unknown>)['aktif'] = 'rusak'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).toBeUndefined()
+    expect(hasil.klinik.aktif).toBeUndefined()
+    const setelah = advance(hasil, { type: 'LANJUTKAN' }, PACK)
+    expect(setelah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+
+  it('sesi OBJEK yang sah tetap tak tersentuh (regresi guard)', () => {
+    const s: GameState = {
+      ...buildInitialState('Uji', SEED, PACK),
+      kegiatan: {
+        jenis: 'posyandu',
+        rw: 1,
+        kartu: [{ id: 'k1', judul: 'X', narasi: 'Y', pilihan: [{ id: 'p1', label: 'A', benar: true, respons: 'ok' }] }],
+        index: 0,
+        jawaban: [],
+      },
+    }
+    const hasil = deserialize(serialize(s), PACK)!
+    expect(hasil.kegiatan).not.toBeUndefined()
+    expect(hasil.layar).toBe('kegiatan')
+  })
+})
+
+describe('deserialize — babak kunjungan aktif (bug hunt 2026-08-21)', () => {
+  const kelId = Object.keys(PACK.keluarga)[0]!
+  const skenario = PACK.keluarga[kelId]!.arc.kunjungan[0]!
+
+  /** Kunjungan aktif sah, dengan field internal yang bisa dirusak per-test. */
+  function kunjunganTersimpan(ubah: Record<string, unknown> = {}): Record<string, unknown> {
+    return {
+      keluargaId: kelId,
+      skenarioId: skenario.id,
+      fase: 'observasi',
+      hotspotDitemukan: [],
+      dialogIndex: 0,
+      pilihanDiambil: [],
+      trustDelta: 0,
+      konfrontasiBeruntun: 0,
+      diusir: false,
+      ...ubah,
+    }
+  }
+
+  it('fase di luar enum dipulihkan (bukan dead-end "Babak tidak dikenal" permanen)', () => {
+    const s: GameState = { ...buildInitialState('Uji', SEED, PACK), hari: 2 }
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = kunjunganTersimpan({ fase: 'fase_hantu' })
+      st['layar'] = 'kunjungan'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).toBeUndefined()
+    expect(hasil.layar).not.toBe('kunjungan')
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kunjungan_'))).toBe(true)
+    const setelah = advance(hasil, { type: 'LANJUTKAN' }, PACK)
+    expect(setelah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+  })
+
+  it('fase "selesai" (tak pernah dipersist reducer) juga dipulihkan', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = kunjunganTersimpan({ fase: 'selesai' })
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).toBeUndefined()
+    expect(hasil.inbox.some((m) => m.id.startsWith('surat_pemulihan_kunjungan_'))).toBe(true)
+  })
+
+  it('array & indeks internal korup dibackfill — KLIK_HOTSPOT tetap bekerja, kunjungan tak dibuang', () => {
+    const hotspotId = skenario.hotspot[0]!.id
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = kunjunganTersimpan({
+        hotspotDitemukan: null,
+        pilihanDiambil: null,
+        dialogIndex: -3,
+        trustDelta: 'banyak',
+        diusir: 'ya',
+      })
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan).not.toBeUndefined()
+    expect(hasil.kunjungan!.hotspotDitemukan).toEqual([])
+    expect(hasil.kunjungan!.pilihanDiambil).toEqual([])
+    expect(hasil.kunjungan!.dialogIndex).toBe(0)
+    expect(hasil.kunjungan!.trustDelta).toBe(0)
+    expect(hasil.kunjungan!.diusir).toBe(false)
+
+    const setelah = advance(hasil, { type: 'KLIK_HOTSPOT', hotspotId }, PACK)
+    expect(setelah.events.some((e) => e.type === 'ERROR_AKSI')).toBe(false)
+    expect(setelah.state.kunjungan!.hotspotDitemukan).toContain(hotspotId)
+  })
+
+  it('kunjungan sah dgn progres nyata tidak diseragamkan (regresi guard)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['kunjungan'] = kunjunganTersimpan({
+        fase: 'wawancara',
+        hotspotDitemukan: [skenario.hotspot[0]!.id],
+        dialogIndex: 1,
+        trustDelta: 2,
+        konfrontasiBeruntun: 1,
+      })
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.kunjungan!.fase).toBe('wawancara')
+    expect(hasil.kunjungan!.dialogIndex).toBe(1)
+    expect(hasil.kunjungan!.trustDelta).toBe(2)
+    expect(hasil.kunjungan!.konfrontasiBeruntun).toBe(1)
+    expect(hasil.kunjungan!.hotspotDitemukan).toEqual([skenario.hotspot[0]!.id])
+  })
+})
+
+describe('deserialize — klinik.selesaiHariIni & tamat (bug hunt 2026-08-21)', () => {
+  const entriSah = {
+    kasusId: 'kasus_uji',
+    pasienNama: 'Bu Sari',
+    grade: 'B',
+    diagnosisBenar: true,
+    clue: 'clue uji',
+  }
+
+  it('entri selesaiHariIni korup disaring — rekap sore tak lagi THROW', () => {
+    const s: GameState = { ...buildInitialState('Uji', SEED, PACK), blok: 'sore' }
+    const json = rusak(serialize(s), (st) => {
+      ;(st['klinik'] as Record<string, unknown>)['selesaiHariIni'] = [null, 'rusak', { pasienNama: 'X' }, entriSah]
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil).not.toBeNull()
+    expect(hasil.klinik.selesaiHariIni).toHaveLength(1)
+    expect(hasil.klinik.selesaiHariIni[0]!.pasienNama).toBe('Bu Sari')
+    // Konsumen nyata blok sore (MejaKerja merender ini setiap render).
+    expect(() => ringkasanHarian(hasil)).not.toThrow()
+    expect(ringkasanHarian(hasil).grade).toBe('B')
+  })
+
+  it('tamat korup (objek tanpa hari/grade) dibuang — stase berjalan tak jadi read-only permanen', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['tamat'] = {}
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.tamat).toBeUndefined()
+    const setelah = advance(hasil, { type: 'PANGGIL_PASIEN' }, PACK)
+    expect(
+      setelah.events.some((e) => e.type === 'ERROR_AKSI' && e.pesan.includes('Stase sudah berakhir')),
+    ).toBe(false)
+  })
+
+  it('tamat berupa string truthy juga dibuang', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['tamat'] = 'sudah'
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.tamat).toBeUndefined()
+  })
+
+  it('tamat SAH dipertahankan & tetap mengunci skor (regresi guard)', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['tamat'] = { hari: 90, grade: 'B' }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.tamat).toEqual({ hari: 90, grade: 'B' })
+    const setelah = advance(hasil, { type: 'PANGGIL_PASIEN' }, PACK)
+    expect(
+      setelah.events.some((e) => e.type === 'ERROR_AKSI' && e.pesan.includes('Stase sudah berakhir')),
+    ).toBe(true)
+  })
+
+  it('tamat sah dgn snapshot skor korup: penandanya bertahan, skornya dibuang', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['tamat'] = { hari: 90, grade: 'A', skor: 'rusak' }
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.tamat?.grade).toBe('A')
+    expect(hasil.tamat?.skor).toBeUndefined()
+  })
+})
+
+describe('deserialize — riwayat pasien & firewall alergi (bug hunt 2026-08-21)', () => {
+  const [kasusAlergiId, kasusAlergi] = Object.entries(PACK.kasus).find(
+    ([, k]) => k.alergiTrap && k.alergiTrap.obatTerlarang.some((id) => PACK.obat[id]),
+  )!
+  const obatTerlarang = kasusAlergi.alergiTrap!.obatTerlarang.find((id) => PACK.obat[id])!
+
+  /** Encounter kasus jebakan yang sudah sampai fase terapi (siap meresepkan). */
+  function stateDenganEncounterTerapi(): GameState {
+    const awal = buildInitialState('Uji', SEED, PACK)
+    const pasien = buatPasienDariKasus(kasusAlergiId, PACK, new Rng(3, 'save-test'))
+    const enc = {
+      ...buatEncounter(pasien),
+      fase: 'terapi' as const,
+      diagnosis: { icd10: kasusAlergi.icd10, jenis: 'tegak' as const },
+    }
+    return { ...awal, klinik: { ...awal.klinik, aktif: enc } }
+  }
+
+  it('pasien aktif kehilangan `alergi` dipulihkan dari kasusnya — firewall tetap menahan obat terlarang', () => {
+    const json = rusak(serialize(stateDenganEncounterTerapi()), (st) => {
+      const aktif = (st['klinik'] as Record<string, unknown>)['aktif'] as Record<string, unknown>
+      delete (aktif['pasien'] as Record<string, unknown>)['alergi']
+      delete aktif['firewallTerpicu']
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.klinik.aktif).toBeDefined()
+    // Bukan sekadar array kosong: kelas alergi kasus jebakan dipulihkan utuh.
+    expect(hasil.klinik.aktif!.pasien.alergi).toEqual([kasusAlergi.alergiTrap!.kelas])
+    expect(hasil.klinik.aktif!.firewallTerpicu).toBe(0)
+
+    const setelah = advance(hasil, { type: 'TAMBAH_OBAT', obatId: obatTerlarang }, PACK)
+    expect(setelah.events.some((e) => e.type === 'FIREWALL_ALERGI')).toBe(true)
+    expect(setelah.state.klinik.aktif!.resep).not.toContain(obatTerlarang)
+    // Percobaan yang diblokir tetap tercatat sbg angka (dulu undefined+1 = NaN).
+    expect(setelah.state.klinik.aktif!.firewallTerpicu).toBe(1)
+  })
+
+  it('`alergi` berisi entri non-string juga dipulihkan (bukan lolos lalu THROW di toLowerCase)', () => {
+    const json = rusak(serialize(stateDenganEncounterTerapi()), (st) => {
+      const aktif = (st['klinik'] as Record<string, unknown>)['aktif'] as Record<string, unknown>
+      ;(aktif['pasien'] as Record<string, unknown>)['alergi'] = [null]
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.klinik.aktif!.pasien.alergi).toEqual([kasusAlergi.alergiTrap!.kelas])
+    const setelah = advance(hasil, { type: 'TAMBAH_OBAT', obatId: obatTerlarang }, PACK)
+    expect(setelah.events.some((e) => e.type === 'FIREWALL_ALERGI')).toBe(true)
+  })
+
+  it('`alergi` sah TIDAK ditimpa (regresi guard)', () => {
+    const hasil = deserialize(serialize(stateDenganEncounterTerapi()), PACK)!
+    expect(hasil.klinik.aktif!.pasien.alergi).toEqual([kasusAlergi.alergiTrap!.kelas])
+    expect(hasil.klinik.aktif!.firewallTerpicu).toBe(0)
+  })
+
+  it('pasien di ANTRIAN kehilangan `alergi` juga dipulihkan (jadi encounter saat dipanggil)', () => {
+    const awal = buildInitialState('Uji', SEED, PACK)
+    const pasien = buatPasienDariKasus(kasusAlergiId, PACK, new Rng(4, 'save-test'))
+    const s: GameState = { ...awal, klinik: { ...awal.klinik, antrian: [pasien], aktif: undefined } }
+    const json = rusak(serialize(s), (st) => {
+      const antrian = (st['klinik'] as Record<string, unknown>)['antrian'] as Record<string, unknown>[]
+      delete antrian[0]!['alergi']
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.klinik.antrian).toHaveLength(1)
+    expect(hasil.klinik.antrian[0]!.alergi).toEqual([kasusAlergi.alergiTrap!.kelas])
+  })
+
+  it('pasien kasus interaksiTrap kehilangan `faktorRisiko` dipulihkan dari kasusnya', () => {
+    const masuk = Object.entries(PACK.kasus).find(([, k]) => k.interaksiTrap)
+    if (!masuk) return
+    const [kasusInteraksiId, kasusInteraksi] = masuk
+    const awal = buildInitialState('Uji', SEED, PACK)
+    const pasien = buatPasienDariKasus(kasusInteraksiId, PACK, new Rng(5, 'save-test'))
+    const enc = {
+      ...buatEncounter(pasien),
+      fase: 'disposisi' as const,
+      diagnosis: { icd10: kasusInteraksi.icd10, jenis: 'tegak' as const },
+    }
+    const s: GameState = { ...awal, klinik: { ...awal.klinik, aktif: enc } }
+    const json = rusak(serialize(s), (st) => {
+      const aktif = (st['klinik'] as Record<string, unknown>)['aktif'] as Record<string, unknown>
+      delete (aktif['pasien'] as Record<string, unknown>)['faktorRisiko']
+    })
+    const hasil = deserialize(json, PACK)!
+    expect(hasil.klinik.aktif!.pasien.faktorRisiko).toEqual([kasusInteraksi.interaksiTrap!.faktor])
+    // Dulu: nilaiEncounter THROW di setiap DISPOSISI → pasien tak pernah bisa
+    // ditutup dan hari tak bisa maju.
+    const setelah = advance(hasil, { type: 'DISPOSISI', jenis: 'pulang' }, PACK)
+    expect(setelah.state.klinik.aktif).toBeUndefined()
+  })
+
+  it('roster Prolanis tanpa takTerkontrolBerturut: drift sesi berikutnya tetap angka, bukan NaN', () => {
+    const s = buildInitialState('Uji', SEED, PACK)
+    const json = rusak(serialize(s), (st) => {
+      st['prolanis'] = {
+        roster: [{ id: 'p1', nama: 'Bu Tuti', usia: 55, jenisKelamin: 'P', rw: 1, jenis: 'ht', param: 150 }],
+      }
+    })
+    const hasil = deserialize(json, PACK)!
+    const peserta = hasil.prolanis.roster[0]!
+    expect(peserta.takTerkontrolBerturut).toBe(0)
+    // Sesi dgn intervensi keliru → parameter naik, hitungan tak terkontrol maju
+    // ke 1 (dulu NaN, sehingga gerbang jembatan komplikasi `>= 2` mati total).
+    const setelahSesi = driftProlanis(peserta, false, new Rng(9, 'prolanis-uji'))
+    expect(Number.isFinite(setelahSesi.takTerkontrolBerturut)).toBe(true)
+    expect(setelahSesi.takTerkontrolBerturut).toBe(1)
   })
 })

@@ -192,9 +192,18 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // ikut tercatat utk pembelian darurat pasien umum; resepBerbahaya ikut
   // interaksiTrap; verifikasi_pispk pending ikut force-evaluate di akhir
   // stase. Rincian di verifikasi.ts rev 63.
-  'reducer.ts': 'a15558a9454517ab2a4361034d5b4b7417f934da222a6a0d92f50d80fc7b3d20',
-  'clinic.ts': '62fe7f36e21687c23a74ef9d070ac817bb0a2518555acd1839746526ed72849b',
-  'scoring.ts': '9d1568e7a8b0801400b99da68dc680087f42828ac6d584be1d7320d658a1ca0a',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): reducer.ts —
+  // jadwal terlantar membawa usiaBulan, AKSI_IGD berpenjaga fase, dan rujukan
+  // IGD wajib bertujuan RS yang cocok (dulu rujukan tanpa tujuan dinilai benar
+  // dan menulis nama RS palsu ke careEpisode). clinic.ts — firewall alergi
+  // membandingkan golongan tanpa peduli kapitalisasi, dan LANJUT_FASE menolak
+  // meninggalkan fase diagnosis sebelum diagnosis ada. scoring.ts — total empat
+  // dimensi dibulatkan ke 1 desimal sebelum grade divonis, jadi huruf dan angka
+  // yang dibaca mahasiswa tak lagi bisa berselisih. Rincian di verifikasi.ts
+  // rev 68.
+  'reducer.ts': '42ee0846c895df2d933325b815d9d891c705f5efaffc6b77f7c5a03f01b02990',
+  'clinic.ts': 'ac5fc96220baa18b87856dde390c0db3e523843afe45d7ea2513b7fe24f04297',
+  'scoring.ts': 'f536ef72e328f5901caf116c0ed5a0bfc153a7eeabfba81f8fa154dbba834a55',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
@@ -215,22 +224,39 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): jargon desain
   // "guillotine" yang bocor ke teks respons kartu Prolanis HT diganti bahasa
   // pemain (skor tak berubah, murni copy).
-  'kegiatan.ts': 'cce87688fdf4148102efc1d326c8c414fe50b6d8c9a22a6b1b6b8e9aefbeea66',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): respons opsi rujuk
+  // kartu Prolanis HT berhenti menjanjikan kenaikan RRNS & kunci nilai
+  // encounter yang tak pernah dijalankan sesi Prolanis (murni copy).
+  'kegiatan.ts': '1ef4a5f00533da907032c5ffe3e6d7cb1836996226aedb226601b8438b20bf6c',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
-  'kunjungan.ts': 'ec165c68a44d5632600f1f5da2940b9a77bb3363ef3ac479887dd7ad9b8b76bf',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): bobot babak
+  // Ingatkan hanya masuk kualitasSaji bila babak itu benar-benar dijalani —
+  // pemain yang diusir sebelum ditawari tak lagi dinilai atas fase itu.
+  'kunjungan.ts': '154a6e3b2e26d971f8dd47174dc4f0bb97303030c454da0ec050fcaa7e275976',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
-  'verifikasi.ts': 'b7a51231dde673b37061d52cdbe319b76424863336a025d097e336421203e6f6',
-  'state.ts': '5eff0197fe1e671edffd7d7c97ea261ef55c8289255abb09cf27db6644bf8db6',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): REVISI_ENGINE
+  // sendiri berubah — lihat changelog rev 68 di verifikasi.ts.
+  'verifikasi.ts': '890ad207b0f1fa36befc0f8938b4104f9ec2ebf6a989e2b801516c276ea3c0a8',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): dua komentar
+  // dijujurkan (igdHariIni penanda turunan, bukan gerbang; cooldown Posyandu
+  // per mode, bukan 30 hari mati). Murni komentar, nol kode runtime — hash
+  // tetap berubah, jadi ikut diunfreeze bersama batch yang sama.
+  'state.ts': '1fde26b7dab749138a83635eaa4316a8dd42eec92ae369c235a457c73ec13b3d',
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): enam validasi baru
   // menutup celah NaN/tipe-salah (dex.bintang, desa.rw.bonusIks & jarak,
   // posyanduRwTerakhir, program.rwFokus/periodeDitetapkan, antrian[].rw).
-  'save.ts': '9c4f487bedf99fbdf4f688d7df377f0d4615afff0a54450b2ddf638a5975aec2',
+  // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): sesi aktif
+  // non-objek dikosongkan (layar ikut dikembalikan ke meja), kunjungan
+  // divalidasi fase + isinya disanitasi, selesaiHariIni & roster Prolanis
+  // difilter per-entri, penanda `tamat` divalidasi bentuknya, dan riwayat
+  // alergi/faktor risiko yang rusak dipulihkan dari pack.
+  'save.ts': 'b0449e4ff0ff4c650b1cff0311a8c54a5ba32aafca2812b9799f8a8cd503f4d0',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
   'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',

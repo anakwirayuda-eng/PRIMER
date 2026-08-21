@@ -148,8 +148,20 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
     // di daftar diagnosis banding kasus (dua opsi tampak identik). O99.0 kini
     // bebas menampilkan nama distingtifnya sendiri ("Anemia dalam Kehamilan",
     // lihat icd10.ts) sebagai distraktor "jawaban tak-spesifik".
+    //
+    // `nama` di sini BUKAN cuma judul kartu Dex: util.namaDiagnosis memakainya
+    // sebagai label tampil untuk SETIAP kode banding non-jawaban, jadi label
+    // wajib menggambarkan KODE-nya, bukan populasi kasus yang ditautkan.
+    // D50.9 = defisiensi besi tidak spesifik dan dipakai sebagai banding di
+    // kasus non-hamil (cacing tambang dewasa, talasemia anak); label lama
+    // "pada Kehamilan" tampil di deck pasien laki-laki/balita — salah klinis
+    // sekaligus membocorkan distraktor karena bisa dieliminasi dari demografi
+    // saja. Konteks maternalnya tetap terbawa lewat kasus tertaut, pola sama
+    // dengan entri `uti` (N39.0 generik ↔ kia_isk_kehamilan). Ekor ", Tidak
+    // Spesifik" menjaga kartu ini tetap terbedakan dari entri hematologi
+    // `anemia_deficiency` (D50) di grid Buku Saku.
     id: 'anemia_pregnancy',
-    nama: 'Anemia Defisiensi Besi pada Kehamilan',
+    nama: 'Anemia Defisiensi Besi, Tidak Spesifik',
     icd10: 'D50.9',
     kasusId: 'anemia_defisiensi_bumil',
   },

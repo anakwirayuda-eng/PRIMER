@@ -127,7 +127,11 @@ export function Rapor() {
 
   // S3 burnout-rapor (d): jurnal refleksi — tulisan pemain (TULIS_REFLEKSI,
   // blok sore) dulu ditelan state tanpa pernah bisa dibaca ulang. Terbaru dulu.
+  // Hanya KONTAINER refleksi yang divalidasi saat load — nilai per-entri bisa
+  // datang non-string dari save yang diedit tangan, dan layar ini satu-satunya
+  // yang memanggil method string atasnya.
   const entriRefleksi = Object.entries(state.refleksi)
+    .filter((entri): entri is [string, string] => typeof entri[1] === 'string')
     .map(([hari, teks]) => ({ hari: Number(hari), teks: teks.trim() }))
     .filter((e) => e.teks !== '')
     .sort((a, b) => b.hari - a.hari)

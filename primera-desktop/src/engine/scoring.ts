@@ -35,6 +35,20 @@ export const MIN_RUJUKAN_GUILLOTINE = 3
 const EKSPEKTASI_KUNJUNGAN_KARIER = 24
 const EKSPEKTASI_KUNJUNGAN_UJIAN = 8
 
+/**
+ * Setiap permukaan yang menampilkan skor total memakai satu desimal (Rapor,
+ * Laporan Akhir, surat penutup stase). Total karena itu DIBULATKAN ke presisi
+ * itu sebelum apa pun membacanya — ambang grade termasuk. Tanpa ini total
+ * 84,96 tampil "85,0/100" berdampingan stempel B: angka yang dibaca mahasiswa
+ * memenuhi ambang A, tapi vonisnya tidak.
+ */
+const DESIMAL_TAMPILAN_TOTAL = 1
+
+function bulatkanTotal(total: number): number {
+  const faktor = 10 ** DESIMAL_TAMPILAN_TOTAL
+  return Math.round(total * faktor) / faktor
+}
+
 function gradeDariTotal(total: number): { grade: Skor4Dimensi['grade']; gradeLabel: string } {
   // Copy-audit 2026-08-01: "PTT" (Pegawai Tidak Tetap) = program yang sudah
   // dihapus 2017 dan tak pernah dieja di mana pun — cukup "Teladan".
@@ -203,7 +217,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   /* -- Resiliensi (0-15): hari kelelahan + burnout ----------------------------- */
   const resiliensi = clamp(15 - 1.5 * t.hariKelelahan - state.burnout / 10, 0, 15)
 
-  const total = ukp + ukm + manajemen + resiliensi
+  const total = bulatkanTotal(ukp + ukm + manajemen + resiliensi)
   const { grade, gradeLabel } = gradeDariTotal(total)
 
   return {

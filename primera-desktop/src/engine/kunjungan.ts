@@ -450,7 +450,14 @@ export function selesaikanKunjungan(
   const totalPilihan = kj.pilihanDiambil.length
   const kualitasMi = totalPilihan === 0 ? 0 : Math.round((100 * tepat) / totalPilihan)
   const pilihanIngatkan = skenario.pilihanIngatkan?.pilihan.find((p) => p.id === kj.ingatkanDipilih)
-  const kualitasIngatkan = skenario.pilihanIngatkan ? (pilihanIngatkan?.tepat ? 100 : 0) : undefined
+  // Babak Ingatkan hanya dinilai bila benar-benar dijalani: pemain yang diusir
+  // di tengah wawancara tak pernah ditawari babak ini, jadi bobot 20%-nya
+  // dinormalisasi kembali ke MI — sejalan `kualitasMi` yang juga hanya
+  // menghitung pilihan dialog yang benar-benar diambil. Pilihan yang diambil
+  // tapi tak dikenal skenario (varian/konten bergeser) tetap dinilai 0.
+  const faseIngatkanDijalani =
+    skenario.pilihanIngatkan !== undefined && kj.ingatkanDipilih !== undefined
+  const kualitasIngatkan = faseIngatkanDijalani ? (pilihanIngatkan?.tepat ? 100 : 0) : undefined
   const kualitasSaji = kualitasIngatkan === undefined
     ? kualitasMi
     : Math.round(0.8 * kualitasMi + 0.2 * kualitasIngatkan)

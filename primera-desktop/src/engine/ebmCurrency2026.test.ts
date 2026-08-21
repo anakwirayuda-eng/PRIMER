@@ -256,7 +256,12 @@ describe('EBM currency 2026 - sumber display yang mengubah keputusan', () => {
     expect(tia.panduanResmi).toMatch(/304\/2026.*AHA 2023/is)
     expect(meningitis.panduanResmi).toMatch(/WHO Guidelines on Meningitis 2025/)
     expect(gizi.panduanResmi).toMatch(/WHO.*2023.*menggantikan.*2013/is)
-    expect(tenggelam.clue).toMatch(/Focused Update on Drowning 2024.*CPR\/ECC 2025/is)
+    // Clue tenggelam dulu menyitir "AHA/AAP Focused Update on Drowning 2024"
+    // dan "AHA CPR/ECC 2025" — dua dokumen yang tidak pernah muncul di panel
+    // BuktiKlinis kasus ini, sehingga pemain yang memverifikasi sitasi menemui
+    // jalan buntu. Kini yang dikunci adalah pedoman yang benar-benar terpasang
+    // di `sumber` kasus.
+    expect(tenggelam.clue).toMatch(/Wilderness Medical Society Drowning Guideline 2024.*Special Circumstances of Resuscitation 2025/is)
     expect(fbao.clue).toMatch(/Pediatric Basic Life Support 2025/)
   })
 

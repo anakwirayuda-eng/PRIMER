@@ -218,6 +218,39 @@ describe('<Kunjungan /> — role=radio kartu intervensi resep sosial (#16d, diko
   })
 })
 
+/**
+ * Save yang diedit tangan/korup bisa membawa objek kunjungan yang SAH di
+ * permukaan (keluargaId + skenarioId dikenali) tapi field arraynya bukan array.
+ * Karena save memaksa layar kembali ke 'kunjungan' dan HUD mengunci navigasi
+ * selama layar itu aktif, throw di sini berarti crash berulang tanpa jalan
+ * keluar — bukan sekadar satu layar rusak.
+ */
+describe('<Kunjungan /> — save korup: field array nested', () => {
+  it('pilihanDiambil = null → fallback "tidak ada kunjungan", bukan crash .at(-1)', () => {
+    pasangKunjungan({ fase: 'wawancara', dialogIndex: 1, pilihanDiambil: null as never })
+    expect(() => render(<Kunjungan />)).not.toThrow()
+    expect(screen.getByText(/Tidak ada kunjungan rumah yang sedang berjalan/)).toBeInTheDocument()
+    expect(document.querySelector('.kunjungan-pilihan-baris')).toBeNull()
+  })
+
+  it('hotspotDitemukan truthy non-array → fallback, bukan crash .includes di memo pilihan', () => {
+    // dialogIndex 2 punya pilihan ber-butuhHotspot, jadi memo benar-benar
+    // memanggil .includes sebelum guard bentuk sempat merender fallback.
+    const { skenario } = skenarioUji()
+    expect(skenario.dialog[2]!.pilihan.some((p) => p.butuhHotspot !== undefined)).toBe(true)
+    pasangKunjungan({ fase: 'wawancara', dialogIndex: 2, hotspotDitemukan: 3 as never })
+    expect(() => render(<Kunjungan />)).not.toThrow()
+    expect(screen.getByText(/Tidak ada kunjungan rumah yang sedang berjalan/)).toBeInTheDocument()
+  })
+
+  it('kunjungan waras tetap merender panggung, bukan fallback', () => {
+    pasangKunjungan({ fase: 'wawancara', dialogIndex: 1, pilihanDiambil: ['wk1_d1_a'] })
+    render(<Kunjungan />)
+    expect(screen.queryByText(/Tidak ada kunjungan rumah yang sedang berjalan/)).not.toBeInTheDocument()
+    expect(document.querySelector('.kunjungan-pilihan-baris')).not.toBeNull()
+  })
+})
+
 describe('<Kunjungan /> — E-2 SAJI', () => {
   it('babak Ingatkan menampilkan tiga pilihan dengan tanggal dari helper engine', () => {
     pasangKunjungan({ fase: 'ingatkan', intervensiDipilih: 'wk1_i1' })

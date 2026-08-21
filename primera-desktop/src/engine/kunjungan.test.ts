@@ -606,6 +606,101 @@ describe('konfrontasi & diusir', () => {
 })
 
 /* ---------------------------------------------------------------------------
+ * Babak Ingatkan (SAJI) — hanya babak yang DIJALANI yang dinilai
+ * ------------------------------------------------------------------------- */
+
+const SKENARIO_INGATKAN: SkenarioKunjungan = {
+  ...SKENARIO,
+  pilihanIngatkan: {
+    prompt: 'Sebelum pamit, bagaimana kamu mengingatkan rencana tadi?',
+    pilihan: [
+      {
+        id: 'ing_tepat',
+        teks: 'Boleh Bapak ulang rencananya dengan kalimat sendiri? Nanti saya mampir lagi hari Kamis.',
+        tepat: true,
+        respons: 'Pak Raharjo mengulang rencananya, lalu menyebut hari Kamis itu sendiri.',
+      },
+      {
+        id: 'ing_ceramah',
+        teks: 'Saya ulang sekali lagi ya bahayanya BAB di sungai, biar Bapak ingat terus.',
+        tepat: false,
+        respons: 'Pak Raharjo tersenyum tipis, matanya sudah melirik ke arah pintu.',
+        catatanPedagogis: 'Menutup dengan ceramah menghapus kesepakatan yang baru saja dibangun.',
+      },
+      {
+        id: 'ing_pamit',
+        teks: 'Kalau begitu saya pamit dulu, Pak.',
+        tepat: false,
+        respons: 'Pintu ditutup pelan, tanpa satu pun kesepakatan diulang.',
+      },
+    ],
+  },
+}
+
+function jalankanIngatkan(aksi: Action[], kel: KeluargaState): KunjunganState {
+  let kj = buatKunjungan(kel.id, SKENARIO_INGATKAN, rngTest)
+  for (const a of aksi) kj = aksiKunjungan(kj, a, SKENARIO_INGATKAN, kel).kj
+  return kj
+}
+
+describe('babak Ingatkan', () => {
+  const WAWANCARA_SEMPURNA: Action[] = [
+    { type: 'LANJUT_BABAK' },
+    { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
+    { type: 'PILIH_DIALOG', pilihanId: 'p2_ungkap' },
+    { type: 'PILIH_DIALOG', pilihanId: 'p3_refleksi' },
+    { type: 'LANJUT_BABAK' },
+    { type: 'KOMIT_HAMBATAN', hipotesis: 'kesempatan' },
+    { type: 'PILIH_INTERVENSI', intervensiId: 'i_arisan' },
+  ]
+
+  it('diusir di tengah wawancara → babak yang tak pernah ditawarkan tidak dinilai', () => {
+    const kel = buatKel(5)
+    const kj = jalankanIngatkan(
+      [
+        { type: 'LANJUT_BABAK' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' }, // tepat
+        { type: 'PILIH_DIALOG', pilihanId: 'p2_konfrontasi' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p3_konfrontasi' },
+      ],
+      kel,
+    )
+    expect(kj.diusir).toBe(true)
+    expect(kj.ingatkanDipilih).toBeUndefined()
+
+    const hasil = selesaikanKunjungan(kj, SKENARIO_INGATKAN, kel)
+    expect(hasil.kualitasMi).toBe(33) // 1 dari 3 pilihan tepat
+    expect(hasil.kualitasIngatkan).toBeUndefined()
+    expect('kualitasIngatkan' in hasil).toBe(false)
+    // Bobot 20% dinormalisasi ke MI — bukan 0.8×33 = 26.
+    expect(hasil.kualitasSaji).toBe(33)
+  })
+
+  it('babak dijalani dengan pilihan keliru → tetap memotong 20% seperti semula', () => {
+    const kel = kelJambanBohong(6)
+    const kj = jalankanIngatkan(
+      [...WAWANCARA_SEMPURNA, { type: 'PILIH_INGATKAN', pilihanId: 'ing_pamit' }],
+      kel,
+    )
+    const hasil = selesaikanKunjungan(kj, SKENARIO_INGATKAN, kel)
+    expect(hasil.kualitasMi).toBe(100)
+    expect(hasil.kualitasIngatkan).toBe(0)
+    expect(hasil.kualitasSaji).toBe(80)
+  })
+
+  it('babak dijalani dengan pilihan tepat → SAJI penuh', () => {
+    const kel = kelJambanBohong(6)
+    const kj = jalankanIngatkan(
+      [...WAWANCARA_SEMPURNA, { type: 'PILIH_INGATKAN', pilihanId: 'ing_tepat' }],
+      kel,
+    )
+    const hasil = selesaikanKunjungan(kj, SKENARIO_INGATKAN, kel)
+    expect(hasil.kualitasIngatkan).toBe(100)
+    expect(hasil.kualitasSaji).toBe(100)
+  })
+})
+
+/* ---------------------------------------------------------------------------
  * Hipotesis hambatan salah → kunjungan gagal
  * ------------------------------------------------------------------------- */
 

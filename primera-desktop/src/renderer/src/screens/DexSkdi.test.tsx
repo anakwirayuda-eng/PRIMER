@@ -58,6 +58,24 @@ describe('<DexSkdi /> — auto-tautan ICD dikenali', () => {
     expect(screen.getByText('dijumpai', { selector: '.dexskdi-kartu__dijumpai-tag' })).toBeInTheDocument()
   })
 
+  // "Terbuka" di layar ini = siluet ??? sudah terungkap (kartu benar===0 pun
+  // terbuka & bisa diklik). Hint panel detail kosong dulu memakai angka
+  // TERSERTIFIKASI, jadi mahasiswa yang 10× salah diagnosis membaca "Belum ada
+  // entri terbuka" sambil menatap grid berisi 10 kartu terbuka.
+  it('hint panel kosong menghitung entri yang benar-benar terbuka, bukan yang tersertifikasi', () => {
+    const entri = PACK.skdi144.find((e) => e.id === ENTRI_AUTO_TAUTAN)!
+    pasangState({ [entri.kasusId!]: { ditangani: 3, benar: 0, bintang: 0, terakhirHari: 4 } })
+    render(<DexSkdi />)
+
+    expect(screen.getByText('1 entri sudah terbuka.')).toBeInTheDocument()
+    expect(screen.queryByText(/Belum ada entri terbuka/)).not.toBeInTheDocument()
+  })
+
+  it('hint "belum ada entri terbuka" hanya saat memang belum ada yang dijumpai', () => {
+    render(<DexSkdi />)
+    expect(screen.getByText(/Belum ada entri terbuka/)).toBeInTheDocument()
+  })
+
   // CODEX M10 (2026-07-05): meski pointerEventsCheck:0 (ronde-13) menurunkan
   // durasi tipikal ke ~1,6-2,3s terisolasi, run suite PENUH (37 file paralel)
   // pernah benar-benar timeout di batas 5000ms default krn kontensi resource

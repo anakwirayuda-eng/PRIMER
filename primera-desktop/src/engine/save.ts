@@ -19,6 +19,33 @@ function objek(nilai: unknown): nilai is Record<string, unknown> {
   return typeof nilai === 'object' && nilai !== null && !Array.isArray(nilai)
 }
 
+function daftarString(nilai: unknown): boolean {
+  return Array.isArray(nilai) && nilai.every((entri) => typeof entri === 'string')
+}
+
+/**
+ * `alergi` & `faktorRisiko` pasien tersimpan bersifat DETERMINISTIK dari
+ * kasusnya (director.ts hanya pernah mengisinya dari `alergiTrap.kelas` /
+ * `interaksiTrap.faktor`), jadi bentuk korup dipulihkan DARI PACK, bukan
+ * dikosongkan: array kosong adalah bentuk yang sah-sah saja sehingga pasien
+ * jebakan diam-diam berubah jadi pasien biasa — firewall alergi dan pergeseran
+ * standar emas kasus jebakan (clinic.ts) lumpuh bersamaan. Tanpa pack (test
+ * skema murni) jatuh ke array kosong; yang wajib dijamin adalah bentuknya,
+ * sebab clinic.ts memanggil `.includes`/`.toLowerCase` atas kedua field ini
+ * tanpa penjaga — field hilang = setiap TAMBAH_OBAT/DISPOSISI kasus jebakan
+ * THROW selamanya (soft-lock tanpa jalan keluar in-game).
+ */
+function pulihkanRiwayatPasien(pasien: Record<string, unknown>, pack?: ContentPack): void {
+  const kasusId = pasien['kasusId']
+  const kasus = pack && typeof kasusId === 'string' ? pack.kasus[kasusId] : undefined
+  if (!daftarString(pasien['alergi'])) {
+    pasien['alergi'] = kasus?.alergiTrap ? [kasus.alergiTrap.kelas] : []
+  }
+  if (!daftarString(pasien['faktorRisiko'])) {
+    pasien['faktorRisiko'] = kasus?.interaksiTrap ? [kasus.interaksiTrap.faktor] : []
+  }
+}
+
 /**
  * `pack` opsional: bila disertakan, deserialize memulihkan IGD aktif yang
  * kasusnya sudah tak ada di konten (build lebih baru mengubah/menghapus kasus
@@ -261,6 +288,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     )
   )
     return null
+  // Sesi aktif berupa non-objek truthy (bug hunt 2026-08-21): setiap jalur
+  // pemulihan sesi di bawah digerbang `objek()`, jadi `igd:"rusak"` (save
+  // diedit tangan) lolos utuh — lalu reducer.ts memblokir LANJUTKAN/
+  // PINDAH_LAYAR dgn truthy-check dan Hud mengunci semua tab, padahal tak ada
+  // sesi yang bisa diselesaikan: kunci permanen yang bertahan lintas restart.
+  // Nilai non-objek tak pernah membawa progres yang bisa dipulihkan (tak ada
+  // kasusId/kartu/skenario di dalamnya) → kosongkan diam-diam, bukan tolak
+  // seluruh save. Harus jalan SEBELUM derive layar di bawah supaya sesi hantu
+  // ini tak terpilih jadi layar.
+  const klinikSt = st['klinik'] as Record<string, unknown>
+  for (const kunci of ['igd', 'kunjungan', 'kegiatan'] as const) {
+    if (st[kunci] !== undefined && !objek(st[kunci])) {
+      st[kunci] = undefined
+      if (st['layar'] === kunci) st['layar'] = 'meja'
+    }
+  }
+  if (klinikSt['aktif'] !== undefined && !objek(klinikSt['aktif'])) klinikSt['aktif'] = undefined
+
   // layar (CODEX ronde-11 #3): tak pernah divalidasi — nilai asing lolos lalu
   // App.tsx (rangkaian `layar === X &&`, tanpa fallback) merender area utama
   // kosong TANPA throw (ErrorBoundary tak menangkap non-error). Bukan field
@@ -271,7 +316,6 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // sesi yang genuinely aktif dulu, 'meja' hanya bila tak ada sesi apa pun.
   const LAYAR_SAH = new Set(['meja', 'klinik', 'peta', 'kunjungan', 'kegiatan', 'igd', 'dex', 'rapor', 'laporan'])
   if (typeof st['layar'] !== 'string' || !LAYAR_SAH.has(st['layar'])) {
-    const klinikSt = st['klinik'] as Record<string, unknown>
     st['layar'] = objek(st['igd'])
       ? 'igd'
       : objek(st['kunjungan'])
@@ -386,6 +430,29 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   if (typeof st['igdHariIni'] !== 'boolean') st['igdHariIni'] = false
   // NIM opsional (ikatan identitas ujian): buang bila bukan string.
   if (st['nim'] !== undefined && typeof st['nim'] !== 'string') delete st['nim']
+  // `tamat` (bug hunt 2026-08-21): satu-satunya penanda sesi besar yang tak
+  // pernah divalidasi bentuknya. Nilai truthy korup (mis. `tamat:{}`) membuat
+  // guard pasca-tamat reducer.ts menolak SEMUA aksi mutasi — stase hari ke-1
+  // pun jadi read-only permanen — sementara pesan penutupnya menginterpolasi
+  // grade yang tak ada ("skor terkunci (undefined)"). Stase yang genuinely
+  // tamat SELALU ditulis lengkap dgn hari + grade, jadi bentuk lain = korup:
+  // buang penandanya (stase dianggap masih berjalan; hari terakhir akan
+  // menutupnya lagi secara normal), jangan bekukan save yang masih hidup.
+  if (st['tamat'] !== undefined) {
+    const tamat = st['tamat']
+    if (
+      !objek(tamat) ||
+      !Number.isInteger(tamat['hari']) ||
+      typeof tamat['grade'] !== 'string' ||
+      tamat['grade'].length === 0
+    ) {
+      delete st['tamat']
+    } else if (tamat['skor'] !== undefined && !objek(tamat['skor'])) {
+      // Snapshot skor opsional (save pra-M10.5 tak punya): bentuk salah dibuang
+      // agar Rapor/LaporanAkhir jatuh ke hitungSkor live spt save lama.
+      delete tamat['skor']
+    }
+  }
   // flags/refleksi (CODEX ronde-12): tak pernah divalidasi. `flags=null` → THROW
   // ("Cannot read properties of null, reading 'bonusStaminaBesok'") di hariBaru;
   // `refleksi=null` → crash render MejaKerja (`state.refleksi[hari]`). Keduanya
@@ -495,6 +562,20 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
       typeof p['param'] === 'number' &&
       Number.isFinite(p['param']),
   )
+  // takTerkontrolBerturut (bug hunt 2026-08-21): field WAJIB numerik yang luput
+  // dari filter di atas. Hilang/korup → driftProlanis (kegiatan.ts,
+  // `p.takTerkontrolBerturut + 1`) menghasilkan NaN, lalu gerbang jembatan
+  // komplikasi UKP (`>= 2`, reducer.ts) tak pernah terpicu — konsekuensi
+  // peserta tak terkendali senyap — dan narasi ke pemain berbunyi "NaN sesi
+  // berturut-turut". Backfill 0 (nilai yang selalu ditulis saat enrolmen),
+  // BUKAN buang pesertanya: peserta yang lenyap justru mematikan jembatan itu
+  // selamanya. Pola sama `antrian[i].rw` di bawah.
+  for (const p of prolanisSt['roster'] as Record<string, unknown>[]) {
+    const berturut = p['takTerkontrolBerturut']
+    if (typeof berturut !== 'number' || !Number.isFinite(berturut) || berturut < 0) {
+      p['takTerkontrolBerturut'] = 0
+    }
+  }
   if (typeof st['posyanduRwTerakhir'] !== 'object' || st['posyanduRwTerakhir'] === null) {
     st['posyanduRwTerakhir'] = {}
   }
@@ -545,6 +626,21 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // Saring entri korup (per-layar ErrorBoundary menangkap, tapi tetap tak boleh).
   klinik['antrian'] = (klinik['antrian'] as unknown[]).filter(objek)
   if (!Array.isArray(klinik['selesaiHariIni'])) klinik['selesaiHariIni'] = []
+  // Entri selesaiHariIni korup (bug hunt 2026-08-21): pola sama antrian di atas,
+  // yang selama ini luput. `selesaiHariIni:[null]` lolos array-check lalu
+  // ringkasanHarian (scoring.ts) — dipanggil di badan render MejaKerja setiap
+  // blok sore — THROW, dan blok sore adalah SATU-SATUNYA jalur menutup hari
+  // (selesaiHariIni sendiri baru direset saat hari baru): kunci progres
+  // permanen. Entri tanpa identitas/grade juga dibuang: rekap harian
+  // menghitung rata-rata grade (NaN) dan catatannya menyebut nama pasien
+  // "undefined" ke pemain — pola sama roster Prolanis di atas.
+  klinik['selesaiHariIni'] = (klinik['selesaiHariIni'] as unknown[]).filter(
+    (p) =>
+      objek(p) &&
+      typeof p['kasusId'] === 'string' &&
+      typeof p['pasienNama'] === 'string' &&
+      typeof p['grade'] === 'string',
+  )
   if (!objek(klinik['autoHariIni'])) klinik['autoHariIni'] = { jumlah: 0, bermasalah: 0 }
   // Encounter aktif dari save pra-prosedur (#4) belum punya array tindakan →
   // skoring terapi meng-iterasinya. Backfill ke kosong.
@@ -554,6 +650,16 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     // Encounter aktif dari save pra-ditanyaKetus (DeepThink #2) sama — nilaiEncounter
     // meng-iterasinya utk penalti distraktor pasca-ketus.
     if (!Array.isArray(aktif['ditanyaKetus'])) aktif['ditanyaKetus'] = []
+    // firewallTerpicu (bug hunt 2026-08-21): hilang/korup → `enc.firewallTerpicu
+    // + 1` (clinic.ts, percobaan resep yang diblokir) jadi NaN, lalu `> 0` selalu
+    // false — cap keselamatan encounter DAN tally firewall lolos tanpa jejak,
+    // padahal kelalaian cek alerginya benar-benar terjadi. Backfill 0 = "belum
+    // pernah terpicu", pola sama tally di atas.
+    const terpicu = aktif['firewallTerpicu']
+    if (typeof terpicu !== 'number' || !Number.isFinite(terpicu) || terpicu < 0) {
+      aktif['firewallTerpicu'] = 0
+    }
+    if (objek(aktif['pasien'])) pulihkanRiwayatPasien(aktif['pasien'] as Record<string, unknown>, pack)
   }
   // Pasien lama tanpa RW mendapat RW 1 (cukup untuk melanjutkan save lama).
   // Bug hunt 2026-08-01: `typeof NaN === 'number'` tetap true, jadi `rw` korup
@@ -561,7 +667,12 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
   // (`cluster_${kasusId}_rwNaN`) — pasien dgn rw korup berbeda-beda malah
   // digabung jadi SATU kluster palsu krn kuncinya sama-sama "rwNaN".
   for (const p of klinik['antrian'] as unknown[]) {
-    if (objek(p) && (typeof p['rw'] !== 'number' || !Number.isFinite(p['rw']))) p['rw'] = 1
+    if (!objek(p)) continue
+    if (typeof p['rw'] !== 'number' || !Number.isFinite(p['rw'])) p['rw'] = 1
+    // Pasien antrian menjadi encounter apa adanya saat dipanggil (reducer.ts
+    // PANGGIL_PASIEN → buatEncounter), jadi riwayat alergi/faktor risikonya
+    // disanitasi di sini juga — bukan hanya milik pasien di ruang periksa.
+    pulihkanRiwayatPasien(p, pack)
   }
 
   // Backfill gudang M4 utk save lama: stok kosong diisi baseline 12/obat agar
@@ -723,7 +834,24 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
     const skenarioId = kj['skenarioId']
     const kel = typeof keluargaId === 'string' ? pack.keluarga[keluargaId] : undefined
     const skenarioAda = kel && typeof skenarioId === 'string' && kel.arc.kunjungan.some((s) => s.id === skenarioId)
-    if (!skenarioAda) {
+    // Bug hunt 2026-08-21: keluarga+skenario sah TIDAK menjamin babaknya sah.
+    // Fase di luar enum → Kunjungan.tsx merender badan tanpa satu pun panel
+    // aksi (semua bersyarat `kj.fase === ...`), LANJUT_BABAK jatuh ke fallback
+    // "Babak tidak dikenal" (kunjungan.ts) sehingga `selesai` tak pernah true,
+    // dan LANJUTKAN ditolak selamanya — dead-end permanen, kelas persis sama
+    // dgn FASE_IGD_SAH & FASE_KLINIK_SAH di atas. 'selesai' SENGAJA tak
+    // termasuk sah: reducer.ts selalu mengosongkan `s.kunjungan` begitu babak
+    // tuntas, jadi fase itu hanya bisa tersisa di save korup dan sama buntunya.
+    const FASE_KUNJUNGAN_SAH = new Set([
+      'penerimaan',
+      'observasi',
+      'wawancara',
+      'diagnosis_perilaku',
+      'resep_sosial',
+      'ingatkan',
+    ])
+    const faseValid = typeof kj['fase'] === 'string' && FASE_KUNJUNGAN_SAH.has(kj['fase'])
+    if (!skenarioAda || !faseValid) {
       st['kunjungan'] = undefined
       if (st['layar'] === 'kunjungan') st['layar'] = 'peta'
       const hari = st['hari'] as number
@@ -737,6 +865,23 @@ export function deserialize(json: string, pack?: ContentPack): GameState | null 
         isi: 'Keluarga atau skenario kunjungan yang sedang berjalan tidak lagi tersedia di versi konten ini. Kunjungan dianggap selesai — kamu bisa melanjutkan hari seperti biasa.',
         dibaca: false,
       })
+    } else {
+      // Isi kunjungan yang masih dilanjutkan disanitasi seperti klinik.aktif di
+      // atas: array hilang → aksi dialog THROW (spread/`.includes`), dan
+      // `dialogIndex` non-bulat/negatif membuat wawancara buntu (node dialognya
+      // undefined sehingga PILIH_DIALOG menolak, tapi `dialogIndex <
+      // dialog.length` masih menahan LANJUT_BABAK).
+      if (!Array.isArray(kj['hotspotDitemukan'])) kj['hotspotDitemukan'] = []
+      if (!Array.isArray(kj['pilihanDiambil'])) kj['pilihanDiambil'] = []
+      const dialogIndex = kj['dialogIndex']
+      if (typeof dialogIndex !== 'number' || !Number.isInteger(dialogIndex) || dialogIndex < 0) {
+        kj['dialogIndex'] = 0
+      }
+      for (const kunci of ['trustDelta', 'konfrontasiBeruntun'] as const) {
+        const nilai = kj[kunci]
+        if (typeof nilai !== 'number' || !Number.isFinite(nilai)) kj[kunci] = 0
+      }
+      if (typeof kj['diusir'] !== 'boolean') kj['diusir'] = false
     }
   }
 

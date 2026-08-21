@@ -744,7 +744,31 @@ function fnv1a(teks: string): string {
 // memindahkan sidikJariPack (daftar hash memuat 'runtime-release-order' dan
 // 'exam-packages' yang membawa contentRelease), jadi populasi dosier yang
 // jatuh ke "tidak dapat diverifikasi" identik entah revisi ini naik atau tidak.
-export const REVISI_ENGINE = 67
+//
+// Bug hunt 2026-08-21: 67 -> 68. Satu bump untuk seluruh batch, sesuai pola rev
+// 62/63. reducer.ts — (a) jadwal `jadwal_terlantar_` kini ikut membawa
+// `usiaBulan`, jadi bayi yang di-skip pagi hari kembali sebagai bayi yang sama,
+// bukan tiba-tiba berumur tahunan; (b) AKSI_IGD mendapat penjaga fase seperti
+// tiga aksi IGD lainnya, sehingga Kode Biru tak lagi bisa ditally berkali-kali
+// dengan mengulang dispatch di fase yang salah; (c) DISPOSISI_IGD jenis 'rujuk'
+// menuntut tujuan RS yang benar-benar cocok — cabang lama meloloskan rujukan
+// tanpa tujuan sebagai disposisi benar dan menulis nama rumah sakit palsu ke
+// careEpisode. clinic.ts — firewall alergi berhenti mencocokkan huruf-persis
+// (pasien ber-alergi 'Penisilin' dulu lolos diberi obat bergolongan
+// 'penisilin'), dan LANJUT_FASE menolak meninggalkan fase diagnosis sebelum
+// diagnosis ditegakkan. scoring.ts — total empat dimensi dibulatkan ke satu
+// desimal SEBELUM grade divonis, jadi huruf yang keluar selalu cocok dengan
+// angka yang dibaca mahasiswa. kunjungan.ts — bobot babak Ingatkan hanya
+// dihitung bila babak itu benar-benar dijalani; pemain yang diusir lebih dulu
+// tak lagi kena penalti fase yang tak pernah ditawarkan. save.ts — sesi aktif
+// non-objek, kunjungan berfase asing, entri `selesaiHariIni`/roster Prolanis
+// cacat, penanda `tamat` bentuk salah, dan riwayat alergi/faktor risiko yang
+// rusak kini dibersihkan atau dipulihkan dari pack alih-alih meracuni layar dan
+// skor. kegiatan.ts — respons opsi rujuk kartu Prolanis HT berhenti menjanjikan
+// efek yang tak pernah dijalankan engine (murni teks). state.ts — dua komentar
+// dijujurkan (murni komentar). Dossier build lama karena itu jatuh ke
+// "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
+export const REVISI_ENGINE = 68
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

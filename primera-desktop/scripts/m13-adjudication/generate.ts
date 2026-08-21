@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { buildAdjudicationDataset, type AdjudicationDataset, type ReviewStatus } from './build-data'
@@ -7,6 +8,13 @@ const DOCS = resolve(process.cwd(), 'docs')
 const DATA_PATH = resolve(DOCS, 'M13_137_ADJUDICATION_DATA.json')
 const HTML_PATH = resolve(DOCS, 'M13_137_ADJUDICATION.html')
 const REPORT_PATH = resolve(DOCS, 'M13_137_ADJUDICATION_REPORT.md')
+const KFA_SNAPSHOT_PATH = resolve(DOCS, 'M13_137_KFA_SNAPSHOT.json')
+
+/**
+ * Panen KFA (`npm run m13:kfa`) berjalan terpisah dari kompilasi laporan, jadi
+ * provenance akses dibaca dari snapshot itu sendiri, bukan dari jam kompilasi.
+ */
+const KFA_SNAPSHOT = JSON.parse(readFileSync(KFA_SNAPSHOT_PATH, 'utf8')) as { retrievedAt: string; endpoint: string }
 
 function listCases(data: AdjudicationDataset, status: ReviewStatus): string {
   const cases = data.cases.filter((item) => item.compiler.suggestion === status)
@@ -15,7 +23,7 @@ function listCases(data: AdjudicationDataset, status: ReviewStatus): string {
     : '- Tidak ada.'
 }
 
-function report(data: AdjudicationDataset): string {
+export function report(data: AdjudicationDataset): string {
   const sourceWarnings = data.cases.filter((item) => item.compiler.sourceAttributionWarning)
   const noFloor = data.cases.filter((item) => item.evidence.ppk.status === 'tak-ada-sumber' && item.evidence.pnpk.status === 'tak-ada-sumber' && item.evidence.ebm.status === 'tak-ada-sumber')
   const fornasTrueUnlocated = [...new Map(data.cases.flatMap((item) => [
@@ -58,7 +66,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 1. [M13_137_ADJUDICATION.html](M13_137_ADJUDICATION.html) - alat review interaktif, filter, autosave lokal, keputusan Setuju/Perlu Edit/Tolak/Nanti, ekspor-impor JSON.
 2. [M13_137_ADJUDICATION_DATA.json](M13_137_ADJUDICATION_DATA.json) - dataset audit machine-readable 137 kasus.
-3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk seluruh obat unik yang dipakai prototipe saat artefak dibangun.
+3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk seluruh obat unik yang dipakai prototipe, dipanen ${KFA_SNAPSHOT.retrievedAt.slice(0, 10)}.
 4. Dokumen ini - metode, keterbatasan, dan daftar temuan provenance.
 
 ## Metode
@@ -97,7 +105,8 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: \`/api/search/active-ingredients\`, diakses ${data.generatedAt.slice(0, 10)}.
+- Endpoint publik browser KFA: \`${KFA_SNAPSHOT.endpoint}\`, diakses ${KFA_SNAPSHOT.retrievedAt.slice(0, 10)}.
+- Panen KFA dijalankan terpisah dari kompilasi laporan ini (${data.generatedAt.slice(0, 10)}), jadi tanggal akses di atas bisa lebih tua; panen ulang dengan \`npm run m13:kfa\` bila selisihnya sudah material untuk penilaian kemutakhiran.
 - Snapshot menghasilkan kode active substance untuk semua query (${data.summary.kfaUnresolvedQueries} unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
@@ -169,4 +178,7 @@ async function main(): Promise<void> {
   console.log(`Saran: ${JSON.stringify(data.summary.bySuggestion)}`)
 }
 
-await main()
+// Berkas ini adalah entry `npm run m13:adjudication`; test mengimpornya hanya
+// untuk memeriksa teks laporan, dan di sana generator tidak boleh menimpa
+// artefak di `docs/`.
+if (!process.env.VITEST) await main()

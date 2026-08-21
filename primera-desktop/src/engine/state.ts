@@ -841,13 +841,18 @@ export interface GameState {
 
   /** Sesi IGD aktif (M3.14): gawat darurat turn-based. */
   igd?: IgdState
-  /** IGD hari ini sudah tiba? (maks 1 interrupt/hari). */
+  /**
+   * IGD sudah tiba pada hari berjalan — penanda turunan yang ikut dipersist,
+   * BUKAN gerbangnya: batas 1 interrupt/hari + jeda antar-IGD ditegakkan flag
+   * `igdHari_<hari>` di `hariBaru` (reducer.ts), jadi menyetel field ini tidak
+   * membuka maupun menutup kedatangan IGD.
+   */
   igdHariIni: boolean
   /** Slot lapangan (siang) sudah terpakai hari ini — kunjungan ATAU kegiatan. */
   lapanganTerpakai: boolean
   /** Program Prolanis: roster kronis + jadwal sesi (terbuka D30). */
   prolanis: { roster: PesertaProlanis[]; sesiBerikutHari?: number }
-  /** Hari posyandu terakhir per RW (cooldown 30 hari). Kunci = String(nomor RW). */
+  /** Hari posyandu terakhir per RW (cooldown `COOLDOWN_POSYANDU` per mode). Kunci = String(nomor RW). */
   posyanduRwTerakhir: Record<string, number>
   /** Program wilayah agregat (M2.10): fokus mingguan menekan penularan + bonus IKS. */
   /** Triase Anggaran (M2.10, DeepThink Q4): 1 fokus terkunci per PERIODE BULANAN

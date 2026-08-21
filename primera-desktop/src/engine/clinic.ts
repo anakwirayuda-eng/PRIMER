@@ -330,6 +330,17 @@ export function aksiKlinik(
     /* -- Alur fase ------------------------------------------------------------ */
 
     case 'LANJUT_FASE': {
+      // Fase diagnosis hanya boleh ditinggalkan lewat KOMIT_DIAGNOSIS (yang
+      // memindah fase sendiri). Melompatinya tanpa stempel membuat encounter
+      // buntu PERMANEN: di fase disposisi, DISPOSISI ditolak reducer karena
+      // diagnosis kosong, KOMIT_DIAGNOSIS sudah tak sah lagi (phase-guard),
+      // tak ada aksi mundur fase/batal-encounter, dan pasien berikutnya
+      // diblokir selama masih ada encounter aktif. Ditegakkan di engine dgn
+      // alasan yang sama seperti `bukanFase` di atas — UI memang tak menawarkan
+      // tombolnya, tapi dispatch headless/DevTools tidak boleh mem-brick save.
+      if (enc.fase === 'diagnosis' && !enc.diagnosis) {
+        return gagal(enc, 'Stempelkan diagnosismu dulu sebelum lanjut ke tahap berikutnya.')
+      }
       const i = URUTAN_FASE.indexOf(enc.fase)
       const berikut = i >= 0 ? URUTAN_FASE[i + 1] : undefined
       if (!berikut) return tanpaPerubahan(enc)
@@ -360,11 +371,20 @@ export function aksiKlinik(
       if (!obat) return gagal(enc, `Obat '${action.obatId}' tidak ada di formularium.`)
 
       // FIREWALL ALERGI class-based (poka-yoke): resep TIDAK ditambahkan.
-      if (obat.golonganAlergi && enc.pasien.alergi.includes(obat.golonganAlergi)) {
+      // Pembandingnya case-insensitive, sama persis dgn `pasienKenaTrap`
+      // (nilaiEncounter di bawah) dan invariant integritas trap (validasiPack):
+      // dgn cocok-persis-huruf, beda kapitalisasi antara `trap.kelas` dan
+      // `obat.golonganAlergi` menggeser standar emas skor tanpa firewall yang
+      // menahannya — obat alergen masuk resep tanpa stempel kontraindikasi.
+      const golonganAlergi = obat.golonganAlergi
+      if (
+        golonganAlergi &&
+        enc.pasien.alergi.some((a) => a.toLowerCase() === golonganAlergi.toLowerCase())
+      ) {
         return {
           enc: { ...enc, firewallTerpicu: enc.firewallTerpicu + 1 },
           events: [
-            { type: 'FIREWALL_ALERGI', obatId: obat.id, golongan: obat.golonganAlergi },
+            { type: 'FIREWALL_ALERGI', obatId: obat.id, golongan: golonganAlergi },
             { type: 'STEMPEL', jenis: 'kontraindikasi' },
           ],
         }

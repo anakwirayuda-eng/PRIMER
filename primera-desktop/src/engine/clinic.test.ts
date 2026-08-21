@@ -9,6 +9,8 @@ import { Rng } from './core/rng'
 import type { Action } from './actions'
 import type { GameEvent } from './events'
 import type { EncounterState, FaseEncounter, PasienAktif } from './state'
+import { validasiPack } from '@content/pack'
+import type { RuntimeCurriculumManifest } from '@content/pack'
 import type {
   ItemLab,
   KasusKlinis,
@@ -712,7 +714,12 @@ describe('aksiKlinik — fase & diagnosis', () => {
     let enc = buatEncounter(buatPasien())
     const urutan: string[] = [enc.fase]
     for (let i = 0; i < 5; i++) {
-      enc = aksiKlinik(enc, { type: 'LANJUT_FASE' }, KASUS_FARINGITIS, PACK, rngTest()).enc
+      // Fase diagnosis ditinggalkan lewat stempel, bukan LANJUT_FASE (test di bawah).
+      const aksi: Action =
+        enc.fase === 'diagnosis'
+          ? { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'suspek' }
+          : { type: 'LANJUT_FASE' }
+      enc = aksiKlinik(enc, aksi, KASUS_FARINGITIS, PACK, rngTest()).enc
       urutan.push(enc.fase)
     }
     expect(urutan).toEqual([
@@ -723,6 +730,49 @@ describe('aksiKlinik — fase & diagnosis', () => {
       'disposisi',
       'disposisi', // mentok — DISPOSISI ditangani reducer
     ])
+  })
+
+  /**
+   * Tanpa penjaga ini, LANJUT_FASE dari fase diagnosis membawa encounter ke
+   * disposisi TANPA diagnosis, dan di sana tak ada jalan keluar: DISPOSISI
+   * ditolak reducer ("stempelkan diagnosismu dulu"), KOMIT_DIAGNOSIS ditolak
+   * phase-guard, LANJUT_FASE mentok, dan pasien berikutnya tak bisa dipanggil
+   * selama encounter aktif masih ada — save terkunci permanen.
+   */
+  it('LANJUT_FASE dari fase diagnosis TANPA stempel ditolak — bukan lompat ke terapi', () => {
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
+    const { enc: baru, events } = aksiKlinik(enc, { type: 'LANJUT_FASE' }, KASUS_FARINGITIS, PACK, rngTest())
+    expect(baru).toBe(enc) // state tak bergerak sama sekali
+    expect(cariEvent(events, 'ERROR_AKSI')).toBeDefined()
+  })
+
+  it('spam LANJUT_FASE tanpa diagnosis tak pernah sampai ke disposisi (anti soft-lock)', () => {
+    let enc = buatEncounterFase(buatPasien(), 'diagnosis')
+    for (let i = 0; i < 3; i++) {
+      enc = aksiKlinik(enc, { type: 'LANJUT_FASE' }, KASUS_FARINGITIS, PACK, rngTest()).enc
+    }
+    expect(enc.fase).toBe('diagnosis')
+    expect(enc.diagnosis).toBeUndefined()
+  })
+
+  it('setelah diagnosis dikomit, LANJUT_FASE kembali sah (terapi→disposisi)', () => {
+    const enc = buatEncounterFase(buatPasien(), 'diagnosis')
+    const { enc: sesudahStempel } = aksiKlinik(
+      enc,
+      { type: 'KOMIT_DIAGNOSIS', icd10: 'J02.9', jenis: 'suspek' },
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    const { enc: akhir, events } = aksiKlinik(
+      sesudahStempel,
+      { type: 'LANJUT_FASE' },
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    expect(akhir.fase).toBe('disposisi')
+    expect(cariEvent(events, 'ERROR_AKSI')).toBeUndefined()
   })
 
   it('KOMIT_DIAGNOSIS menyetel diagnosis, pindah ke terapi, dan mengeluarkan STEMPEL', () => {
@@ -807,6 +857,59 @@ describe('aksiKlinik — firewall alergi', () => {
     ])
     expect(baru.resep).toEqual(['eritromisin_500', 'paracetamol_500'])
     expect(baru.firewallTerpicu).toBe(1)
+  })
+
+  /**
+   * Kapitalisasi `trap.kelas` (yang jadi isi `pasien.alergi`) dan
+   * `obat.golonganAlergi` ditulis dua tempat berbeda di konten. Skoring
+   * (`pasienKenaTrap`) dan invariant integritas trap di validasiPack
+   * membandingkannya case-insensitive; bila firewall cocok-persis-huruf,
+   * beda huruf besar-kecil menggeser standar emas tanpa memblokir apa pun.
+   */
+  it('beda kapitalisasi alergi pasien vs golongan obat TETAP diblokir firewall', () => {
+    const enc = buatEncounterFase(buatPasien({ alergi: ['Penisilin'] }), 'terapi')
+    const { enc: baru, events } = aksiKlinik(
+      enc,
+      { type: 'TAMBAH_OBAT', obatId: 'amoxicillin_500' },
+      KASUS_FARINGITIS,
+      PACK,
+      rngTest(),
+    )
+    expect(baru.resep).toEqual([])
+    expect(baru.firewallTerpicu).toBe(1)
+    expect(cariEvent(events, 'FIREWALL_ALERGI')?.golongan).toBe('penisilin')
+    expect(cariEvent(events, 'STEMPEL')?.jenis).toBe('kontraindikasi')
+  })
+
+  it('normalisasi hanya menambah blokir untuk kelas yang sama — golongan lain tetap lolos', () => {
+    for (const obat of Object.values(OBAT_MINI)) {
+      const enc = buatEncounterFase(buatPasien({ alergi: ['PENISILIN'] }), 'terapi')
+      const { enc: baru } = aksiKlinik(
+        enc,
+        { type: 'TAMBAH_OBAT', obatId: obat.id },
+        KASUS_FARINGITIS,
+        PACK,
+        rngTest(),
+      )
+      const sekelasAlergi = obat.golonganAlergi?.toLowerCase() === 'penisilin'
+      expect(baru.resep).toEqual(sekelasAlergi ? [] : [obat.id])
+    }
+  })
+
+  it('standar emas trap tetap bisa dipenuhi 100 walau kapitalisasi alergi berbeda', () => {
+    const enc = buatEncounterFase(buatPasien({ alergi: ['Penisilin'] }), 'terapi')
+    const { enc: baru } = jalankan(enc, [
+      { type: 'TAMBAH_OBAT', obatId: 'eritromisin_500' }, // alternatif trap
+      { type: 'TAMBAH_OBAT', obatId: 'paracetamol_500' },
+    ])
+    expect(baru.resep).toEqual(['eritromisin_500', 'paracetamol_500'])
+    expect(baru.firewallTerpicu).toBe(0)
+    const nilai = nilaiEncounter(
+      { ...baru, diagnosis: { icd10: 'J02.9', jenis: 'suspek' }, disposisi: 'pulang' },
+      KASUS_FARINGITIS,
+      PACK,
+    )
+    expect(nilai.skorTerapi).toBe(100)
   })
 
   it('HAPUS_OBAT dan TAMBAH/HAPUS_EDUKASI bekerja biasa', () => {
@@ -1898,5 +2001,114 @@ describe('kasusEfektif', () => {
     // Pertanyaan yang TIDAK di-override tak kehilangan suaranya.
     const makan = efektif.anamnesis.find((q) => q.id === 'q_makan')!
     expect(makan.variasi?.polos).toBe(`(polos) ${KASUS_FARINGITIS.anamnesis.find((q) => q.id === 'q_makan')!.jawab}`)
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * Pagar konten yang menjaga mesin encounter (validasiPack)
+ *
+ * Kedua invariant di bawah tak punya makna sendiri: keduanya ada SEMATA karena
+ * mesin di file ini berperilaku begini — firewall memblokir resep by golongan
+ * alergi, gerbang terapi kritis mencocokkan id MENTAH (buta thd pergeseran
+ * standar emas saat trap menyala), dan pasien kasus ber-trap selalu membawa
+ * alerginya. Karena itu testnya duduk berdampingan dgn perilaku yang dijaga.
+ * ------------------------------------------------------------------------- */
+
+describe('validasiPack — pagar konten yang menjaga mesin encounter', () => {
+  const MANIFEST_MINI: RuntimeCurriculumManifest = {
+    schemaVersion: 1,
+    contentRelease: 'uji',
+    releaseOrder: ['uji'],
+    encounterArchetypes: [],
+    ukmScenarios: [],
+  }
+
+  /** Pesan validator untuk SATU kasus uji (temuan pack mini lain diabaikan). */
+  function masalahKasus(kasus: KasusKlinis): string[] {
+    return validasiPack({
+      ...PACK,
+      kasus: { [kasus.id]: kasus },
+      runtimeManifest: MANIFEST_MINI,
+    }).filter((m) => m.startsWith(`Kasus ${kasus.id}:`))
+  }
+
+  const { alergiTrap: _alergiTrap, ...KASUS_TANPA_TRAP } = KASUS_FARINGITIS
+
+  describe('terapiKritis tak boleh bertabrakan dengan trap kasusnya sendiri', () => {
+    it('terapi kritis sekelas alergiTrap ditolak — firewall membuat gerbangnya mustahil', () => {
+      const masalah = masalahKasus({
+        ...KASUS_FARINGITIS,
+        id: 'trap_kritis_mini',
+        tatalaksana: { ...KASUS_FARINGITIS.tatalaksana, terapiKritis: ['amoxicillin_500'] },
+      })
+      expect(
+        masalah.some((m) => m.includes("terapiKritis 'amoxicillin_500' terlarang oleh alergiTrap")),
+      ).toBe(true)
+      // Pagar selektabilitas lama meloloskannya: obat terlarang trap justru
+      // WAJIB terdaftar di obatBenar (lihat invariant integritas trap).
+      expect(masalah.some((m) => m.includes('tidak ada di obatBenar/obatAlternatif'))).toBe(false)
+    })
+
+    it('terapi kritis di luar kelas alergi kasus tetap sah', () => {
+      const masalah = masalahKasus({
+        ...KASUS_FARINGITIS,
+        id: 'kritis_aman_mini',
+        tatalaksana: { ...KASUS_FARINGITIS.tatalaksana, terapiKritis: ['paracetamol_500'] },
+      })
+      expect(masalah.some((m) => m.includes('terapiKritis'))).toBe(false)
+    })
+
+    it('terapi kritis yang sekaligus obat terlarang interaksiTrap ditolak', () => {
+      const masalah = masalahKasus({
+        ...KASUS_TANPA_TRAP,
+        id: 'interaksi_kritis_mini',
+        tatalaksana: {
+          ...KASUS_FARINGITIS.tatalaksana,
+          obatBenar: ['isdn_mini', 'paracetamol_500'],
+          terapiKritis: ['isdn_mini'],
+        },
+        interaksiTrap: {
+          faktor: 'pde5_inhibitor',
+          obatTerlarang: ['isdn_mini'],
+          alternatifBenar: ['furosemid_mini'],
+        },
+      })
+      expect(
+        masalah.some((m) => m.includes("terapiKritis 'isdn_mini' juga terlarang oleh interaksiTrap")),
+      ).toBe(true)
+    })
+  })
+
+  describe('varian presentasi tak boleh menimpa jawaban pengungkap trap alergi', () => {
+    const varian = (jawabanBerubah: Record<string, string>) => [
+      { id: 'v_uji', vital: { suhu: 37.6 }, jawabanBerubah },
+    ]
+
+    it('menimpa jawaban pertanyaan alergi pada kasus ber-alergiTrap ditolak', () => {
+      const masalah = masalahKasus({
+        ...KASUS_FARINGITIS,
+        id: 'varian_trap_mini',
+        varianPresentasi: varian({ q_alergi: 'Belum pernah alergi obat apa pun, Dok.' }),
+      })
+      expect(masalah.some((m) => m.includes("menimpa jawaban pertanyaan alergi 'q_alergi'"))).toBe(true)
+    })
+
+    it('menimpa jawaban pertanyaan LAIN pada kasus ber-alergiTrap tetap sah', () => {
+      const masalah = masalahKasus({
+        ...KASUS_FARINGITIS,
+        id: 'varian_nontrap_mini',
+        varianPresentasi: varian({ q_demam: 'Panasnya baru semalam, Dok.' }),
+      })
+      expect(masalah.some((m) => m.includes('menimpa jawaban pertanyaan alergi'))).toBe(false)
+    })
+
+    it('kasus TANPA alergiTrap bebas memvariasikan jawaban pertanyaan alergi', () => {
+      const masalah = masalahKasus({
+        ...KASUS_TANPA_TRAP,
+        id: 'varian_tanpa_trap_mini',
+        varianPresentasi: varian({ q_alergi: 'Tidak ada alergi obat, Dok.' }),
+      })
+      expect(masalah.some((m) => m.includes('menimpa jawaban pertanyaan alergi'))).toBe(false)
+    })
   })
 })

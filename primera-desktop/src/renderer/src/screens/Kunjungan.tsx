@@ -219,7 +219,9 @@ export function Kunjungan() {
   const pilihanAcak = useMemo(() => {
     const node = skenario && dialogIndexAktif >= 0 ? skenario.dialog[dialogIndexAktif] : undefined
     if (!node) return []
-    const ditemukan = kj?.hotspotDitemukan ?? []
+    // Memo ini jalan SEBELUM guard bentuk di bawah, dan `?? []` meloloskan nilai
+    // truthy non-array (save korup) yang lalu meledak di `.includes`.
+    const ditemukan = Array.isArray(kj?.hotspotDitemukan) ? kj.hotspotDitemukan : []
     return acakUrutan(node.pilihan, state.seed, 'kunjungan-dialog', dialogIndexAktif).filter(
       (pilihan) => pilihan.butuhHotspot?.every((id) => ditemukan.includes(id)) ?? true,
     )
@@ -244,8 +246,16 @@ export function Kunjungan() {
   )
 
   // CODEX ronde-13: `kj.hotspotDitemukan` korup (bukan array) crash `.includes`
-  // di bawah bila lolos guard tanpa cek ini.
-  if (!kj || !kelContent || !skenario || !Array.isArray(kj.hotspotDitemukan)) {
+  // di bawah bila lolos guard tanpa cek ini. `kj.pilihanDiambil` sekelas —
+  // `.at(-1)` di bawah meledak pada nilai non-array, dan initializer riwayat di
+  // atas sudah memakai Array.isArray untuk field yang sama.
+  if (
+    !kj ||
+    !kelContent ||
+    !skenario ||
+    !Array.isArray(kj.hotspotDitemukan) ||
+    !Array.isArray(kj.pilihanDiambil)
+  ) {
     return (
       <div className="kunjungan-root kunjungan-root--kosong tengah">
         <div className="kartu kolom" style={{ alignItems: 'center' }}>

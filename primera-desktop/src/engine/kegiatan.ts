@@ -455,10 +455,11 @@ export function kartuProlanis(peserta: PesertaProlanis[], rng: Rng): KartuKegiat
                 id: 'c',
                 label: 'Langsung rujuk ke spesialis',
                 benar: false,
-                // Copy-audit bug hunt 2026-08-01: "guillotine mengintai" — jargon Inggris
-                // dramatis yang tak jelas maksudnya bagi pemain — diganti konsekuensi
-                // konkret & konsisten dgn frasa RRNS di scoring.ts.
-                respons: 'HT esensial adalah kompetensi FKTP (4A). Rujuk dini menaikkan RRNS-mu dan mengunci nilai encounter ini.',
+                // RRNS & cap grade adalah mekanik encounter KLINIK (tally rujukan
+                // di reducer, cap di clinic.ts) — sesi Prolanis tak menyentuh
+                // keduanya. Respons di sini hanya boleh menyebut yang memang
+                // terjadi: jawaban dinilai keliru dan drift peserta memburuk.
+                respons: 'HT esensial adalah kompetensi FKTP (4A). Akar ketidakpatuhannya tak tersentuh — ia pulang dari sesi ini dengan tensi yang tetap tak terkendali.',
               },
             ],
       }

@@ -49,9 +49,9 @@ function soreHariIni(): GameState {
   return s
 }
 
-function tekan(key: string): void {
+function tekan(key: string, repeat = false): void {
   act(() => {
-    window.dispatchEvent(new KeyboardEvent('keydown', { key, bubbles: true, cancelable: true }))
+    window.dispatchEvent(new KeyboardEvent('keydown', { key, repeat, bubbles: true, cancelable: true }))
   })
 }
 
@@ -93,6 +93,25 @@ describe('<MejaKerja /> — hotkey L & susunan panel sore', () => {
     tekan('l')
     expect(useGame.getState().state?.hari).toBe(s.hari)
     dialog.remove()
+    tekan('l')
+    expect(useGame.getState().state?.hari).toBe(s.hari + 1)
+  })
+
+  // CTA bukan aksi idempotent seperti hotkey angka 1-5: tiap ulangan menjalankan
+  // LANJUTKAN baru yang ter-autosave. Tombol L yang ditahan (auto-repeat ~30×/dtk,
+  // atau tuts macet) karena itu bisa melewatkan blok demi blok tanpa niat.
+  it('L yang DITAHAN (auto-repeat) tidak menjalankan CTA berulang', () => {
+    const s = renderSore()
+    tekan('l', true)
+    tekan('l', true)
+    tekan('l', true)
+    expect(useGame.getState().state?.hari).toBe(s.hari)
+  })
+
+  it('setelah tombol dilepas, ketukan L berikutnya tetap bekerja', () => {
+    const s = renderSore()
+    tekan('l', true)
+    expect(useGame.getState().state?.hari).toBe(s.hari)
     tekan('l')
     expect(useGame.getState().state?.hari).toBe(s.hari + 1)
   })
