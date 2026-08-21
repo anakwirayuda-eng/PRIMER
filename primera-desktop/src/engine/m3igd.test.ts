@@ -104,14 +104,16 @@ describe('M3.14 — alur IGD', () => {
     expect(sBuruk.burnout).toBeGreaterThan(0)
   })
 
-  describe('M10.5 Q4/Q-E — rujuk prematur (stabilitas<50) setara Kode Hitam', () => {
-    // CODEX audit (2026-07-12, temuan #2): dulu ROSC → SEGERA disposisi, jadi
-    // rujukan BENAR (disposisiBenar SEMUA kasus IGD='rujuk') SELALU mati
-    // dalam perjalanan — dead-end deterministik tanpa jalur selamat. Kini ada
-    // titik keputusan 'pasca_rosc' (stabilisasiLanjutanIgd): skip stabilisasi
-    // (langsung_rujuk) mempertahankan risiko lama; stabilisasi benar
-    // (ulang_abcde) membuka jalur selamat yang dulu tak eksis sama sekali.
-    it('ROSC lalu SKIP stabilisasi lanjutan (langsung_rujuk) → rujuk prematur, memburuk (igdMeninggal)', () => {
+  describe('Adjudikasi-delegasi 2026-08-21 — kurva konsekuensi disposisi di bawah ambang stabil', () => {
+    // Doktrin LAMA (M10.5 Q4/Q-E) memvonis rujuk<50 sebagai "meninggal dalam
+    // perjalanan" (Kode Hitam) sementara pulang dipaksa hasil 'stabil' dan
+    // SELALU selamat — kurva terbalik: 'rujuk' adalah disposisiBenar SEMUA
+    // kasus IGD dan tak ada aksi penambah stabilitas di fase disposisi, jadi
+    // jawaban benar dihukum mati, jawaban salah selamat. Adjudikasi-delegasi
+    // 2026-08-21 membaliknya: rujuk<50 = pasien tiba KRITIS di RS tapi HIDUP
+    // (disposisi dinilai normal, narasi edukatif); pulang<50 = memburuk fatal
+    // di rumah (Kode Hitam + igdMeninggal + burnout pindah alamat ke sini).
+    it('ROSC lalu SKIP stabilisasi lanjutan (langsung_rujuk) → rujuk pada 25: pasien TIBA KRITIS tapi hidup', () => {
       let s: GameState = base(igdKasus(KASUS, 10))
       const l0 = PACK.kasusIgd[KASUS]!.langkah[0]!
       const salah = l0.pilihan.find((p) => !p.benar)!
@@ -124,12 +126,78 @@ describe('M3.14 — alur IGD', () => {
       expect(s.igd?.fase).toBe('disposisi')
       expect(s.igd?.stabilitas).toBe(25) // TAK naik — skip stabilisasi lanjutan
 
-      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+      const burnoutSebelum = s.burnout
+      s = run(s, { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
+      expect(s.tally.igdMeninggal).toBe(0) // BUKAN lagi vonis mati
+      expect(s.tally.igdStabil).toBe(1) // rujukan benar + tujuan cocok = dinilai normal
+      expect(s.tally.igdSalahDisposisi).toBe(0)
+      expect(s.burnout).toBe(burnoutSebelum)
+      expect(s.igd).toBeUndefined()
+      expect(s.inbox.some((m) => m.judul.includes('kondisi kritis'))).toBe(true)
+      expect(s.inbox.some((m) => m.judul.includes('KODE HITAM'))).toBe(false)
+    })
+
+    it('(a) rujuk stabilitas 45 + tujuan cocok → disposisiTepat, TANPA Kode Hitam/burnout, surat tiba-kritis edukatif', () => {
+      const s0 = base({ ...igdKasus(KASUS, 45), fase: 'disposisi' })
+      const s = run(s0, { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
+      expect(s.tally.igdStabil).toBe(1)
+      expect(s.tally.igdSalahDisposisi).toBe(0)
+      expect(s.tally.igdMeninggal).toBe(0)
+      expect(s.burnout).toBe(s0.burnout)
+      const surat = s.inbox.at(-1)!
+      expect(surat.judul).toContain('kondisi kritis')
+      expect(surat.isi).toContain('45/100')
+      expect(surat.isi).toContain('stabilisasi')
+      expect(surat.jenis).not.toBe('pujian_kapus') // edukatif, bukan memuji
+      // Rujukan tepat tetap menyambung umpan balik RS seperti biasa.
+      expect(s.jadwal.some((j) => j.jenis === 'rujukan_feedback')).toBe(true)
+    })
+
+    it('(b) pulang stabilitas 45 → memburuk di rumah: Kode Hitam, igdMeninggal+1, burnout+15', () => {
+      const s0 = base({ ...igdKasus(KASUS, 45), fase: 'disposisi' })
+      const s = run(s0, { type: 'DISPOSISI_IGD', jenis: 'pulang' })
       expect(s.tally.igdMeninggal).toBe(1)
       expect(s.tally.igdStabil).toBe(0)
       expect(s.tally.igdSalahDisposisi).toBe(0)
+      expect(s.burnout).toBe(Math.min(100, s0.burnout + 15))
       expect(s.igd).toBeUndefined()
-      expect(s.inbox.some((m) => m.judul.includes('KODE HITAM') && m.judul.includes('perjalanan'))).toBe(true)
+      const surat = s.inbox.at(-1)!
+      expect(surat.judul).toContain('KODE HITAM')
+      expect(surat.judul).toContain('memburuk di rumah')
+      expect(surat.isi).toContain('45/100')
+      expect(surat.kaitKasusIgdId).toBe(KASUS)
+    })
+
+    it('(c) pulang stabilitas 60 (kasus wajib-rujuk) → selamat, igdSalahDisposisi, TANPA frasa "Untung"', () => {
+      const s = run(base({ ...igdKasus(KASUS, 60), fase: 'disposisi' }), { type: 'DISPOSISI_IGD', jenis: 'pulang' })
+      expect(s.tally.igdSalahDisposisi).toBe(1)
+      expect(s.tally.igdMeninggal).toBe(0)
+      const surat = s.inbox.at(-1)!
+      // Frasa lama "Untung keluarganya membawanya ke RS sendiri" mengajarkan
+      // transport pribadi pasien-rujukan itu aman — dilarang muncul lagi.
+      expect(surat.isi).not.toContain('Untung')
+      expect(surat.isi).toContain('inisiatif sendiri')
+    })
+
+    it('(d) regresi: rujuk stabilitas 60 + tujuan cocok → tepat penuh tanpa narasi kritis', () => {
+      const s = run(base({ ...igdKasus(KASUS, 60), fase: 'disposisi' }), { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
+      expect(s.tally.igdStabil).toBe(1)
+      expect(s.tally.igdMeninggal).toBe(0)
+      expect(s.tally.igdSalahDisposisi).toBe(0)
+      expect(s.inbox.at(-1)!.judul).not.toContain('kritis')
+    })
+
+    it('(e) INVARIAN: pada kasus wajib-rujuk, konsekuensi pulang ≥ konsekuensi rujuk utk tiap stabilitas', () => {
+      for (const stabilitas of [5, 25, 45, 49, 50, 55, 75, 100]) {
+        const mulai = () => base({ ...igdKasus(KASUS, stabilitas), fase: 'disposisi' })
+        const sRujuk = run(mulai(), { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: RS_TUJUAN })
+        const sPulang = run(mulai(), { type: 'DISPOSISI_IGD', jenis: 'pulang' })
+        expect(sPulang.tally.igdMeninggal).toBeGreaterThanOrEqual(sRujuk.tally.igdMeninggal)
+        expect(sPulang.burnout).toBeGreaterThanOrEqual(sRujuk.burnout)
+        const ukp = (st: GameState) =>
+          hitungSkor({ ...st, tally: { ...st.tally, totalPasien: 4, diagnosisBenar: 4, tegakBenar: 4 } }).ukp
+        expect(ukp(sPulang)).toBeLessThanOrEqual(ukp(sRujuk))
+      }
     })
 
     it('ROSC lalu stabilisasi lanjutan BENAR (ulang_abcde) → stabilitas naik ≥ambang → rujuk SELAMAT (igdStabil)', () => {

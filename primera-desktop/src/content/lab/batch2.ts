@@ -777,7 +777,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_program', 'sosial', 'Apakah anak sudah menerima PMT lokal, makan bergizi gratis, atau pendampingan kader; siapa yang memantau konsumsinya?', 'Belum menerima PMT. Kader bersedia memantau dan Posyandu dekat dari rumah.', true],
     ],
     fisik: [['umum', 'Anak kurus tetapi aktif; BB/TB z-score -2,4 SD dan LILA 12,0 cm, tanpa edema atau tanda dehidrasi.'], ['abdomen', 'Tidak ada hepatomegali atau distensi patologis.', false]],
-    diagnosisBanding: ['E44', 'E43', 'R62.7'],
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #6): R62.7 adalah kode
+    // ICD-10-CM AS "Adult failure to thrive" — salah demografi utk balita dan
+    // tak ada di WHO ICD-10. Distraktor gagal-tumbuh dipertahankan lewat
+    // padanan WHO-nya, R62.8.
+    diagnosisBanding: ['E44', 'E43', 'R62.8'],
     tatalaksana: { obatBenar: [], edukasi: ['alur_pmt_lokal_2025', 'makan_balita_padat_gizi', 'pantau_tumbuh_mingguan'], edukasiKritis: ['alur_pmt_lokal_2025', 'pantau_tumbuh_mingguan'] },
     clue: 'Wasting sedang (BB/TB -2,4 SD; LILA 12,0 cm), nafsu makan baik, dan tanpa edema/komplikasi dapat dikelola rawat jalan setelah penyebab dinilai. Hubungkan hasil konfirmasi Puskesmas kembali ke kader: PMT berbahan pangan lokal kaya protein hewani diberikan setiap hari selama 56 hari, tidak menggantikan makanan utama, dengan pemantauan konsumsi dan pertumbuhan mingguan. Bila dalam sekitar 14 hari konsumsi memadai tetapi berat tidak membaik, atau muncul edema, anoreksia, penyakit penyerta, dan tanda bahaya, evaluasi ulang dan rujuk sesuai temuan.',
     panduanResmi: 'Kepdirjen Kesprimkom HK.02.02/B/576/2025 adalah petunjuk teknis aktif PMT lokal; kebijakan 2025 menggantikan petunjuk 1622/2023 yang telah dicabut. Untuk balita gizi kurang, durasi program 56 hari, diberikan setiap hari, kaya protein hewani, dengan pemantauan harian oleh kader/keluarga dan berkala oleh tenaga kesehatan. WHO 2023 menekankan penilaian klinis, dukungan keluarga, follow-up pertumbuhan, dan rujukan bila komplikasi atau respons buruk.',
@@ -785,7 +789,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran', icd10: 'E50-E56', kategori: 'metabolik',
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #2): nama kasus memang "Dugaan"
+    // dan catatanRealita menyebut "label diagnosis tetap dugaan" — field lalai
+    // disetel, kini dijujurkan mengikuti preseden leptospirosis di bawah.
+    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran', icd10: 'E50-E56', kepastianDiagnosis: 'suspek', kategori: 'metabolik',
     keluhanUtama: 'Sudut bibir sering pecah dan lidah terasa perih sejak pola makan saya sangat terbatas.', usia: [18, 70], vital: { td: '118/74', nadi: 80, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Apa perubahan pola makan dan keluhan lain?', 'Tiga bulan hanya banyak makan nasi instan; bibir pecah, lidah merah, dan mudah lelah.'],
     pertanyaan: [
@@ -802,7 +809,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_defisiensi_mineral_zinc', nama: 'Dugaan Defisiensi Zinc', icd10: 'E58-E61', kategori: 'metabolik',
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #2): clue kasus ini sendiri
+    // melarang menegakkan diagnosis dari satu gejala — field lalai disetel,
+    // kini dijujurkan mengikuti preseden leptospirosis di bawah.
+    id: 'lab_defisiensi_mineral_zinc', nama: 'Dugaan Defisiensi Zinc', icd10: 'E58-E61', kepastianDiagnosis: 'suspek', kategori: 'metabolik',
     keluhanUtama: 'Luka kecil lama sembuh, rambut mudah rontok, dan selera makan turun.', usia: [12, 50], vital: { td: '116/72', nadi: 78, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Bagaimana pola makan dan sejak kapan keluhan muncul?', 'Berbulan-bulan jarang makan protein hewani; keluhan perlahan dan tidak ada demam.'],
     pertanyaan: [

@@ -447,6 +447,9 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     id: 'lab_intoleransi_makanan_laktosa',
     nama: 'Intoleransi Makanan - Dugaan Laktosa',
     icd10: 'K90.4',
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #2): nama kasus memang "Dugaan"
+    // dan cluenya menolak kepastian — field lalai disetel, kini dijujurkan.
+    kepastianDiagnosis: 'suspek',
     skdi: '4A',
     kategori: 'pencernaan',
     fktp144: true,

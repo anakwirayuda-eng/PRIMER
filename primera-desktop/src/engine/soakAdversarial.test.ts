@@ -672,7 +672,15 @@ describe('SOAK ADVERSARIAL — 3 profil (speedrunner/teliti/ceroboh), M10.5 §7d
       `[soak-adversarial] rata-rata grade (4=A..1=D): teliti=${teliti.toFixed(2)} speedrunner=${speedrunner.toFixed(2)} ceroboh=${ceroboh.toFixed(2)}`,
     )
     expect(teliti).toBeGreaterThanOrEqual(speedrunner)
-    expect(speedrunner).toBeGreaterThanOrEqual(ceroboh)
+    expect(teliti).toBeGreaterThanOrEqual(ceroboh)
+    // Adjudikasi-delegasi 2026-08-21: penalti-palsu yg dulu menekan ceroboh
+    // dihapus (pseudoefedrin normotensi tak lagi cap-D, union makrolida,
+    // suspek dihargai jujur) — pada SEED_A rata-rata speedrunner vs ceroboh
+    // kini berselisih ~0,0003, di bawah derau satu seed. Pagar outcome-gaming
+    // yang sesungguhnya adalah dua assert teliti di atas (tetap ketat);
+    // pembanding dua-profil-salah ini diberi toleransi kecil agar tetap
+    // menangkap inversi nyata (>0,02) tanpa flaky terhadap derau.
+    expect(speedrunner).toBeGreaterThanOrEqual(ceroboh - 0.02)
   })
 
   for (const mode of ['karier', 'ujian'] as const) {

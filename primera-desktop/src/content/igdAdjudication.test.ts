@@ -8,6 +8,7 @@ import {
   CONTENT_RELEASE_ORDER,
   IGD_ADJUDICATION_CONTENT_RELEASE,
   ANSWER_KEY_SWEEP_CONTENT_RELEASE,
+  DELEGATED_ADJUDICATION_CONTENT_RELEASE,
   encounterArchetypeAktif,
 } from './pack'
 
@@ -42,8 +43,11 @@ describe('M13-14 - aktivasi IGD pasca-adjudikasi dokter', () => {
     expect(approved).toHaveLength(14)
     expect(Object.values(PACK.kasusIgd).filter((kasus) => kasus.activationStatus)).toHaveLength(0)
     expect(CONTENT_RELEASE_ORDER).toContain(IGD_ADJUDICATION_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE).toBe(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
-    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
+    // Adjudikasi-delegasi 2026-08-21: rilis aktif naik dari answer-key-sweep
+    // karena lima keputusan adjudikasi mengubah kunci jawaban (lihat pack.ts).
+    expect(CONTENT_RELEASE).toBe(DELEGATED_ADJUDICATION_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE_ORDER).toContain(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE_ORDER.at(-1)).toBe(DELEGATED_ADJUDICATION_CONTENT_RELEASE)
   })
 
   it('tidak mengubah id pilihan, kunci benar, atau efek stabilitas dari prototipe yang direview', () => {

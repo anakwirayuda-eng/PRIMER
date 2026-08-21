@@ -815,10 +815,13 @@ export function nilaiKegiatan(kg: KegiatanState): HasilKegiatan {
 }
 
 /**
- * Drift parameter Prolanis antar-bulan: intervensi tepat menurunkan, lalai
- * menaikkan. `skala` (0..1, default 1) mengecilkan besaran langkah — dipakai
- * jalur klinik untuk kredit parsial (grade B = 0.5); skala 1 identik perilaku
- * lama (Math.round(besar) === besar) dan konsumsi RNG selalu tepat satu draw.
+ * Drift parameter Prolanis antar-bulan: intervensi tepat menurunkan; intervensi
+ * salah pada peserta TAK terkendali (lalai) menaikkan; intervensi salah pada
+ * peserta yg SEDANG terkendali (overtreatment) ikut MENURUNKAN — lihat komentar
+ * `arah` di bawah (Keputusan #8, adjudikasi-delegasi 2026-08-21). `skala`
+ * (0..1, default 1) mengecilkan besaran langkah — dipakai jalur klinik untuk
+ * kredit parsial (grade B = 0.5); skala 1 identik perilaku lama
+ * (Math.round(besar) === besar) dan konsumsi RNG selalu tepat satu draw.
  */
 export function driftProlanis(
   p: PesertaProlanis,
@@ -826,7 +829,23 @@ export function driftProlanis(
   rng: Rng,
   skala = 1,
 ): PesertaProlanis {
-  const arah = intervensiTepat ? -1 : 1
+  // Keputusan #8 (adjudikasi-delegasi 2026-08-21): dulu `arah = tepat ? -1 : 1`
+  // — intervensi salah SELALU menaikkan param, termasuk "naikkan dosis" pada
+  // peserta terkendali. Itu kebalikan fisiologi: menaikkan dosis antihipertensi
+  // pada pasien terkendali MENURUNKAN tekanan darah (kartunya sendiri sudah
+  // memperingatkan risiko hipotensi). Kini intervensi salah pada peserta yg
+  // SEDANG terkendali (dinilai dari param SEBELUM drift) = overtreatment →
+  // arah turun juga; clamp bawah 110/85 di bawah menahan dari nilai absurd.
+  // Salah pada peserta tak terkendali tetap +1 (lalai, perilaku lama). Hukuman
+  // atas jawaban salah tetap hidup di skor sesi (benar/total) — yg dibalik
+  // hanya arah simulasinya. Konsumsi RNG tak berubah: tetap satu draw.
+  // Amendemen (2026-08-21, hari yg sama): pembalikan HANYA utk HT — kartu DM
+  // terkendali opsi salahnya "Stop obat karena gula sudah normal" =
+  // UNDER-treatment, gula justru melonjak lagi (persis teks respons kartunya);
+  // arah +1 lama sudah benar utk DM.
+  const overtreatment =
+    !intervensiTepat && p.jenis === 'ht' && prolanisTerkendali(p.jenis, p.param)
+  const arah = intervensiTepat || overtreatment ? -1 : 1
   // #12 (audit CODEX UKM 2026-07-16): skala DM kini GDP — ambang kontrol
   // RPPT <130 mg/dL (bukan GDS <200); langkah drift disesuaikan ke skala GDP.
   // S5-iks-prolanis (2026-08-01, REVISI_ENGINE 62): langkah TURUN DM dinaikkan

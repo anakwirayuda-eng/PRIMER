@@ -783,8 +783,31 @@ export function nilaiEncounter(
   // obatSalahUmum kasus (mis. siprofloksasin pada kasus TB, bukan oat_kdt)
   // tetap lolos floor 70 — MENGHAPUS efek penalti stewardship yg seharusnya
   // sudah menjatuhkan skor. Ditambahkan syarat eksplisit di sini.
-  if (menungguLabBesok && obatBerbahaya === 0 && !antibiotikTanpaIndikasi) {
-    skorTerapi = Math.max(skorTerapi, 70)
+  // Keputusan #7 (adjudikasi-delegasi 2026-08-21): dua kelas penalti yg lahir
+  // SESUDAH Fix #2 masih lolos floor. Doktrin yg sama ("floor tidak boleh
+  // menghapus efek penalti") diterapkan PROPORSIONAL dgn berat pelanggaran:
+  // - tindakanBerbahaya/tindakanDiLuar (m13-1a): tindakan salah/tak-terindikasi
+  //   MENCAPAI pasien — "observasi yang aman" tidak kompatibel dengannya.
+  //   Floor GUGUR sepenuhnya, sekelas obatBerbahaya/antibiotikTanpaIndikasi.
+  // - obatNonPrimerDiresepkan (rev 29): pelanggaran minor (salah-sasaran tanpa
+  //   bahaya langsung). Floor TETAP berlaku, tapi potongannya (15/obat, angka
+  //   yg sama dgn yg dipotong dari skor mentah di atas) dikurangkan SETELAH
+  //   flooring: potongan ditambahkan balik dulu (rekonstruksi skor tanpa-
+  //   potongan-nonPrimer), di-floor 70, lalu dipotong ulang — ekuivalen floor
+  //   efektif 70 − potongan. Kredit observasi-yg-benar tak lenyap total karena
+  //   satu resep minor, tapi penaltinya juga tak pernah terhapus floor.
+  //   (Rekonstruksi dari skor ter-clamp-0 aman: pada semua kasus clamp, hasil
+  //   akhirnya identik krn floor/clamp bawah mendominasi.) Bila floor tak
+  //   aktif, blok ini tak tersentuh — perilaku lama utuh persis.
+  if (
+    menungguLabBesok &&
+    obatBerbahaya === 0 &&
+    !antibiotikTanpaIndikasi &&
+    !tindakanBerbahaya &&
+    tindakanDiLuar === 0
+  ) {
+    const potonganNonPrimer = 15 * obatNonPrimerDiresepkan
+    skorTerapi = clamp(Math.max(skorTerapi + potonganNonPrimer, 70) - potonganNonPrimer, 0, 100)
   }
 
   /* -- Edukasi: PRIORITISASI (M7 34b/O4 — precision with opportunity cost) ------ */

@@ -768,7 +768,24 @@ function fnv1a(teks: string): string {
 // efek yang tak pernah dijalankan engine (murni teks). state.ts — dua komentar
 // dijujurkan (murni komentar). Dossier build lama karena itu jatuh ke
 // "tidak_dapat_diverifikasi" (perilaku baku), bukan divonis tidak sah.
-export const REVISI_ENGINE = 68
+//
+// Adjudikasi-delegasi 2026-08-21 (docs/ADJUDIKASI_DELEGASI_2026-08-21.md):
+// 68 -> 69. Delapan keputusan klinis yang didelegasikan dr. Wirayuda,
+// dieksekusi satu batch bersama CONTENT_RELEASE 'adjudikasi-delegasi-
+// 2026-08-21'. igd.ts + reducer.ts — kurva konsekuensi disposisi dibalik ke
+// arah yang benar secara klinis: rujuk pada stabilitas <50 kini TIBA KRITIS
+// (hidup, dinilai normal), memulangkan pasien tak stabil-lah yang berujung
+// Kode Hitam; surat "Untung keluarganya membawanya sendiri" diganti nada
+// netral. clinic.ts — floor observasi-menunggu-lab gugur pada tindakan
+// berbahaya/di-luar, dan potongan obat nonPrimer dikurangkan SETELAH flooring
+// (floor tak lagi menghapus penalti, doktrin Fix #2 dituntaskan). kegiatan.ts
+// — drift Prolanis HT terkendali + intervensi salah kini MENURUNKAN tensi
+// (overtreatment; kartunya sendiri memperingatkan hipotensi) — khusus HT,
+// DM tetap arah lama (opsi salahnya under-treatment). Konten: tiga kasus
+// "Dugaan" jadi suspek, I13.9 M6 dipulihkan, union makrolida faringitis/
+// tonsilitis, pseudoefedrin normotensi turun ke nonPrimer, R62.7 -> R62.8.
+// Dossier build lama jatuh ke "tidak_dapat_diverifikasi", bukan tidak sah.
+export const REVISI_ENGINE = 69
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

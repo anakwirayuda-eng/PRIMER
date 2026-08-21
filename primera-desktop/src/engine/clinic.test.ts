@@ -1513,6 +1513,90 @@ describe('nilaiEncounter — stewardship, disposisi, lab, SBAR', () => {
     expect(nilai.skorTerapi).toBe(0)
   })
 
+  describe('Keputusan #7 (adjudikasi-delegasi 2026-08-21): floor observasi vs penalti tindakan & obat nonPrimer', () => {
+    // Basis observasi sah: bta_sputum (bolehTundaTerapi) relevan → floor 70
+    // aktif. Varian per test menambah tindakanSalahUmum / obatSalahUmum.
+    const KASUS_OBS_DASAR: KasusKlinis = {
+      ...KASUS_FARINGITIS,
+      id: 'obs_adjudikasi_mini',
+      lab: [{ id: 'bta_sputum', hasil: 'Menunggu hasil', flag: 'normal', relevan: true }],
+    }
+    const KASUS_OBS_NONPRIMER: KasusKlinis = {
+      ...KASUS_OBS_DASAR,
+      tatalaksana: {
+        ...KASUS_OBS_DASAR.tatalaksana,
+        obatSalahUmum: [
+          {
+            id: 'ibuprofen_400',
+            alasan: 'Bukan lini pertama kasus ini — salah-sasaran tanpa bahaya langsung.',
+            bahaya: 'nonPrimer',
+          },
+        ],
+      },
+    }
+    const encObservasi = (): EncounterState => ({
+      ...buatEncounter(buatPasien({ kasusId: 'obs_adjudikasi_mini' })),
+      labDipesan: ['bta_sputum'],
+      disposisi: 'observasi',
+    })
+
+    it('tindakan BERBAHAYA menggugurkan floor sepenuhnya (sekelas obatBerbahaya)', () => {
+      const kasus: KasusKlinis = {
+        ...KASUS_OBS_DASAR,
+        tatalaksana: {
+          ...KASUS_OBS_DASAR.tatalaksana,
+          tindakanSalahUmum: [
+            { id: 'nebul_mini', alasan: 'Tak terindikasi & berisiko pada kasus ini.', bahaya: 'berbahaya' },
+          ],
+        },
+      }
+      const enc: EncounterState = { ...encObservasi(), tindakan: ['nebul_mini'] }
+      const nilai = nilaiEncounter(enc, kasus, PACK)
+      expect(nilai.tindakanBerbahaya).toBe(true)
+      // mentah: rasio 0/2 −15 tindakanDiLuar −25 berbahaya → clamp 0. DULU
+      // floor tetap menyulapnya jadi 70 ("observasi aman" + tindakan berbahaya
+      // sekaligus) — kini floor GUGUR.
+      expect(nilai.skorTerapi).toBe(0)
+    })
+
+    it('tindakan DI LUAR rencana (tanpa tag berbahaya) juga menggugurkan floor', () => {
+      // nebul_mini bukan prosedur kasus & tak terdaftar tindakanSalahUmum →
+      // murni tindakanDiLuar (1), tindakanBerbahaya false.
+      const enc: EncounterState = { ...encObservasi(), tindakan: ['nebul_mini'] }
+      const nilai = nilaiEncounter(enc, KASUS_OBS_DASAR, PACK)
+      expect(nilai.tindakanBerbahaya).toBe(false)
+      // mentah: 0 − 15 → clamp 0; tanpa fix, floor menjadikannya 70.
+      expect(nilai.skorTerapi).toBe(0)
+    })
+
+    it('obat nonPrimer TIDAK menggugurkan floor, tapi potongannya bertahan SETELAH flooring: 70 − 15 = 55', () => {
+      const enc: EncounterState = { ...encObservasi(), resep: ['ibuprofen_400'] }
+      const nilai = nilaiEncounter(enc, KASUS_OBS_NONPRIMER, PACK)
+      // mentah: rasio 0/2 −15 obatDiLuar −15 nonPrimer → clamp 0. Floor tetap
+      // aktif (pelanggaran minor), tapi hasilnya BUKAN 70 (itu menghapus
+      // penalti — bug yang di-fix) dan BUKAN mentah 0 (itu menghapus kredit
+      // observasi-yg-benar): 70 − 15 = 55.
+      expect(nilai.skorTerapi).toBe(55)
+    })
+
+    it('regresi: observasi sah BERSIH tetap 70 persis (nol obat nonPrimer tak menggeser floor lama)', () => {
+      const nilai = nilaiEncounter(encObservasi(), KASUS_OBS_DASAR, PACK)
+      expect(nilai.skorTerapi).toBe(70)
+    })
+
+    it('regresi: TANPA floor (disposisi pulang), penalti nonPrimer tak berubah dari perilaku lama', () => {
+      const enc: EncounterState = {
+        ...buatEncounter(buatPasien({ kasusId: 'obs_adjudikasi_mini' })),
+        resep: ['paracetamol_500', 'ibuprofen_400'],
+        disposisi: 'pulang',
+      }
+      const nilai = nilaiEncounter(enc, KASUS_OBS_NONPRIMER, PACK)
+      // rasio 1/2 = 50, −15 obatDiLuar −15 nonPrimer = 20 — angka lama persis;
+      // blok Keputusan #7 tak boleh menyentuh jalur tanpa-floor.
+      expect(nilai.skorTerapi).toBe(20)
+    })
+  })
+
   it('SBAR lengkap yang menyebut diagnosis dinilai 100; tanpa SBAR skor tidak ada', () => {
     const dasarPneumonia: EncounterState = {
       ...buatEncounter(buatPasien({ kasusId: 'pneumonia_mini', usia: 3, nama: 'Ade Bima' })),

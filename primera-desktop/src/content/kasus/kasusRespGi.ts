@@ -246,7 +246,12 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       obatOpsional: ['ctm_4', 'flutikason_semprot_hidung'],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Rinitis alergi bukan infeksi bakteri — antibiotik tidak berperan. Sekret jernih tanpa demam menyingkirkan sinusitis bakterial.', bahaya: 'nonPrimer' },
-        { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan terapi utama rinitis alergi; efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) berbahaya, terutama pada hipertensi. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.', bahaya: 'kontraindikasi' },
+        // Adjudikasi-delegasi 2026-08-21 (keputusan #5): diturunkan dari
+        // 'kontraindikasi' — pseudoefedrin oral pada dewasa muda normotensi
+        // (TD vignette 118/76) bukan kontraindikasi, hanya bukan terapi utama;
+        // kasus rinosinusitis di file lain justru MEWAJIBKANNYA, jadi cap
+        // bendera-merah di sini kontradiksi lintas kasus.
+        { id: 'pseudoefedrin_30', alasan: 'Dekongestan ORAL bukan lini pertama rinitis alergi — meredakan sumbatan tanpa menyentuh mekanisme alerginya. Efek sistemiknya (menaikkan tekanan darah, insomnia, palpitasi) menuntut kehati-hatian TERUTAMA pada hipertensi; pasien ini normotensi, jadi bukan kontraindikasi, hanya bukan slot terapi utama. Rinitis medikamentosa justru rebound dekongestan TOPIKAL (oksimetazolin), bukan oral.', bahaya: 'nonPrimer' },
       ],
       // M10.c (dossier §47): jaga_kelembapan_kulit (topik KULIT/eksim) dibuang
       // dari kasus HIDUNG — salah sasaran, pemain dapat kredit topik tak relevan.
@@ -397,7 +402,10 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup', 'amoxiclav_625'],
-      alternatifBenar: ['azitromisin_500'],
+      // Adjudikasi-delegasi 2026-08-21 (keputusan #4): guideline field kasus ini
+      // sendiri menulis "alternatif makrolida" (kelas, bukan satu molekul) —
+      // disamakan dgn faringitis_akut agar jawaban benar tidak dihukum.
+      alternatifBenar: ['eritromisin_500', 'azitromisin_500'],
     },
     konsekuensi: {
       narasi: 'GAS yang benar-benar terkonfirmasi tetapi tidak ditangani atau terapinya tidak tuntas dapat berkomplikasi, termasuk demam rematik; memaksakan amoksisilin pada pasien alergi dapat memicu reaksi berat.',

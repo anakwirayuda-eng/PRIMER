@@ -201,8 +201,15 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // dimensi dibulatkan ke 1 desimal sebelum grade divonis, jadi huruf dan angka
   // yang dibaca mahasiswa tak lagi bisa berselisih. Rincian di verifikasi.ts
   // rev 68.
-  'reducer.ts': '42ee0846c895df2d933325b815d9d891c705f5efaffc6b77f7c5a03f01b02990',
-  'clinic.ts': 'ac5fc96220baa18b87856dde390c0db3e523843afe45d7ea2513b7fe24f04297',
+  // Unfreeze 2026-08-21 (adjudikasi-delegasi, REVISI_ENGINE 69): reducer.ts +
+  // igd.ts — kurva konsekuensi disposisi IGD dibalik (rujuk <50 tiba kritis
+  // hidup; pulang <50 Kode Hitam); clinic.ts — floor observasi gugur pada
+  // tindakan berbahaya & potongan nonPrimer dikurangkan pasca-floor;
+  // kegiatan.ts — drift overtreatment HT terkendali turun (khusus HT);
+  // verifikasi.ts — changelog rev 69. Rincian keputusan & dasarnya di
+  // docs/ADJUDIKASI_DELEGASI_2026-08-21.md.
+  'reducer.ts': '8dc8e75df5a934792717558be0db3248c8389868f1784fb11820094e2c4a73a0',
+  'clinic.ts': 'efd50c5395cdf9ca3a39064b65919b489d84195f4b24758db9e97205366e769c',
   'scoring.ts': 'f536ef72e328f5901caf116c0ed5a0bfc153a7eeabfba81f8fa154dbba834a55',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
@@ -212,7 +219,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // rujukan tak lagi bisa menimpa slot jaminan kurikulum 4A pity-timer.
   'director.ts': '37039d94fca76f1db7616d9ac3ba82a27992b7d1468d78c1950ff27a3065b939',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
-  'igd.ts': 'a4118f89ab3a5214370611633e4a1ffeeb20df9b2ff06814acbe60f76ed31118',
+  'igd.ts': '930be5071fa33dd7f83d735b34612575bfc4f33453a2b19fe836fdfec2030349',
   'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
   'init.ts': '4b9bb8b402c98f264d196592e7132aa7d1c6cb15c9e96755b5f06991f3ff71c1',
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
@@ -227,7 +234,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): respons opsi rujuk
   // kartu Prolanis HT berhenti menjanjikan kenaikan RRNS & kunci nilai
   // encounter yang tak pernah dijalankan sesi Prolanis (murni copy).
-  'kegiatan.ts': '1ef4a5f00533da907032c5ffe3e6d7cb1836996226aedb226601b8438b20bf6c',
+  'kegiatan.ts': '824162457de22c12573c1504f68e313af0787d50d2bc0370fcee9abac59c0a25',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
@@ -242,7 +249,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 68 di verifikasi.ts.
-  'verifikasi.ts': '890ad207b0f1fa36befc0f8938b4104f9ec2ebf6a989e2b801516c276ea3c0a8',
+  'verifikasi.ts': 'eafb4b32709403b66c0046fd512934cad7284c084f915cc2f859f62d46391293',
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): dua komentar
   // dijujurkan (igdHariIni penanda turunan, bukan gerbang; cooldown Posyandu
   // per mode, bukan 30 hari mati). Murni komentar, nol kode runtime — hash

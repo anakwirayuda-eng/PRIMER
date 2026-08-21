@@ -368,6 +368,33 @@ describe('PACK — validasi silang id konten', () => {
     expect(validasiPack(rusakC).some((m) => m.includes("alternatifBenar 'amoxicillin_sirup' justru sekelas trap"))).toBe(true)
   })
 
+  // Adjudikasi-delegasi 2026-08-21 (docs/ADJUDIKASI_DELEGASI_2026-08-21.md):
+  // kunci jawaban yang berubah dikunci eksplisit di sini supaya revert
+  // diam-diam (kelas bug yang sama dgn ter-revertnya Fix M6 oleh refresh EBM)
+  // langsung ketahuan test, bukan playtest. Butirnya:
+  //   #2 tiga kasus "Dugaan" bertarget diagnosis suspek;
+  //   #3 hipertensi urgensi kembali I13.9 + banding bentuk M6;
+  //   #4 union makrolida pada trap penisilin faringitis/tonsilitis;
+  //   #5 pseudoefedrin rinitis alergi turun kontraindikasi → nonPrimer;
+  //   #6 banding gizi kurang balita R62.8 (WHO), bukan R62.7 (CM dewasa).
+  it('keputusan adjudikasi-delegasi 2026-08-21 terkunci pada kunci jawaban', () => {
+    for (const id of ['lab_defisiensi_mineral_zinc', 'lab_defisiensi_vitamin_b_kompleks', 'lab_intoleransi_makanan_laktosa']) {
+      expect(PACK.kasus[id]?.kepastianDiagnosis, id).toBe('suspek')
+    }
+    expect(PACK.kasus.mm_hipertensi_urgensi?.icd10).toBe('I13.9')
+    expect(PACK.kasus.mm_hipertensi_urgensi?.diagnosisBanding).toEqual(['I13.9', 'I11.9', 'I12.9'])
+    for (const id of ['faringitis_akut', 'tonsilitis_akut']) {
+      expect(PACK.kasus[id]?.alergiTrap?.alternatifBenar, id).toEqual(['eritromisin_500', 'azitromisin_500'])
+    }
+    const pseudoefedrin = PACK.kasus.rinitis_alergi?.tatalaksana.obatSalahUmum?.find((o) => o.id === 'pseudoefedrin_30')
+    expect(pseudoefedrin?.bahaya).toBe('nonPrimer')
+    expect(pseudoefedrin?.alasan).toMatch(/normotensi/i)
+    expect(pseudoefedrin?.alasan).toMatch(/medikamentosa/i)
+    expect(PACK.kasus.lab_malnutrisi_energi_protein_sedang?.diagnosisBanding).toEqual(['E44', 'E43', 'R62.8'])
+    expect(NAMA_ICD['R62.8']).toBe('Gagal Tumbuh (Failure to Thrive)')
+    expect(NAMA_ICD['R62.7']).toBeUndefined()
+  })
+
   // M10.c (dossier §47) — triase temuan agent pembaca, tiap butir diverifikasi
   // manual thd clue/konsekuensi sebelum dikunci di sini:
   // (1) tinea & kandidiasis dulu pakai `jaga_kelembapan_kulit` (MELEMBAPKAN)

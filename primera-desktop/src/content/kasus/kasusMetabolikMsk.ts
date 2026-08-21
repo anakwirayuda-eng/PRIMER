@@ -937,9 +937,11 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
     // gagal jantung/ginjal akut) match persis I13.9 (penyakit jantung DAN
     // ginjal hipertensif, tak dirinci) — kode WHO real yg menangkap kerusakan
     // organ ganda kronik yg sudah ditulis di PF/lab kasus ini.
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #3): refresh EBM 1a5a4e7 sempat
+    // me-revert diam-diam ke I16.0 tanpa alasan tertulis; Fix M6 dipulihkan.
     id: 'mm_hipertensi_urgensi',
     nama: 'Hipertensi Berat Tanpa Kerusakan Organ Akut (Urgensi)',
-    icd10: 'I16.0',
+    icd10: 'I13.9',
     skdi: '3B',
     kategori: 'kardiovaskular',
     // CODEX ronde-16 P2: 3B (rujuk) tak mungkin "wajib tuntas 144" (4A saja).
@@ -1031,7 +1033,7 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
       { id: 'fungsi_ginjal', hasil: 'Ureum/kreatinin sedikit meningkat (kesan nefropati hipertensi kronik).', flag: 'tinggi', relevan: true },
       { id: 'urinalisis', hasil: 'Proteinuria +1 — kerusakan organ target kronik ginjal.', flag: 'abnormal', relevan: true },
     ],
-    diagnosisBanding: ['I16.0', 'I13.9', 'I11.9'],
+    diagnosisBanding: ['I13.9', 'I11.9', 'I12.9'],
     tatalaksana: {
       // Audit CODEX 2026-07-04: amlodipin+kaptopril DULU wajib SEKALIGUS —
       // bertentangan dgn poin ajar kasus sendiri ("JANGAN drop cepat"): dua

@@ -268,7 +268,10 @@ export const KASUS_INFEKSI: KasusKlinis[] = [
     alergiTrap: {
       kelas: 'penisilin',
       obatTerlarang: ['amoxicillin_500', 'amoxicillin_sirup'],
-      alternatifBenar: ['eritromisin_500'],
+      // Adjudikasi-delegasi 2026-08-21 (keputusan #4): kedua makrolida sama-sama
+      // diterima utk GAS pada alergi penisilin — disamakan dgn tonsilitis_akut
+      // (vignette nyaris identik) agar jawaban benar tidak dihukum.
+      alternatifBenar: ['eritromisin_500', 'azitromisin_500'],
     },
     konsekuensi: {
       narasi: 'GAS yang benar-benar terkonfirmasi tetapi tidak ditangani atau terapinya tidak tuntas dapat berkomplikasi, termasuk demam rematik; memaksakan amoksisilin pada pasien alergi dapat memicu reaksi berat.',

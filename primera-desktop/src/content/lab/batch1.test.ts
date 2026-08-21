@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest'
 import { CURRICULUM_BLUEPRINT, PACK } from '../index'
 import {
   CONTENT_RELEASE,
-  ANSWER_KEY_SWEEP_CONTENT_RELEASE,
+  DELEGATED_ADJUDICATION_CONTENT_RELEASE,
   encounterArchetypeAktif,
   validasiPack,
 } from '../pack'
@@ -47,7 +47,8 @@ describe('M13 lab full-fledge - batch 1', () => {
   })
 
   it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
-    expect(CONTENT_RELEASE).toBe(ANSWER_KEY_SWEEP_CONTENT_RELEASE)
+    // Adjudikasi-delegasi 2026-08-21: rilis konten naik (kunci jawaban berubah).
+    expect(CONTENT_RELEASE).toBe(DELEGATED_ADJUDICATION_CONTENT_RELEASE)
     for (const kasus of LAB_BATCH_1_CASES) {
       expect(
         encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),

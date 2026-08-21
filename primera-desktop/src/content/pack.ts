@@ -71,7 +71,25 @@ export const GAMEPLAY_COMFORT_CONTENT_RELEASE = 'gameplay-comfort-2026-08-01'
  * kehilangan satu save playtest daripada menuduh mahasiswa memalsukan berkas.
  */
 export const ANSWER_KEY_SWEEP_CONTENT_RELEASE = 'answer-key-sweep-2026-08-06'
-export const CONTENT_RELEASE = ANSWER_KEY_SWEEP_CONTENT_RELEASE
+/**
+ * Adjudikasi-delegasi 2026-08-21 (jejak audit: docs/ADJUDIKASI_DELEGASI_2026-08-21.md;
+ * dr. Wirayuda mendelegasikan 8 keputusan bug hunt, dapat diveto kapan pun).
+ * Lima di antaranya mengubah KUNCI JAWABAN konten:
+ *   - 3 kasus "Dugaan" (zinc, riboflavin, laktosa) kini bertarget diagnosis
+ *     'suspek', bukan tegak — skorDiagnosis pemain bergeser;
+ *   - mm_hipertensi_urgensi kembali ke I13.9 + banding I13.9/I11.9/I12.9
+ *     (pemulihan Fix M6 yang ter-revert diam-diam oleh refresh EBM);
+ *   - alergiTrap faringitis/tonsilitis menerima union makrolida
+ *     eritromisin+azitromisin;
+ *   - pseudoefedrin pada rinitis_alergi turun kontraindikasi → nonPrimer
+ *     (bendera merah & kunci grade D hilang);
+ *   - banding gizi kurang balita R62.7 → R62.8.
+ * Alasan mekanis wajib-naiknya rilis persis answer-key-sweep di atas: tanpa
+ * rilis baru, save lama diteruskan dgn kunci baru dan replay verifikasi
+ * memvonis mahasiswa jujur `tidak_sah`. Save mid-stase lama menjadi ARSIP.
+ */
+export const DELEGATED_ADJUDICATION_CONTENT_RELEASE = 'adjudikasi-delegasi-2026-08-21'
+export const CONTENT_RELEASE = DELEGATED_ADJUDICATION_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -90,6 +108,7 @@ export const CONTENT_RELEASE_ORDER = [
   CLINICAL_PROVENANCE_CONTENT_RELEASE,
   GAMEPLAY_COMFORT_CONTENT_RELEASE,
   ANSWER_KEY_SWEEP_CONTENT_RELEASE,
+  DELEGATED_ADJUDICATION_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

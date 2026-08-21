@@ -71,7 +71,9 @@ export const NAMA_ICD: Record<string, string> = {
   E43: 'Malnutrisi Energi-Protein Berat',
   'E53.0': 'Defisiensi Riboflavin',
   E60: 'Defisiensi Zinc akibat Asupan',
-  'R62.7': 'Failure to Thrive Dewasa',
+  // Adjudikasi-delegasi 2026-08-21: R62.7 (ICD-10-CM AS, khusus dewasa) diganti
+  // R62.8 — padanan WHO ICD-10 utk gagal tumbuh, netral demografi.
+  'R62.8': 'Gagal Tumbuh (Failure to Thrive)',
   'L65.9': 'Kerontokan Rambut Nonsikatrik, Tidak Spesifik',
   'D56.3': 'Trait Talasemia',
   'D63.8': 'Anemia pada Penyakit Kronis Lain',

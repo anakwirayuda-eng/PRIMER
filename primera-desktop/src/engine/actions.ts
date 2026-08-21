@@ -86,8 +86,10 @@ export type Action =
        * CODEX audit (2026-07-12, temuan #2): titik keputusan pasca-ROSC —
        * `ulang_abcde` (benar, re-evaluasi ABCDE/monitor/O2 sebelum transportasi,
        * +30 stabilitas) vs `langsung_rujuk` (godaan skip stabilisasi lanjutan,
-       * stabilitas TAK naik, risiko rujuk prematur di fase disposisi berikutnya
-       * tetap nyata bila lanjut memilih rujuk).
+       * stabilitas TAK naik). Adjudikasi-delegasi 2026-08-21: rujuk pada
+       * stabilitas rendah kini berujung pasien TIBA KRITIS (bukan meninggal) —
+       * konsekuensi skip stabilisasi tetap terasa lewat surat kritis, sedangkan
+       * memulangkan pasien tak stabil-lah yang kini fatal.
        */
       type: 'STABILISASI_LANJUTAN_IGD'
       pilihanId: 'ulang_abcde' | 'langsung_rujuk'

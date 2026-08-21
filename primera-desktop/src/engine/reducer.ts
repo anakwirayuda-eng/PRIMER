@@ -1932,8 +1932,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
 
     // CODEX audit (2026-07-12, temuan #2): titik keputusan pasca-ROSC — dulu
     // tak ada, ROSC langsung lompat ke disposisi dgn stabilitas terkunci 25
-    // (selalu di bawah AMBANG_STABIL_RUJUK), membuat rujukan BENAR selalu
-    // mati dalam perjalanan. Lihat `stabilisasiLanjutanIgd` (igd.ts).
+    // (selalu di bawah AMBANG_STABIL_RUJUK), yang di bawah doktrin lama
+    // berarti rujukan BENAR selalu mati dalam perjalanan. Vonis mati itu
+    // sendiri sudah dibalik (adjudikasi-delegasi 2026-08-21: rujuk<ambang =
+    // tiba kritis tapi hidup). Lihat `stabilisasiLanjutanIgd` (igd.ts).
     case 'STABILISASI_LANJUTAN_IGD': {
       const igd = s.igd
       if (!igd || igd.fase !== 'pasca_rosc') return err(s, 'Tidak dalam fase stabilisasi lanjutan.')
@@ -1974,31 +1976,36 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         signal: kasus.pembuka,
       }
 
-      // M10.5 Q4/Q-E (2026-07-12): rujuk saat stabilitas masih di bawah
-      // AMBANG_STABIL_RUJUK adalah rujukan PREMATUR — pasien memburuk/
-      // meninggal dalam perjalanan. Konsekuensi setara Kode Hitam (ditally
-      // igdMeninggal), bukan sekadar disposisi keliru — risikonya nyata.
+      // Adjudikasi-delegasi 2026-08-21 (§1) — kurva konsekuensi DIBALIK dari
+      // doktrin M10.5 Q4/Q-E lama. Dulu justru RUJUK di bawah ambang yang
+      // divonis "meninggal dalam perjalanan" (Kode Hitam), sedangkan PULANG
+      // dipaksa hasil 'stabil' dan SELALU selamat — jawaban benar dihukum
+      // mati, jawaban salah selamat, padahal disposisiBenar SEMUA kasus IGD
+      // = 'rujuk' dan tak ada aksi penambah stabilitas di fase disposisi.
+      // Kini: PULANG saat stabilitas < AMBANG_STABIL_RUJUK = pasien memburuk
+      // di rumah dan meninggal — Kode Hitam, tally igdMeninggal, burnout+15
+      // (konsekuensi yang dulu salah alamat ke rujukan pindah ke sini).
+      // RUJUK < ambang ditangani di alur normal di bawah via `nilai.tibaKritis`.
       if (nilai.hasil === 'memburuk') {
         const t = { ...s.tally, igdMeninggal: s.tally.igdMeninggal + 1 }
         const careEpisodes = perbaruiEpisode(s.careEpisodes, {
           ...episodeCommon,
-          owner: 'dokter',
+          owner: 'keluarga',
           status: 'berakhir',
-          decision: `Rujuk pada stabilitas ${igd.stabilitas}/100 sebelum ambang aman transportasi.`,
-          feedback: `${igd.pasienNama} memburuk dan meninggal dalam perjalanan.`,
-          nextAction: 'Debrief: stabilisasi sebelum transportasi adalah bagian dari rujukan, bukan penundaan rujukan.',
+          decision: `Dipulangkan pada stabilitas ${igd.stabilitas}/100 — di bawah ambang aman ${AMBANG_STABIL_RUJUK}.`,
+          feedback: `${igd.pasienNama} memburuk di rumah; keluarga terlambat membawanya kembali.`,
+          nextAction: 'Debrief: pasien gawat pasca-stabilisasi wajib dirujuk dengan stabilisasi berjalan, bukan dipulangkan.',
           dueDay: null,
-          referral: { stage: 'completed', note: 'Outcome fatal sebelum tiba' },
           eventLabel: 'Episode berakhir dengan Kode Hitam',
-          eventDetail: `Transportasi dimulai di bawah ambang stabil ${AMBANG_STABIL_RUJUK}.`,
+          eventDetail: `Dipulangkan di bawah ambang stabil ${AMBANG_STABIL_RUJUK}; memburuk di rumah.`,
         })
         const surat: Surat = {
           id: `surat_igd_${s.hari}_${s.log.length}`,
           hari: s.hari,
           jenis: 'igd',
           dari: 'Perawat jaga',
-          judul: `KODE HITAM — ${igd.pasienNama} meninggal dalam perjalanan`,
-          isi: `${igd.pasienNama} dirujuk saat stabilitas masih rendah (${igd.stabilitas}/100) — kondisinya memburuk dan tak tertolong sebelum tiba di RS rujukan. Pasien gawat WAJIB distabilkan dulu (stabilitas ≥${AMBANG_STABIL_RUJUK}) sebelum transportasi jarak jauh. ${kasus.clue}`,
+          judul: `KODE HITAM — ${igd.pasienNama} memburuk di rumah`,
+          isi: `${igd.pasienNama} dipulangkan saat stabilitas masih rendah (${igd.stabilitas}/100). Kondisinya memburuk di rumah malam itu; keluarga terlambat membawanya kembali — ia tak tertolong. ${kasus.nama} pasca-stabilisasi wajib DIRUJUK dengan stabilisasi berjalan, bukan dipulangkan. ${kasus.clue}`,
           dibaca: false,
           kaitKasusIgdId: kasus.id,
         }
@@ -2013,7 +2020,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             careEpisodes,
           },
           events: [
-            { type: 'KODE_HITAM', narasi: `Kode Hitam. ${igd.pasienNama} meninggal dalam perjalanan — dirujuk sebelum stabil.` },
+            { type: 'KODE_HITAM', narasi: `Kode Hitam. ${igd.pasienNama} memburuk di rumah — dipulangkan sebelum stabil.` },
             { type: 'SURAT_MASUK', surat },
           ],
         }
@@ -2043,16 +2050,26 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             feedbackRujukan: `${rsNama} menyelesaikan pelayanan lanjutan ${kasus.nama} dan mengirim ringkasan ke Puskesmas.`,
           },
         ]
+        // Adjudikasi-delegasi 2026-08-21: rujuk di bawah ambang stabil = pasien
+        // TIBA KRITIS tapi hidup — rujukannya tetap benar, RS melanjutkan
+        // stabilisasi; narasinya edukatif (stabilisasi maksimal sebelum &
+        // selama transportasi adalah bagian dari rujukan), bukan memuji.
         careEpisodes = perbaruiEpisode(careEpisodes, {
           ...episodeCommon,
           owner: 'rs',
           status: 'dirujuk',
-          decision: `${nilai.benar}/${nilai.total} langkah tepat; pasien stabil lalu dirujuk ke ${rsNama}.`,
-          feedback: `${rsNama} menerima pasien gawat setelah stabilisasi FKTP.`,
-          nextAction: `Tunggu ringkasan pelayanan pada hari ${hariFeedback}.`,
+          decision: nilai.tibaKritis
+            ? `${nilai.benar}/${nilai.total} langkah tepat; dirujuk ke ${rsNama} pada stabilitas ${igd.stabilitas}/100 — di bawah ambang aman ${AMBANG_STABIL_RUJUK}.`
+            : `${nilai.benar}/${nilai.total} langkah tepat; pasien stabil lalu dirujuk ke ${rsNama}.`,
+          feedback: nilai.tibaKritis
+            ? `${igd.pasienNama} tiba di ${rsNama} dalam kondisi kritis; stabilisasi dilanjutkan RS.`
+            : `${rsNama} menerima pasien gawat setelah stabilisasi FKTP.`,
+          nextAction: nilai.tibaKritis
+            ? `Debrief: stabilisasi maksimal sebelum & selama transportasi adalah bagian dari rujukan. Tunggu ringkasan pelayanan pada hari ${hariFeedback}.`
+            : `Tunggu ringkasan pelayanan pada hari ${hariFeedback}.`,
           dueDay: hariFeedback,
           referral: { stage: 'accepted', hospitalName: rsNama },
-          eventLabel: 'Stabilisasi tersambung ke rujukan',
+          eventLabel: nilai.tibaKritis ? 'Rujukan tiba dalam kondisi kritis' : 'Stabilisasi tersambung ke rujukan',
           eventDetail: `Stabilitas ${igd.stabilitas}/100; ${rsNama} menerima pasien.`,
         })
       } else {
@@ -2092,7 +2109,10 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
       // jantung sama sekali. Berlaku 20/20 kasus IGD, termasuk kelima kasus
       // pool Ujian. Diperparah: `igdKodeBiruTerjadi` nol dibaca renderer, jadi
       // surat ini satu-satunya rekaman naratif yang tersisa — dan isinya memuji.
-      const igdMulus = nilai.disposisiTepat && !igd.melewatiKodeBiru && nilai.benar * 2 >= nilai.total
+      // Adjudikasi-delegasi 2026-08-21: pasien yang tiba kritis di RS bukan
+      // bahan surat pujian — nadanya edukatif walau disposisinya tepat.
+      const igdMulus =
+        nilai.disposisiTepat && !igd.melewatiKodeBiru && !nilai.tibaKritis && nilai.benar * 2 >= nilai.total
       const surat: Surat = {
         id: `surat_igd_${s.hari}_${s.log.length}`,
         hari: s.hari,
@@ -2102,13 +2122,21 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
         jenis: igdMulus ? 'pujian_kapus' : 'teguran_kapus',
         dari: 'dr. Harsono, Kepala Puskesmas',
         judul: nilai.disposisiTepat
-          ? igd.melewatiKodeBiru
-            ? `IGD: ${igd.pasienNama} selamat setelah Kode Biru (${nilai.benar}/${nilai.total} langkah tepat; algoritme berhenti di langkah ${igd.jawaban.length})`
-            : `IGD: ${igd.pasienNama} tertangani baik (${nilai.benar}/${nilai.total} langkah tepat)`
+          ? nilai.tibaKritis
+            ? `IGD: ${igd.pasienNama} tiba di ${rsNama} dalam kondisi kritis (stabilitas ${igd.stabilitas}/100)`
+            : igd.melewatiKodeBiru
+              ? `IGD: ${igd.pasienNama} selamat setelah Kode Biru (${nilai.benar}/${nilai.total} langkah tepat; algoritme berhenti di langkah ${igd.jawaban.length})`
+              : `IGD: ${igd.pasienNama} tertangani baik (${nilai.benar}/${nilai.total} langkah tepat)`
           : `IGD: disposisi ${igd.pasienNama} keliru`,
+        // Adjudikasi-delegasi 2026-08-21: (1) rujuk<ambang = tiba kritis tapi
+        // hidup, surat edukatif (bukan pujian, bukan vonis mati); (2) frasa
+        // lama "Untung keluarganya membawanya ke RS sendiri" dibuang — ia
+        // mengajarkan transport pribadi pasien-rujukan itu aman.
         isi: nilai.disposisiTepat
-          ? `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
-          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? (rs ? `${rs.nama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : `rujukan diberangkatkan tanpa RS tujuan yang ditetapkan — ${kasus.nama} butuh jejaring yang sanggup menanganinya, bukan sekadar "dirujuk". Tetapkan tujuannya sebelum pasien berangkat.`) : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Untung keluarganya membawanya ke RS sendiri.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
+          ? nilai.tibaKritis
+            ? `Rujukanmu ke ${rsNama} tepat, tapi ${igd.pasienNama} berangkat pada stabilitas ${igd.stabilitas}/100 — di bawah ambang aman transportasi (${AMBANG_STABIL_RUJUK}) — dan tiba dalam kondisi kritis. ${rsNama} melanjutkan stabilisasi. Ingat: stabilisasi maksimal sebelum dan selama transportasi adalah bagian dari rujukan itu sendiri. ${kasus.clue}`
+            : `${igd.pasienNama} stabil dan ${action.jenis === 'rujuk' ? `diterima ${rsNama}` : 'dipulangkan dengan observasi'}. ${kasus.clue}`
+          : `${igd.pasienNama} selamat, tapi disposisimu keliru — ${action.jenis === 'rujuk' && !tujuanCocok ? (rs ? `${rs.nama} tidak memenuhi spesialisasi/kapabilitas waktu-kritis yang dibutuhkan ${kasus.nama}. Pilih tujuan jejaring yang sesuai.` : `rujukan diberangkatkan tanpa RS tujuan yang ditetapkan — ${kasus.nama} butuh jejaring yang sanggup menanganinya, bukan sekadar "dirujuk". Tetapkan tujuannya sebelum pasien berangkat.`) : kasus.disposisiBenar === 'rujuk' ? `kasus ${kasus.nama} pasca-stabilisasi wajib DIRUJUK, bukan dipulangkan. Keluarganya akhirnya membawanya ke RS atas inisiatif sendiri — kesempatan rujukan terstruktur dengan stabilisasi berjalan terlewat.` : `kasus ini dapat dituntaskan dengan observasi di Puskesmas — merujuk semuanya membebani jejaring.`} ${kasus.clue}`,
         dibaca: false,
         kaitKasusIgdId: kasus.id,
       }

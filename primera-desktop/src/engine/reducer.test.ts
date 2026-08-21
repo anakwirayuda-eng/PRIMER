@@ -163,7 +163,7 @@ describe('AKSI_IGD — penjaga fase menjaga tally Kode Biru jujur', () => {
 
 describe('DISPOSISI_IGD — rujukan tanpa tujuan bukan disposisi tepat', () => {
   const kasus = PACK.kasusIgd[KASUS_IGD]!
-  /** IGD siap disposisi, stabilitas di atas ambang transportasi (bukan rujuk prematur). */
+  /** IGD siap disposisi, stabilitas di atas ambang transportasi (tanpa narasi tiba-kritis). */
   const siapDisposisi = () => stateIgd(igdAktif(KASUS_IGD, { fase: 'disposisi', stabilitas: 70 }))
 
   it('rujuk ke RS jejaring yang sesuai → igdStabil + jadwal umpan balik menyebut RS-nya', () => {
@@ -215,6 +215,27 @@ describe('DISPOSISI_IGD — rujukan tanpa tujuan bukan disposisi tepat', () => {
     const s = run(siapDisposisi(), { type: 'DISPOSISI_IGD', jenis: 'pulang' })
     expect(s.tally.igdSalahDisposisi).toBe(1) // kasus ini wajib rujuk
     expect(s.tally.igdStabil).toBe(0)
+  })
+
+  // Adjudikasi-delegasi 2026-08-21: rujuk di bawah ambang stabil kini berarti
+  // pasien tiba KRITIS tapi hidup — penjaga tujuan TIDAK ikut dilonggarkan:
+  // rujuk kritis + tujuan cocok = tepat; tanpa tujuan = tetap keliru (tapi
+  // sama-sama hidup, tanpa Kode Hitam).
+  it('rujuk kritis (stabilitas 45): tujuan cocok = tepat; TANPA tujuan = tetap keliru, keduanya hidup', () => {
+    const rs = PACK.rumahSakit.find((item) => rumahSakitCocokUntukIgd(kasus, item))!
+    const kritis = () => stateIgd(igdAktif(KASUS_IGD, { fase: 'disposisi', stabilitas: 45 }))
+
+    const sCocok = run(kritis(), { type: 'DISPOSISI_IGD', jenis: 'rujuk', rumahSakitId: rs.id })
+    expect(sCocok.tally.igdStabil).toBe(1)
+    expect(sCocok.tally.igdSalahDisposisi).toBe(0)
+    expect(sCocok.tally.igdMeninggal).toBe(0)
+    expect(sCocok.inbox.at(-1)?.judul).toContain('kondisi kritis')
+
+    const sTanpa = run(kritis(), { type: 'DISPOSISI_IGD', jenis: 'rujuk' })
+    expect(sTanpa.tally.igdStabil).toBe(0)
+    expect(sTanpa.tally.igdSalahDisposisi).toBe(1)
+    expect(sTanpa.tally.igdMeninggal).toBe(0) // hidup — bukan lagi vonis mati doktrin lama
+    expect(sTanpa.inbox.at(-1)?.isi).toContain('tanpa RS tujuan')
   })
 })
 

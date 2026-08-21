@@ -193,7 +193,10 @@ describe('EBM currency 2026 - sumber display yang mengubah keputusan', () => {
   })
 
   it('gap provenance berisiko tinggi menyebut sumber aktif dan batas kewenangan', () => {
-    expect(PACK.kasus.mm_hipertensi_urgensi?.icd10).toBe('I16.0')
+    // Adjudikasi-delegasi 2026-08-21 (keputusan #3): I16.0 (ICD-10-CM AS) di
+    // sini adalah revert diam-diam refresh EBM atas Fix M6; kunci kembali ke
+    // I13.9 — kode WHO ICD-10 yang match vignette LVH + nefropati kronik.
+    expect(PACK.kasus.mm_hipertensi_urgensi?.icd10).toBe('I13.9')
     expect(PACK.kasus.mm_hipertensi_urgensi?.panduanResmi).toMatch(/303\/2026/)
     expect(PACK.kasus.kia_kb_konseling?.panduanResmi).toMatch(/Permenkes 2\/2025.*WHO MEC.*2025/is)
     expect(PACK.kasus.jiwa_depresi_ringan?.panduanResmi).toMatch(/mhGAP.*2023/is)
