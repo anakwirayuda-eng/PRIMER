@@ -1,9 +1,9 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-08-08
+**Tanggal kompilasi:** 2026-08-21
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
 **Kemajuan adjudikasi dokter:** **16** kasus sudah ditandatangani, **121** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [`docs/M13_137_DECISION_LOG.md`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
-**Snapshot:** commit `a071607f3a71275d733b022c1a11b7f4565e7267`, artefak `d5dfe64ca4fa8b6aeca5dbd99c3faf5d6c6994e9841aea5f134a456349ce93f1`, pack `aef54c57`, content release `answer-key-sweep-2026-08-06`, `REVISI_ENGINE=67`
+**Snapshot:** commit `bae730e772c733a394e6889516c93debc68469f6`, artefak `13456a160df8ea7447695a271a69086536b5ed9b512980b47463b236c99ec9ff`, pack `e96c8cc0`, content release `answer-key-sweep-2026-08-06`, `REVISI_ENGINE=68`
 
 ## Ringkasan eksekutif
 
@@ -32,7 +32,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 1. [M13_137_ADJUDICATION.html](M13_137_ADJUDICATION.html) - alat review interaktif, filter, autosave lokal, keputusan Setuju/Perlu Edit/Tolak/Nanti, ekspor-impor JSON.
 2. [M13_137_ADJUDICATION_DATA.json](M13_137_ADJUDICATION_DATA.json) - dataset audit machine-readable 137 kasus.
-3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk seluruh obat unik yang dipakai prototipe saat artefak dibangun.
+3. [M13_137_KFA_SNAPSHOT.json](M13_137_KFA_SNAPSHOT.json) - snapshot endpoint publik KFA active-substance untuk seluruh obat unik yang dipakai prototipe, dipanen 2026-07-23.
 4. Dokumen ini - metode, keterbatasan, dan daftar temuan provenance.
 
 ## Metode
@@ -71,7 +71,8 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 
 ### KFA
 
-- Endpoint publik browser KFA: `/api/search/active-ingredients`, diakses 2026-08-08.
+- Endpoint publik browser KFA: `https://satusehat.kemkes.go.id/kfa-browser/farmasi/api/search/active-ingredients`, diakses 2026-07-23.
+- Panen KFA dijalankan terpisah dari kompilasi laporan ini (2026-08-21), jadi tanggal akses di atas bisa lebih tua; panen ulang dengan `npm run m13:kfa` bila selisihnya sudah material untuk penilaian kemutakhiran.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 
