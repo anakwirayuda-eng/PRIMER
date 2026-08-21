@@ -5,6 +5,7 @@
 
 import { PACK } from '@content/index'
 import { NAMA_ICD } from '@content/icd10'
+import { NAMA_DECK } from '@content/namaDeck'
 import type {
   ItemLab,
   JenisKelamin,
@@ -132,7 +133,14 @@ export function namaDiagnosis(icd10: string, kasus: KasusKlinis): string {
   // Pemenangnya pun arbitrer: Map dibangun dari seluruh kasus, jadi bila dua
   // kasus berbagi kode, yang menang semata-mata yang terakhir didefinisikan.
   // Semua 49 label yang dulu bersumber dari sana kini punya entri kamus netral.
-  if (icd10 === kasus.icd10) return kasus.nama
+  //
+  // Audit 2026-08-22 (lanjutan): setelah label distraktor diseragamkan ke
+  // sumber kurasi, muncul petunjuk gaya BARU — 78 dari 210 kasus punya jawaban
+  // benar yang jauh lebih panjang & berhias (derajat, demografi, narasi
+  // temuan) daripada distraktornya, sehingga bisa dipilih tanpa menalar. Label
+  // deck netralnya hidup di NAMA_DECK; `kasus.nama` yang kaya tetap dipakai di
+  // Buku Saku/Dex, debrief, dan laporan.
+  if (icd10 === kasus.icd10) return NAMA_DECK[kasus.id] ?? kasus.nama
   const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
   if (entri) return entri.nama
   const tambahan = NAMA_ICD[icd10]

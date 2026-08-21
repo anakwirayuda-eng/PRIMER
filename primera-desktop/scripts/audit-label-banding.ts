@@ -12,6 +12,7 @@ import { mkdirSync, writeFileSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
 import { PACK } from '../src/content/index'
 import { NAMA_ICD } from '../src/content/icd10'
+import { NAMA_DECK } from '../src/content/namaDeck'
 
 type Lapisan = 'jawaban-sendiri' | 'skdi144' | 'kasus-lain' | 'kamus' | 'kode-telanjang'
 
@@ -57,7 +58,8 @@ for (const k of kasusList) {
  * benar-benar dilihat pemain.
  */
 function resolusi(icd10: string, kasus: (typeof kasusList)[number]): { label: string; lapisan: Lapisan } {
-  if (icd10 === kasus.icd10) return { label: kasus.nama, lapisan: 'jawaban-sendiri' }
+  if (icd10 === kasus.icd10)
+    return { label: NAMA_DECK[kasus.id] ?? kasus.nama, lapisan: 'jawaban-sendiri' }
   const entri = PACK.skdi144.find((e) => e.icd10 === icd10)
   if (entri) return { label: entri.nama, lapisan: 'skdi144' }
   const tambahan = NAMA_ICD[icd10]
@@ -135,6 +137,57 @@ const labelKembar = baris
   })
   .map((b) => ({ kasusId: b.kasusId, kodeBanding: b.kodeBanding, label: b.labelTampil }))
 
+/* -- Format-tell: gaya jawaban benar vs gaya distraktornya -------------------- */
+// Setelah label distraktor diseragamkan ke sumber kurasi, muncul risiko baru:
+// bila HANYA jawaban benar yang bergaya naratif/berdemografi, gayanya sendiri
+// jadi petunjuk. Deteksi ini menandai kasus yang jawaban benarnya menonjol
+// sementara SEMUA distraktornya netral.
+const PENANDA_DEMOGRAFI = /\b(Dewasa|Anak|Balita|Bayi|Neonatus|Lansia|Remaja|Muda|Kehamilan|Hamil)\b/i
+const PENANDA_NARASI = /—|\bSuspek\b|\bDugaan\b|\bBerulang\b/i
+
+const formatTell = kasusList
+  .map((k) => {
+    const distraktor = (k.diagnosisBanding ?? [])
+      .filter((kode) => kode !== k.icd10)
+      .map((kode) => ({
+        kode,
+        label:
+          PACK.skdi144.find((e) => e.icd10 === kode)?.nama ?? NAMA_ICD[kode] ?? `Kode ${kode}`,
+      }))
+    if (distraktor.length === 0) return undefined
+
+    const namaDeck = NAMA_DECK[k.id] ?? k.nama
+    const rataDistraktor =
+      distraktor.reduce((s, d) => s + d.label.length, 0) / distraktor.length
+    const alasan = [
+      PENANDA_DEMOGRAFI.test(namaDeck) ? 'demografi' : undefined,
+      PENANDA_NARASI.test(namaDeck) ? 'narasi/kualifikasi' : undefined,
+      namaDeck.length > rataDistraktor * 1.5 && namaDeck.length - rataDistraktor > 12
+        ? 'jauh lebih panjang'
+        : undefined,
+    ].filter((x): x is string => x !== undefined)
+    // Bila distraktornya pun bergaya sama, gaya itu bukan petunjuk.
+    const distraktorBergaya = distraktor.some(
+      (d) => PENANDA_DEMOGRAFI.test(d.label) || PENANDA_NARASI.test(d.label),
+    )
+    if (alasan.length === 0 || distraktorBergaya) return undefined
+    return {
+      kasusId: k.id,
+      icd10: k.icd10,
+      namaKasus: k.nama,
+      namaDeck,
+      memakaiNamaDeck: NAMA_DECK[k.id] !== undefined,
+      alasan,
+      panjangNamaDeck: namaDeck.length,
+      rataPanjangDistraktor: Math.round(rataDistraktor),
+      usiaMin: k.demografi?.usiaMin,
+      usiaMax: k.demografi?.usiaMax,
+      distraktor,
+    }
+  })
+  .filter((x): x is NonNullable<typeof x> => x !== undefined)
+  .sort((a, b) => b.panjangNamaDeck - a.panjangNamaDeck)
+
 const hasil = {
   ringkasan: {
     totalKasus: kasusList.length,
@@ -144,7 +197,9 @@ const hasil = {
     jumlahLabelSamaDenganKasusLain: labelSamaDenganKasusLain.length,
     jumlahTanpaSumberKurasi: tanpaSumberKurasi.length,
     jumlahLabelKembar: labelKembar.length,
+    jumlahFormatTell: formatTell.length,
   },
+  formatTell,
   labelSamaDenganKasusLain,
   tanpaSumberKurasi,
   tabrakanKode,
@@ -163,3 +218,4 @@ console.info(`  kode dipakai >1 kasus playable: ${tabrakanKode.length}`)
 console.info(`  label distraktor identik dgn nama kasus lain: ${labelSamaDenganKasusLain.length}`)
 console.info(`  kode banding tanpa sumber kurasi (jatuh ke "Kode X"): ${tanpaSumberKurasi.length}`)
 console.info(`  label kembar dgn jawaban benar: ${labelKembar.length}`)
+console.info(`  format-tell (hanya jawaban benar yg bergaya): ${formatTell.length}`)

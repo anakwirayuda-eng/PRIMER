@@ -8,6 +8,7 @@
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import { NAMA_ICD } from '@content/icd10'
+import { NAMA_DECK } from '@content/namaDeck'
 import { cocokLab, cocokObat, namaDiagnosis, normalisasiNamaObat } from './util'
 
 describe('namaDiagnosis — semua banding bernama', () => {
@@ -58,6 +59,80 @@ describe('namaDiagnosis — semua banding bernama', () => {
     expect(meminjam).toEqual([])
   })
 
+  // Audit 2026-08-22 (lanjutan): NAMA_DECK menutup petunjuk GAYA — jawaban
+  // benar tak boleh lagi menonjol karena panjang/hiasannya sendiri.
+  describe('NAMA_DECK — label jawaban benar setara distraktornya', () => {
+    it('setiap kunci NAMA_DECK menunjuk kasus yang benar-benar ada', () => {
+      const yatim = Object.keys(NAMA_DECK).filter((id) => PACK.kasus[id] === undefined)
+      expect(yatim).toEqual([])
+    })
+
+    it('label deck bebas penanda demografi, narasi temuan, dan embel tata laksana', () => {
+      const KOTOR = /\b(Dewasa|Anak|Balita|Bayi|Neonatus|Lansia|Remaja)\b|—|\bSuspek\b|\bDugaan\b|\bCuriga\b|Pra-Rujuk|Rawat Jalan/i
+      const kotor = Object.entries(NAMA_DECK)
+        .filter(([, nama]) => KOTOR.test(nama))
+        .map(([id, nama]) => `${id}: "${nama}"`)
+      expect(kotor).toEqual([])
+    })
+
+    it('label deck bukan nama kode dari KELUARGA ICD lain (koding keliru tercetak di layar)', () => {
+      // Kode ikut tampil di DeckDiagnosis, jadi label yang sebenarnya milik kode
+      // lain mengajarkan koding salah. Contoh nyata yang pernah lolos ke draf:
+      // J44.0 hendak diberi label "PPOK Eksaserbasi Akut" — itu nama J44.1.
+      //
+      // Dibandingkan per KELUARGA (3 karakter pertama), bukan per kode persis:
+      // memakai nama induk untuk kode anak adalah praktik sah dan lazim di sini
+      // (D50.0 & D50.9 sama-sama "Anemia Defisiensi Besi"). Yang dikejar adalah
+      // label yang menyeberang ke keluarga LAIN.
+      const keluarga = (kode: string): string => kode.split('.')[0] ?? kode
+      const salahKode: string[] = []
+      for (const [kasusId, nama] of Object.entries(NAMA_DECK)) {
+        const kasus = PACK.kasus[kasusId]
+        if (!kasus) continue
+        // Kode RENTANG (mis. 'E50-E56') bukan kode ICD-10 sah dan sedang
+        // menunggu keputusan dokter; jangan blokir di penjaga ini.
+        if (kasus.icd10.includes('-')) continue
+        const akar = keluarga(kasus.icd10)
+        const bentrok = [
+          ...Object.entries(NAMA_ICD)
+            .filter(([kode, label]) => label === nama && keluarga(kode) !== akar)
+            .map(([kode]) => kode),
+          ...PACK.skdi144
+            .filter((e) => e.nama === nama && keluarga(e.icd10) !== akar)
+            .map((e) => e.icd10),
+        ]
+        if (bentrok.length > 0) {
+          salahKode.push(`${kasusId} (${kasus.icd10}) "${nama}" = nama kode ${bentrok.join(', ')}`)
+        }
+      }
+      expect(salahKode).toEqual([])
+    })
+
+    it('label deck TIDAK menonjol mencolok dari distraktor kasusnya', () => {
+      const menonjol: string[] = []
+      for (const [kasusId, nama] of Object.entries(NAMA_DECK)) {
+        const kasus = PACK.kasus[kasusId]
+        if (!kasus) continue
+        const distraktor = kasus.diagnosisBanding
+          .filter((kode) => kode !== kasus.icd10)
+          .map((kode) => namaDiagnosis(kode, kasus))
+        if (distraktor.length === 0) continue
+        const terpanjang = Math.max(...distraktor.map((d) => d.length))
+        // Ambang sengaja longgar (1,8x DAN selisih >12 karakter) karena yang
+        // diburu adalah HIASAN, bukan panjang mentah: sebagian diagnosis memang
+        // bernama panjang tanpa bisa dipendekkan (mis. "Perdarahan
+        // Subkonjungtiva" 25 melawan "Episkleritis" 12 — keduanya sudah nama
+        // minimal). Yang harus tertangkap adalah kelas "Penyakit Radang Panggul
+        // Berat dengan Curiga Abses Tubo-Ovarium" (62) melawan "Kista Ovarium"
+        // (13), di mana pemain bisa memilih dari bentuknya saja.
+        if (nama.length > terpanjang * 1.8 && nama.length - terpanjang > 12) {
+          menonjol.push(`${kasusId}: "${nama}" (${nama.length}) vs distraktor terpanjang ${terpanjang}`)
+        }
+      }
+      expect(menonjol).toEqual([])
+    })
+  })
+
   // Temuan playtest 2026-07-04: dua kode banding berbeda (D50.9 & O99.0) tampil
   // NAMA IDENTIK di layar → pemain lihat opsi dobel, tak bisa membedakannya.
   it('TIDAK ADA dua kode banding dalam satu kasus yang tampil nama sama', () => {
@@ -78,11 +153,28 @@ describe('namaDiagnosis — semua banding bernama', () => {
   // Audit CODEX 2026-07-04: 27 kasus salah tampil label GENERIK skdi144 utk
   // JAWABAN BENARNYA SENDIRI (mis. "Hipertensi Urgensi" tertampil "Hipertensi
   // Esensial") krn urutan resolusi lama mengecek skdi144 sebelum kasus sendiri.
-  // Jawaban benar kasus WAJIB pakai nama presisinya sendiri, selalu.
-  it('jawaban benar kasus SELALU pakai nama kasus sendiri (bukan label skdi144)', () => {
+  // Jawaban benar kasus WAJIB pakai nama presisinya SENDIRI, tak pernah jatuh
+  // ke label kompetensi generik.
+  //
+  // Audit 2026-08-22: sumber "nama sendiri" kini boleh berupa label deck
+  // kurasi (NAMA_DECK) — itu tetap milik kasus itu, hanya dipangkas hiasannya
+  // supaya tak menonjol di antara distraktor. Yang tetap dilarang keras sama
+  // seperti dulu: jawaban benar mengambil label skdi144.
+  it('jawaban benar kasus SELALU pakai nama sendiri/label deck, TAK PERNAH label skdi144', () => {
+    // Cukup satu invarian: label jawaban benar WAJIB berasal dari kasus itu
+    // sendiri (nama kasus, atau label deck kurasinya). Selama itu dipegang,
+    // jalur resolusi tak pernah bisa sampai ke skdi144 untuk jawaban benar —
+    // persis cacat yang ditemukan 2026-07-04. Catatan: sebuah label deck BOLEH
+    // kebetulan sama bunyinya dengan nama kompetensi SKDI (mis. "Faringitis
+    // Akut" memang nama minimal yang benar); yang dilarang adalah MENGAMBIL
+    // dari sana, bukan kebetulan seragam.
     const salah: string[] = []
     for (const k of Object.values(PACK.kasus)) {
-      if (namaDiagnosis(k.icd10, k) !== k.nama) salah.push(`${k.id}: tampil "${namaDiagnosis(k.icd10, k)}" ≠ nama sendiri "${k.nama}"`)
+      const tampil = namaDiagnosis(k.icd10, k)
+      const seharusnya = NAMA_DECK[k.id] ?? k.nama
+      if (tampil !== seharusnya) {
+        salah.push(`${k.id}: tampil "${tampil}" ≠ label semestinya "${seharusnya}"`)
+      }
     }
     expect(salah).toEqual([])
   })
