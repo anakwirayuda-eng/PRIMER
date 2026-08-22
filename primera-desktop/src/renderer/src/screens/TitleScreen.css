@@ -1,6 +1,16 @@
 /* ============================================================================
-   TITLE SCREEN — fajar yang tenang di atas Puskesmas Sukamaju.
-   Semua warna dari token; gradasi fajar disusun dari kertas/kunyit/daun.
+   TITLE SCREEN — "MAP STASE SAAT FAJAR" (rombak 2026-08-22).
+   Panel desain 3-arah + juri: kerangka "map rekam medis di kiri meja" (B),
+   graft koreografi fajar-terbit + jendela-menyala (C) dan pengayaan scene
+   ambulans/terasering/rumah desa (A).
+
+   Prinsip: (1) scene adalah panggung — panel minggir ke kolom kiri sebagai
+   MAP MANILA, matahari akhirnya terlihat di fokal ±68%; (2) identitas benda
+   Puskesmas: tab map, kop surat dinas, stempel CTA, kartu berobat, memo
+   tempel; (3) semua warna token, nol hex baru (rgba hanya turunan token yang
+   polanya sudah ada); (4) semua animasi tunduk kill-switch reduced-motion
+   base.css; elemen interaktif memakai fill-mode `backwards` (bukan `both`)
+   supaya transform hover tidak terkunci oleh animasi entrance.
    ========================================================================== */
 
 .title {
@@ -8,29 +18,47 @@
   height: 100%;
   min-height: 100vh;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  /* Langit fajar: mint pucat → kertas hangat → semburat kunyit di horizon */
+  display: grid;
+  grid-template-rows: 1fr auto;
+  grid-template-columns:
+    clamp(28px, 6vw, 104px)
+    minmax(400px, clamp(420px, 36vw, 500px))
+    1fr;
+  /* Langit fajar: mint pucat → kertas hangat → semburat kunyit tebal di horizon */
   background: linear-gradient(
     180deg,
     var(--daun-50) 0%,
-    var(--kertas-050) 38%,
-    var(--kertas-100) 60%,
+    var(--kertas-050) 30%,
+    var(--kertas-100) 52%,
+    var(--kunyit-100) 82%,
     var(--kunyit-100) 100%
   );
 }
 
-/* -- Matahari pagi ----------------------------------------------------------- */
+/* Pendar fajar radial di titik fokal — di bawah semua lapis scene. */
+.title__cahaya {
+  position: absolute;
+  left: 68%;
+  bottom: 0;
+  width: min(62vw, 760px);
+  aspect-ratio: 1.4;
+  transform: translateX(-50%);
+  background: radial-gradient(ellipse at center 70%, var(--kunyit-100) 0%, transparent 68%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+/* -- Matahari pagi (fokal 68%, TERLIHAT di atas bukit) ------------------------ */
 .title__matahari {
   position: absolute;
-  left: 50%;
-  bottom: 4%;
-  width: min(46vw, 520px);
+  left: 68%;
+  bottom: clamp(96px, 15vh, 160px);
+  width: min(28vw, 340px);
   aspect-ratio: 1;
   transform: translateX(-50%);
   pointer-events: none;
-  animation: title-terbit 4.5s var(--ease-keluar) both;
+  /* Fajar benar-benar TERBIT saat layar dibuka — naik dari balik bukit. */
+  animation: title-terbit 2200ms var(--ease-keluar) both;
 }
 
 .title__matahari svg {
@@ -40,8 +68,8 @@
 }
 
 @keyframes title-terbit {
-  from { transform: translateX(-50%) translateY(9%); opacity: 0; }
-  to { transform: translateX(-50%) translateY(0); opacity: 1; }
+  from { transform: translateX(-50%) translateY(46%) scale(0.96); opacity: 0; }
+  to { transform: translateX(-50%) translateY(0) scale(1); opacity: 1; }
 }
 
 @keyframes title-berpendar {
@@ -49,100 +77,180 @@
   to { opacity: 1; transform: scale(1.035); }
 }
 
-/* -- Awan pagi (audit visual 2026-08-01) -------------------------------------- */
+/* -- Awan pagi ----------------------------------------------------------------- */
 .title__awan {
   position: absolute;
   inset: 0;
   pointer-events: none;
   overflow: hidden;
+  /* Parallax lapis awan (lebih dalam dari matahari 14px) */
+  transform: translate(calc(var(--par-x, 0) * 8px), calc(var(--par-y, 0) * 5px));
+  transition: transform 400ms var(--ease-keluar);
 }
 
 .title__awan-svg {
   position: absolute;
   animation: title-awan-drift 90s ease-in-out infinite alternate;
-}
-
-.title__awan--1 {
-  top: 9%;
-  left: 10%;
-  width: clamp(130px, 14vw, 210px);
   opacity: 0.55;
 }
 
+.title__awan--1 { top: 9%; left: 8%; width: clamp(130px, 14vw, 210px); }
 .title__awan--2 {
-  top: 21%;
-  right: 8%;
+  /* Reposisi: membingkai matahari di fokal kanan. */
+  top: 14%;
+  left: 74%;
   width: clamp(100px, 11vw, 170px);
   opacity: 0.4;
   animation-duration: 120s;
   animation-direction: alternate-reverse;
 }
+.title__awan--3 { top: 28%; left: 4%; width: clamp(80px, 8vw, 120px); opacity: 0.3; animation-duration: 75s; }
+.title__awan--4 { top: 26%; left: 38%; width: clamp(70px, 7vw, 104px); opacity: 0.28; animation-duration: 105s; }
 
-.title__awan--3 {
-  top: 30%;
-  left: 6%;
-  width: clamp(80px, 8vw, 120px);
-  opacity: 0.3;
-  animation-duration: 75s;
-}
-
-/* Drift sway kecil bolak-balik — bukan menyeberangi layar (distraksi). */
 @keyframes title-awan-drift {
   from { transform: translateX(0); }
   to { transform: translateX(3.5vw); }
 }
 
-/* Mode malam: awan putih pekat di langit gelap = mencolok — redupkan jadi
-   awan tersinari bulan. */
-[data-mode='malam'] .title__awan-svg {
-  opacity: 0.08;
+[data-mode='malam'] .title__awan-svg { opacity: 0.08; }
+
+/* -- Burung melintas (graft C) — ±8 dtk tampil, hening panjang ----------------- */
+.title__burung {
+  position: absolute;
+  left: -8vw;
+  width: 40px;
+  height: 16px;
+  pointer-events: none;
+  opacity: 0;
 }
 
-/* -- Siluet desa -------------------------------------------------------------- */
+.title__burung--1 { top: 15%; animation: title-burung 46s linear infinite; }
+.title__burung--2 { top: 23%; width: 30px; animation: title-burung 67s linear 26s infinite; }
+
+/* Berakhir & diam di opacity 0 — reduced-motion (lompat ke akhir) aman. */
+@keyframes title-burung {
+  0% { transform: translateX(0); opacity: 0; }
+  2% { opacity: 0.5; }
+  17% { opacity: 0.5; }
+  20% { transform: translateX(125vw); opacity: 0; }
+  100% { transform: translateX(125vw); opacity: 0; }
+}
+
+/* -- Siluet 3 lapis ------------------------------------------------------------ */
 .title__siluet {
   position: absolute;
-  left: 0;
-  right: 0;
+  /* 104% + offset: parallax tidak membuka tepi kosong. */
+  left: -2%;
+  width: 104%;
   bottom: 0;
-  width: 100%;
-  height: clamp(160px, 26vh, 260px);
+  height: clamp(170px, 28vh, 290px);
   display: block;
   pointer-events: none;
 }
 
-/* -- Panel judul (kertas di atas meja fajar) ---------------------------------- */
-.title__panel {
+.title__siluet--jauh {
+  animation: title-scene-masuk 600ms 120ms var(--ease-keluar) both;
+  transform: translate(calc(var(--par-x, 0) * 3px), 0);
+  transition: transform 400ms var(--ease-keluar);
+}
+
+.title__siluet--tengah {
+  animation: title-scene-masuk 600ms 210ms var(--ease-keluar) both;
+  transform: translate(calc(var(--par-x, 0) * 5px), 0);
+  transition: transform 400ms var(--ease-keluar);
+}
+
+/* Lapis depan = jangkar, tanpa parallax. */
+.title__siluet--depan {
+  animation: title-scene-masuk 600ms 300ms var(--ease-keluar) both;
+}
+
+@keyframes title-scene-masuk {
+  from { opacity: 0; translate: 0 10px; }
+  to { opacity: 1; translate: 0 0; }
+}
+
+/* Kabut pagi menguap saat fajar naik. */
+.kabut { animation: title-kabut-menguap 2200ms 500ms var(--ease-keluar) both; }
+
+@keyframes title-kabut-menguap {
+  from { opacity: 0.38; }
+  to { opacity: 0.12; }
+}
+
+/* Asap dapur — goyang idle sangat lambat. */
+.title__asap { animation: title-asap 16s ease-in-out infinite alternate; transform-origin: 164px 182px; }
+
+@keyframes title-asap {
+  from { transform: skewX(0deg); opacity: 0.3; }
+  to { transform: skewX(-6deg); opacity: 0.2; }
+}
+
+/* Jendela Puskesmas MENYALA SATU PER SATU — "Puskesmas bangun, menunggumu".
+   Opasitas final via --op-j (dievaluasi per elemen di dalam keyframes);
+   TIDAK berkedip setelahnya — kedip = listrik rusak, bukan pagi. */
+.jendela { opacity: 0; animation: title-jendela-nyala 500ms var(--ease-keluar) forwards; }
+.jendela--1 { --op-j: 0.85; animation-delay: 1400ms; }
+.jendela--2 { --op-j: 0.5; animation-delay: 1650ms; }
+.jendela--3 { --op-j: 0.5; animation-delay: 1800ms; }
+.jendela--4 { --op-j: 0.35; animation-delay: 1950ms; }
+.jendela--5 { --op-j: 0.35; animation-delay: 2050ms; }
+.jendela--6 { --op-j: 0.35; animation-delay: 2150ms; }
+.jendela--7 { --op-j: 0.35; animation-delay: 2250ms; }
+
+@keyframes title-jendela-nyala {
+  from { opacity: 0; }
+  to { opacity: var(--op-j, 0.85); }
+}
+
+/* Bintang subuh: tersembunyi di siang, tampil + berkelip di malam. */
+.title__bintang { display: none; }
+
+/* -- MAP STASE (wrapper folder manila, kolom 2) -------------------------------- */
+.title__map {
   position: relative;
   z-index: 1;
-  /* Premiere 2026-07-26: 600→540px — siluet Puskesmas fajar lebih terlihat
-     sebagai panggung di kedua sisi panel. */
-  width: min(540px, calc(100vw - var(--sp-6) * 2));
-  padding: var(--sp-6) var(--sp-7) var(--sp-6);
-  text-align: center;
-  /* Auto-margin: panel terpusat di ruang yang TERSISA di atas blok kredit
-     (kredit kini in-flow — tumpang-tindih mustahil di viewport mana pun).
-     Layar pendek: panel scroll internal, kredit legal tetap terlihat utuh. */
-  margin-top: auto;
-  margin-bottom: auto;
-  /* Batch-7: buang angka ajaib calc(100vh - 150px) — parent flex-column yang
-     meng-cap tinggi; min-height:0 mengizinkan flex item menyusut utk scroll. */
-  max-height: none;
-  min-height: 0;
-  overflow-y: auto;
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  /* Ruang utk tab map di atas + jarak ke strip kredit di bawah. */
+  margin: 56px 0 24px;
   animation: title-panel-masuk 700ms 250ms var(--ease-keluar) both;
 }
 
-/* Wow hero: kertas terangkat dari meja fajar + garis kunyit matahari terbit.
-   Selector digandakan .title__panel.kertas — main.tsx mengimpor App SEBELUM
-   base.css, jadi border/box-shadow .kertas (base.css) menang atas selector
-   satu-kelas di file layar; butuh spesifisitas lebih tinggi, bukan urutan. */
+/* Tab folder manila menonjol di atas map. */
+.title__map::before {
+  content: '';
+  position: absolute;
+  top: -28px;
+  left: 20px;
+  width: 150px;
+  height: 30px;
+  background: var(--kertas-200);
+  border: 1px solid var(--kertas-400);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+}
+
+.title__panel {
+  position: relative;
+  width: 100%;
+  padding: var(--sp-6) var(--sp-7);
+  text-align: left;
+  max-height: calc(100vh - 150px);
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* Map terangkat dari meja; garis kunyit lama diganti identitas tab folder. */
 .title__panel.kertas {
   box-shadow: var(--shadow-kartu), 0 24px 64px rgba(6, 63, 49, 0.14);
-  border-top: 3px solid var(--kunyit-600);
+  border-color: var(--kertas-400);
 }
 
 @media (max-height: 820px) {
   .title__panel { padding: var(--sp-4) var(--sp-5); }
+  .title__siluet { height: clamp(150px, 24vh, 230px); }
 }
 
 @keyframes title-panel-masuk {
@@ -150,12 +258,29 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* -- Kop surat dinas ----------------------------------------------------------- */
+.title__kop {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sp-2);
+  padding-bottom: var(--sp-2);
+  /* Garis ganda penutup kop — konvensi surat dinas. */
+  border-bottom: 2.5px solid var(--tinta);
+  box-shadow: 0 4px 0 -3px var(--tinta);
+  animation: title-panel-masuk 600ms 380ms var(--ease-keluar) both;
+}
+
+.title__kop-lambang {
+  width: 22px;
+  height: 22px;
+  flex: none;
+  margin-top: 1px;
+}
+
 .title__kicker {
   font-size: var(--text-xs);
   font-weight: 700;
-  /* 0.28→0.2em (2026-07-26): nama fakultas 37 karakter harus muat satu baris
-     di panel 540px — hindari patah kata janggal ("...IKM" sendirian). */
-  letter-spacing: 0.2em;
+  letter-spacing: 0.14em;
   color: var(--tinta-pudar);
   text-wrap: balance;
 }
@@ -164,17 +289,35 @@
   display: block;
   margin-top: var(--sp-05);
   font-size: 0.85em;
-  opacity: 0.8;
+  opacity: 0.75;
 }
 
+/* -- Judul --------------------------------------------------------------------- */
 .title__judul {
-  margin-top: var(--sp-2);
-  font-size: clamp(3.2rem, 9vw, 5rem);
+  position: relative;
+  z-index: 0; /* stacking context sendiri — stabilo ::after aman di belakang teks */
+  display: inline-block;
+  margin-top: var(--sp-3);
+  font-size: clamp(3rem, 4.6vw, 4.2rem);
   font-weight: 800;
   line-height: 1;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.045em;
   color: var(--daun-800);
   text-shadow: 0 2px 0 var(--daun-100);
+  animation: title-panel-masuk 600ms 440ms var(--ease-keluar) backwards;
+}
+
+/* Sapuan stabilo kunyit di belakang judul — tangan dokter menandai nama stase. */
+.title__judul::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: -6px;
+  right: -12px;
+  bottom: 4px;
+  height: 0.4em;
+  background: var(--kunyit-100);
+  transform: skewX(-8deg);
 }
 
 .title__sub {
@@ -182,16 +325,17 @@
   font-size: var(--text-md);
   font-weight: 700;
   letter-spacing: 0.42em;
-  text-indent: 0.42em; /* seimbangkan letter-spacing terakhir */
   color: var(--kunyit-700);
+  animation: title-panel-masuk 600ms 500ms var(--ease-keluar) backwards;
 }
 
 .title__tagline {
-  margin: var(--sp-4) auto 0;
-  max-width: 46ch;
+  margin: var(--sp-4) 0 0;
+  max-width: 44ch;
   font-size: var(--text-sm);
-  line-height: 1.6;
+  line-height: 1.65;
   color: var(--tinta-lembut);
+  animation: title-panel-masuk 600ms 560ms var(--ease-keluar) backwards;
 }
 
 .title__memuat {
@@ -200,17 +344,53 @@
   animation: title-berpendar 1.6s ease-in-out infinite alternate;
 }
 
-/* -- Aksi: lanjutkan + form nama ----------------------------------------------- */
+/* -- Aksi ----------------------------------------------------------------------- */
 .title__aksi {
   margin-top: var(--sp-5);
   display: flex;
   flex-direction: column;
   gap: var(--sp-4);
+  animation: title-panel-masuk 600ms 620ms var(--ease-keluar) backwards;
 }
 
-.title__lanjut {
+/* Hero "Lanjutkan" = KARTU BEROBAT: miring sedikit, strip hijau kiri, klip. */
+.tombol.title__lanjut {
+  position: relative;
   width: 100%;
+  text-align: left;
+  padding: var(--sp-3) var(--sp-4);
+  font-weight: 700;
+  color: var(--tinta-siang);
+  background: var(--kertas-050);
+  border: 1.5px solid var(--daun-800);
+  border-left: 8px solid var(--daun-600);
+  border-radius: 8px;
+  box-shadow: var(--shadow-kartu);
+  transform: rotate(-0.6deg);
+  transition: transform var(--durasi-cepat) var(--ease-keluar), box-shadow var(--durasi-cepat) var(--ease-keluar);
 }
+
+.tombol.title__lanjut:hover {
+  transform: rotate(0deg) translateY(-2px);
+  box-shadow: var(--shadow-angkat), 0 12px 28px rgba(6, 63, 49, 0.18);
+}
+
+/* Klip kertas di sudut kanan-atas kartu. */
+.tombol.title__lanjut::after {
+  content: '';
+  position: absolute;
+  top: -7px;
+  right: 16px;
+  width: 18px;
+  height: 12px;
+  border: 2px solid var(--tinta-pudar);
+  border-bottom: none;
+  border-radius: 7px 7px 0 0;
+  background: transparent;
+}
+
+/* Mode malam: kartu sengaja tetap kertas terang — tinta ikut versi siang. */
+[data-mode='malam'] .tombol.title__lanjut { color: var(--tinta-siang); border-color: var(--daun-800-siang); }
 
 .title__form {
   display: flex;
@@ -218,13 +398,8 @@
   gap: var(--sp-2);
 }
 
-.title__label {
-  justify-content: center;
-}
-
-.title__label::after {
-  display: none;
-}
+.title__label { justify-content: flex-start; }
+.title__label::after { display: none; }
 
 .title__form-baris {
   display: flex;
@@ -232,14 +407,66 @@
   gap: var(--sp-2);
 }
 
+/* Radio mode = KOTAK ISIAN FORMULIR dengan centang Caveat tinta-biru. */
+.title__mode-baris .tombol {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--sp-2);
+  background: transparent;
+  border: 1px solid var(--border-tegas);
+  border-radius: 8px;
+  font-weight: 600;
+  color: var(--tinta-lembut);
+}
+
+.title__mode-baris .tombol::before {
+  content: '';
+  flex: none;
+  width: 15px;
+  height: 15px;
+  border: 2px solid var(--border-tegas);
+  border-radius: 4px;
+  background: var(--kertas-050);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.title__mode-baris .tombol--utama {
+  background: var(--daun-50);
+  border-color: var(--daun-700);
+  color: var(--tinta);
+}
+
+.title__mode-baris .tombol--utama::before {
+  content: '✓';
+  font-family: var(--font-tulis);
+  font-weight: 700;
+  color: var(--tinta-biru);
+  border-color: var(--daun-700);
+}
+
+[data-mode='malam'] .title__mode-baris .tombol--utama {
+  background: var(--wash-daun);
+}
+[data-mode='malam'] .title__mode-baris .tombol::before { background: transparent; }
+
 .title__gelar {
   display: inline-flex;
   align-items: center;
   padding: 0 var(--sp-2);
   font-weight: 700;
   color: var(--tinta-pudar);
-  border-bottom: 2px solid var(--border-tegas);
+  border-bottom: 2px dashed var(--border-tegas);
+  transition: color var(--durasi-cepat) var(--ease-keluar);
 }
+
+/* Baris formulir hidup saat diisi: "dr." ikut tinta biru pulpen. */
+.title__form-baris:focus-within .title__gelar { color: var(--tinta-biru); }
 
 .title__input {
   flex: 1;
@@ -251,9 +478,14 @@
   color: var(--tinta-biru);
   background: transparent;
   border: none;
-  border-bottom: 2px solid var(--border-tegas);
+  border-bottom: 2px dashed var(--border-tegas);
   outline: none;
-  transition: border-color var(--durasi-cepat) var(--ease-keluar);
+  /* Garis fokus DIGAMBAR melebar dari kiri — pulpen menggarisi formulir. */
+  background-image: linear-gradient(var(--daun-700), var(--daun-700));
+  background-repeat: no-repeat;
+  background-size: 0% 2px;
+  background-position: 0 100%;
+  transition: background-size 260ms var(--ease-keluar), border-color var(--durasi-cepat) var(--ease-keluar);
 }
 
 .title__input::placeholder {
@@ -264,30 +496,90 @@
 }
 
 .title__input:focus {
-  border-bottom-color: var(--daun-700);
+  border-bottom-color: transparent;
+  background-size: 100% 2px;
 }
 
-.title__peringatan {
-  text-align: center;
+/* Selector dua-kelas (.tombol.title__*): main.tsx mengimpor App SEBELUM
+   base.css, jadi aturan .tombol base menang atas satu-kelas file layar —
+   pola persis .title__panel.kertas terdahulu. */
+/* CTA "Mulai Stase" = STEMPEL DINAS: cincin dalam kertas, menekan saat aktif.
+   Disabled = stempel kering (kertas-300); MENYALA hijau begitu huruf pertama
+   nama diketik — hadiah mikro untuk aksi pertama pemain. */
+.tombol.title__cta {
+  background: var(--daun-700);
+  color: var(--kertas-050);
+  border: 2px solid var(--daun-800);
+  border-radius: 10px;
+  box-shadow: inset 0 0 0 3px var(--kertas-050);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: background 220ms var(--ease-keluar), color 220ms var(--ease-keluar),
+    box-shadow 220ms var(--ease-keluar), transform var(--durasi-cepat) var(--ease-keluar);
+  animation: title-stempel-hadir 500ms 750ms var(--ease-keluar) backwards;
 }
 
-/* Batch-7: pengganti inline style color kunyit-800 di TSX. */
+.tombol.title__cta:hover:not(:disabled) { transform: translateY(-1px); background: var(--daun-800); }
+.tombol.title__cta:active:not(:disabled) { transform: translateY(1.5px) rotate(-0.5deg); }
+
+.tombol.title__cta:disabled {
+  background: var(--kertas-300);
+  color: var(--tinta-pudar);
+  border-color: var(--kertas-400);
+  box-shadow: none;
+  cursor: not-allowed;
+  opacity: 1; /* keterbacaan dijaga warna, bukan opacity global .tombol */
+}
+
+[data-mode='malam'] .tombol.title__cta:not(:disabled) { color: var(--malam-900); box-shadow: inset 0 0 0 3px var(--malam-900); }
+[data-mode='malam'] .tombol.title__cta:disabled { background: var(--malam-700); border-color: var(--border-tegas); }
+
+@keyframes title-stempel-hadir {
+  0% { transform: scale(0.9); opacity: 0; }
+  60% { transform: scale(1.05); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* Peringatan = MEMO TEMPEL kunyit dgn selotip — bukan blok teks telanjang. */
+.title__peringatan { text-align: left; }
+
 .title__peringatan--kunyit {
+  position: relative;
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--kunyit-100);
   color: var(--kunyit-800);
+  border-radius: 6px;
+  box-shadow: var(--shadow-kertas);
+  transform: rotate(0.8deg);
 }
 
-/* -- Kredit & HKI ---------------------------------------------------------------- */
-/* Teks legal WAJIB terbaca (CODEX P1) TANPA menabrak apa pun (playtest:
-   "piye cara liatnya"): in-flow di dasar kolom flex (bukan absolute — dulu
-   tumbuh ke atas menembus siluet & menimpa panel), scrim daun-900 menjamin
-   kontras di atas latar apa pun, line-height menjaga baris tak menimpa. */
+.title__peringatan--kunyit::before {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: 50%;
+  width: 64px;
+  height: 16px;
+  transform: translateX(-50%) rotate(-2deg);
+  background: rgba(253, 251, 247, 0.55); /* selotip = kertas-050 tembus */
+  border-radius: 2px;
+}
+
+.title__peringatan--kunyit .tombol { margin-top: var(--sp-2); border-color: var(--kunyit-700); color: var(--kunyit-800); }
+
+/* Mode malam: memo tetap kertas kunyit terang — tinta memo ikut versi siang
+   (kunyit-800 malam = terang, kontras runtuh di latar terang). */
+[data-mode='malam'] .title__peringatan--kunyit { color: var(--kunyit-700-siang); }
+[data-mode='malam'] .title__peringatan--kunyit .tombol { border-color: var(--kunyit-700-siang); color: var(--kunyit-700-siang); }
+
+/* -- Strip kredit (kaki kop surat, full-bleed) --------------------------------- */
 .title__kredit {
   position: relative;
   z-index: 1;
-  /* P0 Batch-7: clearance simetris 220px utk kluster tombol melayang kiri-bawah
-     (mute + gigi) — dulu var(--sp-5)*2 membuat baris kredit terselip di bawah FAB. */
-  width: min(1100px, calc(100vw - 220px));
-  margin-bottom: var(--sp-2);
+  grid-column: 1 / -1;
+  grid-row: 2;
+  width: 100%;
   text-align: center;
   font-size: var(--text-xs);
   letter-spacing: 0.05em;
@@ -298,12 +590,16 @@
   flex-direction: column;
   gap: var(--sp-1);
   padding: var(--sp-2) var(--sp-4);
-  background: rgba(6, 63, 49, 0.82); /* daun-900 */
-  border-radius: var(--radius-md);
+  background: var(--daun-900);
+  border-top: 2px solid var(--kunyit-600);
 }
 
-/* Teks legal/medis: WAJIB tetap terbaca (CODEX P1) — jangan di bawah
-   --text-xs & jangan ditumpuk opacity parent × child hingga <0.8 efektif. */
+/* Clearance FAB kiri-bawah (mute+gear) dipertahankan: konten diciutkan, bukan stripnya. */
+.title__kredit > * {
+  max-width: min(880px, calc(100vw - 240px));
+  margin-inline: auto;
+}
+
 .title__kredit-haki {
   font-size: var(--text-xs);
   opacity: 0.95;
@@ -318,16 +614,22 @@
   margin: 0 auto;
 }
 
-/* -- Tombol keluar (Electron) ------------------------------------------------------ */
-.title__keluar {
-  margin-top: var(--sp-2);
-  align-self: center;
+/* Bugfix (temuan Desainer B): pointer-events:none strip membuat summary HAKI
+   tak bisa diklik — lipatan legal dikecualikan. */
+.title__kredit-lipat { pointer-events: auto; }
+
+/* -- Tombol keluar (Electron) --------------------------------------------------- */
+.tombol.title__keluar {
+  margin-top: var(--sp-4);
+  align-self: flex-start;
   font-size: var(--text-xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
+  color: var(--tinta-pudar);
 }
+.tombol.title__keluar:hover { text-decoration: underline; }
 
-/* M5.24/25 — arsip slot & impor di layar judul */
+/* -- Arsip slot & impor ---------------------------------------------------------- */
 .title__arsip {
   display: flex;
   flex-direction: column;
@@ -337,13 +639,18 @@
   border-top: 1px dashed var(--border-halus);
 }
 
-.title__slot { text-align: left; font-size: var(--text-sm); padding: var(--sp-1) var(--sp-3); }
+.tombol.title__slot {
+  text-align: left;
+  font-size: var(--text-sm);
+  padding: var(--sp-1) var(--sp-3);
+  border-left: 4px solid var(--kertas-400);
+}
 
-/* Chip build pojok (premiere 2026-07-26) — identitas subtitle bersih. */
+/* Chip build — "ditempelkan" ke tab map saat entrance. */
 .title__beta {
-  position: fixed;
-  top: var(--sp-3);
-  right: var(--sp-3);
+  position: absolute;
+  top: -24px;
+  right: 8px;
   z-index: 2;
   font-size: var(--text-xs);
   font-weight: 700;
@@ -352,25 +659,35 @@
   border: 1px solid var(--kunyit-700);
   border-radius: var(--radius-sm);
   color: var(--kunyit-700);
-  opacity: 0.8;
-  transform: rotate(2deg);
+  background: var(--kertas-100);
+  opacity: 0.9;
+  transform: rotate(-1deg);
+  animation: title-tempel 260ms 720ms var(--ease-keluar) backwards;
+}
+
+@keyframes title-tempel {
+  from { opacity: 0; transform: scale(1.18) rotate(-1deg); }
+  to { opacity: 0.9; transform: scale(1) rotate(-1deg); }
 }
 
 /* Parallax matahari — var di-set onMouseMove root (mati saat kurangi-gerak).
-   Diterapkan ke SVG ANAK, bukan wrapper: wrapper memegang centering -50% +
-   animasi title-terbit fill both yang menimpa properti transform selamanya. */
+   Diterapkan ke SVG ANAK, bukan wrapper (wrapper memegang centering + terbit). */
 .title__matahari svg {
   display: block;
   transform: translate(calc(var(--par-x, 0) * 14px), calc(var(--par-y, 0) * 10px));
   transition: transform 400ms var(--ease-keluar);
 }
 
-/* -- Lipatan premiere (2026-07-26): satu aksi pahlawan, sisanya dilipat ------- */
+/* -- Lipatan = TAB PEMBATAS MAP dgn jepitan indeks warna ------------------------ */
 .title__lipat {
   text-align: left;
   border-top: 1px dashed var(--border-halus);
   padding-top: var(--sp-3);
 }
+
+.title__lipat--mulai { --pin-tab: var(--daun-600); }
+.title__lipat--arsip { --pin-tab: var(--kunyit-600); }
+.title__alat-dosen { --pin-tab: var(--tinta-biru); }
 
 .title__lipat-judul {
   cursor: pointer;
@@ -378,8 +695,9 @@
   display: flex;
   align-items: center;
   gap: var(--sp-2);
-  justify-content: center;
-  padding: var(--sp-1) 0;
+  justify-content: flex-start;
+  padding: var(--sp-1) 0 var(--sp-1) var(--sp-2);
+  border-left: 4px solid var(--pin-tab, var(--border-tegas));
 }
 
 .title__lipat-judul::-webkit-details-marker { display: none; }
@@ -389,12 +707,10 @@
   transition: transform var(--durasi-cepat) var(--ease-keluar);
 }
 
-.title__lipat[open] > .title__lipat-judul::before {
-  transform: rotate(90deg);
-}
+.title__lipat[open] > .title__lipat-judul::before { transform: rotate(90deg); }
 
 .title__lipat-judul:hover { color: var(--tinta); }
-.title__lipat-judul::after { display: none; } /* garis judul-seksi tak perlu di tengah */
+.title__lipat-judul::after { display: none; }
 
 .title__lipat > *:not(summary) { margin-top: var(--sp-3); }
 
@@ -407,16 +723,6 @@
 .title__kredit-lipat summary::-webkit-details-marker { display: none; }
 .title__kredit-lipat summary::before { content: '▸ '; }
 .title__kredit-lipat[open] summary::before { content: '▾ '; }
-
-/* Entrance berlapis (tunduk kurangi-gerak via gerbang global base.css). */
-.title__kicker, .title__judul, .title__sub, .title__tagline, .title__aksi {
-  animation: title-panel-masuk 600ms var(--ease-keluar) both;
-}
-.title__kicker { animation-delay: 350ms; }
-.title__judul { animation-delay: 420ms; }
-.title__sub { animation-delay: 500ms; }
-.title__tagline { animation-delay: 580ms; }
-.title__aksi { animation-delay: 660ms; }
 
 .title__impor { display: block; margin-top: var(--sp-3); cursor: pointer; }
 .title__impor input { font-size: var(--text-xs); }
@@ -436,11 +742,8 @@
   cursor: pointer;
 }
 
-/* Fix #26b (audit CODEX 2026-07-11): input aslinya disembunyikan visual
-   (bukan display:none, agar klik label tetap meneruskan ke <input> di semua
-   engine) — nama file bawaan browser ("No file chosen", bahasa Inggris,
-   tak bisa distyle) diganti span teks Indonesia sendiri (.title__file-tampil),
-   di-update lewat state onChange. */
+/* Fix #26b (audit CODEX 2026-07-11): input file disembunyikan visual (bukan
+   display:none) — nama file bawaan browser diganti span Indonesia sendiri. */
 .title__file-input-tersembunyi {
   position: absolute;
   width: 1px;
@@ -453,8 +756,6 @@
   border: 0;
 }
 
-/* Batch-7: gaya lama (border tegas + bg kartu + bold) terlalu berat utk
-   sekadar penampil nama file — kini pasif/dashed, menguat saat hover/fokus. */
 .title__file-tampil {
   display: inline-block;
   padding: var(--sp-2) var(--sp-4);
@@ -481,8 +782,6 @@
   border-top: 1px dashed var(--border-halus);
 }
 
-/* Batch-7: alat dosen (verifikasi dossier + telemetri) dilipat dlm <details>
-   — default tertutup agar mahasiswa tak terdistraksi; marker kustom ▸/▾. */
 .title__alat-dosen {
   margin-top: var(--sp-3);
   border-top: 1px dashed var(--border-halus);
@@ -492,13 +791,15 @@
 .title__alat-dosen > summary {
   cursor: pointer;
   list-style: none;
+  padding-left: var(--sp-2);
+  border-left: 4px solid var(--pin-tab, var(--border-tegas));
 }
 
 .title__alat-dosen > summary::-webkit-details-marker { display: none; }
 .title__alat-dosen > summary::before { content: '▸ '; }
 .title__alat-dosen[open] > summary::before { content: '▾ '; }
 
-/* -- M6.27: panel hasil verifikasi dossier (dosen) --------------------------------- */
+/* -- Panel hasil verifikasi dossier (dosen) -------------------------------------- */
 .title__verifikasi {
   display: flex;
   flex-direction: column;
@@ -516,8 +817,6 @@
   gap: var(--sp-1);
 }
 
-/* Verifikasi Massal (2026-07-23) — tabel rekap satu kelas. Digulir sendiri
-   (x dan y) supaya 50 baris tak memanjangkan panel judul. */
 .title__massal-gulir {
   overflow-x: auto;
   max-height: 300px;
@@ -546,4 +845,42 @@
   padding: var(--sp-1) var(--sp-2);
   border-bottom: 1px solid var(--border-halus);
   white-space: nowrap;
+}
+
+/* -- MODE MALAM: langit benar-benar gelap, matahari jadi bulan, bintang -------- */
+/* Token kertas/kunyit-100 TIDAK diremap malam (sengaja — kertas tetap kertas),
+   jadi langit malam dirakit dari token malam-* + daun-900 yang sudah ada.
+   Perbaikan sekalian: sebelum rombak ini, layar judul malam masih memakai
+   gradient fajar terang. */
+[data-mode='malam'] .title {
+  background: linear-gradient(180deg, var(--malam-900) 0%, var(--malam-800) 58%, var(--daun-900) 100%);
+  --scene-mthr-halo: rgba(253, 251, 247, 0.3); /* kertas-050 tembus — halo bulan */
+  --scene-mthr-inti: var(--kertas-050);
+}
+
+[data-mode='malam'] .title__cahaya { opacity: 0.16; }
+
+[data-mode='malam'] .title__bintang {
+  display: block;
+  animation: title-bintang-kelip 4s ease-in-out infinite alternate;
+}
+
+@keyframes title-bintang-kelip {
+  from { opacity: 0.35; }
+  to { opacity: 0.65; }
+}
+
+/* Puskesmas jaga malam — semua jendela terang penuh. */
+[data-mode='malam'] .jendela { --op-j: 0.95; }
+
+[data-mode='malam'] .title__judul::after { opacity: 0.35; }
+
+/* -- Lebar sempit (di bawah target 1024): map memusat, scene tetap ------------- */
+@media (max-width: 1023px) {
+  .title {
+    grid-template-columns: clamp(16px, 4vw, 40px) 1fr clamp(16px, 4vw, 40px);
+  }
+  .title__map { max-width: 540px; justify-self: center; width: 100%; }
+  .title__matahari { left: 50%; }
+  .title__cahaya { left: 50%; }
 }

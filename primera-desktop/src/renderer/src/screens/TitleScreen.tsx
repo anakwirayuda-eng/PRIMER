@@ -20,50 +20,143 @@ import './TitleScreen.css'
 /** Tombol Keluar hanya relevan di jendela Electron (bukan preview browser). */
 const DI_ELECTRON = typeof navigator !== 'undefined' && navigator.userAgent.includes('Electron')
 
-/** Siluet Desa Sukamaju saat fajar — bukit, pepohonan, gedung puskesmas. */
-function SiluetPuskesmas() {
+/* ---------------------------------------------------------------------------
+ * SCENE "MAP STASE SAAT FAJAR" (rombak 2026-08-22, panel desain 3-arah + juri):
+ * pemandangan dipecah 3 lapis SVG (jauh/tengah/depan) supaya parallax punya
+ * kedalaman per-lapis dan entrance bisa di-stagger. Gedung Puskesmas lama
+ * TIDAK digambar ulang — hanya dibungkus <g transform> ke titik fokal ±68%
+ * lebar layar (sejajar matahari), karena panel kini map di kolom kiri.
+ * Semua warna token; jendela diberi kelas utk koreografi "menyala satu-satu".
+ * ------------------------------------------------------------------------- */
+
+/** Lapis JAUH: bukit berkabut + bintang (hanya tampil mode malam). */
+function SiluetJauh() {
   return (
     <svg
-      className="title__siluet"
-      viewBox="0 0 1200 240"
+      className="title__siluet title__siluet--jauh"
+      viewBox="0 0 1200 260"
       preserveAspectRatio="xMidYMax slice"
       aria-hidden="true"
     >
-      {/* Bukit belakang — masih berkabut */}
+      <defs>
+        <filter id="title-kabut-blur" x="-40%" y="-200%" width="180%" height="500%">
+          <feGaussianBlur stdDeviation="10" />
+        </filter>
+      </defs>
+      {/* Bintang subuh — display:none di siang, muncul + berkelip di malam */}
+      <g className="title__bintang" fill="var(--kertas-050)">
+        <circle cx="90" cy="26" r="1.4" />
+        <circle cx="205" cy="58" r="1.2" />
+        <circle cx="330" cy="18" r="1.7" />
+        <circle cx="455" cy="44" r="1.2" />
+        <circle cx="570" cy="14" r="1.5" />
+        <circle cx="700" cy="52" r="1.3" />
+        <circle cx="836" cy="24" r="1.8" />
+        <circle cx="948" cy="60" r="1.2" />
+        <circle cx="1064" cy="30" r="1.5" />
+        <circle cx="1150" cy="66" r="1.3" />
+      </g>
       <path
-        d="M0 190 Q 150 120 320 165 Q 470 200 640 150 Q 820 100 1000 160 Q 1110 195 1200 170 L 1200 240 L 0 240 Z"
+        d="M0 200 Q 180 120 380 165 Q 560 205 760 150 Q 940 105 1200 175 L 1200 260 L 0 260 Z"
         fill="var(--daun-800)"
-        opacity="0.22"
+        opacity="0.16"
       />
-      {/* Bukit tengah */}
-      <path
-        d="M0 210 Q 200 160 400 195 Q 620 230 830 180 Q 1020 140 1200 200 L 1200 240 L 0 240 Z"
-        fill="var(--daun-800)"
-        opacity="0.45"
-      />
-      {/* Burung pagi */}
-      <path d="M300 74 q 8 -8 16 0 q 8 -8 16 0" fill="none" stroke="var(--daun-900)" strokeWidth="2.5" strokeLinecap="round" opacity="0.55" />
-      <path d="M356 92 q 6 -6 12 0 q 6 -6 12 0" fill="none" stroke="var(--daun-900)" strokeWidth="2" strokeLinecap="round" opacity="0.4" />
-      {/* Tanah depan */}
-      <path d="M0 226 Q 300 214 600 222 Q 900 230 1200 218 L 1200 240 L 0 240 Z" fill="var(--daun-900)" />
+      {/* Pita kabut pagi — menguap perlahan saat entrance */}
+      <g fill="var(--kertas-050)" filter="url(#title-kabut-blur)">
+        <ellipse className="kabut" cx="300" cy="192" rx="150" ry="16" />
+        <ellipse className="kabut" cx="660" cy="206" rx="185" ry="18" />
+        <ellipse className="kabut" cx="960" cy="194" rx="125" ry="14" />
+      </g>
+    </svg>
+  )
+}
 
-      {/* Pepohonan kiri */}
+/** Lapis TENGAH: bukit + terasering sawah + rumah desa + asap dapur. */
+function SiluetTengah() {
+  return (
+    <svg
+      className="title__siluet title__siluet--tengah"
+      viewBox="0 0 1200 260"
+      preserveAspectRatio="xMidYMax slice"
+      aria-hidden="true"
+    >
+      <path
+        d="M0 215 Q 220 158 430 195 Q 650 232 860 180 Q 1030 142 1200 205 L 1200 260 L 0 260 Z"
+        fill="var(--daun-800)"
+        opacity="0.42"
+      />
+      {/* Terasering sawah di lereng kiri — garis kontur khas desa Indonesia */}
+      <g fill="none" stroke="var(--daun-100)" strokeWidth="1.5" opacity="0.28" strokeLinecap="round">
+        <path d="M46 206 Q 170 188 306 198" />
+        <path d="M26 219 Q 186 200 344 211" />
+        <path d="M62 232 Q 206 215 366 224" />
+      </g>
+      {/* Dua rumah desa, satu jendela menyala */}
+      <g fill="var(--daun-800)" opacity="0.85">
+        <rect x="150" y="198" width="30" height="20" />
+        <polygon points="146,198 165,186 184,198" />
+        <rect x="218" y="203" width="26" height="15" />
+        <polygon points="214,203 231,193 248,203" />
+      </g>
+      <rect x="160" y="204" width="8" height="8" fill="var(--kunyit-100)" opacity="0.8" />
+      {/* Asap dapur pagi — goyang idle sangat lambat */}
+      <path
+        className="title__asap"
+        d="M164 182 q 4 -8 -2 -14 q -5 -7 1 -13"
+        fill="none"
+        stroke="var(--kertas-050)"
+        strokeWidth="3"
+        strokeLinecap="round"
+        opacity="0.3"
+      />
+    </svg>
+  )
+}
+
+/** Lapis DEPAN: tanah, gedung Puskesmas (fokal), ambulans, jalan setapak, pohon. */
+function SiluetDepan() {
+  return (
+    <svg
+      className="title__siluet title__siluet--depan"
+      viewBox="0 0 1200 260"
+      preserveAspectRatio="xMidYMax slice"
+      aria-hidden="true"
+    >
+      {/* Tanah depan */}
+      <path d="M0 226 Q 300 214 600 222 Q 900 230 1200 218 L 1200 260 L 0 260 Z" fill="var(--daun-900)" />
+
+      {/* Jalan setapak dari pintu Puskesmas ke tepi bawah — leading line */}
+      <polygon points="806,250 828,250 872,260 756,260" fill="var(--kertas-300)" opacity="0.22" />
+
+      {/* Pepohonan tepi kiri */}
       <g fill="var(--daun-900)">
-        <rect x="128" y="188" width="7" height="40" rx="2" />
-        <ellipse cx="131" cy="168" rx="34" ry="30" />
-        <rect x="212" y="200" width="6" height="30" rx="2" />
-        <ellipse cx="215" cy="184" rx="24" ry="22" />
+        <rect x="60" y="188" width="7" height="44" rx="2" />
+        <ellipse cx="63" cy="168" rx="34" ry="30" />
+        <rect x="140" y="202" width="6" height="32" rx="2" />
+        <ellipse cx="143" cy="186" rx="23" ry="21" />
       </g>
       {/* Pepohonan kanan */}
       <g fill="var(--daun-900)">
-        <rect x="1008" y="192" width="7" height="38" rx="2" />
-        <ellipse cx="1011" cy="170" rx="32" ry="29" />
-        <rect x="1090" y="204" width="6" height="26" rx="2" />
-        <ellipse cx="1093" cy="190" rx="21" ry="19" />
+        <rect x="1092" y="192" width="7" height="40" rx="2" />
+        <ellipse cx="1095" cy="170" rx="32" ry="29" />
+        <rect x="1164" y="204" width="6" height="28" rx="2" />
+        <ellipse cx="1167" cy="190" rx="20" ry="18" />
       </g>
 
-      {/* Gedung Puskesmas — siluet gelap, jendela mulai menyala */}
-      <g>
+      {/* Ambulans Puskesmas parkir di kiri gedung — "layanan primer" dalam satu benda */}
+      <g className="title__ambulans">
+        <rect x="600" y="236" width="46" height="20" rx="4" fill="var(--kertas-050)" opacity="0.9" />
+        <rect x="600" y="247" width="46" height="3" fill="var(--daun-700)" opacity="0.9" />
+        <rect x="636" y="239" width="7" height="6" rx="1" fill="var(--daun-900)" opacity="0.35" />
+        <rect x="616" y="238" width="4" height="10" fill="var(--tinta-merah)" opacity="0.85" />
+        <rect x="613" y="241" width="10" height="4" fill="var(--tinta-merah)" opacity="0.85" />
+        <circle cx="611" cy="257" r="4.5" fill="var(--daun-900)" />
+        <circle cx="635" cy="257" r="4.5" fill="var(--daun-900)" />
+      </g>
+
+      {/* Gedung Puskesmas — geometri LAMA utuh, direposisi ke fokal ±68% via
+          transform (translate dulu, lalu scale — jangan gambar ulang path). */}
+      <g transform="translate(132 -8) scale(1.14)">
         {/* Sayap kiri & kanan */}
         <rect x="452" y="164" width="90" height="64" fill="var(--daun-900)" />
         <rect x="658" y="164" width="90" height="64" fill="var(--daun-900)" />
@@ -76,14 +169,16 @@ function SiluetPuskesmas() {
         <rect x="572" y="186" width="56" height="6" fill="var(--daun-900)" />
         <rect x="576" y="192" width="4" height="36" fill="var(--daun-900)" />
         <rect x="620" y="192" width="4" height="36" fill="var(--daun-900)" />
-        {/* Pintu & jendela — cahaya pagi pertama */}
-        <rect x="588" y="194" width="24" height="34" rx="2" fill="var(--kunyit-100)" opacity="0.85" />
-        <rect x="540" y="156" width="16" height="14" rx="1" fill="var(--kunyit-100)" opacity="0.5" />
-        <rect x="644" y="156" width="16" height="14" rx="1" fill="var(--kunyit-100)" opacity="0.5" />
-        <rect x="468" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" opacity="0.35" />
-        <rect x="504" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" opacity="0.35" />
-        <rect x="682" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" opacity="0.35" />
-        <rect x="718" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" opacity="0.35" />
+        {/* Pintu & jendela — menyala SATU PER SATU saat entrance (kelas jendela--N;
+            opasitas final di CSS var --op-j, bukan attribute, agar bisa dianimasi
+            & di-override mode malam "Puskesmas jaga malam"). */}
+        <rect className="jendela jendela--1" x="588" y="194" width="24" height="34" rx="2" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--2" x="540" y="156" width="16" height="14" rx="1" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--3" x="644" y="156" width="16" height="14" rx="1" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--4" x="468" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--5" x="504" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--6" x="682" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" />
+        <rect className="jendela jendela--7" x="718" y="180" width="14" height="12" rx="1" fill="var(--kunyit-100)" />
         {/* Lambang kesehatan di atas pintu */}
         <circle cx="600" cy="124" r="11" fill="var(--kertas-050)" opacity="0.92" />
         <rect x="597.5" y="117" width="5" height="14" rx="1" fill="var(--daun-900)" />
@@ -93,6 +188,18 @@ function SiluetPuskesmas() {
         <rect x="785" y="152" width="20" height="12" fill="var(--tinta-merah)" opacity="0.8" />
         <rect x="785" y="164" width="20" height="12" fill="var(--kertas-050)" opacity="0.9" />
       </g>
+    </svg>
+  )
+}
+
+/** Lambang kesehatan mini utk kop surat map — bentuk sama dgn lambang gedung. */
+function LambangKop() {
+  return (
+    <svg className="title__kop-lambang" viewBox="0 0 22 22" aria-hidden="true">
+      <circle cx="11" cy="11" r="10" fill="var(--daun-700)" opacity="0.14" />
+      <circle cx="11" cy="11" r="10" fill="none" stroke="var(--daun-800)" strokeWidth="1.5" />
+      <rect x="9.2" y="5.5" width="3.6" height="11" rx="1" fill="var(--daun-800)" />
+      <rect x="5.5" y="9.2" width="11" height="3.6" rx="1" fill="var(--daun-800)" />
     </svg>
   )
 }
@@ -253,49 +360,75 @@ export function TitleScreen() {
         t.style.setProperty('--par-y', String(e.clientY / t.clientHeight - 0.5))
       }}
     >
-      <span className="title__beta mono" aria-hidden="true">TEST-BETA</span>
-      {/* Matahari pagi — naik perlahan, cahaya lembut */}
+      {/* Pendar fajar di titik fokal (68% lebar) — di bawah semua lapis scene */}
+      <div className="title__cahaya" aria-hidden="true" />
+
+      {/* Matahari pagi — kini BENAR-BENAR terlihat: fokal kanan, terbit dari
+          balik bukit saat entrance. Fill via var lokal supaya mode malam bisa
+          menukarnya jadi bulan tanpa menyentuh markup. */}
       <div className="title__matahari" aria-hidden="true">
         <svg viewBox="0 0 300 300">
-          <circle cx="150" cy="150" r="130" fill="var(--kunyit-100)" opacity="0.55" />
-          <circle cx="150" cy="150" r="88" fill="var(--kunyit-100)" opacity="0.7" />
-          <circle cx="150" cy="150" r="52" fill="var(--kunyit-600)" opacity="0.82" />
+          <circle cx="150" cy="150" r="130" fill="var(--scene-mthr-halo, var(--kunyit-100))" opacity="0.55" />
+          <circle cx="150" cy="150" r="88" fill="var(--scene-mthr-halo, var(--kunyit-100))" opacity="0.7" />
+          <circle cx="150" cy="150" r="52" fill="var(--scene-mthr-inti, var(--kunyit-600))" opacity="0.82" />
         </svg>
       </div>
 
-      {/* Awan pagi (audit visual 2026-08-01) — langit atas dulu polos total.
-          Tiga awan datar (gaya sama dgn siluet: flat shape, tanpa gradasi)
-          ber-drift sangat lambat; beku otomatis saat kurangi-gerak lewat
-          kill-switch global base.css. */}
+      {/* Awan pagi — fill token kertas-050 (bukan #fff hardcode), komposisi
+          membingkai matahari; drift idle sangat lambat (kill-switch global). */}
       <div className="title__awan" aria-hidden="true">
         <svg className="title__awan-svg title__awan--1" viewBox="0 0 120 36">
-          <ellipse cx="34" cy="24" rx="30" ry="11" fill="#fff" />
-          <ellipse cx="62" cy="17" rx="26" ry="13" fill="#fff" />
-          <ellipse cx="90" cy="25" rx="26" ry="10" fill="#fff" />
+          <ellipse cx="34" cy="24" rx="30" ry="11" fill="var(--kertas-050)" />
+          <ellipse cx="62" cy="17" rx="26" ry="13" fill="var(--kertas-050)" />
+          <ellipse cx="90" cy="25" rx="26" ry="10" fill="var(--kertas-050)" />
         </svg>
         <svg className="title__awan-svg title__awan--2" viewBox="0 0 120 36">
-          <ellipse cx="38" cy="23" rx="32" ry="10" fill="#fff" />
-          <ellipse cx="72" cy="18" rx="28" ry="12" fill="#fff" />
+          <ellipse cx="38" cy="23" rx="32" ry="10" fill="var(--kertas-050)" />
+          <ellipse cx="72" cy="18" rx="28" ry="12" fill="var(--kertas-050)" />
         </svg>
         <svg className="title__awan-svg title__awan--3" viewBox="0 0 120 36">
-          <ellipse cx="40" cy="22" rx="28" ry="9" fill="#fff" />
-          <ellipse cx="66" cy="17" rx="22" ry="10" fill="#fff" />
+          <ellipse cx="40" cy="22" rx="28" ry="9" fill="var(--kertas-050)" />
+          <ellipse cx="66" cy="17" rx="22" ry="10" fill="var(--kertas-050)" />
+        </svg>
+        <svg className="title__awan-svg title__awan--4" viewBox="0 0 120 36">
+          <ellipse cx="44" cy="22" rx="24" ry="8" fill="var(--kertas-050)" />
+          <ellipse cx="68" cy="17" rx="18" ry="9" fill="var(--kertas-050)" />
         </svg>
       </div>
 
-      <SiluetPuskesmas />
+      {/* Burung pagi — melintasi layar sesekali (±8 dtk tampil, lalu hening
+          panjang); berakhir opacity 0 sehingga aman utk kurangi-gerak. */}
+      <svg className="title__burung title__burung--1" viewBox="0 0 40 16" aria-hidden="true">
+        <path d="M4 10 q 8 -8 16 0 q 8 -8 16 0" fill="none" stroke="var(--daun-900)" strokeWidth="2.5" strokeLinecap="round" />
+      </svg>
+      <svg className="title__burung title__burung--2" viewBox="0 0 40 16" aria-hidden="true">
+        <path d="M4 10 q 6 -6 12 0 q 6 -6 12 0" fill="none" stroke="var(--daun-900)" strokeWidth="2" strokeLinecap="round" />
+      </svg>
 
-      <div className="title__panel kertas">
+      <SiluetJauh />
+      <SiluetTengah />
+      <SiluetDepan />
+
+      {/* MAP STASE — folder manila di kiri meja; tab map + klip + chip build
+          hidup di wrapper (overflow visible), panel di dalamnya yang scroll. */}
+      <div className="title__map">
+        <span className="title__beta mono" aria-hidden="true">TEST-BETA</span>
+        <div className="title__panel kertas">
         {/* Koreksi kelembagaan (2026-07-26, dr. Wirayuda): kop lama
             "KEMENTERIAN KESEHATAN" keliru DAN berisiko terbaca sbg produk
             resmi Kemenkes — ini simulasi edukasi milik fakultas (konsisten
             METADATA.organisasi ITS). */}
-        <p className="title__kicker mono">
-          FAKULTAS KEDOKTERAN DAN KESEHATAN ITS
-          {/* Deskriptor terpilih dr. Wirayuda (2026-07-26, opsi 1): kedua
-              pilar ko-primer dinyatakan eksplisit & setara — DNA produk. */}
-          <span className="title__kicker-sub">SIMULASI LAYANAN PRIMER &amp; KEDOKTERAN KOMUNITAS</span>
-        </p>
+        {/* Kop surat dinas: lambang mini + nama fakultas + garis ganda penutup
+            (identitas "map stase" — surat resmi Puskesmas, rata kiri). */}
+        <div className="title__kop">
+          <LambangKop />
+          <p className="title__kicker mono">
+            FAKULTAS KEDOKTERAN DAN KESEHATAN ITS
+            {/* Deskriptor terpilih dr. Wirayuda (2026-07-26, opsi 1): kedua
+                pilar ko-primer dinyatakan eksplisit & setara — DNA produk. */}
+            <span className="title__kicker-sub">SIMULASI LAYANAN PRIMER &amp; KEDOKTERAN KOMUNITAS</span>
+          </p>
+        </div>
         <h1 className="title__judul">PRIMERA</h1>
         {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
             instalasi lain; hapus label ini saat porting ke rilis produksi. */}
@@ -348,7 +481,7 @@ export function TitleScreen() {
                 pahlawan (Lanjutkan); form stase-baru terlipat — terbuka penuh
                 hanya utk pemain baru. jsdom tak menyembunyikan isi <details>,
                 kontrak test lama (placeholder/tombol) tetap terjangkau. */}
-            <details className="title__lipat" open={arsip === null}>
+            <details className="title__lipat title__lipat--mulai" open={arsip === null}>
               <summary className="judul-seksi title__lipat-judul">
                 {arsip !== null ? 'Atau mulai stase baru' : 'Mulai stase barumu'}
               </summary>
@@ -357,7 +490,7 @@ export function TitleScreen() {
                 Nama doktermu
               </label>
               {/* M4.5 — pemilih mode stase */}
-              <div className="title__form-baris" {...modeRadio.groupProps} aria-label="Mode stase">
+              <div className="title__form-baris title__mode-baris" {...modeRadio.groupProps} aria-label="Mode stase">
                 <button
                   type="button"
                   className={`tombol ${mode === 'karier' ? 'tombol--utama' : ''}`}
@@ -393,7 +526,7 @@ export function TitleScreen() {
                 />
                 <button
                   type="submit"
-                  className={`tombol tombol--besar ${arsip !== null ? '' : 'tombol--utama'}`}
+                  className={`tombol tombol--besar title__cta ${arsip !== null ? '' : 'tombol--utama'}`}
                   disabled={!bolehMulai}
                   title={
                     namaBersih.length === 0
@@ -439,7 +572,7 @@ export function TitleScreen() {
 
             {/* M5.25 — slot manual + impor arsip; M5.24 — jejak lintas-playthrough.
                 Premiere (2026-07-26): dilipat — arsip adalah alat, bukan hero. */}
-            <details className="title__lipat">
+            <details className="title__lipat title__lipat--arsip">
               <summary className="judul-seksi title__lipat-judul">
                 Arsip &amp; Impor{slots.length > 0 ? ` (${slots.length} slot terisi)` : ''}
               </summary>
@@ -864,6 +997,7 @@ export function TitleScreen() {
             )}
           </div>
         )}
+        </div>
       </div>
 
       {dialog !== null && (
