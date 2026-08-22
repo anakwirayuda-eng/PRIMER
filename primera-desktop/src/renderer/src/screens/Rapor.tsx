@@ -266,7 +266,15 @@ export function Rapor() {
               {
                 label: 'IKS desa (rata-rata RW)',
                 nilai: r.iksDesa > 0 ? koma(r.iksDesa, 2) : 'belum ada data',
-                waspada: r.iksDesa > 0 && r.iksDesa < 0.5,
+                // Audit UKM 2026-08-22: ambang lama (<0,5) MUSTAHIL dicapai —
+                // plafon nyata IKS desa ±0,3, jadi bendera waspada menyala
+                // permanen bahkan bagi pemain sempurna. Kini membaca kontribusi
+                // ternormalisasi (skorIksDesa); snapshot beku save lama tanpa
+                // field itu jatuh ke aturan lama agar rapor arsip tak berubah.
+                waspada:
+                  r.skorIksDesa !== undefined
+                    ? r.iksDesa > 0 && r.skorIksDesa < 0.5
+                    : r.iksDesa > 0 && r.iksDesa < 0.5,
               },
               {
                 label: 'Kunjungan berhasil',

@@ -807,7 +807,16 @@ function fnv1a(teks: string): string {
 // terverifikasi/closureRate tak menyusut diam-diam; surat kader berhenti
 // mengklaim 12 indikator terisi padahal kuota harian 2.
 // Dossier build lama jatuh ke "tidak_dapat_diverifikasi", bukan tidak sah.
-export const REVISI_ENGINE = 70
+//
+// Kalibrasi #10 (2026-08-22, didelegasikan dokter): 70 -> 71. Suku IKS desa
+// (bobot 40% dimensi UKM) berhenti memakai angka absolut yang plafonnya ~0,3 —
+// pemain sempurna dulu terkunci UKM ~27/35 yang ditampilkan /35. Kini dinilai
+// dari KENAIKAN di atas baseline roll terpersist tiap RW, dinormalisasi ke
+// target terukur 0,115 (kalibrasi rev 62 blok kapitasi: tanpa usaha 0,125,
+// plafon praktis 0,24). Tanpa-usaha kini nol (dulu ~0,125 gratis); paritas
+// UKM=UKP=35 akhirnya terjangkau di langit-langit. Dossier build lama jatuh ke
+// "tidak_dapat_diverifikasi", bukan tidak sah.
+export const REVISI_ENGINE = 71
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

@@ -36,7 +36,13 @@ function stateSkor(sumSkorProses: number, apathy = 0): GameState {
     },
     desa: {
       ...BASIS.desa,
-      rw: BASIS.desa.rw.map((r, i) => (i === 0 ? { ...r, iks: 1, kkTersurvei: r.totalKk } : r)),
+      // Audit UKM 2026-08-22 (#10): suku IKS kini dinilai dari KENAIKAN atas
+      // baseline roll — fixture wajib membawa proporsiBaselineRoll agar
+      // kontribusinya tetap penuh (kenaikan 0,875 >> target 0,115) dan
+      // aritmetika ambang-grade fixture ini tak bergeser.
+      rw: BASIS.desa.rw.map((r, i) =>
+        i === 0 ? { ...r, iks: 1, proporsiBaselineRoll: 0.125, kkTersurvei: r.totalKk } : r,
+      ),
     },
   }
 }
@@ -126,5 +132,43 @@ describe('ringkasanHarian — rincian kunjungan', () => {
     })
     expect(rincian).toContain('Fase Ingatkan 0/100')
     expect(rincian).toContain('SAJI 80/100')
+  })
+})
+
+/* -- Audit UKM 2026-08-22 (kalibrasi #10): suku IKS = kenaikan atas baseline --- */
+
+describe('suku IKS desa dinormalisasi ke kenaikan yang terjangkau', () => {
+  const rwUji = (iks: number, roll?: number) => ({
+    nomor: 1, nama: 'RW Uji', jarak: 'dekat' as const, totalKk: 28,
+    iks, bonusIks: 0, kkTersurvei: 20,
+    ...(roll !== undefined ? { proporsiBaselineRoll: roll } : {}),
+  })
+
+  it('tanpa usaha (iks == baseline roll) → kontribusi IKS nol, bukan kredit gratis', () => {
+    const s = buildInitialState('Uji', 7, PACK)
+    const skor = hitungSkor({ ...s, desa: { ...s.desa, rw: [rwUji(0.125, 0.125)] } })
+    expect(skor.rincian.skorIksDesa).toBe(0)
+  })
+
+  it('mencapai plafon praktis terukur (kenaikan 0,115) → suku IKS penuh', () => {
+    const s = buildInitialState('Uji', 7, PACK)
+    // 0,30 jauh melampaui target — clamp mengunci tepat di 1 (bebas derau
+    // floating-point yang muncul bila kenaikan PERSIS 0,115: 0,115/0,115
+    // menghasilkan 0,9999...).
+    const skor = hitungSkor({ ...s, desa: { ...s.desa, rw: [rwUji(0.3, 0.125)] } })
+    expect(skor.rincian.skorIksDesa).toBe(1)
+  })
+
+  it('RW tanpa baseline roll (save pra-migrasi) dinilai kenaikan nol — konservatif', () => {
+    const s = buildInitialState('Uji', 7, PACK)
+    const skor = hitungSkor({ ...s, desa: { ...s.desa, rw: [rwUji(0.25)] } })
+    expect(skor.rincian.skorIksDesa).toBe(0)
+  })
+
+  it('rincian tetap memuat iksDesa MENTAH (metrik populasi jujur utk tampilan)', () => {
+    const s = buildInitialState('Uji', 7, PACK)
+    const skor = hitungSkor({ ...s, desa: { ...s.desa, rw: [rwUji(0.2, 0.125)] } })
+    expect(skor.rincian.iksDesa).toBeCloseTo(0.2, 5)
+    expect(skor.rincian.skorIksDesa).toBeCloseTo((0.2 - 0.125) / 0.115, 5)
   })
 })

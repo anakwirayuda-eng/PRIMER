@@ -80,6 +80,18 @@ Prinsip yang dipakai menimbang: (1) jawaban yang benar secara klinis tidak boleh
 
 **Yang TIDAK diubah:** `hindari_alergen` (kontrol lingkungan umum, tak tersentuh temuan ini) dan `tanda_bahaya`. Kasus `skabies` (memakai `cuci_seprai_panas` + `cuci_tangan`) tidak disentuh sama sekali — buktinya tetap kuat.
 
+## 10. Kalibrasi suku IKS desa pada skor UKM (2026-08-22)
+
+**Keputusan:** suku `iksDesa` (bobot 40% dimensi UKM) berhenti memakai angka absolut desa. Kini dinilai dari **kenaikan di atas baseline survei** tiap RW (roll terpersist `proporsiBaselineRoll`), dinormalisasi ke target kenaikan **0,115** — dan di-clamp 0..1 seperti tiga suku UKM lainnya.
+
+**Masalahnya:** tiga suku UKM lain semuanya rasio ternormalisasi ke ekspektasi yang terjangkau; hanya suku IKS yang absolut mentah, padahal plafon strukturalnya ±0,3 (baseline survei kader mendominasi penyebut). Pemain sempurna terkunci UKM ~27 dari 35 yang ditampilkan /35 — paritas UKM=UKP=35 yang dijanjikan formula tak pernah tercapai. Ini kelas bug ambang-mustahil yang sama dengan yang sudah diperbaiki rev 62 untuk pengali kapitasi; skor UKM-nya saja yang saat itu luput.
+
+**Sumber angka (bukan karangan baru):** kalibrasi terukur rev 62 di blok laporan kapitasi (reducer.ts) — dihitung dari konten aktual (totalKk per RW, baseline 0,2/0,12/0,06, 2 binaan/RW): tanpa usaha ≈ **0,125**; semua 16 binaan sehat ≈ 0,205; plafon praktis ≈ **0,24**–0,26. Target 0,115 = jarak 0,125 → 0,24, titik yang kalibrasi kapitasi sendiri menyebutnya "binaan nyaris tuntas + UKM lapangan konsisten".
+
+**Sifat-sifat yang dijamin (di-test):** tanpa usaha = kontribusi NOL (dulu ~0,125 gratis dari baseline survei); mencapai plafon praktis = suku penuh; RW tanpa baseline roll (save pra-migrasi) dinilai kenaikan nol — konservatif; baseline per-RW dari roll terpersist, jadi jitter ±0,02 milik seed desa tidak menghukum/menghadiahi mahasiswa. Terverifikasi soak: pemain teladan karier 27,6/35 → dengan ruang tumbuh nyata ke 35, ujian 25,9/35; seluruh assert lama tetap hijau.
+
+**Ikutan:** `rincian.skorIksDesa` (opsional) ditambahkan agar Rapor memakai bendera waspada yang jujur — ambang lama (`iksDesa < 0,5`) mustahil dipenuhi sehingga peringatan menyala permanen bahkan bagi pemain sempurna; snapshot beku save lama tanpa field itu memakai aturan lama agar rapor arsip tak berubah. Angka `iksDesa` mentah tetap ditampilkan apa adanya (metrik populasi jujur).
+
 ---
 
 *Implementasi: lihat commit-commit bertanda "adjudikasi-delegasi" pada 2026-08-21 dan 2026-08-22. REVISI_ENGINE dan CONTENT_RELEASE di-bump pada rilis yang sama.*

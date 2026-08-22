@@ -946,6 +946,8 @@ export interface Skor4Dimensi {
     rrns: number // % rujukan non-spesialistik
     guillotine: number // 0-1 multiplier
     iksDesa: number // 0-1
+    /** Audit UKM 2026-08-22: kontribusi ternormalisasi suku IKS (0-1, kenaikan atas baseline / target 0,115). Opsional — snapshot tamat.skor save lama tak memilikinya. */
+    skorIksDesa?: number
     kualitasMi: number // 0-100
     kalibrasi: number // 0-100 (stempel dua tinta)
     prosesKlinis: number // 0-100 (rerata mutu anamnesis, pemeriksaan, terapi, edukasi)

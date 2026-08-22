@@ -216,7 +216,10 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // bukan menggusur record. Rincian di verifikasi.ts rev 70.
   'reducer.ts': 'd4200eaed99cc98aead2dc9d9e9cc4dfbba685d1dfc80e356d80c9c885568e07',
   'clinic.ts': 'efd50c5395cdf9ca3a39064b65919b489d84195f4b24758db9e97205366e769c',
-  'scoring.ts': 'f536ef72e328f5901caf116c0ed5a0bfc153a7eeabfba81f8fa154dbba834a55',
+  // Unfreeze 2026-08-22 KEDUA (kalibrasi #10, REVISI_ENGINE 71): scoring —
+  // suku IKS jadi kenaikan-atas-baseline ternormalisasi (plafon 27/35 dicabut);
+  // state — field opsional skorIksDesa di rincian. Rincian di verifikasi.ts.
+  'scoring.ts': '4d0879c67a5e1b8bd452d666823fde3e9d2cc590552421725bedc15ef9b0dbbf',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
@@ -255,12 +258,12 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 68 di verifikasi.ts.
-  'verifikasi.ts': 'f6f633c26babf0ff0b885170a56fca8d5309eb27f253e8d5478f4de8fc3b9297',
+  'verifikasi.ts': '72b8fd1e4e85ddf4b587739fdb23eb7de44ba842eded15446d5b071a6c32f6c6',
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): dua komentar
   // dijujurkan (igdHariIni penanda turunan, bukan gerbang; cooldown Posyandu
   // per mode, bukan 30 hari mati). Murni komentar, nol kode runtime — hash
   // tetap berubah, jadi ikut diunfreeze bersama batch yang sama.
-  'state.ts': '81853aa715f9f650a301e0336f15188bea6e550c8c11f486d65847dec1414ab5',
+  'state.ts': '697d53fbaf9ac3837708822b0875b7ac5a51b8675b40a25a4e7a5b84c7b1e48d',
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): enam validasi baru
   // menutup celah NaN/tipe-salah (dex.bintang, desa.rw.bonusIks & jarak,
   // posyanduRwTerakhir, program.rwFokus/periodeDitetapkan, antrian[].rw).

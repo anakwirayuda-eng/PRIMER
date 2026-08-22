@@ -107,7 +107,12 @@ function buatTally(override?: Partial<SkorTally>): SkorTally {
   }
 }
 
-function buatRw(nomor: number, iks: number): RwState {
+// Audit UKM 2026-08-22 (#10): suku skor IKS kini dihitung dari kenaikan atas
+// `proporsiBaselineRoll`, bukan `iks` mentah — helper WAJIB menyertakannya
+// agar fixture ini tetap memberi kredit yang sama seperti sebelum kalibrasi
+// (default = kredit penuh; call site yang butuh kredit PARSIAL eksplisit
+// mengoper baselineRoll sendiri, lihat tes apathy/karma di bawah).
+function buatRw(nomor: number, iks: number, baselineRoll = 0.125): RwState {
   return {
     nomor,
     nama: `RW ${nomor}`,
@@ -116,6 +121,7 @@ function buatRw(nomor: number, iks: number): RwState {
     kkTersurvei: iks > 0 ? 10 : 0,
     iks,
     bonusIks: 0,
+    proporsiBaselineRoll: baselineRoll,
   }
 }
 
@@ -766,15 +772,23 @@ describe('hitungSkor — profil adversarial', () => {
       miTotal: 24,
       miTepat: 24,
     }
-    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8), buatRw(2, 0)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
+    // Audit UKM 2026-08-22 (#10): baselineRoll=0.708 dipilih supaya kenaikan
+    // (0.8-0.708=0.092) menghasilkan skorIksDesa PERSIS 0.8 (0.092/target
+    // 0.115 = 0.8) — mempertahankan angka 25.2/5.2 di bawah walau makna suku
+    // itu berubah dari "iks mentah" jadi "kredit kenaikan ternormalisasi".
+    const desa = {
+      keluarga: {}, kader: {},
+      rw: [buatRw(1, 0.8, 0.708), buatRw(2, 0)],
+      binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 },
+    }
     const rajin = hitungSkor(buatState({ desa, tally: buatTally(tallyDasar) }))
     const apatis = hitungSkor(buatState({ desa, tally: buatTally({ ...tallyDasar, apathy: 10 }) }))
-    // iksDesa = rata-rata rw ber-iks > 0 saja → 0.8
+    // iksDesa = rata-rata rw ber-iks > 0 saja → 0.8 (angka MENTAH, tampilan)
     expect(rajin.rincian.iksDesa).toBeCloseTo(0.8)
     // CODEX audit pasca-GM (2026-07-13, temuan #7): UKM kini juga menimbang
     // rasioProlanisTerkontrol (bobot 0.2) — roster kosong di sini (bukan fokus
     // tes ini) → suku itu = 0, jadi 3 suku lama diskalakan 0.4/0.2/0.2 (dulu
-    // 0.5/0.25/0.25): (0.4*0.8+0.2*1+0.2*1)*35 = 25.2 (dulu 31.5).
+    // 0.5/0.25/0.25): (0.4*skorIksDesa[0.8]+0.2*1+0.2*1)*35 = 25.2 (dulu 31.5).
     expect(rajin.ukm).toBeCloseTo(25.2)
     expect(apatis.ukm).toBeCloseTo(5.2)
     expect(apatis.ukm).toBeLessThan(rajin.ukm)
@@ -801,7 +815,9 @@ describe('hitungSkor — profil adversarial', () => {
     // DeepThink ronde-2 "Boikot Rujukan": cowboy dinaikkan dari −2 ke −5/kejadian.
     expect(cowboy.ukp).toBeCloseTo(35 - 15)
 
-    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
+    // Audit UKM 2026-08-22 (#10): baselineRoll=0.708 sejajar tes apathy di
+    // atas — menjaga skorIksDesa persis 0.8 agar angka 25.2-5 tetap berlaku.
+    const desa = { keluarga: {}, kader: {}, rw: [buatRw(1, 0.8, 0.708)], binaan: [], surveilans: [], drift: { minggu: 1, jumlah: 0 } }
     const tallyUkm = { kunjunganTotal: 24, kunjunganBerhasil: 24, miTotal: 24, miTepat: 24 }
     const karma = hitungSkor(
       buatState({ desa, tally: buatTally({ ...tallyUkm, karmaTerjadi: 2, karmaDicegah: 1 }) }),

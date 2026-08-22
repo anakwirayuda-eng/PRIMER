@@ -145,6 +145,40 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const rwBerdata = state.desa.rw.filter((r) => r.iks > 0)
   const iksDesa =
     rwBerdata.length > 0 ? rwBerdata.reduce((jml, r) => jml + r.iks, 0) / rwBerdata.length : 0
+  // Audit UKM 2026-08-22 (kalibrasi, keputusan delegasi #10): suku IKS dinilai
+  // dari KENAIKAN di atas baseline survei — dinormalisasi ke target yang
+  // benar-benar terjangkau — bukan dari angka absolut desa.
+  //
+  // Dulu formula memakai `iksDesa` mentah, padahal tiga suku UKM lainnya
+  // semuanya rasio ternormalisasi ke ekspektasi (kunjungan/ekspektasi, MI %,
+  // fraksi Prolanis terkontrol). Kalibrasi rev 62 (komentar panjang di
+  // reducer.ts, blok laporan bulanan kapitasi) sudah MENGUKUR dari konten
+  // aktual: tanpa usaha iksDesa ≈ 0,125; SEMUA 16 binaan 'sehat' tanpa bonus
+  // ≈ 0,205; plafon praktis + bonus lapangan rutin ≈ 0,24-0,26. Artinya suku
+  // berbobot 40% ini mentok di ~0,3 — pemain sempurna terkunci UKM ~27/35
+  // yang ditampilkan /35, dan paritas UKM=UKP=35 tak pernah tercapai di
+  // langit-langitnya. (Ini kelas bug ambang-mustahil yang sama dengan yang
+  // sudah diperbaiki rev 62 untuk pengali kapitasi — skor UKM-nya saja yang
+  // saat itu luput.)
+  //
+  // Baseline dihitung dari roll TERPERSIST tiap RW (proporsiBaselineRoll,
+  // stabil sejak rev 62), bukan konstanta rata: jitter ±0,02 milik seed desa
+  // tidak boleh menghukum/menghadiahi mahasiswa. RW tanpa roll (save sangat
+  // lama, pra-migrasi) dinilai kenaikan 0 — konservatif, tak pernah memberi
+  // kredit gratis. Penyebut 0,115 = jarak baseline terukur (0,125) ke awal
+  // tingkat tertinggi kalibrasi kapitasi (0,24, "binaan nyaris tuntas + UKM
+  // lapangan konsisten") — pemain yang mencapai tingkat itu memperoleh suku
+  // ini penuh; yang tak berbuat apa-apa memperoleh nol (dulu justru dapat
+  // ~0,125 gratis dari baseline survei kader).
+  const KENAIKAN_IKS_TARGET = 0.115
+  const kenaikanIksDesa =
+    rwBerdata.length > 0
+      ? rwBerdata.reduce(
+          (jml, r) => jml + Math.max(0, r.iks - (r.proporsiBaselineRoll ?? r.iks)),
+          0,
+        ) / rwBerdata.length
+      : 0
+  const skorIksDesa = clamp(kenaikanIksDesa / KENAIKAN_IKS_TARGET, 0, 1)
   const ekspektasiKunjungan =
     state.mode === 'ujian' ? EKSPEKTASI_KUNJUNGAN_UJIAN : EKSPEKTASI_KUNJUNGAN_KARIER
   const kualitasKomunikasi = (t.miTepat / Math.max(ekspektasiKunjungan, t.miTotal)) * 100
@@ -186,7 +220,7 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
   const denomKarma = Math.max(3, totalKarmaKasus)
   const efekKarma = (3 * t.karmaDicegah - 9 * t.karmaTerjadi) / denomKarma
   const ukm = clamp(
-    (0.4 * iksDesa +
+    (0.4 * skorIksDesa +
       0.2 * rasioKunjungan +
       0.2 * (kualitasKomunikasi / 100) +
       0.2 * rasioProlanisTerkontrol) *
@@ -233,6 +267,9 @@ export function hitungSkor(state: GameState): Skor4Dimensi {
       rrns,
       guillotine,
       iksDesa,
+      // Kontribusi ternormalisasi suku IKS (0-1) — dipakai Rapor utk bendera
+      // waspada yang jujur; opsional krn snapshot beku save lama tak punya.
+      skorIksDesa,
       // Nama field dipertahankan untuk kompatibilitas dossier.
       kualitasMi: kualitasKomunikasi,
       kalibrasi,

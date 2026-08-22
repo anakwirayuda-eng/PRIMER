@@ -285,8 +285,15 @@ function tallyKosong(override?: Partial<SkorTally>): SkorTally {
   }
 }
 
-function rwSatu(iks: number): RwState {
-  return { nomor: 1, nama: 'RW 1', jarak: 'dekat', totalKk: 25, kkTersurvei: iks > 0 ? 10 : 0, iks, bonusIks: 0 }
+// Audit UKM 2026-08-22 (#10): suku skor IKS kini dihitung dari kenaikan atas
+// `proporsiBaselineRoll`, bukan `iks` mentah — helper WAJIB menyertakannya
+// agar fixture ini tetap memberi kredit penuh (bukan nol) pada suku itu,
+// persis niat semula tes-tes ini (mengisolasi dimensi LAIN, bukan IKS).
+function rwSatu(iks: number, baselineRoll = 0.125): RwState {
+  return {
+    nomor: 1, nama: 'RW 1', jarak: 'dekat', totalKk: 25, kkTersurvei: iks > 0 ? 10 : 0, iks, bonusIks: 0,
+    proporsiBaselineRoll: baselineRoll,
+  }
 }
 
 describe('DeepThink ronde-2 — Hukum Bilangan Kecil: rasioKunjungan/kualitasMi punya lantai ekspektasi', () => {
