@@ -89,7 +89,38 @@ export const ANSWER_KEY_SWEEP_CONTENT_RELEASE = 'answer-key-sweep-2026-08-06'
  * memvonis mahasiswa jujur `tidak_sah`. Save mid-stase lama menjadi ARSIP.
  */
 export const DELEGATED_ADJUDICATION_CONTENT_RELEASE = 'adjudikasi-delegasi-2026-08-21'
-export const CONTENT_RELEASE = DELEGATED_ADJUDICATION_CONTENT_RELEASE
+
+/**
+ * Sapuan koding & UKM 2026-08-22 — rilis ini TERTINGGAL dan baru dinaikkan
+ * setelah triase menemukannya. TUJUH commit sesudah `adjudikasi-delegasi-
+ * 2026-08-21` sudah menggeser kunci jawaban/replay tanpa rilis ikut naik:
+ *   - 6a00ab4 / f6236e3 / 1a11375 / 93a0e90 — sapuan label: 49 distraktor
+ *     berhenti meminjam identitas kasus lain, format-tell dipadamkan, kamus
+ *     ICD-10 dinaikkan di atas SKDI-144. Isi DECK yang dilihat pemain berubah.
+ *   - ad442b8 — 9 kode ICD-10 diluruskan ke WHO (B37.9→B37.0, J34.89→J34.8,
+ *     J45.901→J45.9, O92.03→O92.0, O92.13→O92.1, E50-E56→E53.0, E58-E61→E60,
+ *     S00-S09→S01.0, B37.89→B37.8) DAN `cuci_seprai_panas` dicabut dari
+ *     edukasi wajib rinitis_alergi (3→2 topik) — dua-duanya kunci jawaban.
+ *   - be09694 — audit UKM: efekTrust dua pilihan kunjungan 0 → -1.
+ *   - 271ae56 — `scoring.ts` suku IKS desa jadi kenaikan-atas-baseline
+ *     ternormalisasi (REVISI_ENGINE 71). Rumus skor UKM berubah.
+ *
+ * KENAPA INI GAWAT, dan kenapa dinaikkan SEBELUM installer dibagikan:
+ * `rilisArsipKompatibel` (renderer/src/store.ts) HANYA membandingkan
+ * `contentRelease` — ia TIDAK melihat REVISI_ENGINE. Jadi selama id rilis tak
+ * bergerak, save mid-stase dari build lama LOLOS gerbang dan diteruskan dengan
+ * kunci jawaban baru; dossier yang diekspor kemudian membawa sidik jari BARU
+ * sehingga lolos pula gerbang §3a verifikasi, lalu replay jurnal lama dengan
+ * kunci baru menyimpang dari skor tercatat → vonis `tidak_sah` = "berkas
+ * diubah setelah diekspor". Mahasiswa jujur dituduh memalsukan. Ini persis
+ * rantai kegagalan beta.17 yang sudah pernah dibayar mahal (lihat komentar
+ * ANSWER_KEY_SWEEP di atas) — dan ia terakit ulang lengkap hari ini.
+ * Dinaikkan saat trial BELUM jalan: ongkosnya kini hanya save playtest
+ * internal yang menjadi ARSIP; ongkos yang sama besok adalah vonis palsu
+ * terhadap satu angkatan mahasiswa.
+ */
+export const CODING_UKM_SWEEP_CONTENT_RELEASE = 'sapuan-koding-ukm-2026-08-22'
+export const CONTENT_RELEASE = CODING_UKM_SWEEP_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -109,6 +140,7 @@ export const CONTENT_RELEASE_ORDER = [
   GAMEPLAY_COMFORT_CONTENT_RELEASE,
   ANSWER_KEY_SWEEP_CONTENT_RELEASE,
   DELEGATED_ADJUDICATION_CONTENT_RELEASE,
+  CODING_UKM_SWEEP_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

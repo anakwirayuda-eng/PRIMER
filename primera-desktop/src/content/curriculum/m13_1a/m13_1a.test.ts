@@ -19,6 +19,7 @@ import {
   GAMEPLAY_COMFORT_CONTENT_RELEASE,
   ANSWER_KEY_SWEEP_CONTENT_RELEASE,
   DELEGATED_ADJUDICATION_CONTENT_RELEASE,
+  CODING_UKM_SWEEP_CONTENT_RELEASE,
   encounterArchetypeAktif,
   releasePolicyAktif,
   ukmScenarioAktif,
@@ -172,7 +173,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
   it('aktif hanya di Career: PACK, release, karma, dan isolasi mode konsisten', () => {
     // Adjudikasi-delegasi 2026-08-21: rilis konten naik karena lima keputusan
     // adjudikasi mengubah kunci jawaban (lihat komentar rilis di pack.ts).
-    expect(CONTENT_RELEASE).toBe(DELEGATED_ADJUDICATION_CONTENT_RELEASE)
+    expect(CONTENT_RELEASE).toBe(CODING_UKM_SWEEP_CONTENT_RELEASE)
     expect(CONTENT_RELEASE_ORDER).toEqual([
       LEGACY_CONTENT_RELEASE,
       M13_1A_BASE_CONTENT_RELEASE,
@@ -190,6 +191,7 @@ describe('M13-1a - slice Career aktif dan menunggu playtest manusia', () => {
       GAMEPLAY_COMFORT_CONTENT_RELEASE,
       ANSWER_KEY_SWEEP_CONTENT_RELEASE,
       DELEGATED_ADJUDICATION_CONTENT_RELEASE,
+      CODING_UKM_SWEEP_CONTENT_RELEASE,
     ])
     for (const kasus of M13_1A_AUTHORING_MANIFEST.clinicCases) {
       expect(tanpaSumber(PACK.kasus[kasus.id]!), kasus.id).toEqual(

@@ -593,7 +593,16 @@ export const KASUS_IGD_LAB_1 = terapkanGroundingIgd([
     disposisiBenar: 'rujuk',
     spesialisRujukan: 'saraf',
     clue:
-      'Stroke iskemik akut: sumbatan arteri menciptakan inti infark dan PENUMBRA yang masih dapat diselamatkan bila aliran darah dipulihkan cepat. Waktu adalah otak, dan jendela reperfusi dihitung dari waktu terakhir diketahui sehat/onset yang dipastikan saksi. Urutan FKTP: ABC, oksigen hanya bila hipoksemik, kunci waktu onset, periksa GULA DARAH kapiler pada setiap defisit neurologis akut, lalu pra-notifikasi dan rujuk segera ke fasilitas dengan CT serta layanan stroke. Pada pasien ini TD 182/100 tanpa kegawatan hipertensi lain tidak diturunkan cepat di FKTP; kebutuhan dan target penurunan bergantung pada kandidat reperfusi serta penilaian tim stroke. JANGAN memberi aspirin sebelum perdarahan disingkirkan dengan pencitraan. Neuroprotektor bukan terapi penyelamat dan tak boleh menunda keberangkatan (PNPK Tata Laksana Stroke KMK 304/2026; AHA/ASA Guideline for Acute Ischemic Stroke 2026).',
+      // Adjudikasi 2026-08-22: kalimat pembuka dulu berbunyi "Stroke iskemik
+      // akut: ..." — menyatakan SUBTIPE sebagai kepastian, padahal lapisan
+      // adjudikasi kasus ini sendiri sudah menamainya "Suspek Stroke Akut"
+      // dengan kode I64 (tak spesifik perdarahan/infark) justru karena di FKTP
+      // tanpa CT subtipe TIDAK BOLEH dipastikan. Isi clue selebihnya sudah
+      // konsisten (menuntut CT, melarang aspirin sebelum perdarahan
+      // disingkirkan), jadi hanya pembukanya yang dijujurkan. Patofisiologi
+      // penumbra tetap diajarkan — ia inti pelajaran reperfusi — tetapi kini
+      // dibingkai sebagai alasan mengapa waktu penting BILA iskemik.
+      'Sindrom defisit neurologis fokal akut mendadak — suspek stroke, subtipe belum dapat ditentukan tanpa pencitraan. Bila penyebabnya sumbatan arteri, di sekitar inti infark ada PENUMBRA yang masih dapat diselamatkan jika aliran darah dipulihkan cepat. Waktu adalah otak, dan jendela reperfusi dihitung dari waktu terakhir diketahui sehat/onset yang dipastikan saksi. Urutan FKTP: ABC, oksigen hanya bila hipoksemik, kunci waktu onset, periksa GULA DARAH kapiler pada setiap defisit neurologis akut, lalu pra-notifikasi dan rujuk segera ke fasilitas dengan CT serta layanan stroke. Pada pasien ini TD 182/100 tanpa kegawatan hipertensi lain tidak diturunkan cepat di FKTP; kebutuhan dan target penurunan bergantung pada kandidat reperfusi serta penilaian tim stroke. JANGAN memberi aspirin sebelum perdarahan disingkirkan dengan pencitraan. Neuroprotektor bukan terapi penyelamat dan tak boleh menunda keberangkatan (PNPK Tata Laksana Stroke KMK 304/2026; AHA/ASA Guideline for Acute Ischemic Stroke 2026).',
     langkah: [
       {
         id: 'st_1',

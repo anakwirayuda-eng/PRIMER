@@ -35,7 +35,21 @@ export const M13_1A_REVIEW_HASHES: Record<string, string> = {
   // Refresh 2026-07-28: pemeriksaan ulang 15 menit yang sudah diwajibkan
   // physicianSignoff H1 kini direpresentasikan sebagai observasi terstruktur.
   'm13-1a-review-clinic-hipoglikemia_ringan_dewasa': '7c7ad727638d083253bfd7b0cefc3412a15a9d2c85e92e8ae3a20d88f706edd0',
-  'm13-1a-review-clinic-benda_asing_hidung_anak': '3d684ef2da6606685568b3a051f251915a6990bfc10b31f584b64ecb6a3d497f',
+  // Penyegelan ulang 2026-08-22 atas PERINTAH LANGSUNG dr. Wirayuda ("reseal
+  // m13-1a juga saya izinkan"), setelah triase menahan eksekusinya lebih dulu:
+  // otorisasi sebelumnya datang dari dokumen adjudikasi yang DITULIS SISTEM AI
+  // dalam suara dokter, dan aturan preseden `db25f00` menuntut perintah dokter
+  // SENDIRI. Perintah itu kini ada, tercatat di sini.
+  // Yang berubah: HANYA kode ICD `J34.89` → `J34.8` (commit ad442b8, sapuan
+  // koding WHO). Delta klinisnya NOL SECARA HARFIAH — judul resmi kedua kode
+  // adalah kalimat yang sama persis ("Other specified disorders of nose and
+  // nasal sinuses"); yang berubah cuma sistem koding yang dirujuk (WHO vs
+  // ICD-10-CM Amerika, yang tak dipakai Kemenkes/BPJS/SATUSEHAT). Diagnosis,
+  // obat, dosis, prosedur, disposisi, dan seluruh sitasi TIDAK tersentuh —
+  // diperiksa baris demi baris terhadap physicianSignoff yang sudah ada.
+  // Mengikuti aturan hash-di-bagian-6 dan preseden refresh pasca-sign-off di
+  // atas: envelope berubah karena kontennya berubah, KEPUTUSAN KLINISNYA tidak.
+  'm13-1a-review-clinic-benda_asing_hidung_anak': '3fe3654b75363996d9e94be530b4a44338c1270cd55039e85b016fb86af9c8a8',
   'm13-1a-review-clinic-otitis_eksterna_akut_ringan': 'c3abaee5ebfdcaf639113dbf6d180c56f9c7285a2773f574d9fe53929db203a5',
   // Refresh 2026-07-28: provenance player-facing berpindah dari domain NICE
   // yang memberi 403 ke ACS/BOAST; keputusan klinis F1 tidak berubah.
