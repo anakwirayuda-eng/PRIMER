@@ -7,7 +7,8 @@
 import { describe, expect, it } from 'vitest'
 import { PACK } from '@content/index'
 import { buildInitialState } from './init'
-import { hitungSkor, ringkasanHarian } from './scoring'
+import { hitungSkor } from './scoring'
+import { ringkasanHarian } from './debriefNarator'
 import type { GameState, HasilKunjungan } from './state'
 
 const BASIS = buildInitialState('dr. Uji Skor', 4242, PACK)

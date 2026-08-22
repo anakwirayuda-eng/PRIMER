@@ -805,7 +805,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: ['vitamin_b_kompleks'], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
     clue: 'Angular cheilitis dan glositis pada diet sangat tidak beragam cocok dengan kekurangan riboflavin, tetapi tidak membuktikannya dan defisiensi mikronutrien sering berkelompok. Koreksi diet adalah inti; B kompleks jangka pendek dapat menjadi terapi pragmatis sambil mencari anemia, kandidiasis, malabsorpsi, alkohol, atau penyakit sistemik bila keluhan menetap.',
     panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi riboflavin. NIH ODS menyebut angular stomatitis, cheilosis, dan glositis sebagai temuan yang kompatibel, sekaligus menegaskan bahwa ko-defisiensi lazim sehingga tanda tersebut tidak spesifik untuk satu vitamin.',
-    catatanRealita: 'Kode E50-E56 dipertahankan karena ini adalah baris payung katalog SKDI-144; fenotipe klinis yang diajarkan paling dekat dengan E53.0. Puskesmas tidak diasumsikan mempunyai biomarker riboflavin. Skenario menilai risiko diet dan respons klinis, memberi dukungan pangan yang realistis, dan membuka evaluasi jejaring bila tidak membaik; label diagnosis tetap dugaan, bukan kepastian laboratorium.',
+    // Deep research 2026-08-22: catatan lama masih memberi tahu mahasiswa bahwa
+    // rentang blok E50-E56 "dipertahankan" — sudah tidak benar sejak sapuan koding
+    // memindahkan baris katalog DAN kasus ini ke E53.0. Kalimatnya dijujurkan;
+    // sisanya (tak ada biomarker riboflavin, diagnosis tetap dugaan) tak berubah.
+    catatanRealita: 'Kode yang dipakai kini kode defisiensi riboflavin (E53.0), bukan rentang blok katalog seperti dahulu — rentang bukan kode diagnosis. Puskesmas tidak diasumsikan mempunyai biomarker riboflavin. Skenario menilai risiko diet dan respons klinis, memberi dukungan pangan yang realistis, dan membuka evaluasi jejaring bila tidak membaik; label diagnosis tetap dugaan, bukan kepastian laboratorium.',
   }),
 
   buatKasusFktpLab({
@@ -825,7 +829,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     tatalaksana: { obatBenar: [], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
     clue: 'Defisiensi zinc tidak boleh ditegakkan dari satu gejala. Diet rendah sumber zinc, dermatitis periorifisial, alopecia, dan penyembuhan lambat hanya meningkatkan probabilitas; nilai malabsorpsi, alkohol, penyakit kronik, dan diagnosis kulit lain. Prioritaskan pangan kaya zinc dan evaluasi respons, bukan suplementasi dosis tinggi empiris.',
     panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi zinc. NIH ODS 2026 menganjurkan integrasi faktor risiko dan tanda klinis serta mengingatkan bahwa kadar zinc serum dipengaruhi usia, jenis kelamin, waktu pengambilan, infeksi, dan katabolisme sehingga tidak selalu mencerminkan asupan atau status jaringan.',
-    catatanRealita: 'Kode E58-E61 dipertahankan karena ini adalah baris payung katalog SKDI-144; dugaan klinis pada skenario paling dekat dengan E60. Zinc dispersibel Fornas dibatasi untuk diare anak dan tidak dijadikan jawaban wajib pada dugaan defisiensi dewasa. Konfirmasi dan suplementasi spesifik dikoordinasikan melalui jejaring bila diperlukan.',
+    // Deep research 2026-08-22: sama seperti catatan riboflavin di atas — rentang
+    // blok E58-E61 tidak lagi "dipertahankan"; baris katalog dan kasus ini sudah
+    // memakai E60. Sifat dugaan diagnosis dipindah ke kalimat penutup agar tidak
+    // hilang bersama kalimat rentang yang dibuang.
+    catatanRealita: 'Kode yang dipakai kini kode defisiensi zinc (E60), bukan rentang blok katalog seperti dahulu — rentang bukan kode diagnosis. Zinc dispersibel Fornas dibatasi untuk diare anak dan tidak dijadikan jawaban wajib pada dugaan defisiensi dewasa. Diagnosis di FKTP tetap dugaan klinis; konfirmasi dan suplementasi spesifik dikoordinasikan melalui jejaring bila diperlukan.',
   }),
 
   buatKasusFktpLab({

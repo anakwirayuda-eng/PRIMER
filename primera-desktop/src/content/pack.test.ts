@@ -4,6 +4,8 @@
  * tak ada yang menjalankan game dalam mode dev sebelum rilis.
  */
 
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 import { describe, expect, it } from 'vitest'
 import { PACK } from './index'
 import { validasiPack } from './pack'
@@ -59,48 +61,75 @@ describe('PACK — validasi silang id konten', () => {
 
   // Konkordansi ICD-10 (audit 2026-07-04): entri SKDI-144 yang MENAUTKAN kasus
   // (kasusId) harus memakai icd10 yang SAMA dengan kasusnya — kecuali beberapa
-  // yang SENGAJA memakai kode kompetensi generik (parent/unspecified) sementara
-  // kasusnya lebih spesifik. Allowlist di bawah = keputusan sadar; entri baru
-  // yang mismatch (mis. kode SIBLING beda penyakit seperti otitis H65.0 vs
-  // H66.0 yang sudah diperbaiki) akan GAGAL agar ditinjau.
-  it('skdi144.kasusId ↔ icd10 cocok dgn kasus (kecuali kode kompetensi generik)', () => {
-    const GENERIK_SENGAJA = new Set([
-      'conjunctivitis_bacterial',
-      'tb_pulmonary',
-      'dm_type2',
+  // yang SENGAJA berbeda karena katalog kompetensi memang berhenti lebih kasar
+  // daripada diagnosis yang diajarkan kasusnya.
+  //
+  // "Semantic fencing" 2026-08-22: daftar pengecualian ini dulu `Set<string>` —
+  // daftar bisu yang hanya berkata "boleh beda" tanpa menyimpan ALASAN. Kelemahan
+  // itu terbukti berbahaya: ia tak bisa membedakan "katalog generik vs kasus
+  // spesifik" (sah) dari "dua kode bersaudara yang sebenarnya penyakit berbeda"
+  // (justru yang harus ditangkap — mis. otitis H65.0 vs H66.0 yang sudah
+  // diperbaiki). Kini tiap entri wajib menyatakan KELAS pengecualiannya, dan
+  // kelas itu ditegakkan secara mekanis, bukan sekadar dipercaya.
+  //
+  // - INDUK_KE_ANAK: katalog memakai kode induk/tak-spesifik dan kasus lebih
+  //   spesifik DI KATEGORI YANG SAMA. Hubungan ini terbaca dari bentuk kodenya
+  //   (kategori 3-karakter sebelum titik harus sama) — di bawah ia BENAR-BENAR
+  //   DIBUKTIKAN mesin, bukan cuma dipercaya dari komentar.
+  // - SINDROM_KE_FENOTIPE: katalog berhenti di tingkat sindrom/gejala sedangkan
+  //   kasus menamai fenotipe spesifik di CABANG KODE BERBEDA. Karena "berbeda
+  //   cabang" tak bisa dibuktikan benar dari bentuk kode (hanya dibuktikan
+  //   SALAH bila kategorinya ternyata sama — itu tandanya entri ini semestinya
+  //   INDUK_KE_ANAK), mesin menegakkan syarat negatifnya: kategori WAJIB
+  //   berbeda. Alasan klinis di baliknya didokumentasikan lewat komentar inline
+  //   tiap entri (dibaca manusia saat tinjauan, bukan diverifikasi mesin).
+  type YurisprudensiKode = 'INDUK_KE_ANAK' | 'SINDROM_KE_FENOTIPE'
+
+  /** Kategori ICD-10 3-karakter sebelum titik, mis. 'S00.9' -> 'S00'. */
+  const kategoriIcd10 = (kode: string): string => kode.split('.')[0]!
+
+  it('skdi144.kasusId ↔ icd10 cocok dgn kasus (kecuali pengecualian ber-kelas & ber-alasan)', () => {
+    const PENGECUALIAN_KODE: Record<string, YurisprudensiKode> = {
+      conjunctivitis_bacterial: 'INDUK_KE_ANAK', // H10.9 (tak spesifik) vs kasus konjungtivitis_bakterial H10.0 (mukopurulen)
+      tb_pulmonary: 'INDUK_KE_ANAK', // A15 (TB paru, kategori) vs kasus tb_paru A15.0
+      dm_type2: 'INDUK_KE_ANAK', // E11 (DM tipe 2, kategori) vs kasus dm_tipe2 E11.9 (tanpa komplikasi)
       // CODEX ronde-14 §5 (2026-07-04) — tertaut manual setelah verifikasi
       // thd dokumen SKDI resmi (Perkonsil 11/2012) mengonfirmasi SEMUA 4A,
       // kompetensi SAMA dgn kasus, kasus cuma pakai ICD-10 lebih spesifik:
-      'dysentery', // A03 (parent) vs kasus disentri_basiler A03.9
-      'hemorrhoid_12', // I84 (kode SKDI umum) vs kasus hemoroid_grade1 K64.0
-      'migraine', // G43.9 (unspesifik) vs kasus saraf_migrain G43.0 (tanpa aura)
-      'vertigo_bppv', // R42 (simtom umum) vs kasus saraf_vertigo_bppv H81.1 (BPPV spesifik)
-      'normal_pregnancy', // Z34 vs kasus kia_anc_kehamilan_normal Z34.0 (trimester)
-      'malaria_vivax', // B54 (unspesifik) vs kasus kia_malaria_falsiparum B50.9 (spesies)
-      'uti', // N39.0 vs kasus kia_isk_kehamilan O23.4 (ISK DALAM kehamilan, penyakit sama)
+      dysentery: 'INDUK_KE_ANAK', // A03 (parent) vs kasus disentri_basiler A03.9
+      hemorrhoid_12: 'SINDROM_KE_FENOTIPE', // I84 (kode SKDI umum) vs kasus hemoroid_grade1 K64.0 — penyakit sama, tapi hemoroid pindah bab antar-revisi ICD-10, jadi dua cabang kode
+      migraine: 'INDUK_KE_ANAK', // G43.9 (unspesifik) vs kasus saraf_migrain G43.0 (tanpa aura)
+      vertigo_bppv: 'SINDROM_KE_FENOTIPE', // R42 (simtom umum) vs kasus saraf_vertigo_bppv H81.1 (BPPV spesifik) — katalog berhenti di GEJALA, kasus menamai penyakitnya
+      normal_pregnancy: 'INDUK_KE_ANAK', // Z34 vs kasus kia_anc_kehamilan_normal Z34.0 (trimester)
+      malaria_vivax: 'SINDROM_KE_FENOTIPE', // B54 (unspesifik) vs kasus kia_malaria_falsiparum B50.9 — spesies parasit yang berbeda memang duduk di kategori kode berbeda
+      uti: 'SINDROM_KE_FENOTIPE', // N39.0 vs kasus kia_isk_kehamilan O23.4 — penyakit sama, tapi kehamilan memindahkannya ke bab obstetri
       // M13-137-15 (2026-07-27) — katalog SKDI merangkum seluruh cedera kepala,
       // sedangkan vignette risiko rendah ini sengaja memakai diagnosis yang presisi.
-      'blunt_trauma', // S00-S09 (rentang katalog) vs kasus S00.0 (cedera superfisial kulit kepala)
+      // Deep research 2026-08-22: kode katalog dulu 'S00-S09' — itu nama BLOK
+      // ICD-10, bukan kode diagnosis, dan ia tercetak sebagai kode di Buku Saku.
+      // Kini S00.9, sehingga hubungannya benar-benar induk-anak: satu kategori
+      // (S00 = cedera superfisial kepala) dengan kode kasus.
+      blunt_trauma: 'INDUK_KE_ANAK', // S00.9 (cedera superfisial kepala, tak spesifik) vs kasus S00.0 (kulit kepala)
       // M13-137-16 (2026-07-27) - katalog memakai T30 generik untuk luka bakar
       // derajat 1-2, sedangkan encounter ini diketahui mengenai lengan bawah.
-      'burn_grade12', // T30 (lokasi tidak spesifik) vs kasus T22.2 (derajat dua lengan bawah)
+      burn_grade12: 'SINDROM_KE_FENOTIPE', // T30 (lokasi tidak spesifik) vs kasus T22.2 (derajat dua lengan bawah) — lokasi yang diketahui memindahkan kode ke kategori T22, bukan menajamkan T30
       // Audit korektif M13-137-13 (2026-07-28): katalog SKDI memakai kode
       // benda asing mata generik, sedangkan lokasi encounter teridentifikasi.
-      'foreign_body_conjunctiva', // T15.9 generik vs kasus T15.1 (sakus konjungtiva)
+      foreign_body_conjunctiva: 'INDUK_KE_ANAK', // T15.9 generik vs kasus T15.1 (sakus konjungtiva)
       // Audit korektif P1 (2026-07-28): katalog menyimpan sindrom vaginitis
       // generik, sedangkan encounter telah mengidentifikasi etiologi kandida.
-      'vaginitis', // N76.0 generik vs kasus B37.3 (kandidiasis vulvovaginal)
+      vaginitis: 'SINDROM_KE_FENOTIPE', // N76.0 generik vs kasus B37.3 (kandidiasis vulvovaginal) — etiologi yang tegak memindahkannya ke bab infeksi jamur
       // M9.2 (2026-07-04) — tertaut manual setelah verifikasi thd dokumen
       // OTORITATIF Kepmenkes 1186/2022 (bukan cuma SKDI umum 2012): kompetensi
       // "Hiperurisemia-Gout Arthritis" digabung SATU (E79.0 + M10) di sana.
-      'hyperuricemia', // E79.0 vs kasus mm_gout_artritis_akut M10.9 — kompetensi gabungan resmi
+      hyperuricemia: 'SINDROM_KE_FENOTIPE', // E79.0 vs kasus mm_gout_artritis_akut M10.9 — satu kompetensi resmi memang menaungi dua cabang kode
       // Bug hunt 2026-08-01: kasus lab_limfadenitis_servikal_akut & lab_miliaria_rubra
       // diberi ICD-10 lebih spesifik (L04.0, L74.0) menggantikan kode salah-bab/tak-spesifik
       // lama (I88, L74.3) — lihat komentar di batch2.ts/batch3.ts. Entri katalog SKDI-144 ini
       // sengaja tetap memakai kode kompetensi tak-spesifik resminya.
-      'lymphadenitis', // I88 (nonspesifik) vs kasus lab_limfadenitis_servikal_akut L04.0 (akut spesifik)
-      'miliaria', // L74.3 (tak spesifik) vs kasus lab_miliaria_rubra L74.0 (subtipe rubra spesifik)
-    ])
+      lymphadenitis: 'SINDROM_KE_FENOTIPE', // I88 (nonspesifik, bab sirkulasi) vs kasus lab_limfadenitis_servikal_akut L04.0 (akut spesifik, bab kulit)
+      miliaria: 'INDUK_KE_ANAK', // L74.3 ("miliaria, tak spesifik") vs kasus lab_miliaria_rubra L74.0 (subtipe rubra spesifik)
+    }
     const berkasusId = PACK.skdi144.filter(
       (e): e is typeof e & { kasusId: string } => e.kasusId !== undefined,
     )
@@ -114,14 +143,43 @@ describe('PACK — validasi silang id konten', () => {
       .map((e) => `${e.id}: kasusId '${e.kasusId}' tidak ada di PACK.kasus`)
     expect(gantung).toEqual([])
 
+    const idPengecualian = new Set(Object.keys(PENGECUALIAN_KODE))
     const mismatch = berkasusId
-      .filter((e) => !GENERIK_SENGAJA.has(e.id))
+      .filter((e) => !idPengecualian.has(e.id))
       .filter((e) => {
         const k = PACK.kasus[e.kasusId]
         return k !== undefined && k.icd10 !== e.icd10
       })
       .map((e) => `${e.id}: ${e.icd10} ≠ kasus ${PACK.kasus[e.kasusId]!.icd10}`)
     expect(mismatch).toEqual([])
+
+    // Penegakan mekanis per kelas (semantic fencing 2026-08-22) — bukti
+    // dipaksa dari BENTUK KODE, bukan dari komentar yang bisa dusta:
+    // INDUK_KE_ANAK wajib kategori SAMA (kode kasus benar-benar turunan kode
+    // katalog); SINDROM_KE_FENOTIPE wajib kategori BEDA (kalau ternyata sama,
+    // entri itu semestinya INDUK_KE_ANAK, bukan kelas ini). Kompromi asalan —
+    // mendaftarkan pasangan sibling sebagai INDUK_KE_ANAK, atau menyamarkan
+    // pasangan sekategori sebagai SINDROM_KE_FENOTIPE untuk lolos pengecekan
+    // yang lebih ketat — GAGAL di sini, persis kelas kesalahan yang pernah
+    // terjadi (N89 vs N72 sempat diusulkan masuk allowlist generik padahal
+    // dua kategori berbeda sama sekali).
+    const salahKelas = Object.entries(PENGECUALIAN_KODE)
+      .map(([id, kelas]) => {
+        const entri = PACK.skdi144.find((e) => e.id === id)
+        if (!entri?.kasusId) return null
+        const kasus = PACK.kasus[entri.kasusId]
+        if (!kasus) return null
+        const sama = kategoriIcd10(entri.icd10) === kategoriIcd10(kasus.icd10)
+        if (kelas === 'INDUK_KE_ANAK' && !sama) {
+          return `${id}: berlabel INDUK_KE_ANAK tapi ${entri.icd10} vs ${kasus.icd10} beda kategori — ini SINDROM_KE_FENOTIPE, atau kodenya salah`
+        }
+        if (kelas === 'SINDROM_KE_FENOTIPE' && sama) {
+          return `${id}: berlabel SINDROM_KE_FENOTIPE tapi ${entri.icd10} vs ${kasus.icd10} SATU kategori — ini sebenarnya INDUK_KE_ANAK`
+        }
+        return null
+      })
+      .filter((x): x is string => x !== null)
+    expect(salahKelas).toEqual([])
 
     // Audit CODEX 2026-07-16 (#5) menghitung 11 perbedaan kode katalog↔kasus dan
     // meminta "rationale + test eksplisit". Allowlist di atas SUDAH memberi
@@ -130,7 +188,7 @@ describe('PACK — validasi silang id konten', () => {
     // entri yang tautannya sudah diperbaiki tetap tinggal di sini dan diam-diam
     // memberi izin untuk mismatch BARU yang kebetulan ber-id sama. Kunci juga
     // arah sebaliknya: tiap id di allowlist WAJIB benar-benar masih mismatch.
-    const yatim = [...GENERIK_SENGAJA].filter((id) => {
+    const yatim = [...idPengecualian].filter((id) => {
       const entri = PACK.skdi144.find((e) => e.id === id)
       if (!entri?.kasusId) return true
       const kasus = PACK.kasus[entri.kasusId]
@@ -138,7 +196,7 @@ describe('PACK — validasi silang id konten', () => {
     })
     expect(
       yatim,
-      'entri allowlist ini sudah tak mismatch (atau tautannya hilang) — hapus dari GENERIK_SENGAJA agar tak jadi izin diam-diam',
+      'entri allowlist ini sudah tak mismatch (atau tautannya hilang) — hapus dari PENGECUALIAN_KODE agar tak jadi izin diam-diam',
     ).toEqual([])
   })
 

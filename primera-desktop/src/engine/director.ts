@@ -19,7 +19,11 @@ import { HARI_STASE, paketUjianDariId } from './paketUjian'
 import { examClinicCaseIdsForDay } from './examBlueprint'
 
 // Re-export skor untuk UI: layar Rapor/MejaKerja mengimpor dari '@engine/director'.
-export { hitungSkor, ringkasanHarian } from './scoring'
+export { hitungSkor, gradeHarian } from './scoring'
+// Pemisahan 2026-08-22: perakitan kalimat debrief pindah ke berkas TAK BEKU
+// (debriefNarator.ts) supaya perbaikan redaksi tak lagi menuntut bump
+// REVISI_ENGINE. Re-export dipertahankan agar konsumen (MejaKerja) tak berubah.
+export { ringkasanHarian } from './debriefNarator'
 
 /* ---------------------------------------------------------------------------
  * Generator pasien

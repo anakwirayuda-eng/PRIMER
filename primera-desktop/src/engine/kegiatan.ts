@@ -500,7 +500,8 @@ export function kartuProlanis(peserta: PesertaProlanis[], rng: Rng): KartuKegiat
               id: 'b',
               label: 'Tambah obat tanpa cek kepatuhan & pola makan',
               benar: false,
-              respons: 'Menambah obat tanpa menyentuh akar masalah jarang berhasil.',
+              respons:
+                'Menambah obat tanpa menyentuh akar masalah jarang berhasil — gula darahnya akan tetap tak terkendali sampai kepatuhan dan pola makannya ditangani.',
             },
           ],
     }
@@ -860,7 +861,25 @@ export function driftProlanis(
   // arah +1 lama sudah benar utk DM.
   const overtreatment =
     !intervensiTepat && p.jenis === 'ht' && prolanisTerkendali(p.jenis, p.param)
-  const arah = intervensiTepat || overtreatment ? -1 : 1
+  // Adjudikasi 2026-08-22 (lanjutan Keputusan #8, didelegasikan dokter):
+  // opsi salah pada peserta DM yang SEDANG TAK TERKENDALI adalah "Tambah obat
+  // tanpa cek kepatuhan & pola makan" — inersia klinis. Dulu arahnya +1 (GDP
+  // NAIK 10..30), padahal menambah agen hipoglikemik tidak MENAIKKAN gula
+  // darah; itu membalik farmakologi, dan membantah teks responsnya sendiri
+  // yang cuma bilang tindakan itu "jarang berhasil" — bukan "memperburuk".
+  // Kini arahnya 0: obat gagal menurunkan gula karena akar masalahnya
+  // (kepatuhan/diet) tak disentuh. Hukumannya TIDAK dipindah ke Manajemen —
+  // itu akan jadi hukuman ganda yang dilarang doktrin repo: jawaban salah
+  // sudah dihukum lewat skor sesi (benar/total) DAN lewat peserta yang tetap
+  // tak terkendali sehingga menekan `rasioProlanisTerkontrol` (20% dimensi UKM).
+  // Cakupannya SEMPIT & disengaja: HANYA dm + salah + sedang tak terkendali.
+  // Kartu DM TERKENDALI tak tersentuh — opsi salahnya di sana "Stop obat
+  // karena gula sudah normal" = under-treatment, dan +1 memang benar (persis
+  // amendemen Keputusan #8). Konsumsi RNG tak berubah: `besar` di bawah tetap
+  // dihitung di SEMUA cabang, jadi jumlah draw tetap satu (dijaga test).
+  const inersiaDmTakTerkendali =
+    !intervensiTepat && p.jenis === 'dm' && !prolanisTerkendali(p.jenis, p.param)
+  const arah = intervensiTepat || overtreatment ? -1 : inersiaDmTakTerkendali ? 0 : 1
   // #12 (audit CODEX UKM 2026-07-16): skala DM kini GDP — ambang kontrol
   // RPPT <130 mg/dL (bukan GDS <200); langkah drift disesuaikan ke skala GDP.
   // S5-iks-prolanis (2026-08-01, REVISI_ENGINE 62): langkah TURUN DM dinaikkan

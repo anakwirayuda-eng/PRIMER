@@ -8,7 +8,7 @@ import { aksiKlinik, buatEncounter, nilaiEncounter } from './clinic'
 import { buatPasienDariKasus, susunAntrianHarian } from './director'
 import { buildInitialState } from './init'
 import { advance } from './reducer'
-import { ringkasanHarian } from './scoring'
+import { ringkasanHarian } from './debriefNarator'
 import type { EncounterState, GameState } from './state'
 
 function encounterLengkap(kasus: KasusKlinis): EncounterState {

@@ -219,14 +219,20 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-08-22 KEDUA (kalibrasi #10, REVISI_ENGINE 71): scoring —
   // suku IKS jadi kenaikan-atas-baseline ternormalisasi (plafon 27/35 dicabut);
   // state — field opsional skorIksDesa di rincian. Rincian di verifikasi.ts.
-  'scoring.ts': '4d0879c67a5e1b8bd452d666823fde3e9d2cc590552421725bedc15ef9b0dbbf',
+  // Unfreeze 2026-08-22 KETIGA (batch aman, REVISI_ENGINE 72): kegiatan —
+  // inersia klinis DM tak terkendali jadi stagnan (bukan memburuk), cakupan
+  // sempit, RNG tetap satu draw; scoring + director — perakitan kalimat debrief
+  // malam PINDAH ke debriefNarator.ts yang TIDAK dibekukan, sementara ambang
+  // grade tetap di sini sbg aturan. Sesudah ini perbaikan redaksi debrief tak
+  // lagi menuntut bump. Rincian di verifikasi.ts rev 72.
+  'scoring.ts': 'de2610e6ef7125dba407b4f84195dc3ad764bec862b8ea78d1e2074ba4b8c0e0',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
   // continuity hanya menautkan pasangan pasien-anggota yang nyata dan cocok.
   // Unfreeze 2026-07-17 (audit B1.1, REVISI_ENGINE 49 -> 50): status BPJS
   // pasien anggota nyata mengikuti ground-truth JKN keluarga, bukan RNG.
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): cap paparan
   // rujukan tak lagi bisa menimpa slot jaminan kurikulum 4A pity-timer.
-  'director.ts': '37039d94fca76f1db7616d9ac3ba82a27992b7d1468d78c1950ff27a3065b939',
+  'director.ts': 'cc067c3aa0f3d23f96f4fdfc04580895bf8b4c6f04ff15a9078d82bb6fe49b02',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '930be5071fa33dd7f83d735b34612575bfc4f33453a2b19fe836fdfec2030349',
   'kader.ts': '5336ce70cce859528de050d6220664f192c161958d8416cea8dd5593309470c4',
@@ -243,7 +249,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): respons opsi rujuk
   // kartu Prolanis HT berhenti menjanjikan kenaikan RRNS & kunci nilai
   // encounter yang tak pernah dijalankan sesi Prolanis (murni copy).
-  'kegiatan.ts': '4074bb04df622cd193e96b5cce43ae8ca6a171ab52cfa21482cac922a6486310',
+  'kegiatan.ts': '81bcf5bf22348ad9e8c026cfa6063f7ee2a862af2bc12db005fbbc97ec28f301',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
@@ -258,7 +264,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 68 di verifikasi.ts.
-  'verifikasi.ts': '72b8fd1e4e85ddf4b587739fdb23eb7de44ba842eded15446d5b071a6c32f6c6',
+  'verifikasi.ts': '544466d63b2c8ee1fc5b60be6a0c68efa314ee6403fd2c7cef8609ddcaf93877',
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): dua komentar
   // dijujurkan (igdHariIni penanda turunan, bukan gerbang; cooldown Posyandu
   // per mode, bukan 30 hari mati). Murni komentar, nol kode runtime — hash

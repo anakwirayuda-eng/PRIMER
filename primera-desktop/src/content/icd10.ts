@@ -110,6 +110,7 @@ export const NAMA_ICD: Record<string, string> = {
   'T22.3': 'Luka Bakar Derajat Tiga (Bahu/Lengan)',
   'T31.0': 'Luka Bakar Kurang dari 10 Persen Luas Tubuh',
   'S00.0': 'Cedera Superfisial Kulit Kepala',
+  'S00.9': 'Cedera Superfisial Kepala, Tidak Spesifik',
   'S02.9': 'Fraktur Tengkorak atau Tulang Wajah, Tidak Spesifik',
   'S06.0': 'Konkusi Otak',
   'S06.5': 'Perdarahan Subdural Traumatik',

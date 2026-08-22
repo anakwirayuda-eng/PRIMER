@@ -108,6 +108,62 @@ describe('Keputusan #8 (adjudikasi-delegasi 2026-08-21) — arah drift overtreat
       expect(dipakai.float()).toBe(acuan.float())
     }
   })
+
+  /* -- Adjudikasi 2026-08-22: inersia klinis DM tak terkendali --------------- */
+
+  const pesertaDm = (over: Partial<PesertaProlanis> = {}): PesertaProlanis =>
+    ({
+      id: 'p_dm',
+      nama: 'Uji DM',
+      usia: 58,
+      jenisKelamin: 'P',
+      rw: 1,
+      jenis: 'dm',
+      param: 190,
+      takTerkontrolBerturut: 0,
+      ...over,
+    }) as PesertaProlanis
+
+  it('DM tak terkendali + "tambah obat" (salah) → gula STAGNAN, tidak naik', () => {
+    // Menambah agen hipoglikemik tidak menaikkan gula darah. Yang benar secara
+    // farmakologi: obatnya gagal menurunkan karena akar masalahnya tak disentuh.
+    for (const seed of [3, 7, 11, 19]) {
+      const awal = pesertaDm({ param: 190 })
+      const sesudah = driftProlanis(awal, false, new Rng(seed, 'drift'))
+      expect(sesudah.param).toBe(190)
+    }
+  })
+
+  it('DM TERKENDALI + salah tetap MEMBURUK — amendemen Keputusan #8 tak tergerus', () => {
+    // Opsi salah di kartu DM terkendali adalah "Stop obat karena gula sudah
+    // normal" = under-treatment; gula memang melonjak lagi. Flatline di atas
+    // TIDAK boleh melebar ke sini.
+    const awal = pesertaDm({ param: 115 }) // < 130 = terkendali
+    const sesudah = driftProlanis(awal, false, new Rng(5, 'drift'))
+    expect(sesudah.param).toBeGreaterThan(115)
+  })
+
+  it('DM + jawaban BENAR tetap membaik', () => {
+    const sesudah = driftProlanis(pesertaDm({ param: 190 }), true, new Rng(5, 'drift'))
+    expect(sesudah.param).toBeLessThan(190)
+  })
+
+  it('konsumsi RNG DM tetap SATU draw di ketiga cabang (termasuk flatline)', () => {
+    // Cabang flatline TIDAK boleh melewati pemanggilan rng — kalau ia hemat
+    // satu draw, seluruh keacakan hilir bergeser (RNG-cascade) tanpa satu pun
+    // test lain memerah.
+    for (const [param, tepat] of [
+      [190, false], // flatline
+      [115, false], // memburuk
+      [190, true], // membaik
+    ] as const) {
+      const dipakai = new Rng(7, 'drift')
+      driftProlanis(pesertaDm({ param }), tepat, dipakai)
+      const acuan = new Rng(7, 'drift')
+      acuan.float()
+      expect(dipakai.float()).toBe(acuan.float())
+    }
+  })
 })
 
 /* -- Audit UKM 2026-08-22 (P1): jawaban tak bisa ditimpa ulang ---------------- */

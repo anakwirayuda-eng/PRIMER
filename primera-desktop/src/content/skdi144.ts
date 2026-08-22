@@ -257,6 +257,6 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'burn_grade12', nama: 'Luka Bakar Derajat 1 dan 2', icd10: 'T30' },
 
   // === TRAUMA (2) ===
-  { id: 'blunt_trauma', nama: 'Kekerasan Tumpul', icd10: 'S00-S09' },
+  { id: 'blunt_trauma', nama: 'Kekerasan Tumpul', icd10: 'S00.9' }, // Deep research 2026-08-22: 'S00-S09' adalah NAMA BLOK ("cedera kepala"), bukan kode diagnosis — dan ia tercetak sebagai kode di Buku Saku. S00.9 (cedera superfisial kepala, tidak spesifik) dipilih karena satu kategori dengan kasus tertaut S00.0, jadi benar-benar induk-tak-spesifiknya. S09.9 sengaja TIDAK dipakai: itu kategori lain (S09), jadi saudara sebelah, bukan induk.
   { id: 'sharp_trauma', nama: 'Kekerasan Tajam', icd10: 'S01.0' }, // Deep research 2026-08-22: 'S00-S09' rentang blok; S01.0 (luka terbuka) persis menyasar laserasi di kasus tertaut.
 ]

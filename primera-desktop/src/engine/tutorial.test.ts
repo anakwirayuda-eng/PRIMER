@@ -11,7 +11,7 @@ import { kasusFormatif } from '@content/pack'
 import { buildInitialState } from './init'
 import { advance } from './reducer'
 import { KASUS_TUTORIAL } from './tutorial'
-import { ringkasanHarian } from './scoring'
+import { ringkasanHarian } from './debriefNarator'
 import type { GameState } from './state'
 import type { Action } from './actions'
 

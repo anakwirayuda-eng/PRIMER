@@ -816,7 +816,34 @@ function fnv1a(teks: string): string {
 // plafon praktis 0,24). Tanpa-usaha kini nol (dulu ~0,125 gratis); paritas
 // UKM=UKP=35 akhirnya terjangkau di langit-langit. Dossier build lama jatuh ke
 // "tidak_dapat_diverifikasi", bukan tidak sah.
-export const REVISI_ENGINE = 71
+//
+// Batch aman 2026-08-22: 71 -> 72. Dua perubahan engine, dibayar sekali karena
+// CONTENT_RELEASE sudah naik di commit yang sama harinya (save lama sudah jadi
+// arsip; populasi dosier yang jatuh identik, jadi ongkos bump ini nol).
+//
+// (a) kegiatan.ts — INERSIA KLINIS DM. Opsi salah pada peserta DM yang sedang
+// TAK TERKENDALI ("Tambah obat tanpa cek kepatuhan & pola makan") dulu
+// MENAIKKAN GDP 10..30. Itu membalik farmakologi — menambah agen hipoglikemik
+// tidak menaikkan gula darah — dan membantah teks responsnya sendiri yang cuma
+// menyebut tindakan itu "jarang berhasil". Arahnya kini 0 (stagnan): obatnya
+// gagal menurunkan karena akar masalahnya tak disentuh. Hukuman TIDAK dipindah
+// ke Manajemen (itu hukuman ganda yang dilarang doktrin): jawaban salah sudah
+// dihukum lewat skor sesi DAN lewat peserta yang tetap tak terkendali sehingga
+// menekan rasioProlanisTerkontrol. Cakupan sempit & di-test: kartu DM
+// TERKENDALI tak tersentuh (opsi salahnya under-treatment, +1 memang benar —
+// amendemen Keputusan #8). Konsumsi RNG tetap satu draw di ketiga cabang.
+//
+// (b) scoring.ts — NARATOR DIPISAH. Perakitan kalimat debrief malam
+// (`ringkasanHarian`) pindah ke `debriefNarator.ts` yang TIDAK dibekukan,
+// karena dulu satu perbaikan typo pada catatan malam menggeser hash berkas
+// beku dan menjatuhkan seluruh dosier berjalan — sehingga tak seorang pun
+// berani merapikan tata bahasa di tengah semester. Batasnya tegas: ANGKA
+// tetap di sini (`gradeHarian`, ambang 3,5/2,5/1,5 = aturan penilaian), KATA
+// pindah ke sana. Narator murni display: dipanggil renderer, tak pernah oleh
+// reducer, jadi tak memberi makan replay. Sesudah ini, memperbaiki redaksi
+// debrief tak lagi menuntut bump.
+// Dossier build lama jatuh ke "tidak_dapat_diverifikasi", bukan tidak sah.
+export const REVISI_ENGINE = 72
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

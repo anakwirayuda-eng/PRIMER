@@ -185,8 +185,12 @@ function SiluetDepan() {
         <rect x="593" y="121.5" width="14" height="5" rx="1" fill="var(--daun-900)" />
         {/* Tiang bendera */}
         <rect x="782" y="150" width="3" height="78" fill="var(--daun-900)" />
-        <rect x="785" y="152" width="20" height="12" fill="var(--tinta-merah)" opacity="0.8" />
-        <rect x="785" y="164" width="20" height="12" fill="var(--kertas-050)" opacity="0.9" />
+        {/* Merah-putih dibungkus satu grup supaya CSS bisa mengibarkannya
+            perlahan dengan poros di tiang (lihat .title__bendera). */}
+        <g className="title__bendera">
+          <rect x="785" y="152" width="20" height="12" fill="var(--tinta-merah)" opacity="0.8" />
+          <rect x="785" y="164" width="20" height="12" fill="var(--kertas-050)" opacity="0.9" />
+        </g>
       </g>
     </svg>
   )

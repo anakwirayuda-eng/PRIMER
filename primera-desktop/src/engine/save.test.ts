@@ -13,7 +13,7 @@ import { advance } from './reducer'
 import { buatEncounter } from './clinic'
 import { buatPasienDariKasus } from './director'
 import { driftProlanis } from './kegiatan'
-import { ringkasanHarian } from './scoring'
+import { ringkasanHarian } from './debriefNarator'
 import { Rng } from './core/rng'
 
 const SEED = 777
