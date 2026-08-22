@@ -1,9 +1,9 @@
 # M13-137 - Laporan Kompilasi Adjudikasi Prototipe Klinis
 
-**Tanggal kompilasi:** 2026-08-21
+**Tanggal kompilasi:** 2026-08-22
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
 **Kemajuan adjudikasi dokter:** **16** kasus sudah ditandatangani, **121** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [`docs/M13_137_DECISION_LOG.md`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
-**Snapshot:** commit `f6d8e63a0cf7cf1273d9768fb527d8695d0941da`, artefak `ef466f5b140ca80e7a66a0b8977b2350bda6f5675530af1dee8a256f5af4429d`, pack `8371126c`, content release `adjudikasi-delegasi-2026-08-21`, `REVISI_ENGINE=69`
+**Snapshot:** commit `d1105b64fcd18cf9951fb9bf32b7afee25301cb7`, artefak `8422740b068779dfd48760393ef3bd3125444e913ea64b604021dcf585dd69fd`, pack `77630cc1`, content release `sapuan-koding-ukm-2026-08-22`, `REVISI_ENGINE=71`
 
 ## Ringkasan eksekutif
 
@@ -72,7 +72,7 @@ Angka saran kompilator **bukan skor mutu klinis**. “Perlu-koreksi” dapat dip
 ### KFA
 
 - Endpoint publik browser KFA: `https://satusehat.kemkes.go.id/kfa-browser/farmasi/api/search/active-ingredients`, diakses 2026-07-23.
-- Panen KFA dijalankan terpisah dari kompilasi laporan ini (2026-08-21), jadi tanggal akses di atas bisa lebih tua; panen ulang dengan `npm run m13:kfa` bila selisihnya sudah material untuk penilaian kemutakhiran.
+- Panen KFA dijalankan terpisah dari kompilasi laporan ini (2026-08-22), jadi tanggal akses di atas bisa lebih tua; panen ulang dengan `npm run m13:kfa` bila selisihnya sudah material untuk penilaian kemutakhiran.
 - Snapshot menghasilkan kode active substance untuk semua query (0 unresolved).
 - Kode tersebut **bukan** product template/variant, bukan status Fornas, dan bukan bukti stok. Tidak ada kode yang ditebak.
 

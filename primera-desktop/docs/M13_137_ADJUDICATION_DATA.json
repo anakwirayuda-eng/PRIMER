@@ -1,11 +1,11 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-21T16:03:57.834Z",
-  "sourceCommit": "f6d8e63a0cf7cf1273d9768fb527d8695d0941da",
-  "artifactFingerprint": "ef466f5b140ca80e7a66a0b8977b2350bda6f5675530af1dee8a256f5af4429d",
-  "packFingerprint": "8371126c",
-  "contentRelease": "adjudikasi-delegasi-2026-08-21",
-  "engineRevision": 69,
+  "generatedAt": "2026-08-22T06:48:20.369Z",
+  "sourceCommit": "d1105b64fcd18cf9951fb9bf32b7afee25301cb7",
+  "artifactFingerprint": "8422740b068779dfd48760393ef3bd3125444e913ea64b604021dcf585dd69fd",
+  "packFingerprint": "77630cc1",
+  "contentRelease": "sapuan-koding-ukm-2026-08-22",
+  "engineRevision": 71,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
     "requestedMinimum": 103,
@@ -669,7 +669,7 @@
         "relevantLabs": [],
         "differentialIcd10": [
           "T78.2",
-          "J45.901",
+          "J45.9",
           "F41.0"
         ],
         "stabilizationRequired": [
@@ -1149,7 +1149,7 @@
       "ordinal": 6,
       "id": "lab_trauma_tajam_kulit_kepala",
       "name": "Trauma Tajam Kulit Kepala Sederhana",
-      "icd10": "S00-S09",
+      "icd10": "S01.0",
       "skdi": "4A",
       "category": "gawat",
       "mustRefer": false,
@@ -1227,7 +1227,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "S00-S09",
+          "S01.0",
           "T14.1",
           "S06.0"
         ],
@@ -5300,7 +5300,7 @@
       "ordinal": 26,
       "id": "lab_puting_lecet",
       "name": "Cracked Nipple karena Perlekatan Buruk",
-      "icd10": "O92.13",
+      "icd10": "O92.1",
       "skdi": "4A",
       "category": "kia",
       "mustRefer": false,
@@ -5331,9 +5331,9 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "O92.13",
+          "O92.1",
           "N61",
-          "B37.89"
+          "B37.8"
         ],
         "stabilizationRequired": []
       },
@@ -6438,7 +6438,7 @@
       "ordinal": 31,
       "id": "lab_puting_tenggelam_laktasi",
       "name": "Inverted Nipple dengan Kesulitan Laktasi",
-      "icd10": "O92.03",
+      "icd10": "O92.0",
       "skdi": "4A",
       "category": "kia",
       "mustRefer": false,
@@ -6474,7 +6474,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "O92.03",
+          "O92.0",
           "N64.5",
           "C50.9"
         ],
@@ -16012,7 +16012,7 @@
       "ordinal": 89,
       "id": "lab_defisiensi_vitamin_b_kompleks",
       "name": "Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran",
-      "icd10": "E50-E56",
+      "icd10": "E53.0",
       "skdi": "4A",
       "category": "metabolik",
       "mustRefer": false,
@@ -16117,7 +16117,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "E50-E56",
+          "E53.0",
           "D50",
           "B37.9"
         ],
@@ -16184,7 +16184,7 @@
       "ordinal": 90,
       "id": "lab_defisiensi_mineral_zinc",
       "name": "Dugaan Defisiensi Zinc",
-      "icd10": "E58-E61",
+      "icd10": "E60",
       "skdi": "4A",
       "category": "metabolik",
       "mustRefer": false,
@@ -16210,8 +16210,8 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "E58-E61",
-          "E50-E56",
+          "E60",
+          "E53.0",
           "L65.9"
         ],
         "stabilizationRequired": []
@@ -19064,7 +19064,7 @@
       "ordinal": 106,
       "id": "lab_kandidiasis_mulut",
       "name": "Kandidiasis Mulut",
-      "icd10": "B37.9",
+      "icd10": "B37.0",
       "skdi": "4A",
       "category": "pencernaan",
       "mustRefer": false,
@@ -19140,7 +19140,7 @@
           }
         ],
         "differentialIcd10": [
-          "B37.9",
+          "B37.0",
           "K12",
           "D37.0"
         ],
@@ -24910,7 +24910,7 @@
         "differentialIcd10": [
           "J34.0",
           "L01.0",
-          "J34.89"
+          "J34.8"
         ],
         "stabilizationRequired": []
       },

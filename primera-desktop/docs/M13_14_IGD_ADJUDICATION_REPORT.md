@@ -1,12 +1,12 @@
 # M13-14 IGD - Snapshot Implementasi Pasca-Adjudikasi
 
-**Tanggal kompilasi:** 2026-08-21
+**Tanggal kompilasi:** 2026-08-22
 
 **Status:** **14/14 keputusan dokter tercatat dan patch telah diterapkan ke gameplay Karier**
 
-**Snapshot:** f6d8e63a0cf7; content release `adjudikasi-delegasi-2026-08-21`; `REVISI_ENGINE=69`
+**Snapshot:** d1105b64fcd1; content release `sapuan-koding-ukm-2026-08-22`; `REVISI_ENGINE=71`
 
-**Fingerprint:** `fce84b889e41f3d132c83080b6b15e7732e260ebdbc3e669a08b67d4cf5d108e`
+**Fingerprint:** `461d23dc2429d217c700f8609668b9f417cd5334fac63c22050d413d17b31cbf`
 
 ## Tujuan
 
