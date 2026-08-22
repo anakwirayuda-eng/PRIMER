@@ -543,6 +543,12 @@
    Disabled = stempel kering (kertas-300); MENYALA hijau begitu huruf pertama
    nama diketik — hadiah mikro untuk aksi pertama pemain. */
 .tombol.title__cta {
+  /* Audit visual 2026-08-23: lebar penuh di baris sendiri (lihat TSX) — dulu
+     sebaris dgn input nama, dan di kolom map yang sempit (400-500px) tombol
+     bergaya stempel ini menyisakan ±150px utk input, cukup sempit hingga
+     placeholder terpotong visual ("tulis namamu di sini" -> "tulis namar"). */
+  width: 100%;
+  margin-top: var(--sp-2);
   background: var(--daun-700);
   color: var(--kertas-050);
   border: 2px solid var(--daun-800);

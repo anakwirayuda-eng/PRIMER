@@ -528,26 +528,34 @@ export function TitleScreen() {
                   autoComplete="off"
                   onChange={(e) => setNama(e.target.value)}
                 />
-                <button
-                  type="submit"
-                  className={`tombol tombol--besar title__cta ${arsip !== null ? '' : 'tombol--utama'}`}
-                  disabled={!bolehMulai}
-                  title={
-                    namaBersih.length === 0
-                      ? 'Isi nama doktermu dulu'
-                      : mode === 'ujian' && nimBersih.length === 0
-                        ? 'Isi NIM-mu dulu (identitas ujian)'
-                        : undefined
-                  }
-                  data-tip={
-                    arsip !== null
-                      ? 'Memulai stase baru akan mengganti Autosave Aktif (slot manual tetap aman)'
-                      : 'Mulai Hari 1 di Puskesmas Sukamaju'
-                  }
-                >
-                  Mulai Stase
-                </button>
               </div>
+              {/* Audit visual 2026-08-23: CTA dulu SEBARIS dgn input nama —
+                  di kolom map yang lebih sempit (400-500px), tombol bergaya
+                  stempel (border tebal + cincin bayangan) menyisakan ±150px
+                  utk input, cukup sempit hingga placeholder "tulis namamu di
+                  sini" TERPOTONG visual jadi "tulis namar". Nama dokter juga
+                  bisa panjang sungguhan (maxLength 24), bukan cuma placeholder
+                  — CTA dipindah ke baris sendiri, lebar penuh, sejajar kartu
+                  Lanjutkan (title__lanjut) yang juga lebar penuh. */}
+              <button
+                type="submit"
+                className={`tombol tombol--besar title__cta ${arsip !== null ? '' : 'tombol--utama'}`}
+                disabled={!bolehMulai}
+                title={
+                  namaBersih.length === 0
+                    ? 'Isi nama doktermu dulu'
+                    : mode === 'ujian' && nimBersih.length === 0
+                      ? 'Isi NIM-mu dulu (identitas ujian)'
+                      : undefined
+                }
+                data-tip={
+                  arsip !== null
+                    ? 'Memulai stase baru akan mengganti Autosave Aktif (slot manual tetap aman)'
+                    : 'Mulai Hari 1 di Puskesmas Sukamaju'
+                }
+              >
+                Mulai Stase
+              </button>
               {/* Mode ujian: NIM mengikat identitas — paket & verifikasi terkunci
                   ke NIM ini, tak bisa ditukar nama teman. */}
               {mode === 'ujian' && (
