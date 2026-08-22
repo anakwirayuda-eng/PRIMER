@@ -3,7 +3,7 @@
 **Tanggal kompilasi:** 2026-08-22
 **Status:** research + compilation only; **bukan adjudikasi dokter dan tidak mengubah gameplay**
 **Kemajuan adjudikasi dokter:** **16** kasus sudah ditandatangani, **121** masih menunggu. Daftar yang sudah disetujui beserta catatan editnya ada di [`docs/M13_137_DECISION_LOG.md`](M13_137_DECISION_LOG.md) — jangan diadjudikasi ulang.
-**Snapshot:** commit `d1105b64fcd18cf9951fb9bf32b7afee25301cb7`, artefak `8422740b068779dfd48760393ef3bd3125444e913ea64b604021dcf585dd69fd`, pack `77630cc1`, content release `sapuan-koding-ukm-2026-08-22`, `REVISI_ENGINE=71`
+**Snapshot:** commit `80b9c3751d4aabc5670f174d00fffec348a755ae`, artefak `fcc45bf244adf7c1dfcdb4ddc2fed47923b53749cdeeb2325cb0be1a2906a379`, pack `a64ff5c0`, content release `sapuan-koding-ukm-2026-08-22`, `REVISI_ENGINE=72`
 
 ## Ringkasan eksekutif
 
