@@ -713,7 +713,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_puting_lecet', nama: 'Cracked Nipple karena Perlekatan Buruk', icd10: 'O92.13', kategori: 'kia', prevalensi: 'sedang',
+    id: 'lab_puting_lecet', nama: 'Cracked Nipple karena Perlekatan Buruk', icd10: 'O92.1', kategori: 'kia', prevalensi: 'sedang', // Deep research 2026-08-22: O92.13 hanya ICD-10-CM (digit ke-5 = episode laktasi, bukan lateralitas). Padanan WHO: O92.1 "Cracked nipple associated with childbirth".
     keluhanUtama: 'Puting lecet dan sangat sakit setiap bayi mulai menyusu.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '110/70', nadi: 78, rr: 18, suhu: 36.7, spo2: 99 },
     pembuka: ['Kapan nyeri muncul dan bagaimana perlekatan bayi?', 'Nyeri paling hebat saat awal menyusu; mulut bayi hanya menangkap ujung puting.'],
     pertanyaan: [
@@ -722,14 +722,14 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_bayi', 'rps', 'Bayi tetap BAK dan berat badannya dipantau?', 'Masih BAK cukup. Berat badannya dipantau di Posyandu dan terakhir masih naik.', false],
     ],
     fisik: [['kulit', 'Fisura dangkal pada puting kanan tanpa pus, eritema sektoral, atau massa payudara.']],
-    diagnosisBanding: ['O92.13', 'N61', 'B37.89'],
+    diagnosisBanding: ['O92.1', 'N61', 'B37.8'],
     tatalaksana: { obatBenar: [], prosedur: ['konseling_laktasi'], edukasi: ['dukungan_laktasi', 'tanda_bahaya'] },
     clue: 'Fisura puting paling sering disebabkan perlekatan dangkal. Observasi satu sesi menyusu dan koreksi posisi adalah terapi utama; hindari sabun/iritan, pertahankan menyusui atau perah nyaman, dan evaluasi infeksi bila tidak membaik.',
     panduanResmi: `${PPK} Puting lecet ditangani dengan koreksi teknik menyusui, bukan menghentikan ASI secara otomatis.`,
   }),
 
   buatKasusFktpLab({
-    id: 'lab_puting_tenggelam_laktasi', nama: 'Inverted Nipple dengan Kesulitan Laktasi', icd10: 'O92.03', kategori: 'kia',
+    id: 'lab_puting_tenggelam_laktasi', nama: 'Inverted Nipple dengan Kesulitan Laktasi', icd10: 'O92.0', kategori: 'kia', // Deep research 2026-08-22: O92.03 hanya ICD-10-CM. Padanan WHO: O92.0 "Retracted nipple associated with childbirth".
     keluhanUtama: 'Puting masuk ke dalam dan bayi baru lahir sulit melekat.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '110/70', nadi: 76, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Apakah puting sudah masuk sejak dulu dan bagaimana minum bayi?', 'Sejak sebelum hamil; bayi baru dua hari, mencoba menyusu tetapi mudah lepas.'],
     pertanyaan: [
@@ -738,7 +738,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_nyeri', 'rps', 'Ada luka, massa, atau darah dari puting?', 'Tidak ada.', false],
     ],
     fisik: [['kulit', 'Puting bilateral terinversi tetapi dapat dieversi sementara; tidak ada massa, inflamasi, atau discharge patologis.']],
-    diagnosisBanding: ['O92.03', 'N64.5', 'C50.9'],
+    diagnosisBanding: ['O92.0', 'N64.5', 'C50.9'],
     tatalaksana: { obatBenar: [], prosedur: ['konseling_laktasi'], edukasi: ['dukungan_laktasi', 'asi_eksklusif', 'tanda_bahaya'] },
     clue: 'Puting terinversi lama tanpa massa tidak mencegah laktasi bila posisi, sandwich hold, stimulasi sebelum menyusu, dan dukungan intensif diberikan. Hindari tindakan traumatik; pantau transfer ASI dan berat bayi.',
     panduanResmi: `${PPK} Pendampingan menyusui menjadi inti; inversi baru unilateral atau disertai massa perlu evaluasi lebih lanjut.`,
@@ -792,7 +792,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     // Adjudikasi-delegasi 2026-08-21 (keputusan #2): nama kasus memang "Dugaan"
     // dan catatanRealita menyebut "label diagnosis tetap dugaan" — field lalai
     // disetel, kini dijujurkan mengikuti preseden leptospirosis di bawah.
-    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran', icd10: 'E50-E56', kepastianDiagnosis: 'suspek', kategori: 'metabolik',
+    id: 'lab_defisiensi_vitamin_b_kompleks', nama: 'Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran', icd10: 'E53.0', kepastianDiagnosis: 'suspek', kategori: 'metabolik', // Deep research 2026-08-22: 'E50-E56' adalah RENTANG BLOK, bukan kode diagnosis. E53.0 'Riboflavin deficiency' (WHO) sudah ada di kamus & persis menyasar riboflavin.
     keluhanUtama: 'Sudut bibir sering pecah dan lidah terasa perih sejak pola makan saya sangat terbatas.', usia: [18, 70], vital: { td: '118/74', nadi: 80, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Apa perubahan pola makan dan keluhan lain?', 'Tiga bulan hanya banyak makan nasi instan; bibir pecah, lidah merah, dan mudah lelah.'],
     pertanyaan: [
@@ -801,7 +801,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_obat', 'rpd', 'Ada obat atau penyakit yang mengganggu penyerapan?', 'Tidak ada.', false],
     ],
     fisik: [['tht_mulut', 'Angular cheilitis dan glositis ringan tanpa kandidiasis.'], ['neurologis', 'Refleks dan sensibilitas normal.', false]],
-    diagnosisBanding: ['E50-E56', 'D50', 'B37.9'],
+    diagnosisBanding: ['E53.0', 'D50', 'B37.9'],
     tatalaksana: { obatBenar: ['vitamin_b_kompleks'], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
     clue: 'Angular cheilitis dan glositis pada diet sangat tidak beragam cocok dengan kekurangan riboflavin, tetapi tidak membuktikannya dan defisiensi mikronutrien sering berkelompok. Koreksi diet adalah inti; B kompleks jangka pendek dapat menjadi terapi pragmatis sambil mencari anemia, kandidiasis, malabsorpsi, alkohol, atau penyakit sistemik bila keluhan menetap.',
     panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi riboflavin. NIH ODS menyebut angular stomatitis, cheilosis, dan glositis sebagai temuan yang kompatibel, sekaligus menegaskan bahwa ko-defisiensi lazim sehingga tanda tersebut tidak spesifik untuk satu vitamin.',
@@ -812,7 +812,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     // Adjudikasi-delegasi 2026-08-21 (keputusan #2): clue kasus ini sendiri
     // melarang menegakkan diagnosis dari satu gejala — field lalai disetel,
     // kini dijujurkan mengikuti preseden leptospirosis di bawah.
-    id: 'lab_defisiensi_mineral_zinc', nama: 'Dugaan Defisiensi Zinc', icd10: 'E58-E61', kepastianDiagnosis: 'suspek', kategori: 'metabolik',
+    id: 'lab_defisiensi_mineral_zinc', nama: 'Dugaan Defisiensi Zinc', icd10: 'E60', kepastianDiagnosis: 'suspek', kategori: 'metabolik', // Deep research 2026-08-22: 'E58-E61' RENTANG BLOK; E60 'Dietary zinc deficiency' (WHO) sudah ada di kamus & persis menyasar zinc (bukan E61.x, yg tak mencakup zinc).
     keluhanUtama: 'Luka kecil lama sembuh, rambut mudah rontok, dan selera makan turun.', usia: [12, 50], vital: { td: '116/72', nadi: 78, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Bagaimana pola makan dan sejak kapan keluhan muncul?', 'Berbulan-bulan jarang makan protein hewani; keluhan perlahan dan tidak ada demam.'],
     pertanyaan: [
@@ -821,7 +821,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_suplemen', 'rpd', 'Sudah memakai suplemen dosis tinggi?', 'Belum.', false],
     ],
     fisik: [['kulit', 'Dermatitis periorifisial ringan dan rambut menipis difus; tanpa infeksi luka.'], ['umum', 'Status gizi sedikit kurang.', true]],
-    diagnosisBanding: ['E58-E61', 'E50-E56', 'L65.9'],
+    diagnosisBanding: ['E60', 'E53.0', 'L65.9'],
     tatalaksana: { obatBenar: [], edukasi: ['gizi_seimbang', 'kontrol_rutin'] },
     clue: 'Defisiensi zinc tidak boleh ditegakkan dari satu gejala. Diet rendah sumber zinc, dermatitis periorifisial, alopecia, dan penyembuhan lambat hanya meningkatkan probabilitas; nilai malabsorpsi, alkohol, penyakit kronik, dan diagnosis kulit lain. Prioritaskan pangan kaya zinc dan evaluasi respons, bukan suplementasi dosis tinggi empiris.',
     panduanResmi: 'PPK FKTP 1186/2022 tidak mempunyai bab diagnosis langsung untuk defisiensi zinc. NIH ODS 2026 menganjurkan integrasi faktor risiko dan tanda klinis serta mengingatkan bahwa kadar zinc serum dipengaruhi usia, jenis kelamin, waktu pengambilan, infeksi, dan katabolisme sehingga tidak selalu mencerminkan asupan atau status jaringan.',
@@ -899,7 +899,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_obat', 'rpd', 'Menggunakan beta-blocker atau punya penyakit jantung?', 'Tidak.', false],
     ],
     fisik: [['umum', 'Gelisah, perfusi buruk, urtikaria generalisata dan angioedema bibir.'], ['toraks_paru', 'Wheezing difus dan suara serak.'], ['jantung', 'Takikardia, hipotensi.', true]],
-    diagnosisBanding: ['T78.2', 'J45.901', 'F41.0'],
+    diagnosisBanding: ['T78.2', 'J45.9', 'F41.0'],
     tatalaksana: { obatBenar: [], prosedur: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi', 'pemantauan_ketat_vital'], edukasi: ['rencana_anafilaksis', 'tanda_bahaya'], edukasiKritis: ['rencana_anafilaksis'], terapiKritis: ['adrenalin_im_anafilaksis'] },
     stabilisasiWajib: ['adrenalin_im_anafilaksis', 'oksigen', 'akses_iv_resusitasi', 'pemantauan_ketat_vital'],
     clue: 'Onset menit dengan keterlibatan kulit plus jalan napas/napas dan hipotensi adalah anafilaksis. Berikan epinefrin 0,5 mg IM paha (0,5 mL sediaan 1 mg/mL) segera pada pasien dewasa ini dan ulangi setelah 5 menit bila masalah ABC menetap. Baringkan dengan tungkai dinaikkan; bila bernapas lebih mudah dalam posisi setengah duduk, pertahankan tungkai lurus dan jangan biarkan berdiri atau berjalan. Beri oksigen karena hipoksemia, berikan bolus kristaloid dini secara terukur sambil menilai respons, pantau serial, dan transfer paralel. Antihistamin atau steroid tidak boleh menunda epinefrin.',

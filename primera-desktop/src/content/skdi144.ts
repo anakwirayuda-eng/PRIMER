@@ -104,7 +104,7 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   },
 
   // === SISTEM PENCERNAAN (18) ===
-  { id: 'oral_candidiasis', nama: 'Kandidiasis Mulut', icd10: 'B37.9' },
+  { id: 'oral_candidiasis', nama: 'Kandidiasis Mulut', icd10: 'B37.0' },
   { id: 'stomatitis_aftosa', nama: 'Ulkus Mulut (Aftosa, Herpes)', icd10: 'K12' },
   { id: 'parotitis_mumps', nama: 'Parotitis', icd10: 'B26' },
   { id: 'umbilical_infection', nama: 'Infeksi pada Umbilikus', icd10: 'P38' },
@@ -172,16 +172,16 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
   { id: 'perineal_rupture_12', nama: 'Ruptur Perineum Tingkat 1–2', icd10: 'O70.0' },
   { id: 'abses_folikel_rambut', nama: 'Abses Folikel Rambut / Kelenjar Sebasea', icd10: 'L02.9' },
   { id: 'mastitis_lactation', nama: 'Mastitis', icd10: 'N61' },
-  { id: 'cracked_nipple', nama: 'Cracked Nipple (Puting Lecet)', icd10: 'O92.13' },
-  { id: 'inverted_nipple', nama: 'Inverted Nipple (Puting Tenggelam)', icd10: 'O92.03' },
+  { id: 'cracked_nipple', nama: 'Cracked Nipple (Puting Lecet)', icd10: 'O92.1' }, // Deep research 2026-08-22: O92.13 hanya ICD-10-CM.
+  { id: 'inverted_nipple', nama: 'Inverted Nipple (Puting Tenggelam)', icd10: 'O92.0' }, // Deep research 2026-08-22: O92.03 hanya ICD-10-CM.
 
   // === SISTEM ENDOKRIN, METABOLIK & NUTRISI (9) ===
   { id: 'dm_type1', nama: 'Diabetes Melitus Tipe 1', icd10: 'E10' },
   { id: 'dm_type2', nama: 'Diabetes Melitus Tipe 2', icd10: 'E11', kasusId: 'dm_tipe2' },
   { id: 'hypoglycemia_mild', nama: 'Hipoglikemia Ringan', icd10: 'E16.2' },
   { id: 'pem', nama: 'Malnutrisi Energi-Protein', icd10: 'E44' },
-  { id: 'vitamin_deficiency', nama: 'Defisiensi Vitamin', icd10: 'E50-E56' },
-  { id: 'mineral_deficiency', nama: 'Defisiensi Mineral', icd10: 'E58-E61' },
+  { id: 'vitamin_deficiency', nama: 'Defisiensi Vitamin', icd10: 'E53.0' }, // Deep research 2026-08-22: 'E50-E56' rentang blok, bukan kode; E53.0 riboflavin persis menyasar kasus tertaut.
+  { id: 'mineral_deficiency', nama: 'Defisiensi Mineral', icd10: 'E60' }, // Deep research 2026-08-22: 'E58-E61' rentang blok, bukan kode; E60 zinc persis menyasar kasus tertaut.
   { id: 'dyslipidemia', nama: 'Dislipidemia', icd10: 'E78.5' },
   {
     // M9.2: Kepmenkes 1186/2022 gabungkan Hiperurisemia (E79.0) & Gout
@@ -258,5 +258,5 @@ export const SKDI144: { id: string; nama: string; icd10: string; kasusId?: strin
 
   // === TRAUMA (2) ===
   { id: 'blunt_trauma', nama: 'Kekerasan Tumpul', icd10: 'S00-S09' },
-  { id: 'sharp_trauma', nama: 'Kekerasan Tajam', icd10: 'S00-S09' },
+  { id: 'sharp_trauma', nama: 'Kekerasan Tajam', icd10: 'S01.0' }, // Deep research 2026-08-22: 'S00-S09' rentang blok; S01.0 (luka terbuka) persis menyasar laserasi di kasus tertaut.
 ]

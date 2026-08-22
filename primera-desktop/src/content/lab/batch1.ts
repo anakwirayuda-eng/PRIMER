@@ -259,7 +259,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'umum', temuan: 'Tidak toksik.', relevan: false },
     ],
     lab: [],
-    diagnosisBanding: ['J34.0', 'L01.0', 'J34.89'],
+    diagnosisBanding: ['J34.0', 'L01.0', 'J34.8'],
     tatalaksana: {
       obatBenar: ['mupirosin_krim'],
       obatOpsional: ['paracetamol_500'],
@@ -361,7 +361,11 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
   buatKasusLab({
     id: 'lab_kandidiasis_mulut',
     nama: 'Kandidiasis Mulut',
-    icd10: 'B37.9',
+    // Deep research 2026-08-22 (WHO ICD-10 API, dikonfirmasi sumber independen
+    // Jerman/ICD-10-GM): B37.0 = "Candidal stomatitis" — persis kandidiasis
+    // mulut. B37.9 = "Candidiasis, unspecified", generik, dipakai kasus lain
+    // sbg distraktor (lab_defisiensi_vitamin_b_kompleks) — bukan kode kasus ini.
+    icd10: 'B37.0',
     skdi: '4A',
     kategori: 'pencernaan',
     fktp144: true,
@@ -390,7 +394,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { id: 'gds', hasil: 'GDS 218 mg/dL; perlu evaluasi diabetes terpisah.', flag: 'tinggi', relevan: true },
       { id: 'mikroskopis_gram_koh', hasil: 'Budding yeast dan pseudohifa tampak.', flag: 'abnormal', relevan: false },
     ],
-    diagnosisBanding: ['B37.9', 'K12', 'D37.0'],
+    diagnosisBanding: ['B37.0', 'K12', 'D37.0'],
     tatalaksana: {
       obatBenar: ['nistatin_suspensi'],
       edukasi: ['higiene_mulut', 'kontrol_rutin', 'tanda_bahaya'],

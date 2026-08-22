@@ -238,7 +238,9 @@ describe('PACK — validasi silang id konten', () => {
     const ICD_DUPLIKAT_SENGAJA: Record<string, string> = {
       'N76.0': 'vaginitis vs bacterial_vaginosis — BV adalah bentuk vaginitis bakterial, kode sama defensible',
       'B35.0': 'tinea_capitis vs tinea_barbae — subtipe lokasi beda, spesies dermatofita sama',
-      'S00-S09': 'blunt_trauma vs sharp_trauma — rentang kode ICD trauma umum, bukan kode spesifik',
+      // 'S00-S09' DIHAPUS 2026-08-22: sharp_trauma direcode ke S01.0 (deep
+      // research — laserasi kulit kepala = luka terbuka, bukan superfisial
+      // spt blunt_trauma S00.0). Bukan duplikat lagi.
     }
     const perIcd = new Map<string, string[]>()
     for (const e of PACK.skdi144) perIcd.set(e.icd10, [...(perIcd.get(e.icd10) ?? []), e.id])
@@ -428,7 +430,12 @@ describe('PACK — validasi silang id konten', () => {
   //     `diet_lambung` ([Lambung] Hindari pedas, asam & kopi) — persis
   //     "modifikasi gaya hidup + waspadai pemicu" di clue.
   // (5) rinitis_alergi: `jaga_kelembapan_kulit` (topik KULIT utk kasus hidung)
-  //     dibuang — salah sasaran, 4→3 topik.
+  //     dibuang — salah sasaran, 4→3 topik. Lanjutan 2026-08-22 (keputusan
+  //     delegasi #9, deep research bukti klinis): `cuci_seprai_panas` turut
+  //     dicabut — 3→2 topik. Baris uji khusus kasus ini di it.each bawah
+  //     DIHAPUS (bukan diedit): dulu mewajibkan cuci_seprai_panas HADIR, kini
+  //     topik itu memang tak lagi dipakai kasus ini. Lihat komentar di
+  //     kasusRespGi.ts pada edukasi rinitis_alergi utk rincian buktinya.
   // Batch agent-3 (saraf/mata/tht + kia/jiwa), tiap butir diverifikasi manual:
   // (6) konjungtivitis_alergi: kompres_mata bernama "Kompres HANGAT" (hordeolum)
   //     — bertentangan clue "kompres DINGIN"; topik baru kompres_dingin_mata.
@@ -445,7 +452,6 @@ describe('PACK — validasi silang id konten', () => {
     ['skabies', 'cuci_seprai_panas', 'cuci_tangan'],
     ['asma_ringan', 'teknik_inhaler', 'hindari_alergen'],
     ['gastritis', 'diet_lambung', 'gizi_seimbang'],
-    ['rinitis_alergi', 'cuci_seprai_panas', 'jaga_kelembapan_kulit'],
     ['mata_konjungtivitis_alergi', 'kompres_dingin_mata', 'kompres_mata'],
     ['saraf_bells_palsy', 'proteksi_kornea', 'kompres_mata'],
     ['tht_rinosinusitis_akut', 'bilas_salin_hidung', 'minum_air_cukup'],

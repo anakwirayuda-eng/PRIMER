@@ -66,7 +66,10 @@ export const NAMA_ICD: Record<string, string> = {
   'L03.9': 'Selulitis, Tidak Spesifik',
   'O91.1': 'Abses Payudara Terkait Persalinan',
   'C50.9': 'Keganasan Payudara, Tidak Spesifik',
-  'B37.89': 'Kandidiasis Lokasi Lain',
+  // Deep research 2026-08-22: B37.89 hanya ada di ICD-10-CM Amerika (WHO API:
+  // anak B37.8 kosong — tak ada pemecahan 5-digit apa pun). Padanan WHO: B37.8
+  // "Candidiasis of other sites", makna sama, dipakai di deck lab_puting_lecet.
+  'B37.8': 'Kandidiasis Lokasi Lain',
   'N64.5': 'Tanda atau Gejala Payudara Lain',
   E43: 'Malnutrisi Energi-Protein Berat',
   'E53.0': 'Defisiensi Riboflavin',
@@ -79,7 +82,6 @@ export const NAMA_ICD: Record<string, string> = {
   'D63.8': 'Anemia pada Penyakit Kronis Lain',
   'A18.2': 'Limfadenopati Tuberkulosis Perifer',
   'C77.0': 'Metastasis Kelenjar Getah Bening Kepala, Wajah, atau Leher',
-  'J45.901': 'Asma dengan Eksaserbasi Akut',
   'I83.0': 'Varises Tungkai Bawah dengan Ulkus',
   'E11.5': 'DM Tipe 2 dengan Komplikasi Sirkulasi Perifer',
   'L72.9': 'Kista Folikular Kulit, Tidak Spesifik',
@@ -130,11 +132,12 @@ export const NAMA_ICD: Record<string, string> = {
   K12: 'Ulkus Mulut',
   'B00.2': 'Gingivostomatitis Herpetik',
   'C06.9': 'Keganasan Mulut, Tidak Spesifik',
-  // MENUNGGU DOKTER: kandidiasis mulut sebenarnya B37.0 (candidal stomatitis);
-  // B37.9 = kandidiasis tanpa keterangan. Baik skdi144 maupun kasus
-  // lab_kandidiasis_mulut sudah terlanjur memakai B37.9, jadi kamus mengikuti
-  // pemakaian de-facto sampai dokter memutuskan recode ke B37.0.
-  'B37.9': 'Kandidiasis Mulut',
+  // Deep research 2026-08-22 (WHO ICD-10 API + sumber independen Jerman
+  // ICD-10-GM, keduanya sepakat): B37.9 = "Candidiasis, unspecified" — generik,
+  // BUKAN kandidiasis mulut (itu B37.0). lab_kandidiasis_mulut & skdi144
+  // oral_candidiasis sudah direcode ke B37.0; B37.9 kini murni distraktor
+  // generik di lab_defisiensi_vitamin_b_kompleks.
+  'B37.9': 'Kandidiasis, Tidak Spesifik',
   'D37.0': 'Neoplasma Mulut dengan Perilaku Tidak Pasti',
   B26: 'Parotitis Epidemika (Mumps)',
   'K11.2': 'Sialadenitis',
@@ -173,7 +176,9 @@ export const NAMA_ICD: Record<string, string> = {
   'I95.9': 'Hipotensi, Tidak Spesifik',
   J46: 'Status Asmatikus / Asma Akut Berat',
   'J31.0': 'Rinitis Kronis',
-  'J34.89': 'Gangguan Hidung dan Sinus Lain',
+  // Deep research 2026-08-22: J34.89 hanya ICD-10-CM (WHO API: J34.8 kode
+  // terminal 4-karakter, tanpa pemecahan 5-digit). Padanan WHO: J34.8.
+  'J34.8': 'Gangguan Hidung dan Sinus Lain',
   'S80.1': 'Kontusio Tungkai Bawah',
   'T17.1': 'Benda Asing di Lubang Hidung',
   'T17.9': 'Benda Asing di Saluran Napas, Bagian Tidak Spesifik',

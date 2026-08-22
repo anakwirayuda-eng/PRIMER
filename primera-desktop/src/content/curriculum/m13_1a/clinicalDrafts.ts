@@ -465,7 +465,7 @@ export const M13_1A_CLINIC_DRAFTS: KasusKlinis[] = [
       { region: 'toraks_paru', temuan: 'Tidak ada stridor; suara napas vesikuler bilateral tanpa mengi.', relevan: true },
     ],
     lab: [],
-    diagnosisBanding: ['T17.1', 'J34.89', 'J31.0'],
+    diagnosisBanding: ['T17.1', 'J34.8', 'J31.0'],
     tatalaksana: {
       obatBenar: [],
       obatSalahUmum: [

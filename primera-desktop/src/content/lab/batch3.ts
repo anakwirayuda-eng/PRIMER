@@ -833,7 +833,7 @@ const DEFINITIONS: LabDefinition[] = [
   {
     catalogId: 'sharp_trauma',
     spec: {
-      id: 'lab_trauma_tajam_kulit_kepala', nama: 'Trauma Tajam Kulit Kepala Sederhana', icd10: 'S00-S09', kategori: 'gawat', prevalensi: 'sedang',
+      id: 'lab_trauma_tajam_kulit_kepala', nama: 'Trauma Tajam Kulit Kepala Sederhana', icd10: 'S01.0', kategori: 'gawat', prevalensi: 'sedang', // Deep research 2026-08-22: 'S00-S09' RENTANG BLOK; klinis laserasi 2cm kulit kepala = S01.0 WHO 'Open wound of scalp' (bukan S00.0 superfisial, yg dipakai kasus tumpul di berkas ini).
       keluhanUtama: 'Kulit kepala tersayat tepi seng satu jam lalu.', usia: [15, 70], vital: NORMAL,
       pembuka: ['Bagaimana luka terjadi dan apa yang dirasakan sesudahnya?', 'Tepi seng menyayat dangkal saat saya membungkuk; tidak pingsan dan tetap ingat semua kejadian.'],
       pertanyaan: [
@@ -842,7 +842,7 @@ const DEFINITIONS: LabDefinition[] = [
         ['q_tetanus', 'rpd', 'Kapan vaksin tetanus terakhir?', 'Tidak ingat.', true],
       ],
       fisik: [['kepala_leher', 'Laserasi linear 2 cm pada kulit kepala, galea utuh, hemostasis tercapai; tidak ada step-off atau tanda fraktur basis kranii.'], ['neurologis', 'GCS 15, pupil isokor-reaktif, tanpa defisit.', true]],
-      diagnosisBanding: ['S00-S09', 'T14.1', 'S06.0'],
+      diagnosisBanding: ['S01.0', 'T14.1', 'S06.0'],
       tatalaksana: { obatBenar: [], obatOpsional: ['paracetamol_500'], prosedur: ['perawatan_luka', 'hecting_luka', 'profilaksis_tetanus'], edukasi: ['rawat_luka_tetanus', 'tanda_bahaya'] },
       clue: 'Pada luka tajam kepala, nilai GCS, gejala neurologis, fraktur, kedalaman, kontaminasi, dan benda asing sebelum anestesi/penutupan. Irigasi dan jahit hanya luka kulit kepala sederhana; penurunan kesadaran, defisit, fraktur, penetrasi, perdarahan tak terkendali, atau benda asing perlu rujuk.',
       panduanResmi: `${PNPK_TRAUMA_2017} Pada laserasi kulit kepala, singkirkan lebih dulu gangguan ABC, cedera otak, fraktur, penetrasi, perdarahan tak terkendali, kontaminasi berat, dan benda asing. Irigasi serta penutupan di FKTP hanya untuk luka superfisial sederhana setelah penilaian tersebut; evaluasi status tetanus tetap wajib.`,

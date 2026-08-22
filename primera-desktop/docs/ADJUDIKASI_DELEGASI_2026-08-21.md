@@ -64,6 +64,22 @@ Prinsip yang dipakai menimbang: (1) jawaban yang benar secara klinis tidak boleh
 
 **Amendemen (2026-08-21, hari yang sama, atas temuan agen implementasi):** pembalikan arah dibatasi ke peserta **HT saja**. Pada kartu DM terkendali, opsi salahnya adalah "Stop obat karena gula sudah normal" — itu *under*-treatment: gula justru melonjak lagi (persis teks respons kartunya), sehingga arah +1 lama sudah benar untuk DM. Predikat generik awal akan membuat engine membantah teks edukasinya sendiri di kartu DM.
 
+## 9. `cuci_seprai_panas` dicabut dari edukasi rinitis alergi (2026-08-22)
+
+**Keputusan:** hapus `cuci_seprai_panas` dari `tatalaksana.edukasi` kasus `rinitis_alergi` (3→2 topik: `hindari_alergen`, `tanda_bahaya`).
+
+**Konteks:** ini bukan keputusan baru dari nol — audit beta.16 (2026-08-05) sudah mencurigai asimetri kekuatan bukti antara rinitis alergi vs skabies/tinea untuk intervensi yang sama ("cuci seprai/handuk air panas"), tapi sengaja diserahkan sebagai pertanyaan terbuka, bukan diputuskan sepihak. dr. Wirayuda kemudian meminta riset mendalam dan mendelegasikan keputusannya secara eksplisit.
+
+**Dasar (deep research 2026-08-22, diverifikasi silang ≥2 sumber independen per klaim):**
+- Cochrane CD001563 (Nurmatov/van Schayck/Hurwitz/Sheikh 2012, update terakhir — tak ada revisi lebih baru yang membalik kesimpulan): *"Isolated use of house dust mite impermeable bedding is unlikely to prove effective."* Cuci air panas sendiri tak pernah diuji terisolasi untuk rinitis — selalu bagian paket multifaset (bersama vacuum, dehumidifier, encasing kasur).
+- Trial primer independen (Terreehorst dkk, *NEJM*, n=232): sarung kasur anti-tungau menurunkan alergen kasur signifikan, **tapi tanpa perbaikan gejala klinis rinitis yang bermakna**.
+- Guideline pasca-2012 melangkah lebih jauh, bukan lebih mendukung: BTS/SIGN 2019 — metode fisik/kimia reduksi tungau debu "should not be routinely recommended"; ARIA/GRADE — *"clinicians do not administer and patients do not use currently available single physical preventive methods"* (rekomendasi kuat, bukti kualitas rendah).
+- Kontras tajam dengan dua kondisi lain yang memakai instruksi serupa: **skabies** (CDC/WHO: suhu >50°C selama 10 menit membunuh *Sarcoptes scabiei* dan telurnya — mekanistik, terukur, dipertahankan) dan **tinea/impetigo** (studi eksperimental: laundering ≥60°C efektif menghilangkan spora dermatofita dan *S. aureus*, bukti sedang untuk *S. pyogenes* ringan — dipertahankan).
+
+**Kenapa dicabut, bukan sekadar diturunkan jadi opsional:** engine ini tidak punya mekanisme "topik edukasi opsional" (berbeda dari `obatOpsional` yang memang ada untuk obat) — `tatalaksana.edukasi` adalah daftar wajib rata. Mempertahankannya di daftar wajib berarti menghukum mahasiswa yang *tidak* memilihnya, padahal tidak memilihnya adalah keputusan yang justru dibenarkan guideline saat ini. Mencabutnya total — bukan menggantinya dengan topik lain yang dipaksakan — adalah implementasi paling jujur dari kesimpulan riset dalam batasan sistem yang ada.
+
+**Yang TIDAK diubah:** `hindari_alergen` (kontrol lingkungan umum, tak tersentuh temuan ini) dan `tanda_bahaya`. Kasus `skabies` (memakai `cuci_seprai_panas` + `cuci_tangan`) tidak disentuh sama sekali — buktinya tetap kuat.
+
 ---
 
-*Implementasi: lihat commit-commit bertanda "adjudikasi-delegasi" pada 2026-08-21. REVISI_ENGINE dan CONTENT_RELEASE di-bump pada rilis yang sama (1.2.0).*
+*Implementasi: lihat commit-commit bertanda "adjudikasi-delegasi" pada 2026-08-21 dan 2026-08-22. REVISI_ENGINE dan CONTENT_RELEASE di-bump pada rilis yang sama.*

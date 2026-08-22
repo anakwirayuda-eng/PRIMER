@@ -5,7 +5,7 @@ export const M13_1A_PROPOSED_ICD10_ENTRIES: Record<string, string> = {
   'I95.9': 'Hipotensi, Tidak Spesifik',
   J46: 'Status Asmatikus / Asma Akut Berat',
   'J31.0': 'Rinitis Kronis',
-  'J34.89': 'Gangguan Hidung dan Sinus Lain',
+  'J34.8': 'Gangguan Hidung dan Sinus Lain', // Deep research 2026-08-22: J34.89 hanya ICD-10-CM.
   'S80.1': 'Kontusio Tungkai Bawah',
   'T17.1': 'Benda Asing di Lubang Hidung',
   'T17.9': 'Benda Asing di Saluran Napas, Bagian Tidak Spesifik',

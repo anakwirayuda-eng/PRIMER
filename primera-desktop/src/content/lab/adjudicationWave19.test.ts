@@ -50,7 +50,9 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
     const riboflavin = PACK.kasus.lab_defisiensi_vitamin_b_kompleks!
     expect(riboflavin).toMatchObject({
       nama: expect.stringMatching(/Dugaan Defisiensi Riboflavin/i),
-      icd10: 'E50-E56',
+      // Deep research 2026-08-22: 'E50-E56' rentang blok bukan kode diagnosis;
+      // E53.0 (WHO "Riboflavin deficiency") persis menyasar kasus ini.
+      icd10: 'E53.0',
       // Adjudikasi-delegasi 2026-08-21 (keputusan #2): target kepastian kini
       // ikut dikunci — dulu bernama "Dugaan" tapi menuntut diagnosis tegak.
       kepastianDiagnosis: 'suspek',
@@ -59,7 +61,9 @@ describe('M13-137 adjudication wave 19: sumber spesifik dan graceful degradation
     expect(riboflavin.catatanRealita).toMatch(/label diagnosis tetap dugaan/i)
 
     const zinc = PACK.kasus.lab_defisiensi_mineral_zinc!
-    expect(zinc).toMatchObject({ nama: 'Dugaan Defisiensi Zinc', icd10: 'E58-E61', kepastianDiagnosis: 'suspek' })
+    // Deep research 2026-08-22: 'E58-E61' rentang blok; E60 (WHO "Dietary
+    // zinc deficiency") persis menyasar kasus ini.
+    expect(zinc).toMatchObject({ nama: 'Dugaan Defisiensi Zinc', icd10: 'E60', kepastianDiagnosis: 'suspek' })
     expect(zinc.tatalaksana.obatBenar).toEqual([])
     expect(zinc.clue).toMatch(/hanya meningkatkan probabilitas/i)
     expect(zinc.panduanResmi).toMatch(/NIH ODS 2026.*tidak selalu/is)

@@ -256,7 +256,24 @@ export const KASUS_RESPIRASI_GI: KasusKlinis[] = [
       // M10.c (dossier §47): jaga_kelembapan_kulit (topik KULIT/eksim) dibuang
       // dari kasus HIDUNG — salah sasaran, pemain dapat kredit topik tak relevan.
       // hindari_alergen + cuci_seprai_panas (kontrol tungau debu) sudah tepat.
-      edukasi: ['hindari_alergen', 'cuci_seprai_panas', 'tanda_bahaya'],
+      // Keputusan delegasi #9 (2026-08-22, deep research): cuci_seprai_panas
+      // dicabut. Cochrane CD001563 (Nurmatov dkk 2012, belum ada update yg
+      // membalik): "isolated use of house dust mite impermeable bedding is
+      // unlikely to prove effective" utk rinitis alergi — dan cuci-air-panas
+      // sendiri tak pernah diuji terisolasi, hanya bagian paket multifaset.
+      // Trial primer independen (Terreehorst dkk, NEJM, n=232): reduksi
+      // alergen kasur signifikan TAPI TANPA perbaikan gejala klinis rinitis.
+      // ARIA/GRADE pasca-2012 melangkah lebih jauh: "clinicians do not
+      // administer and patients do not use currently available single
+      // physical preventive methods" (strong recommendation). Kontras dgn
+      // SKABIES (CDC/WHO: >50°C/10 menit membunuh tungau — mekanistik,
+      // terukur, tetap dikunci benar di kasus itu) dan TINEA/IMPETIGO (studi
+      // eksperimental: laundering >=60°C membunuh spora/S. aureus) — asimetri
+      // kekuatan bukti yg dicurigai audit beta.16 terkonfirmasi TAJAM oleh
+      // literatur terkini, bukan melemah. Menjadikannya wajib menghukum
+      // mahasiswa yg TIDAK memilihnya padahal itu keputusan yg dibenarkan
+      // guideline saat ini.
+      edukasi: ['hindari_alergen', 'tanda_bahaya'],
     },
     clue: 'Rinitis alergi: bersin serial + rinorea ENCER JERNIH + gatal hidung/mata, dipicu debu/pagi, TANPA demam, riwayat atopi keluarga. Terapi lini pertama antihistamin non-sedatif (loratadin/setirizin) + kontrol lingkungan (ARIA/PPK IDI). Bedakan dari common cold (durasi lebih lama, gatal menonjol, tanpa demam).',
     panduanResmi: 'PPK 1186/2022 mencantumkan antihistamin generasi-1 (klorfeniramin/CTM, difenhidramin) SEJAJAR dengan generasi-2 (loratadin, cetirizin) — berbeda dari clue/ARIA yang memprioritaskan non-sedatif. PPK juga membolehkan kortikosteroid intranasal (mometason/flutikason) bila sumbatan hidung dominan.',
