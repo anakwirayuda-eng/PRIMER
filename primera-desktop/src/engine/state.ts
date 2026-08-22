@@ -819,7 +819,8 @@ export interface GameState {
     /** Roster keluarga binaan (id) — maks MAKS_BINAAN (16 sejak M3c). */
     binaan: string[]
     /** Surveilans balik UKP→UKM: diagnosis menular per RW, jendela 14 hari. */
-    surveilans: { hari: number; rw: number; kasusId: string }[]
+    /** Audit UKM 2026-08-22: `pasienNama` opsional agar kluster menghitung ORANG, bukan kunjungan (save lama tanpa nama tetap sah). */
+    surveilans: { hari: number; rw: number; kasusId: string; pasienNama?: string }[]
     /** Penghitung drift keluarga rawan per pekan (cap 2 kejadian/minggu). */
     drift: { minggu: number; jumlah: number }
   }

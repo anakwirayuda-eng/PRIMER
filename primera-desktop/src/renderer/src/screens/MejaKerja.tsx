@@ -17,7 +17,7 @@ import { storyletHariIniDetail } from './mejaKerja/storylet'
 import { benderaRujukan } from './mejaKerja/konteksRujukan'
 import { profilVisualStorylet } from './mejaKerja/storyletVisualProfiles'
 import { agendaBesok } from './mejaKerja/agendaBesok'
-import { hitungIksKeluarga } from '@engine/pispk'
+import { hitungIksKeluarga, klasifikasiIks } from '@engine/pispk'
 import {
   HARI_BUKA_PETA,
   HARI_BUKA_KUNJUNGAN,
@@ -213,6 +213,13 @@ export function MejaKerja() {
       const konten = PACK.keluarga[id]
       if (!konten || kel.arcSelesai) continue
       const iks = hitungIksKeluarga(kel)
+      // Audit UKM 2026-08-22 (P3): ambang IKS jangan ditulis ulang di layar.
+      // Cabang `iks < 0.8` dulu memperlakukan IKS TEPAT 0,80 sebagai keluarga
+      // sehat lalu membuangnya dari Tas Kunjungan, padahal klasifikasi kanonik
+      // (pispk.ts, Permenkes 39/2016) baru menyebut sehat di ATAS 0,8 — 0,80
+      // masih pra-sehat, justru keluarga yang tinggal selangkah dari tuntas.
+      // Satu sumber kebenaran: pakai fungsinya, bukan salinan angkanya.
+      const kelas = iks === null ? null : klasifikasiIks(iks)
 
       let alasan: string
       let prioritas: number
@@ -230,10 +237,10 @@ export function MejaKerja() {
       } else if (iks === null) {
         alasan = 'Belum ada data terverifikasi — kunjungan pertama membuka profil keluarga'
         prioritas = 30
-      } else if (iks < 0.5) {
+      } else if (kelas === 'tidak_sehat') {
         alasan = `IKS ${fmt(iks, 2)} (tidak sehat) — indikator PIS-PK banyak yang belum tuntas`
         prioritas = 20
-      } else if (iks < 0.8) {
+      } else if (kelas === 'pra_sehat') {
         alasan = `IKS ${fmt(iks, 2)} (pra-sehat) — tinggal satu-dua indikator lagi`
         prioritas = 40
       } else {
@@ -1294,15 +1301,27 @@ export function MejaKerja() {
             {/* Triase Anggaran (M2.10, DeepThink Q4): ongkos oportunitas EKSPLISIT —
                 kluster aktif yang tak tersentuh fokus program bulan lalu. */}
             {(() => {
+              // Audit UKM 2026-08-22 (P2): supresi penularan oleh Program Wilayah
+              // menuntut DUA syarat sekaligus di engine — penyakitnya masuk target
+              // program DAN klusternya berada di RW fokus (reducer.ts). Panel ini
+              // dulu hanya mencocokkan penyakitnya, jadi wabah penyakit target di
+              // RW LAIN hilang dari daftar seolah sudah ditangani — padahal dana
+              // program tak pernah sampai ke sana. Justru RW yang tak dipilih itu
+              // ongkos oportunitas yang ingin ditunjukkan panel ini.
+              const rwFokus = state.program.rwFokus
               const tercakup = state.program.fokus ? TARGET_KASUS_PROGRAM[state.program.fokus] : []
-              const diabaikan = clusterAktif(state, PACK).filter((c) => !tercakup.includes(c.kasusId))
+              const diabaikan = clusterAktif(state, PACK).filter(
+                (c) => !(tercakup.includes(c.kasusId) && c.rw === rwFokus),
+              )
               if (diabaikan.length === 0) return null
               return (
                 <div className="kartu mk__lokmin-rival mk__lokmin-ongkos">
                   <div className="teks-kecil">⚖️ Ongkos oportunitas bulan ini</div>
                   <p className="teks-xs teks-lembut">
-                    Fokusmu ({state.program.fokus ? LABEL_PROGRAM[state.program.fokus] : 'belum ditetapkan'}) tak
-                    menyentuh kluster berikut — kamu memilih membiarkannya demi program lain:
+                    Fokusmu ({state.program.fokus ? LABEL_PROGRAM[state.program.fokus] : 'belum ditetapkan'}
+                    {rwFokus !== undefined ? `, RW ${rwFokus}` : ''}) tak menyentuh kluster berikut — kamu
+                    memilih membiarkannya demi program lain. Dana bulan ini hanya bekerja di RW yang kamu
+                    pilih, jadi penyakit yang sama di RW lain tetap berjalan:
                   </p>
                   {diabaikan.map((c) => (
                     <p key={`${c.rw}_${c.kasusId}`} className="teks-xs">

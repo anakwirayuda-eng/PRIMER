@@ -170,9 +170,18 @@ export function PetaDesa() {
   const tampilanHasil = hasilKunjungan ? tampilanHasilKunjungan(hasilKunjungan) : undefined
   const panduanHasil = skenarioHasil ? panduanSkenarioUkm(skenarioHasil) : undefined
   const tautanPanduanHasil = skenarioHasil ? tautanPanduanSkenarioUkm(skenarioHasil) : []
-  const intervensiBenarHasil = skenarioHasil?.intervensi.find((kartu) =>
-    kartuIntervensiBenar(skenarioHasil, kartu),
-  )
+  // Audit UKM 2026-08-22 (P2): kartu yang BENAR dicari dari ground-truth
+  // `hambatanSebenarnya`, jadi menampilkan buktinya pada kunjungan yang belum
+  // berbuah sama saja menyerahkan kunci jawaban. Arc hanya maju bila
+  // `hasil.berhasil` (kunjungan.ts) — pemain yang gagal akan mengulang skenario
+  // yang SAMA PERSIS, dan latihannya habis bila kartunya sudah ia ketahui.
+  // Bukti kartu karena itu hanya dibuka bila skenarionya tak akan diulang;
+  // yang belum berbuah tetap memegang LANDASAN RESMI (konteks masalah, bukan
+  // kunci) plus rincian penilaian di debrief sore.
+  const skenarioAkanDiulang = hasilKunjungan ? hasilKunjungan.berhasil !== true : false
+  const intervensiBenarHasil = skenarioAkanDiulang
+    ? undefined
+    : skenarioHasil?.intervensi.find((kartu) => kartuIntervensiBenar(skenarioHasil, kartu))
   const buktiIntervensiHasil = skenarioHasil && intervensiBenarHasil
     ? sitasiIntervensiUkm(skenarioHasil, intervensiBenarHasil, 'pasca_penilaian')
     : undefined
@@ -395,14 +404,21 @@ export function PetaDesa() {
                 <b className="mono">LANDASAN RESMI</b>
                 <p>{panduanHasil}</p>
                 <TautanSumber sumber={tautanPanduanHasil} />
-                {buktiIntervensiHasil && (
+                {buktiIntervensiHasil ? (
                   <details className="peta-hasil__bukti-intervensi">
                     <summary>Bukti resep sosial</summary>
                     <p>{buktiIntervensiHasil.sumber}</p>
                     <p className="peta-hasil__batas-evidence">{buktiIntervensiHasil.batasan}</p>
                     <TautanSumber sumber={buktiIntervensiHasil.tautan} />
                   </details>
-                )}
+                ) : skenarioAkanDiulang ? (
+                  <p className="peta-hasil__batas-evidence">
+                    Bukti untuk resep sosial yang tepat belum dibuka — kunjungan ini belum
+                    berbuah dan keluarga yang sama masih akan kamu hadapi lagi. Bandingkan
+                    dulu apa yang TERLIHAT di rumah mereka dengan apa yang TERDENGAR dari
+                    mulut mereka; hambatan sebenarnya biasanya menyembul di selisih keduanya.
+                  </p>
+                ) : null}
               </aside>
             )}
             <div className="baris baris--tengah">

@@ -20,7 +20,7 @@ import userEvent from '@testing-library/user-event'
 import { useGame } from '../store'
 import { buildInitialState } from '@engine/init'
 import { PACK } from '@content/index'
-import { Kunjungan, narasiDenganKontinuitas } from './Kunjungan'
+import { frasaJarakJanji, Kunjungan, narasiDenganKontinuitas } from './Kunjungan'
 import type { KunjunganState } from '@engine/state'
 import { sitasiIntervensiUkm } from '@content/ukmCitations'
 
@@ -252,14 +252,31 @@ describe('<Kunjungan /> — save korup: field array nested', () => {
 })
 
 describe('<Kunjungan /> — E-2 SAJI', () => {
-  it('babak Ingatkan menampilkan tiga pilihan dengan tanggal dari helper engine', () => {
+  /**
+   * Audit UKM 2026-08-22 (P3) — test ini DULU mengunci perilaku yang keliru
+   * (`getByText(/Hari 5/)`): tanggal permainan dihitung dari `arcTamat` saja,
+   * SEBELUM hasil kunjungan dinilai, padahal engine hanya memasang
+   * `followUpHari` bila kunjungannya berhasil. Pemain yang gagal berpamitan
+   * dengan tanggal yang tak pernah ada di kalender mana pun. Kini yang disebut
+   * adalah jarak waktu kesepakatan — benar diucapkan apa pun hasilnya, dan tak
+   * membocorkan apakah pilihan diagnosis/resep barusan sudah tepat.
+   */
+  it('babak Ingatkan menyebut JARAK WAKTU kesepakatan, bukan tanggal yang belum dijadwalkan', () => {
     pasangKunjungan({ fase: 'ingatkan', intervensiDipilih: 'wk1_i1' })
     render(<Kunjungan />)
 
     const grup = screen.getByRole('group', { name: 'Pilihan pengingat penutup' })
     expect(grup.querySelectorAll('button')).toHaveLength(3)
-    expect(screen.getByText(/Hari 5/)).toBeInTheDocument()
+    // hari 1 + JEDA_FOLLOW_UP_KUNJUNGAN (4) — arc Wulan belum tamat di K1.
+    expect(screen.getByText(/dalam empat hari/)).toBeInTheDocument()
+    expect(grup.textContent).not.toMatch(/Hari \d/)
     expect(screen.getByText('Ingatkan')).toBeInTheDocument()
+  })
+
+  it('frasa jarak janji memakai satuan yang wajar — pekan bulat, bukan "14 hari"', () => {
+    expect(frasaJarakJanji(4)).toBe('dalam empat hari')
+    expect(frasaJarakJanji(5)).toBe('dalam lima hari')
+    expect(frasaJarakJanji(14)).toBe('dalam dua pekan')
   })
 
   it('penerimaan awal Santoso tampil sebagai prelude dua respons tanpa langkah SAJI aktif', () => {

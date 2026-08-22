@@ -563,7 +563,12 @@ export const KELUARGA_DESA_F: KeluargaBinaan[] = [
                     '"Penginapan..." Andri menghitung: sebulan penginapan + makan berdua + wara-wiri, ' +
                     'dengan tabungan yang sudah habis untuk perlengkapan bayi. "Boleh saya pikir-pikir, Dok." ' +
                     'Jalan tengah yang mahal adalah jalan buntu yang sopan.',
-                  efekTrust: 0,
+                  // Audit UKM 2026-08-22: satu-satunya gaya terlarang lain yang
+                  // berbiaya trust NOL — memberi resep di luar jangkauan dompet
+                  // keluarga tetap melukai kepercayaan, walau sopan. Diberi -1
+                  // (bukan -2 seperti ek1_d1_c/ek1_d3_c): mereka menunda dengan
+                  // halus, tidak menutup barisan membela Ibu seperti dua itu.
+                  efekTrust: -1,
                   tepat: false,
                   catatanPedagogis:
                     'Kompromi kreatif tetap harus lolos uji dompet. Dan intinya terlewat: masalahnya bukan ' +

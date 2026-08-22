@@ -73,6 +73,8 @@ export type Action =
   | { type: 'MULAI_POSYANDU'; rw: number }
   | { type: 'MULAI_PROLANIS' }
   | { type: 'MULAI_KLB'; rw: number; kasusId: string }
+  // Audit UKM 2026-08-22 (P1): di-autosave (store.ts) & di-dispatch saat opsi
+  // DIKLIK, sehingga vonis tak pernah terbaca sebelum jawabannya tersimpan.
   | { type: 'JAWAB_KEGIATAN'; kartuId: string; pilihanId: string }
   | { type: 'DELEGASI_KEGIATAN' } // sisa kartu dijawab kader (posyandu; error ≈35% — lihat PELUANG_KADER_BENAR, kegiatan.ts)
   | { type: 'TETAPKAN_PROGRAM'; fokus: FokusProgram; rwFokus?: number }

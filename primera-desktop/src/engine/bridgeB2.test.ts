@@ -122,12 +122,21 @@ describe('Bridge B2 - continuity ledger lintas UKM, UKP, dan RS', () => {
     expect(duaKali[0]?.familyId).toBe('keluarga_wulan')
   })
 
-  it('ledger tetap maksimal 120 saat seluruh episode aktif dan memprioritaskan tenggat terdekat', () => {
+  // Audit UKM 2026-08-22: test ini DULU mengunci perilaku yang keliru —
+  // `expect(hasil).toHaveLength(120)` + `episode_119` lenyap. Penggusuran
+  // record itulah yang membuat hitungan Jejak Perawatan menyusut diam-diam.
+  // Sekarang yang digusur riwayatnya, bukan recordnya; prioritas "tenggat
+  // terdekat" tetap dipegang, hanya arti slotnya yang berubah (slot detail).
+  it('slot detail 120 diberikan ke tenggat terdekat; episode di luar slot kehilangan riwayat, BUKAN recordnya', () => {
     const episodes = Array.from({ length: 120 }, (_, index): CareEpisodeLite => ({
       ...episodeDasar(),
       id: `episode_${String(index).padStart(3, '0')}`,
       dueDay: index + 10,
       updatedDay: index,
+      history: [
+        { hari: 1, status: 'terdeteksi', label: 'Terdeteksi', detail: 'Sinyal awal masuk.' },
+        { hari: 2, status: 'dinilai', label: 'Dinilai', detail: 'Dinilai di poli.' },
+      ],
     }))
     const hasil = perbaruiEpisode(episodes, {
       id: 'episode_paling_mendesak',
@@ -146,9 +155,120 @@ describe('Bridge B2 - continuity ledger lintas UKM, UKP, dan RS', () => {
       eventDetail: 'Episode mendesak masuk ke ledger penuh.',
     })
 
-    expect(hasil).toHaveLength(120)
+    expect(hasil).toHaveLength(121)
     expect(hasil.some((episode) => episode.id === 'episode_paling_mendesak')).toBe(true)
-    expect(hasil.some((episode) => episode.id === 'episode_119')).toBe(false)
+    // Record paling tidak mendesak TETAP ada — dulu ia dibuang begitu saja.
+    expect(hasil.some((episode) => episode.id === 'episode_119')).toBe(true)
+    // ...hanya riwayatnya yang dirampingkan ke peristiwa terakhir.
+    expect(hasil.find((episode) => episode.id === 'episode_119')?.history).toEqual([
+      { hari: 2, status: 'dinilai', label: 'Dinilai', detail: 'Dinilai di poli.' },
+    ])
+    // Yang masih di dalam slot detail utuh riwayatnya.
+    expect(hasil.find((episode) => episode.id === 'episode_000')?.history).toHaveLength(2)
+    // Worklist tidak berkurang satu pun.
+    expect(ringkasanEpisode(hasil, 20).active).toBe(121)
+  })
+
+  // Audit UKM 2026-08-22 (bukti: bridge.ts penggusuran kapasitas vs
+  // ringkasanEpisode). Ini regresi inti temuan: kapasitas tidak boleh
+  // mencabut kerja yang sudah pemain selesaikan.
+  it('audit UKM 2026-08-22: hitungan tuntas tidak menyusut saat ledger melewati kapasitas', () => {
+    const tuntas = Array.from({ length: 118 }, (_, index): CareEpisodeLite => ({
+      ...episodeDasar('terverifikasi'),
+      id: `episode_tuntas_${String(index).padStart(3, '0')}`,
+      dueDay: undefined,
+      updatedDay: index + 1,
+    }))
+    const aktif = Array.from({ length: 3 }, (_, index): CareEpisodeLite => ({
+      ...episodeDasar('menunggu'),
+      id: `episode_aktif_${index}`,
+      dueDay: 200 + index,
+      updatedDay: 150,
+    }))
+    const ledgerAwal = [...tuntas, ...aktif]
+    const sebelum = ringkasanEpisode(ledgerAwal, 160)
+
+    const hasil = perbaruiEpisode(ledgerAwal, {
+      id: 'episode_aktif_baru',
+      day: 160,
+      subjectId: 'warga_baru',
+      subjectName: 'Pak Baru',
+      source: 'klinik',
+      problemId: 'kontrol_baru',
+      problemLabel: 'Kontrol baru',
+      owner: 'dokter',
+      status: 'menunggu',
+      signal: 'Kasus baru masuk saat ledger sudah penuh.',
+      nextAction: 'Jadwalkan kontrol.',
+      dueDay: 165,
+      eventLabel: 'Terdeteksi',
+      eventDetail: 'Episode ke-122.',
+    })
+    const sesudah = ringkasanEpisode(hasil, 160)
+
+    expect(hasil).toHaveLength(122)
+    expect(sesudah.verified).toBe(sebelum.verified) // 118, dulu turun jadi ≤116
+    expect(sesudah.closed).toBe(sebelum.closed)
+    expect(sesudah.adverse).toBe(sebelum.adverse)
+    expect(sesudah.active).toBe(sebelum.active + 1)
+  })
+
+  it('audit UKM 2026-08-22: 400 episode tuntas berturut-turut tetap terhitung 400', () => {
+    let ledger: CareEpisodeLite[] = []
+    for (let index = 0; index < 400; index++) {
+      ledger = perbaruiEpisode(ledger, {
+        id: `episode_panen_${String(index).padStart(3, '0')}`,
+        day: 10 + index,
+        subjectId: `warga_${index}`,
+        subjectName: `Warga ${index}`,
+        source: 'klinik',
+        problemId: 'kontrol_rutin',
+        problemLabel: 'Kontrol rutin',
+        owner: 'dokter',
+        status: 'terverifikasi',
+        signal: 'Kasus ditutup dengan verifikasi hasil.',
+        nextAction: 'Selesai.',
+        eventLabel: 'Terverifikasi',
+        eventDetail: 'Hasil diverifikasi dokter.',
+      })
+    }
+    const ringkasan = ringkasanEpisode(ledger, 500)
+
+    // Satu stase karier (90 hari) wajar memanen ratusan episode; dulu angka
+    // ini mentok di sisa slot 120 dan terus mundur setiap episode baru.
+    expect(ledger).toHaveLength(400)
+    expect(ringkasan.verified).toBe(400)
+    expect(ringkasan.closureRate).toBe(1)
+    expect(ledger.some((episode) => episode.id === 'episode_panen_000')).toBe(true)
+  })
+
+  it('plafon arsip 900 tetap jadi rem memori, dan yang jatuh adalah ekor paling basi', () => {
+    const episodes = Array.from({ length: 900 }, (_, index): CareEpisodeLite => ({
+      ...episodeDasar('terverifikasi'),
+      id: `episode_arsip_${String(index).padStart(3, '0')}`,
+      dueDay: undefined,
+      updatedDay: index + 1, // index 0 = paling lama tak tersentuh
+    }))
+    const hasil = perbaruiEpisode(episodes, {
+      id: 'episode_arsip_baru',
+      day: 950,
+      subjectId: 'warga_lewat_plafon',
+      subjectName: 'Warga Lewat Plafon',
+      source: 'klinik',
+      problemId: 'kontrol_rutin',
+      problemLabel: 'Kontrol rutin',
+      owner: 'dokter',
+      status: 'menunggu',
+      signal: 'Record ke-901.',
+      nextAction: 'Tindak lanjuti.',
+      eventLabel: 'Terdeteksi',
+      eventDetail: 'Melewati plafon arsip.',
+    })
+
+    expect(hasil).toHaveLength(900)
+    expect(hasil.some((episode) => episode.id === 'episode_arsip_baru')).toBe(true)
+    expect(hasil.some((episode) => episode.id === 'episode_arsip_000')).toBe(false)
+    expect(hasil.some((episode) => episode.id === 'episode_arsip_001')).toBe(true)
   })
 
   it('ringkasan memakai hari permainan untuk mendeteksi overdue dan memisahkan verifikasi dari hasil buruk', () => {

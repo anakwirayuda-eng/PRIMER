@@ -8,6 +8,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { useGame } from '../store'
 import { PELUANG_KADER_BENAR } from '@engine/kegiatan'
 import type { HasilKegiatan } from '@engine/kegiatan'
+import type { JenisKegiatan, KartuKegiatan, PilihanKegiatan } from '@engine/state'
 import { acakUrutan } from '../utils/acakUrutan'
 import { sumberKegiatanUkm, tautanKegiatanUkm } from '@content/ukmCitations'
 import { TautanSumber } from '../components/TautanSumber'
@@ -35,7 +36,15 @@ export function Kegiatan() {
   const eventTick = useGame((s) => s.eventTick)
 
   const [hasil, setHasil] = useState<HasilKegiatan | null>(null)
-  const [pilihanTerpilih, setPilihanTerpilih] = useState<string | null>(null)
+  // Audit UKM 2026-08-22 (P1): CUPLIKAN tampilan vonis kartu yang baru dijawab.
+  // Jawabannya sudah TERSIMPAN di engine sebelum panel ini muncul (dispatch
+  // terjadi pada klik yang sama), jadi cuplikan ini murni pacing baca — tak
+  // menyimpan jawaban, tak bisa dipakai memundurkan apa pun lewat quit/reload.
+  // Disimpan sebagai objek, bukan id: pada kartu TERAKHIR sesi langsung selesai
+  // dan `state.kegiatan` lenyap, sehingga pencarian by-id takkan menemukan
+  // apa pun dan pembahasan kartu penutup akan terlewat begitu saja.
+  const [vonis, setVonis] = useState<{ kartu: KartuKegiatan; pilihan: PilihanKegiatan; jenis: JenisKegiatan } | null>(null)
+
   const tickRef = useRef(-1)
 
   const kg = state.kegiatan
@@ -58,9 +67,11 @@ export function Kegiatan() {
   // stempel tepat/keliru, melainkan teks pembahasannya. Sapuan
   // useEffect→useLayoutEffect 2026-08-01 (Kunjungan/PetaDesa/Klinik) melewatkan
   // berkas ini.
-  useLayoutEffect(() => {
-    setPilihanTerpilih(null)
-  }, [kg?.index])
+  // Audit UKM 2026-08-22 (P1): tak ada lagi state pilihan lokal untuk direset —
+  // status terjawab kini diturunkan dari kg.jawaban (sumber tunggal di engine),
+  // sehingga kebocoran satu-frame yang diperbaiki di sini mustahil terulang:
+  // panel vonis hanya dirender bila kartu BERJALAN punya entri jawaban.
+  void 0
 
   // CODEX M14 #14c: pindah kartu meng-unmount tombol sebelumnya → fokus jatuh ke
   // <body>. Pindahkan ke panel (pola DeckAksi). Dipasang ref di bawah.
@@ -82,13 +93,20 @@ export function Kegiatan() {
   // ada sesi aktif (`!kg`), agar sesi BARU tak tertutup hasil sesi lama yg masih
   // tersimpan. state-based = sinkron saat render → tak flash fallback "tak ada sesi".
   const hasilTampil = hasil ?? state.hasilKegiatanTerakhir
-  if (hasilTampil && !kg)
+  // Audit UKM 2026-08-22: kartu TERAKHIR menyelesaikan sesi pada klik yang sama,
+  // jadi layar hasil ditahan dulu sampai vonis penutupnya dibaca — kalau tidak,
+  // pembahasan kartu terakhir tak pernah sempat terlihat.
+  if (hasilTampil && !kg && !vonis)
     return <KartuHasil hasil={hasilTampil} onTutup={() => dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' })} />
   // CODEX ronde-11 #4: `layar==='kegiatan'` tanpa `state.kegiatan` (mis. save
   // korup) dulu me-return null diam-diam — blank screen TANPA throw, luput dari
   // ErrorBoundary. Beri jalan keluar eksplisit, bukan kosong.
   // CODEX ronde-13: `kartu.pilihan` korup (bukan array) crash di `.find`/`.map`
   // bawah bila lolos sampai sini — masukkan ke guard yang sama.
+  // Audit UKM 2026-08-22: kartu TERAKHIR menutup sesi pada klik yang sama, jadi
+  // `state.kegiatan` sudah lenyap saat pembahasannya perlu dibaca. Panel penutup
+  // ini merender cuplikan vonis itu sebelum layar hasil muncul.
+  if (vonis && (!kg || !kartu)) return <PanelVonisPenutup vonis={vonis} onTutup={() => setVonis(null)} />
   if (!kg || !kartu || !Array.isArray(kartu.pilihan)) {
     return (
       <div className="layar-tak-dikenal">
@@ -102,9 +120,17 @@ export function Kegiatan() {
 
   const meta = JUDUL[kg.jenis] ?? { label: 'KEGIATAN', sub: '' }
   const visual = profilVisualKegiatan(kg.jenis)
-  const pilihanObj = pilihanTerpilih ? kartu.pilihan.find((p) => p.id === pilihanTerpilih) : null
-  const sumberKartu = sumberKegiatanUkm(kartu, kg.jenis)
-  const tautanSumberKartu = tautanKegiatanUkm(kartu, kg.jenis)
+  // Audit UKM 2026-08-22 (P1): vonis diturunkan dari JAWABAN YANG SUDAH
+  // TERSIMPAN di engine (kg.jawaban), bukan dari state React lokal. Karena
+  // aksi JAWAB_KEGIATAN kini di-dispatch saat opsi DIKLIK dan ikut di-autosave,
+  // stempel TEPAT/KELIRU mustahil terbaca sebelum jawabannya terkunci — jadi
+  // menutup paksa aplikasi tak lagi mengembalikan kartu ke keadaan
+  // belum-dijawab dengan kunci jawaban di tangan.
+  const kartuVonis = vonis?.kartu
+  const pilihanObj = vonis?.pilihan ?? null
+  const pilihanTerpilih = vonis?.pilihan.id ?? null
+  const sumberKartu = kartuVonis ? sumberKegiatanUkm(kartuVonis, kg.jenis) : undefined
+  const tautanSumberKartu = kartuVonis ? tautanKegiatanUkm(kartuVonis, kg.jenis) : []
 
   return (
     <div className="kegiatan">
@@ -140,7 +166,10 @@ export function Kegiatan() {
                   className={`kegiatan__opsi ${nadaKelas}`}
                   disabled={pilihanTerpilih !== null}
                   title={pilihanTerpilih !== null ? 'Jawaban sudah dikunci — baca pembahasannya, lalu lanjut ke kartu berikutnya.' : undefined}
-                  onClick={() => setPilihanTerpilih(p.id)}
+                  onClick={() => {
+                    setVonis({ kartu, pilihan: p, jenis: kg.jenis })
+                    dispatch({ type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: p.id })
+                  }}
                 >
                   {p.label}
                 </button>
@@ -165,9 +194,7 @@ export function Kegiatan() {
                 )}
                 <button
                   className="tombol tombol--utama"
-                  onClick={() =>
-                    dispatch({ type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: pilihanObj.id })
-                  }
+                  onClick={() => setVonis(null)}
                 >
                   {kg.index + 1 >= kg.kartu.length ? 'Tutup Sesi →' : 'Kartu Berikutnya →'}
                 </button>
@@ -265,6 +292,53 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
         <button className="tombol tombol--utama tombol--besar" onClick={onTutup}>
           Kembali ke Peta Desa
         </button>
+      </div>
+    </div>
+  )
+}
+
+/**
+ * Audit UKM 2026-08-22: pembahasan kartu PENUTUP sesi. Dirender dari cuplikan
+ * (bukan dari `state.kegiatan`, yang sudah kosong begitu sesi selesai) supaya
+ * kartu terakhir tak pernah lagi terlewat pembahasannya. Display-only —
+ * jawabannya sudah tersimpan di engine sejak opsi diklik.
+ */
+function PanelVonisPenutup({
+  vonis,
+  onTutup,
+}: {
+  vonis: { kartu: KartuKegiatan; pilihan: PilihanKegiatan; jenis: JenisKegiatan }
+  onTutup: () => void
+}) {
+  const sumberKartu = sumberKegiatanUkm(vonis.kartu, vonis.jenis)
+  const tautanSumberKartu = tautanKegiatanUkm(vonis.kartu, vonis.jenis)
+  return (
+    <div className="kegiatan">
+      <div className="kegiatan__panel kertas">
+        <div className="kegiatan__kartu">
+          <div className="judul-seksi">{vonis.kartu.judul}</div>
+          <p className="kegiatan__narasi">{vonis.kartu.narasi}</p>
+          <div className="kegiatan__slot-aksi">
+            <div
+              className={`kegiatan__respons ${vonis.pilihan.benar ? 'kegiatan__respons--benar' : 'kegiatan__respons--salah'}`}
+              role="status"
+              aria-live="polite"
+            >
+              <span className="stempel stempel--kecil">{vonis.pilihan.benar ? 'TEPAT' : 'KELIRU'}</span>
+              <p>{vonis.pilihan.respons}</p>
+              {sumberKartu && (
+                <div className="kegiatan__sumber">
+                  <b className="mono">LANDASAN RESMI</b>
+                  <p>{sumberKartu}</p>
+                  <TautanSumber sumber={tautanSumberKartu} />
+                </div>
+              )}
+              <button className="tombol tombol--utama" onClick={onTutup}>
+                Lihat Hasil Sesi →
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   )

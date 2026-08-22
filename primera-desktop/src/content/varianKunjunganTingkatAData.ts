@@ -16,6 +16,20 @@
  * sudah diperbaiki (verdict null = bantahan, bukan lolos diam-diam) sebelum
  * dipakai di sini -- lihat riwayat commit utk detail.
  *
+ * KOREKSI MANUAL (audit UKM 2026-08-22) — WAJIB IKUT bila file diregenerasi:
+ * kedua varian PAGI bagyo_k1 ('pagi_ramai_hari_pasaran', 'kabut_subuh_bubu_
+ * kosong') dulu membiarkan respons bk1_d3_c berbunyi "Wis sore, Dok" — penanda
+ * waktu presentasi DASAR bocor ke varian pagi, dan pemain membacanya utuh.
+ * Ditambahkan `pilihanBerubah` (mekanisme yang sudah ada, sama seperti varian
+ * lain di file ini) yang menukar HANYA penanda waktunya; isi pengusiran halus
+ * itu — tawa yang mati, tuan rumah yang dipermalukan di depan anaknya — dibiarkan
+ * persis seperti aslinya, begitu pula gaya/efekTrust/tepat/catatanPedagogis
+ * yang memang tak bisa disentuh varian. Satu kasus sekelas ikut ditambal:
+ * varian 'pagi_mengupas_singkong_di_bale_bale' (asih_k1) dulu memakai respons
+ * dasar ak1_d3_c yang berakhir "mengisyaratkan sore sudah larut" padahal
+ * pembukanya matahari baru naik separuh. Regresi ketiganya dijaga
+ * src/engine/kunjungan.test.ts (blok "audit UKM 2026-08-22 #a").
+ *
  * Kunci = id skenario kunjungan (unik lintas 16 keluarga, diverifikasi
  * pack.test.ts). Diterapkan ke katalog oleh
  * `terapkanVarianKunjunganTingkatA()` (varianKunjunganTingkatA.ts) saat
@@ -195,6 +209,11 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
       pilihanBerubah: {
         ak1_d2_a: { respons: 'Mata Bu Asih berkaca sambil mendekap Udin yang duduk di pangkuannya lebih erat. "Tahun sembilan puluhan, Dok, saya masih gadis. Mbakyu saya masuknya sudah kejang-kejang, kata orang darahnya naik. Sampai sekarang saya mimpi buruk kalau ingat lorong rumah sakit itu." — Kejang. Darah naik. Eklampsia yang terlambat.' },
         ak1_d3_a: { responsBohong: '"Rencananya ya di bidan, Dok," jawabnya lancar sambil mendekap Udin di pangkuannya, matanya melirik ke arah kamar yang pintunya terbuka pagi itu — ke bungkusan kain dan gunting yang sudah disiapkan untuk Mbah Rah.' },
+        // Audit UKM 2026-08-22 (temuan sekelas varian pagi bagyo_k1): dasar
+        // menutup dengan "mengisyaratkan sore sudah larut" — mustahil di varian
+        // yang pembukanya matahari baru naik separuh. Isyarat pamitnya tetap,
+        // alasannya dipindahkan ke pekerjaan pagi yang sedang ia kerjakan.
+        ak1_d3_c: { respons: 'Hening. Bu Asih memeluk perutnya, seperti melindungi bayinya dari kata-katamu. "...Kalau begitu doakan saja saya selamat, Dok." Ia berdiri, mengisyaratkan singkong sekeranjang itu masih menunggu dikupas.' },
       },
       penutupBerhasil: 'Matahari sudah makin tinggi, Udin anteng bermain kerikil di halaman, saat Bu Asih memegang buku KIA yang kini ada isinya. "Angka-angka tadi itu... beneran tinggi ya, Dok?" Untuk pertama kalinya, pertanyaannya bukan tentang Mbah Rah — tentang dirinya. "Besok pagi saya ditunggu bu bidan, to? Iya, Dok, saya datang — katanya tensi sama air seninya mau dicek lagi, tidak boleh ditunda-tunda."',
       penutupGagal: 'Udin masih asyik mengorek tanah dengan ranting kecil di sampingnya saat kamu pamit pagi itu. Bu Asih melambaikan tangan dengan senyum yang sama seperti saat kamu datang — ramah, hangat, dan sama sekali tidak berubah. Di buku KIA, halaman pemeriksaan kembali menunggu entah sampai kapan.',
@@ -295,10 +314,20 @@ export const VARIAN_KUNJUNGAN_TINGKAT_A: Record<string, VarianKunjunganTingkatA[
         bk1_d2: 'Bu Jum, yang tadi sempat menitip singkong goreng ke bakul pasar keliling, ikut duduk. "Sebenarnya pas musim hujan kemarin Tini sama saya mencret bareng, Dok. Tapi kata orang-orang ya karena musim, bukan karena kali. Wong dari zaman simbah minum air kali ya sehat-sehat."',
         bk1_d3: 'Tini yang baru pulang jajan pasaran duduk di undakan, mendengarkan. "Kalau aku sih tim jamban, Dok," katanya tiba-tiba, "Di sekolah diajari, dan jijik tahu nggak sih liat bapak-bapak jongkok rame-rame." Pak Bagyo tersedak kopinya, handuk di bahunya melorot sedikit karena kaget.',
       },
+      pilihanBerubah: {
+        // Audit UKM 2026-08-22: pengusiran halusnya tetap, alasannya yang
+        // dipindahkan ke pagi hari pasaran — dasar berbunyi "Wis sore, Dok".
+        bk1_d3_c: { respons: 'Tawa di undakan itu mati. Pak Bagyo menatap kopimu yang belum habis: "Wis, Dok. Mumpung pasarannya masih ramai, mangga mampir-mampir dulu ke simpang. Jalan ke bawah licin kalau embunnya belum kering." Diusir dengan halus, oleh tuan rumah yang barusan dipermalukan di depan anaknya.' },
+      },
     },
     {
       id: 'kabut_subuh_bubu_kosong',
       pembuka: 'Kabut subuh belum sepenuhnya terangkat ketika kamu tiba di rumah panggung Pak Bagyo. Dari jalan setapak yang licin menuju kali, ia muncul menjinjing bubu ikan kosong. "Nihil, Dok, ikannya kompak mogok pagi ini," serunya sambil menggulung tali; handuk di bahunya masih basah oleh air kali. Ia menggantungkan bubu di pagar sebelum naik ke teras. Jamban bantuan di sampingnya berdiri bersih dan tak tersentuh. Pak Bagyo menunjuk sambil terkekeh, "Kantor lama saya di kali belakang masih buka tiap subuh. Dokter saja yang belum pernah diajak." Bu Jum membawa kopi, sementara Tini menjemur seragam sekolah dekat tanggul.',
+      pilihanBerubah: {
+        // Audit UKM 2026-08-22: idem varian pasaran — kabut subuh menggantikan
+        // "Wis sore, Dok", peringatan jalan licinnya justru makin masuk akal.
+        bk1_d3_c: { respons: 'Tawa di undakan itu mati. Pak Bagyo menatap kopimu yang belum habis: "Wis, Dok. Mumpung kabutnya sudah mulai terangkat. Jalan ke bawah licin kalau masih berembun begini." Diusir dengan halus, oleh tuan rumah yang barusan dipermalukan di depan anaknya.' },
+      },
     },
   ],
   endah_k1: [

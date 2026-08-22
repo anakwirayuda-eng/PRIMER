@@ -5,8 +5,8 @@
 
 import { describe, expect, it } from 'vitest'
 import { Rng } from './core/rng'
-import { driftProlanis, kartuProlanis, prolanisTerkendali } from './kegiatan'
-import type { PesertaProlanis } from './state'
+import { driftProlanis, jawabKegiatan, kartuProlanis, prolanisTerkendali } from './kegiatan'
+import type { KegiatanState, PesertaProlanis } from './state'
 
 function pesertaHt(override: Partial<PesertaProlanis> = {}): PesertaProlanis {
   return {
@@ -107,5 +107,38 @@ describe('Keputusan #8 (adjudikasi-delegasi 2026-08-21) — arah drift overtreat
       acuan.float() // satu draw manual
       expect(dipakai.float()).toBe(acuan.float())
     }
+  })
+})
+
+/* -- Audit UKM 2026-08-22 (P1): jawaban tak bisa ditimpa ulang ---------------- */
+
+describe('P1 anti-replay: kartu yang sudah dijawab menolak dijawab ulang', () => {
+  const sesi = (): KegiatanState => ({
+    jenis: 'posyandu',
+    rw: 2,
+    index: 0,
+    jawaban: [],
+    kartu: [
+      { id: 'k1', judul: 'A', narasi: 'a', pilihan: [{ id: 'a', label: 'A', benar: true, respons: 'ya' }, { id: 'b', label: 'B', benar: false, respons: 'tidak' }] },
+      { id: 'k2', judul: 'B', narasi: 'b', pilihan: [{ id: 'a', label: 'A', benar: true, respons: 'ya' }, { id: 'b', label: 'B', benar: false, respons: 'tidak' }] },
+    ],
+  } as unknown as KegiatanState)
+
+  it('menjawab kartu yang SUDAH terjawab dikembalikan apa adanya (tak menimpa, tak maju dua kali)', () => {
+    const pertama = jawabKegiatan(sesi(), 'k1', 'b')
+    expect(pertama.kg.jawaban).toEqual([{ kartuId: 'k1', pilihanId: 'b', benar: false }])
+    expect(pertama.kg.index).toBe(1)
+    // Simulasi dispatch ganda (mis. klik-ganda/ghost-click): kartuId sudah tak
+    // cocok dgn kartu berjalan, dan andai cocok pun penjaga jawaban menahan.
+    const ulang = jawabKegiatan(pertama.kg, 'k1', 'a')
+    expect(ulang.kg).toBe(pertama.kg)
+    expect(ulang.benar).toBe(false)
+  })
+
+  it('penjaga jawaban menahan walau kartuId cocok dgn kartu berjalan', () => {
+    const kg = sesi()
+    const disuntik = { ...kg, jawaban: [{ kartuId: 'k1', pilihanId: 'b', benar: false }] } as KegiatanState
+    const ulang = jawabKegiatan(disuntik, 'k1', 'a')
+    expect(ulang.kg).toBe(disuntik)
   })
 })

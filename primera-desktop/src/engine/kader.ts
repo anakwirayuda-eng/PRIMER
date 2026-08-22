@@ -84,8 +84,16 @@ interface AktivitasKader {
   rw: RwState
   /** KK statistik yang baru disurvei hari ini. */
   tambah: number
-  /** Keluarga binaan yang datanya baru diisi hari ini. */
-  keluargaDiisi: { id: string; nama: string }[]
+  /**
+   * Keluarga binaan yang datanya baru diisi hari ini.
+   *
+   * Audit UKM 2026-08-22: `terisi`/`tersisa` ikut dibawa karena surat kader
+   * dulu mengklaim "formulir 12 indikatornya sudah saya isi" padahal kuota
+   * harian cuma KUOTA_INDIKATOR_KADER_HARIAN kolom — pemain diberi tahu
+   * pekerjaan yang tidak pernah dikerjakan. Angka nyata harus ikut sampai ke
+   * penyusun surat, bukan ditebak di sana.
+   */
+  keluargaDiisi: { id: string; nama: string; terisi: number; tersisa: number }[]
   /**
    * CODEX audit (2026-07-12, temuan #8): plafon survei STATISTIK RW ini —
    * `totalKk` dikurangi keluarga binaan (bernama, sudah didata individual
@@ -150,7 +158,7 @@ export function prosesHarianKader(
     }
 
     // Keluarga binaan (bernama) di RW ini yang datanya masih 'belum'.
-    const keluargaDiisi: { id: string; nama: string }[] = []
+    const keluargaDiisi: AktivitasKader['keluargaDiisi'] = []
     for (const id of idKeluargaUrut) {
       const profil = pack.keluarga[id]
       const st = keluarga[id]
@@ -186,7 +194,15 @@ export function prosesHarianKader(
       }
       if (terisiHariIni === 0) continue
       keluarga[id] = { ...st, indikator }
-      keluargaDiisi.push({ id, nama: profil.namaKeluarga })
+      // Audit UKM 2026-08-22: sisa kolom 'belum' dihitung SESUDAH kuota harian
+      // dipakai — inilah yang membuat surat kader bisa berkata jujur "sisanya
+      // menyusul" alih-alih mengaku formulirnya sudah penuh. Kolom 'na'
+      // (tak berlaku secara demografis) tidak pernah ditanya kader, jadi tidak
+      // ikut dihitung sebagai sisa pekerjaan.
+      const tersisa = SEMUA_INDIKATOR_PISPK.filter(
+        (ind) => indikator[ind].sumber === 'belum' && indikator[ind].statusSebenarnya !== 'na',
+      ).length
+      keluargaDiisi.push({ id, nama: profil.namaKeluarga, terisi: terisiHariIni, tersisa })
     }
 
     aktivitas.push({ kader: kader[k.id] ?? k, rw: wilayah, tambah, keluargaDiisi, kkStatistikMax })
@@ -235,6 +251,9 @@ export function prosesHarianKader(
     wilayah.iks = clamp01(totalSehat / totalKeluarga + wilayah.bonusIks)
   }
 
+  // Audit UKM 2026-08-22 (P3): rumus IKS RW dipakai ULANG oleh jalur TAMAT lewat
+  // `segarkanIksRw` di bawah — satu sumber, supaya skor beku tak pernah lagi
+  // membaca angka basi. Lihat komentar fungsi itu.
   // Maksimal SATU surat laporan kader per hari.
   const surat: Surat[] = []
   const kandidat = aktivitas.filter((a) => a.tambah > 0 || a.keluargaDiisi.length > 0)
@@ -267,7 +286,23 @@ function buatSuratKader(a: AktivitasKader, pack: ContentPack, hari: number, rng:
 
   if (a.keluargaDiisi.length > 0) {
     const nama = a.keluargaDiisi.map((x) => x.nama).join(' dan ')
-    bagian.push(`Saya sempat mampir agak lama ke ${nama} — formulir 12 indikatornya sudah saya isi dan saya titip di meja Dokter.`)
+    // Audit UKM 2026-08-22: surat ini dulu berbunyi "formulir 12 indikatornya
+    // sudah saya isi" — tak pernah benar, karena kader dibatasi
+    // KUOTA_INDIKATOR_KADER_HARIAN kolom per keluarga per hari (fog-of-war
+    // bertahap #8). Pemain jadi mengira data satu keluarga sudah utuh dan
+    // berhenti menengoknya. Kini surat menyebut jumlah kolom yang BENAR-BENAR
+    // diisi hari ini dan mengakui sisanya belum digarap — nada kader tetap
+    // hangat, klaimnya yang dijujurkan.
+    const totalTerisi = a.keluargaDiisi.reduce((n, x) => n + x.terisi, 0)
+    const masihKosong = a.keluargaDiisi.some((x) => x.tersisa > 0)
+    const berapaKolom = totalTerisi === 1 ? 'satu kolom' : `${totalTerisi} kolom`
+    const formulir =
+      a.keluargaDiisi.length > 1 ? 'formulir 12 indikator masing-masing' : 'formulir 12 indikatornya'
+    bagian.push(
+      masihKosong
+        ? `Saya sempat mampir agak lama ke ${nama} — dari ${formulir}, baru ${berapaKolom} yang sempat saya isi hari ini; sisanya menyusul kalau saya lewat lagi. Yang sudah, saya titip di meja Dokter.`
+        : `Saya sempat mampir agak lama ke ${nama} — ${berapaKolom} terakhir sudah saya isi, jadi di ${formulir} sudah tidak ada lagi yang perlu saya tanyakan. Saya titip di meja Dokter.`,
+    )
   }
 
   // Petunjuk halus: kader kadang "kelepasan" soal indikator biasnya —
@@ -296,4 +331,43 @@ function buatSuratKader(a: AktivitasKader, pack: ContentPack, hari: number, rng:
     dibaca: false,
     ...(kaitId ? { kaitKeluargaId: kaitId } : {}),
   }
+}
+
+/**
+ * Audit UKM 2026-08-22 (P3): hitung ulang `iks` tiap RW dari keadaan keluarga
+ * TERKINI, tanpa menyentuh RNG/kader/surat.
+ *
+ * `prosesHarianKader` hanya berjalan pada pergantian hari, sedangkan jalur
+ * TAMAT menghitung skor beku dari salinan `s.desa.rw` apa adanya — sehingga
+ * seluruh kerja UKM di hari terakhir (termasuk koreksi indikator hasil flush
+ * janji yang terjadi di blok yang sama) tak pernah sampai ke `iksDesa`.
+ * Fungsi ini memakai rumus yang PERSIS sama dengan loop harian di atas
+ * (baseline yang sudah dipersist + bonus program), jadi IKS tetap satu sumber
+ * kebenaran — bukan salinan rumus yang bisa hanyut sendiri.
+ */
+export function segarkanIksRw(
+  rw: readonly RwState[],
+  keluarga: Record<string, KeluargaState>,
+  pack: ContentPack,
+): RwState[] {
+  const idKeluargaUrut = Object.keys(pack.keluarga).sort()
+  return rw.map((wilayah) => {
+    if (wilayah.proporsiBaselineRoll === undefined) return wilayah
+    let sehatBinaan = 0
+    let berdataBinaan = 0
+    for (const id of idKeluargaUrut) {
+      if (pack.keluarga[id]?.rw !== wilayah.nomor) continue
+      const st = keluarga[id]
+      if (!st) continue
+      const iks = hitungIksKeluarga(st)
+      if (iks === null) continue
+      berdataBinaan += 1
+      if (klasifikasiIks(iks) === 'sehat') sehatBinaan += 1
+    }
+    const totalKeluarga = berdataBinaan + wilayah.kkTersurvei
+    if (totalKeluarga === 0) return wilayah
+    const totalSehat = sehatBinaan + wilayah.proporsiBaselineRoll * wilayah.kkTersurvei
+    const iks = clamp01(totalSehat / totalKeluarga + wilayah.bonusIks)
+    return iks === wilayah.iks ? wilayah : { ...wilayah, iks }
+  })
 }

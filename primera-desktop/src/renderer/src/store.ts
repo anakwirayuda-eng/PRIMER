@@ -132,9 +132,16 @@ export const EVENT_AUTOSAVE = new Set([
 // hipotesis/intervensi) dulu TAK pernah di-autosave — crash/restart di tengah
 // kunjungan membuang seluruh progres babak. Aksi-aksinya jarang (belasan per
 // kunjungan) tapi tiap satunya bermakna; simpan per-langkah spt aksi manajemen.
+// Audit UKM 2026-08-22 (P1): sesi kegiatan lapangan dulu TAK PERNAH di-autosave
+// sampai kartu terakhir (KEGIATAN_SELESAI) — save terakhir di disk adalah
+// BLOK_BERGANTI awal siang. Dek Posyandu/Prolanis/KLB deterministik per
+// (seed, hari, rw), jadi sesi yang ditinggalkan bisa diulang identik berbekal
+// vonis yang sudah terbaca. Kini tiap MULAI_* dan tiap JAWAB_KEGIATAN disimpan,
+// persis pola langkah kunjungan di baris atas (KLIK_HOTSPOT dst.).
 export const AKSI_AUTOSAVE = new Set([
   'PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI', 'DISPOSISI_IGD',
   'MULAI_KUNJUNGAN', 'KLIK_HOTSPOT', 'PILIH_DIALOG', 'KOMIT_HAMBATAN', 'PILIH_INTERVENSI', 'LANJUT_BABAK',
+  'MULAI_POSYANDU', 'MULAI_PROLANIS', 'MULAI_KLB', 'JAWAB_KEGIATAN', 'DELEGASI_KEGIATAN',
 ])
 
 export const useGame = create<GameStore>((set, get) => ({

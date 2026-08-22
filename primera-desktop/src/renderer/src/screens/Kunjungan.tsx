@@ -58,8 +58,39 @@ const GAYA_INFO: Record<PilihanDialog['gaya'], { label: string; simbol: string }
   memaksa: { label: 'Memaksa', simbol: '!' },
 }
 
-function isiPlaceholderJadwal(teks: string, hari: number): string {
-  return teks.replaceAll('{jadwal}', `Hari ${hari}`)
+/** Sulih '{jadwal}' pada teks pilihan dengan waktu yang dokter sebutkan. */
+function isiPlaceholderJadwal(teks: string, waktu: string): string {
+  return teks.replaceAll('{jadwal}', waktu)
+}
+
+const TERBILANG = [
+  'nol',
+  'satu',
+  'dua',
+  'tiga',
+  'empat',
+  'lima',
+  'enam',
+  'tujuh',
+  'delapan',
+  'sembilan',
+  'sepuluh',
+  'sebelas',
+  'dua belas',
+  'tiga belas',
+  'empat belas',
+]
+
+/**
+ * Jarak waktu yang diucapkan di ruang tamu ("dalam empat hari", "dalam dua
+ * pekan") — sengaja BUKAN tanggal kalender permainan. Lihat catatan babak
+ * Ingatkan di bawah untuk alasannya.
+ */
+export function frasaJarakJanji(jumlahHari: number): string {
+  if (jumlahHari <= 0) return 'secepatnya'
+  const pekanBulat = jumlahHari % 7 === 0
+  const angka = pekanBulat ? jumlahHari / 7 : jumlahHari
+  return `dalam ${TERBILANG[angka] ?? angka} ${pekanBulat ? 'pekan' : 'hari'}`
 }
 
 /** Ingatkan nada pilihan sebelumnya tanpa menulis ulang seluruh pohon dialog. */
@@ -231,7 +262,18 @@ export function Kunjungan() {
     ? arcKunjunganAktif(PACK, kelContent, state.mode, state.contentRelease)
     : []
   const arcTamat = Boolean(kj && arcAktif.findIndex((item) => item.id === kj.skenarioId) === arcAktif.length - 1)
-  const hariJanji = hariTindakLanjutKunjungan(state.hari, state.mode, arcTamat)
+  // Audit UKM 2026-08-22 (P3): babak Ingatkan dulu menyulih '{jadwal}' dengan
+  // TANGGAL permainan ("Hari 12") yang dihitung sebelum hasil kunjungan dinilai,
+  // padahal engine baru memasang janji tindak lanjut bila kunjungannya BERHASIL
+  // (kunjungan.ts) — pemain yang gagal menutup kunjungan dengan tanggal yang tak
+  // pernah masuk kalender mana pun, sementara "Hari N" di layar lain SELALU
+  // berarti jadwal sungguhan (tooltip kartu keluarga, chip "Janji ulang" di
+  // peta). Menunggu hasil juga bukan jalan keluar: memunculkan tanggal hanya
+  // saat pemain benar sama dengan membocorkan kunci sebelum ia menekan tombol.
+  // Maka yang diucapkan di ruang tamu adalah JARAK WAKTU kesepakatannya — benar
+  // diucapkan apa pun hasilnya; tanggal pastinya baru muncul setelah engine
+  // sungguh menjadwalkannya.
+  const jarakJanji = hariTindakLanjutKunjungan(state.hari, state.mode, arcTamat) - state.hari
   const pilihanIngatkanAcak = useMemo(
     () => skenario?.pilihanIngatkan
       ? acakUrutan(skenario.pilihanIngatkan.pilihan, state.seed, 'kunjungan-ingatkan', 0)
@@ -446,9 +488,13 @@ export function Kunjungan() {
                   onClick={() => responsPenerimaan(pilihan.id)}
                 >
                   <span className="kunjungan-pilihan__teks">
+                    {/* Kontak pertama: tanggalnya SAH disebut — engine memasang
+                        followUpHari = hari + ulangDalamHari begitu pemain memilih
+                        menghormati penolakan (kunjungan.ts), jadi yang terbaca di
+                        sini persis yang masuk kalender. */}
                     {isiPlaceholderJadwal(
                       pilihan.teks,
-                      state.hari + skenario.penerimaanAwal!.ulangDalamHari,
+                      `Hari ${state.hari + skenario.penerimaanAwal!.ulangDalamHari}`,
                     )}
                   </span>
                 </button>
@@ -662,7 +708,7 @@ export function Kunjungan() {
                   onClick={() => pilihIngatkan(pilihan.id)}
                 >
                   <span className="kunjungan-pilihan__teks">
-                    {isiPlaceholderJadwal(pilihan.teks, hariJanji)}
+                    {isiPlaceholderJadwal(pilihan.teks, frasaJarakJanji(jarakJanji))}
                   </span>
                 </button>
               ))}

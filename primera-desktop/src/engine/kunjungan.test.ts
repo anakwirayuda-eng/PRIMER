@@ -18,7 +18,16 @@ import type {
 } from '../content/types'
 import { Rng } from './core/rng'
 import { hitungIksKeluarga, klasifikasiIks, SEMUA_INDIKATOR_PISPK } from './pispk'
-import { aksiKunjungan, buatKunjungan, selesaikanKunjungan, skenarioEfektif, terapkanHasil } from './kunjungan'
+import { isGayaTerlarang } from '@content/types'
+import { PACK } from '@content/index'
+import {
+  aksiKunjungan,
+  buatKunjungan,
+  PENUTUP_DIUSIR,
+  selesaikanKunjungan,
+  skenarioEfektif,
+  terapkanHasil,
+} from './kunjungan'
 import { prosesHarianKader } from './kader'
 
 /* ---------------------------------------------------------------------------
@@ -580,7 +589,11 @@ describe('konfrontasi & diusir', () => {
     const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
     expect(hasil.diusir).toBe(true)
     expect(hasil.berhasil).toBe(false)
-    expect(hasil.narasiPenutup).toBe(SKENARIO.penutupGagal)
+    // Audit UKM 2026-08-22: test ini dulu MENGUNCI perilaku keliru —
+    // `penutupGagal` (perpisahan kunjungan tuntas-tapi-gagal) dipakai juga
+    // untuk pemain yang barusan dipersilakan pulang.
+    expect(hasil.narasiPenutup).toBe(PENUTUP_DIUSIR)
+    expect(hasil.narasiPenutup).not.toContain(SKENARIO.penutupGagal)
     // Trust tetap terjun: -2 -2 = -4, clamp di 0-10.
     const kelBaru = terapkanHasil(kel, hasil, SKENARIO, 3, 2)
     expect(kelBaru.trust).toBe(1)
@@ -1158,5 +1171,184 @@ describe('prosesHarianKader (scout)', () => {
       expect(state.desa.rw[0]!.iks).toBe(iksSetelahPlateau)
       expect(state.desa.rw[0]!.proporsiBaselineRoll).toBe(rollSetelahPlateau)
     }
+  })
+
+  // Audit UKM 2026-08-22: surat kader dulu berbunyi "formulir 12 indikatornya
+  // sudah saya isi" padahal kuota harian cuma KUOTA_INDIKATOR_KADER_HARIAN=2
+  // kolom per keluarga — klaim itu hampir selalu salah, dan membuat pemain
+  // mengira data keluarga sudah utuh lalu berhenti menengoknya.
+  it('audit UKM 2026-08-22: surat kader menyebut kolom yang BENAR-BENAR diisi, bukan mengaku formulir 12 indikator selesai', () => {
+    const pack = buatPackKader()
+    const awal = buatStateKader()
+    const hari2 = prosesHarianKader(awal, pack, new Rng(42, 'kader', 2))
+    const isi2 = hari2.surat[0]!.isi
+
+    // fam1 punya 3 kolom 'belum' non-na; kuota harian menutup baru 2 di antaranya.
+    expect(isi2).toContain('Saya sempat mampir agak lama ke Keluarga Raharjo') // nada kader tetap
+    expect(isi2).toContain('baru 2 kolom yang sempat saya isi hari ini')
+    expect(isi2).toContain('sisanya menyusul kalau saya lewat lagi')
+    expect(isi2).not.toContain('formulir 12 indikatornya sudah saya isi')
+
+    // Hari 3 kolom terakhir baru tergarap — barulah surat boleh bilang beres.
+    const hari3 = prosesHarianKader(
+      { ...awal, hari: 3, desa: { ...awal.desa, keluarga: hari2.keluarga, rw: hari2.rw, kader: hari2.kader } },
+      pack,
+      new Rng(42, 'kader', 3),
+    )
+    const isi3 = hari3.surat[0]!.isi
+    expect(isi3).toContain('satu kolom terakhir sudah saya isi')
+    expect(isi3).toContain('tidak ada lagi yang perlu saya tanyakan')
+    expect(isi3).not.toContain('sisanya menyusul')
+  })
+})
+
+/* ---------------------------------------------------------------------------
+ * REGRESI AUDIT UKM 2026-08-22 — tiga temuan konten/engine kunjungan
+ * ------------------------------------------------------------------------- */
+
+describe('audit UKM 2026-08-22 #b — penutup kunjungan yang DIHENTIKAN tuan rumah', () => {
+  it('diusir di babak Ingatkan-pun tak pernah memungut penutup/pujian yang tak terjadi', () => {
+    const kel = buatKel(5)
+    const kj = jalankanIngatkan(
+      [
+        { type: 'LANJUT_BABAK' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p1_konfrontasi' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p2_konfrontasi' },
+      ],
+      kel,
+    )
+    expect(kj.diusir).toBe(true)
+
+    const hasil = selesaikanKunjungan(kj, SKENARIO_INGATKAN, kel)
+    expect(hasil.narasiPenutup).toBe(PENUTUP_DIUSIR)
+    // Tak ada perpisahan hangat, tak ada narasi kartu, tak ada respons Ingatkan.
+    expect(hasil.narasiPenutup).not.toContain(SKENARIO_INGATKAN.penutupGagal)
+    expect(hasil.narasiPenutup).not.toContain(SKENARIO_INGATKAN.penutupBerhasil)
+    for (const kartu of SKENARIO_INGATKAN.intervensi) {
+      expect(hasil.narasiPenutup).not.toContain(kartu.hasilNarasi)
+    }
+  })
+
+  it('kunjungan tuntas-tapi-gagal TETAP memakai penutupGagal skenario (bukan teks diusir)', () => {
+    const kel = kelJambanBohong(6)
+    const r = jalankan(
+      buatKunjungan(kel.id, SKENARIO, rngTest),
+      [
+        { type: 'LANJUT_BABAK' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p1_empati' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p2_ungkap' },
+        { type: 'PILIH_DIALOG', pilihanId: 'p3_refleksi' },
+        { type: 'LANJUT_BABAK' },
+        { type: 'KOMIT_HAMBATAN', hipotesis: 'motivasi' }, // salah
+        { type: 'PILIH_INTERVENSI', intervensiId: 'i_arisan' },
+      ],
+      kel,
+    )
+    const hasil = selesaikanKunjungan(r.kj, SKENARIO, kel)
+    expect(hasil.diusir).toBe(false)
+    expect(hasil.narasiPenutup).toContain(SKENARIO.penutupGagal)
+    expect(hasil.narasiPenutup).not.toContain(PENUTUP_DIUSIR)
+  })
+})
+
+describe('audit UKM 2026-08-22 #a — varian pagi tak boleh menyisakan penanda waktu sore', () => {
+  const bagyo = PACK.keluarga['keluarga_bagyo']
+  const bagyoK1 = bagyo?.arc.kunjungan.find((sk) => sk.id === 'bagyo_k1')
+
+  /** Seluruh teks yang benar-benar DIBACA pemain dalam satu presentasi. */
+  function teksTerbaca(sk: SkenarioKunjungan): string[] {
+    return [
+      sk.pembuka,
+      sk.penutupBerhasil,
+      sk.penutupGagal,
+      ...sk.hotspot.map((h) => h.narasi),
+      ...sk.dialog.flatMap((d) => [
+        d.narasi,
+        ...d.pilihan.flatMap((p) => [p.teks, p.respons, p.ungkap?.responsBohong ?? '']),
+      ]),
+    ]
+  }
+
+  it('kedua varian pagi/subuh bagyo_k1 nol menyebut sore/senja/malam', () => {
+    expect(bagyoK1).toBeDefined()
+    const varianPagi = (bagyoK1!.varianKunjungan ?? []).filter((v) =>
+      /pagi|subuh|kabut/i.test(v.id),
+    )
+    expect(varianPagi.map((v) => v.id)).toEqual(['pagi_ramai_hari_pasaran', 'kabut_subuh_bubu_kosong'])
+    for (const v of varianPagi) {
+      const efektif = skenarioEfektif(bagyoK1!, v.id)
+      for (const teks of teksTerbaca(efektif)) {
+        expect(teks, `varian ${v.id}`).not.toMatch(/\b(sore|senja|malam)\b/i)
+      }
+    }
+  })
+
+  /**
+   * Kasus sekelas di keluarga lain: 'malam' TIDAK dilarang di sini karena varian
+   * ini memang bercerita tentang Pak Jumadi yang baru pulang jaga malam ronda —
+   * yang dilarang hanya penanda JAM SEKARANG yang bertabrakan dengan pagi.
+   */
+  it('varian pagi asih_k1 tak lagi menutup dengan isyarat "sore sudah larut"', () => {
+    const asihK1 = PACK.keluarga['keluarga_asih']?.arc.kunjungan.find((sk) => sk.id === 'asih_k1')
+    expect(asihK1).toBeDefined()
+    const efektif = skenarioEfektif(asihK1!, 'pagi_mengupas_singkong_di_bale_bale')
+    expect(efektif.pembuka).toMatch(/Pagi itu/)
+    for (const teks of teksTerbaca(efektif)) {
+      expect(teks).not.toMatch(/\b(sore|senja)\b/i)
+    }
+    const dasar = asihK1!.dialog.flatMap((d) => d.pilihan).find((p) => p.id === 'ak1_d3_c')!
+    const p = efektif.dialog.flatMap((d) => d.pilihan).find((x) => x.id === 'ak1_d3_c')!
+    expect(p.gaya).toBe(dasar.gaya)
+    expect(p.efekTrust).toBe(dasar.efekTrust)
+    expect(p.tepat).toBe(dasar.tepat)
+    // Isyarat pamitnya tetap ada — hanya alasannya yang dipindahkan ke pagi.
+    expect(p.respons).toContain('Ia berdiri, mengisyaratkan')
+    expect(p.respons).toContain('doakan saja saya selamat, Dok')
+  })
+
+  it('penukaran itu HANYA menyentuh penanda waktu — kunci jawaban pilihan tak bergeser', () => {
+    const dasar = bagyoK1!.dialog.flatMap((d) => d.pilihan).find((p) => p.id === 'bk1_d3_c')!
+    for (const id of ['pagi_ramai_hari_pasaran', 'kabut_subuh_bubu_kosong']) {
+      const p = skenarioEfektif(bagyoK1!, id)
+        .dialog.flatMap((d) => d.pilihan)
+        .find((x) => x.id === 'bk1_d3_c')!
+      expect(p.teks).toBe(dasar.teks)
+      expect(p.gaya).toBe(dasar.gaya)
+      expect(p.efekTrust).toBe(dasar.efekTrust)
+      expect(p.tepat).toBe(dasar.tepat)
+      expect(p.catatanPedagogis).toBe(dasar.catatanPedagogis)
+      // Maknanya utuh: tuan rumah tetap mengusir dengan halus.
+      expect(p.respons).toContain('Diusir dengan halus')
+      expect(p.respons).toContain('Jalan ke bawah licin')
+    }
+  })
+})
+
+describe('audit UKM 2026-08-22 #c — gaya terlarang tak boleh gratis', () => {
+  it('setiap pilihan bergaya terlarang di SELURUH pack berbiaya trust negatif', () => {
+    const nol: string[] = []
+    for (const kel of Object.values(PACK.keluarga)) {
+      for (const sk of kel.arc.kunjungan) {
+        for (const node of sk.dialog) {
+          for (const p of node.pilihan) {
+            if (isGayaTerlarang(p.gaya) && p.efekTrust >= 0) nol.push(`${sk.id}/${p.id} (${p.gaya})`)
+          }
+        }
+      }
+    }
+    expect(nol).toEqual([])
+  })
+
+  it('dua outlier lama kini sekelas tetangganya (-1), bukan nol', () => {
+    function pilihan(keluargaId: string, skenarioId: string, pilihanId: string) {
+      const sk = PACK.keluarga[keluargaId]?.arc.kunjungan.find((s) => s.id === skenarioId)
+      return sk?.dialog.flatMap((d) => d.pilihan).find((p) => p.id === pilihanId)
+    }
+    const ak3 = pilihan('keluarga_asih', 'asih_k3', 'ak3_d3_c')
+    const ek1 = pilihan('keluarga_endah', 'endah_k1', 'ek1_d2_c')
+    expect(ak3?.efekTrust).toBe(-1)
+    expect(ek1?.efekTrust).toBe(-1)
+    // Beda kelas dari konfrontasi yang bikin tuan rumah menutup barisan (-2).
+    expect(pilihan('keluarga_endah', 'endah_k1', 'ek1_d1_c')?.efekTrust).toBe(-2)
   })
 })

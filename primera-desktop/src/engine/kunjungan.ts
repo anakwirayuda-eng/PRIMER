@@ -389,6 +389,23 @@ export function aksiKunjungan(
 const AMBANG_KUALITAS_MI_BERHASIL = 50
 
 /**
+ * Penutup untuk kunjungan yang DIHENTIKAN tuan rumah — righting reflex (dua
+ * gaya terlarang beruntun) maupun memaksa masuk di babak penerimaan awal.
+ *
+ * Audit UKM 2026-08-22: jalur ini dulu ikut memakai `skenario.penutupGagal`,
+ * padahal teks itu ditulis untuk kunjungan yang TUNTAS tapi tak menggerakkan —
+ * perpisahan hangat bergaya "Terima kasih ilmunya, Dok". Akibatnya debrief sore
+ * merangkai pujian tuan rumah tepat setelah kalimat "kamu diminta pulang", dan
+ * pemain membaca perpisahan yang tak pernah terjadi. Penutup ini sengaja
+ * netral-skenario: yang diketahui engine hanyalah kunjungan berhenti di tengah,
+ * dan mengarang detail rumah tertentu justru sumber kontradiksi baru.
+ */
+export const PENUTUP_DIUSIR =
+  'Pintu ditutup pelan di belakangmu, dan tak ada yang mengantar sampai pagar. ' +
+  'Tidak ada rencana yang sempat disepakati, tidak ada janji kunjungan berikutnya — ' +
+  'hanya rumah yang kini lebih rapat daripada sebelum kamu datang.'
+
+/**
  * Merekonstruksi seluruh penilaian kunjungan dari id yang tersimpan + skenario.
  * `kel` adalah state keluarga SEBELUM hasil diterapkan (trust awal kunjungan) —
  * replay gerbang kejujuran deterministik terhadap urutan pilihan.
@@ -412,7 +429,9 @@ export function selesaikanKunjungan(
       kualitasMi: 0,
       kualitasSaji: 0,
       indikatorTerverifikasi: [],
-      narasiPenutup: pilihan?.respons ?? skenario.penutupGagal,
+      // Audit UKM 2026-08-22: cadangan pun harus tahu diri — pemain yang
+      // memaksa masuk tak boleh jatuh ke penutup kunjungan tuntas-tapi-gagal.
+      narasiPenutup: pilihan?.respons ?? (diusir ? PENUTUP_DIUSIR : skenario.penutupGagal),
       ...(diusir ? { tingkat: 'gagal' as const } : { ulangDalamHari: skenario.penerimaanAwal.ulangDalamHari }),
       ...(pilihan?.catatanPedagogis ? { catatanPedagogis: [pilihan.catatanPedagogis] } : {}),
     }
@@ -524,13 +543,18 @@ export function selesaikanKunjungan(
     kualitasSaji,
     ...(kualitasIngatkan !== undefined ? { kualitasIngatkan } : {}),
     indikatorTerverifikasi,
-    narasiPenutup: [
-      pilihanIngatkan?.respons,
-      berhasil || !intervensiCocok ? kartu?.hasilNarasi : undefined,
-      berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
-    ]
-      .filter(Boolean)
-      .join(' '),
+    // Diusir = kunjungan berhenti di tengah wawancara: babak Ingatkan & kartu
+    // intervensi tak pernah ditawarkan, dan penutup skenario mengandaikan
+    // perpisahan yang tak pernah terjadi (audit UKM 2026-08-22).
+    narasiPenutup: kj.diusir
+      ? PENUTUP_DIUSIR
+      : [
+          pilihanIngatkan?.respons,
+          berhasil || !intervensiCocok ? kartu?.hasilNarasi : undefined,
+          berhasil ? skenario.penutupBerhasil : skenario.penutupGagal,
+        ]
+          .filter(Boolean)
+          .join(' '),
     tingkat,
     indikatorDibohongi,
     ...(catatanPedagogis.length > 0 ? { catatanPedagogis: catatanPedagogis.slice(0, 3) } : {}),

@@ -749,6 +749,20 @@ export interface HasilKegiatan {
 }
 
 /** Terapkan satu jawaban; kembalikan state baru + apakah sesi selesai. */
+/**
+ * Audit UKM 2026-08-22 (P1): menolak menjawab kartu yang SUDAH terjawab.
+ *
+ * Bersama dua perubahan di luar berkas ini — UI mengunci jawaban pada saat opsi
+ * DIKLIK (bukan saat tombol "Kartu Berikutnya"), dan tiap JAWAB_KEGIATAN kini
+ * di-autosave — vonis TEPAT/KELIRU tak bisa lagi terbaca sebelum jawabannya
+ * tersimpan. Dulu ketiganya bolong sekaligus: vonis tampil dari state React
+ * lokal, sesi tak pernah di-autosave sampai kartu terakhir, dan dek Posyandu/
+ * Prolanis/KLB deterministik per (seed, hari, rw) — jadi sesi bisa dibaca
+ * vonisnya lalu diulang identik berbekal kunci jawaban. Di Mode Ujian itu
+ * mengangkat dimensi UKM 35 poin tanpa jejak; telemetri anti-save-scum pun buta
+ * karena ia hanya menulis saat save BERHASIL, sedangkan pada percobaan pertama
+ * tak ada save sama sekali.
+ */
 export function jawabKegiatan(
   kg: KegiatanState,
   kartuId: string,
@@ -756,6 +770,7 @@ export function jawabKegiatan(
 ): { kg: KegiatanState; selesai: boolean; benar: boolean } {
   const kartu = kg.kartu[kg.index]
   if (!kartu || kartu.id !== kartuId) return { kg, selesai: false, benar: false }
+  if (kg.jawaban.some((j) => j.kartuId === kartuId)) return { kg, selesai: false, benar: false }
   const pilihan = kartu.pilihan.find((p) => p.id === pilihanId)
   if (!pilihan) return { kg, selesai: false, benar: false }
   const jawaban = [...kg.jawaban, { kartuId, pilihanId, benar: pilihan.benar }]

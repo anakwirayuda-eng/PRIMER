@@ -208,7 +208,13 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // kegiatan.ts — drift overtreatment HT terkendali turun (khusus HT);
   // verifikasi.ts — changelog rev 69. Rincian keputusan & dasarnya di
   // docs/ADJUDIKASI_DELEGASI_2026-08-21.md.
-  'reducer.ts': '8dc8e75df5a934792717558be0db3248c8389868f1784fb11820094e2c4a73a0',
+  // Unfreeze 2026-08-22 (audit UKM, REVISI_ENGINE 70): reducer/kegiatan —
+  // komit jawaban kegiatan + autosave (anti-replay); reducer/surveilans/state —
+  // kluster menghitung ORANG bukan encounter, flag kluster pulih saat padam;
+  // reducer/kader — skor TAMAT menyegarkan iks RW lewat rumus yang sama;
+  // kunjungan — penutup khusus DIUSIR; bridge — cap episode memangkas muatan,
+  // bukan menggusur record. Rincian di verifikasi.ts rev 70.
+  'reducer.ts': 'd4200eaed99cc98aead2dc9d9e9cc4dfbba685d1dfc80e356d80c9c885568e07',
   'clinic.ts': 'efd50c5395cdf9ca3a39064b65919b489d84195f4b24758db9e97205366e769c',
   'scoring.ts': 'f536ef72e328f5901caf116c0ed5a0bfc153a7eeabfba81f8fa154dbba834a55',
   // Unfreeze 2026-07-17 (Bridge B1.1, REVISI_ENGINE 44 -> 45): family
@@ -220,7 +226,7 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   'director.ts': '37039d94fca76f1db7616d9ac3ba82a27992b7d1468d78c1950ff27a3065b939',
   'core/rng.ts': '3a60dde2ff1fd06262549623f0a1ed92447102dc7d55df988c100ba89afcb4e1',
   'igd.ts': '930be5071fa33dd7f83d735b34612575bfc4f33453a2b19fe836fdfec2030349',
-  'kader.ts': '43e227f54f8f586ce7bfa324cc7e33591a6210590423412384e4fb25bc6df207',
+  'kader.ts': '5336ce70cce859528de050d6220664f192c161958d8416cea8dd5593309470c4',
   'init.ts': '4b9bb8b402c98f264d196592e7132aa7d1c6cb15c9e96755b5f06991f3ff71c1',
   // Unfreeze 2026-07-17 (bridge UKM↔UKP P0-B, REVISI_ENGINE 43 -> 44):
   // 22 kasus kluster dipetakan eksplisit ke 15 pola pengendalian; fallback
@@ -234,14 +240,14 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): respons opsi rujuk
   // kartu Prolanis HT berhenti menjanjikan kenaikan RRNS & kunci nilai
   // encounter yang tak pernah dijalankan sesi Prolanis (murni copy).
-  'kegiatan.ts': '824162457de22c12573c1504f68e313af0787d50d2bc0370fcee9abac59c0a25',
+  'kegiatan.ts': '4074bb04df622cd193e96b5cce43ae8ca6a171ab52cfa21482cac922a6486310',
   // Unfreeze 2026-07-19 (UKM assurance, REVISI_ENGINE 53 -> 54): hasil kartu
   // intervensi dan klasifikasi evidence pasca-penilaian masuk debrief; skor
   // tidak berubah tetapi output replay kunjungan berubah secara sengaja.
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): bobot babak
   // Ingatkan hanya masuk kualitasSaji bila babak itu benar-benar dijalani —
   // pemain yang diusir sebelum ditawari tak lagi dinilai atas fase itu.
-  'kunjungan.ts': '154a6e3b2e26d971f8dd47174dc4f0bb97303030c454da0ec050fcaa7e275976',
+  'kunjungan.ts': '51b00f1e1690325f45e4b4048f364e35ae26ede873b3d0d665fd626b62fbae28',
   'paketUjian.ts': 'aaa854b409b12f52c0f588401de10a6a00e03f3c3e80582015968f3a64afcf38',
   // Unfreeze 2026-07-16 (audit CODEX #1/#2/#4): REVISI_ENGINE di-bump untuk
   // gerbang terapiKritis + Dex "kuasai" ketat + konsekuensi hanya-kontraindikasi.
@@ -249,12 +255,12 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // sendiri berubah — lihat changelog rev 63 di verifikasi.ts.
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): REVISI_ENGINE
   // sendiri berubah — lihat changelog rev 68 di verifikasi.ts.
-  'verifikasi.ts': 'eafb4b32709403b66c0046fd512934cad7284c084f915cc2f859f62d46391293',
+  'verifikasi.ts': 'f6f633c26babf0ff0b885170a56fca8d5309eb27f253e8d5478f4de8fc3b9297',
   // Unfreeze 2026-08-21 (bug hunt, REVISI_ENGINE 67 -> 68): dua komentar
   // dijujurkan (igdHariIni penanda turunan, bukan gerbang; cooldown Posyandu
   // per mode, bukan 30 hari mati). Murni komentar, nol kode runtime — hash
   // tetap berubah, jadi ikut diunfreeze bersama batch yang sama.
-  'state.ts': '1fde26b7dab749138a83635eaa4316a8dd42eec92ae369c235a457c73ec13b3d',
+  'state.ts': '81853aa715f9f650a301e0336f15188bea6e550c8c11f486d65847dec1414ab5',
   // Unfreeze 2026-08-01 (bug hunt, REVISI_ENGINE 62 -> 63): enam validasi baru
   // menutup celah NaN/tipe-salah (dex.bintang, desa.rw.bonusIks & jarak,
   // posyanduRwTerakhir, program.rwFokus/periodeDitetapkan, antrian[].rw).
@@ -265,9 +271,9 @@ const HASH_DIBEKUKAN: Record<string, string> = {
   // alergi/faktor risiko yang rusak dipulihkan dari pack.
   'save.ts': 'b0449e4ff0ff4c650b1cff0311a8c54a5ba32aafca2812b9799f8a8cd503f4d0',
   'pispk.ts': '052b8a14590c8dd42eac2269e18ee02b0e38cb6ba6f6259b77f6a667b37b0784',
-  'surveilans.ts': '7ee33537f9a2d982f6ac82590e50e77046e82bfffe73e7127a656f18d41ecc36',
+  'surveilans.ts': '993ab0498f6d48be5621b4b181ef3132b2b8f4ab46d146f792d404ee59b71df8',
   'examBlueprint.ts': 'b25f942d9f642244ee1b42d058b7c262de8a88f8c155661c254e0795834d2b9a',
-  'bridge.ts': '89d667eb5598b020bb86a20ed3ea582186d00cb736820e653eb1c59dbfc1558f',
+  'bridge.ts': 'bc03d7813325b764cbce7fd3dcec11328147ec13e8c2c0f381138a6d3fb20c96',
 }
 
 describe('GOLDEN MASTER FREEZE (M10.5 Q-D) — 18 file penentu replay/skor terkunci', () => {

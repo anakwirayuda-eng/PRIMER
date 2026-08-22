@@ -20,7 +20,13 @@ function pasangHasil(hasil: HasilKegiatan) {
     kegiatan: undefined,
     hasilKegiatanTerakhir: hasil,
   }
-  useGame.setState({ state })
+  // Audit UKM 2026-08-22: `lastEvents`/`eventTick` WAJIB ikut direset. Sejak
+  // jawaban kartu di-dispatch pada saat opsi diklik (anti-replay), test yang
+  // benar-benar menjawab kartu meninggalkan KEGIATAN_SELESAI di store — dan
+  // efek `[eventTick, lastEvents]` di komponen akan memungutnya lagi di test
+  // BERIKUTNYA, menimpa `hasilKegiatanTerakhir` yang baru dipasang di sini.
+  // Gejalanya menyesatkan: test lulus sendiri-sendiri, gagal saat sefile.
+  useGame.setState({ state, lastEvents: [], eventTick: 0 })
 }
 
 describe('<Kegiatan /> — KartuHasil Posyandu (audit CODEX 2026-07-11, #15)', () => {

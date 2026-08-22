@@ -91,7 +91,7 @@ import {
   hariTindakLanjutKunjungan,
   penutupanAwalSah,
 } from './kunjungan'
-import { prosesHarianKader } from './kader'
+import { prosesHarianKader, segarkanIksRw } from './kader'
 import { susunAntrianHarian, buatPasienDariKasus, peluangIgd } from './director'
 import { ambangKlusterPack, kasusMenular, pangkasSurveilans, hitungCluster } from './surveilans'
 import {
@@ -1268,7 +1268,7 @@ export function advance(state: GameState, action: Action, pack: ContentPack, rep
             ...desaSetelahKlinik,
             surveilans: [
               ...desaSetelahKlinik.surveilans,
-              { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id },
+              { hari: s.hari, rw: encFinal.pasien.rw, kasusId: kasus.id, pasienNama: encFinal.pasien.nama },
             ],
           }
         : desaSetelahKlinik
@@ -2776,10 +2776,19 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
       }
       jadwalSisaFlush.push(j)
     }
+    // Audit UKM 2026-08-22 (P3): `rw.iks` hanya dihitung ulang oleh
+    // prosesHarianKader pada pergantian hari, sedangkan skor TAMAT dibekukan di
+    // sini. Tanpa penyegaran, seluruh kerja UKM hari terakhir — termasuk koreksi
+    // indikator dari flush janji di blok tepat di atas — tak pernah sampai ke
+    // iksDesa. Dipakai rumus yang sama (kader.segarkanIksRw), bukan salinan.
     const s0 = {
       ...s,
       tally: tallyFlush,
-      desa: { ...s.desa, keluarga: keluargaFlush },
+      desa: {
+        ...s.desa,
+        keluarga: keluargaFlush,
+        rw: segarkanIksRw(s.desa.rw, keluargaFlush, pack),
+      },
       jadwal: jadwalSisaFlush,
     }
     const skor = hitungSkor(s0)
@@ -3446,7 +3455,20 @@ function hariBaru(s: GameState, pack: ContentPack): HasilAdvance {
   // Surveilans (M1.2): deteksi KLUSTER BARU — pola di poli jadi kabar di peta
   // (satu surat per kluster per RW). Kluster ≥ambang juga membuka Respons KLB.
   const flags = { ...s.flags }
-  for (const c of hitungCluster(surveilans, hari, ambangKlusterPack(pack))) {
+  // Audit UKM 2026-08-22 (P2): flag dedup dulu HANYA di-set, tak pernah pulih
+  // saat kluster PADAM SENDIRI karena entri lewat jendela 14 hari — satu-satunya
+  // reset ada di jalur respons KLB tuntas. Akibatnya wabah yang kambuh di RW &
+  // penyakit yang sama tak pernah diumumkan lagi (surat & pembaruan episode
+  // sama-sama diblokir `continue`), dan episode Jejak Perawatan-nya membeku
+  // dengan instruksi yang tak mungkin ditindaklanjuti. Kini flag kluster yang
+  // sudah tak aktif dibersihkan lebih dulu, jadi dedup tetap berlaku SELAMA
+  // kluster hidup, dan kemunculan berikutnya kembali berbunyi.
+  const klusterAktif = hitungCluster(surveilans, hari, ambangKlusterPack(pack))
+  const kunciAktif = new Set(klusterAktif.map((c) => `cluster_${c.kasusId}_rw${c.rw}`))
+  for (const kunci of Object.keys(flags)) {
+    if (kunci.startsWith('cluster_') && !kunciAktif.has(kunci)) delete flags[kunci]
+  }
+  for (const c of klusterAktif) {
     const kunciFlag = `cluster_${c.kasusId}_rw${c.rw}`
     if (flags[kunciFlag]) continue
     flags[kunciFlag] = true

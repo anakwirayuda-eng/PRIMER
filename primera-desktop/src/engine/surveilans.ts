@@ -12,6 +12,13 @@ export interface SurveilansEntry {
   hari: number
   rw: number
   kasusId: string
+  /**
+   * Audit UKM 2026-08-22 (P1): identitas pasien, agar kluster menghitung ORANG
+   * bukan KUNJUNGAN. Opsional demi save lama — entri tanpa nama diperlakukan
+   * sebagai orang berbeda (perilaku lama) supaya save berjalan tak berubah
+   * vonisnya di tengah stase.
+   */
+  pasienNama?: string
 }
 
 /** Jendela pengamatan kluster (hari) — angka repo lama. */
@@ -75,10 +82,25 @@ export function hitungCluster(
   hariIni: number,
   ambangKluster: AmbangKluster,
 ): Cluster[] {
+  // Audit UKM 2026-08-22 (P1): dulu tiap ENTRI dihitung satu, padahal satu
+  // pasien yang kembali (kontrol, evaluasi hasil lab, boomerang SISRUTE) menulis
+  // entri baru dengan rw & kasusId yang sama. Akibatnya penyakit ber-ambang 2
+  // bisa divonis "kluster" oleh SATU orang yang datang dua kali — dan justru
+  // permainan paling benar (observasi sambil menunggu lab) yang paling sering
+  // memicunya. Kini orang yang sama dihitung sekali per (RW, kasus); entri lama
+  // tanpa `pasienNama` tetap dihitung sendiri-sendiri agar save berjalan tak
+  // berubah vonisnya di tengah stase.
   const hitung = new Map<string, Cluster>()
+  const orang = new Map<string, Set<string>>()
   for (const e of pangkasSurveilans(entries, hariIni)) {
     const kunci = `${e.rw}|${e.kasusId}`
     const ada = hitung.get(kunci)
+    if (e.pasienNama !== undefined) {
+      const dilihat = orang.get(kunci) ?? new Set<string>()
+      if (dilihat.has(e.pasienNama)) continue
+      dilihat.add(e.pasienNama)
+      orang.set(kunci, dilihat)
+    }
     if (ada) ada.jumlah += 1
     else hitung.set(kunci, { rw: e.rw, kasusId: e.kasusId, jumlah: 1 })
   }

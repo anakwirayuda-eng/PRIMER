@@ -785,7 +785,29 @@ function fnv1a(teks: string): string {
 // "Dugaan" jadi suspek, I13.9 M6 dipulihkan, union makrolida faringitis/
 // tonsilitis, pseudoefedrin normotensi turun ke nonPrimer, R62.7 -> R62.8.
 // Dossier build lama jatuh ke "tidak_dapat_diverifikasi", bukan tidak sah.
-export const REVISI_ENGINE = 69
+//
+// Audit UKM 2026-08-22: 69 -> 70. Sapuan gameplay UKM (dimensi 35/100, setara
+// UKP) — 17 temuan terverifikasi adversarial, 12 diperbaiki di sini.
+// DUA P1: (a) sesi kegiatan lapangan bisa DIULANG berbekal kunci jawaban —
+// vonis TEPAT/KELIRU tampil dari state React lokal sebelum apa pun tersimpan,
+// sesi tak pernah di-autosave sampai kartu terakhir, dan dek deterministik per
+// (seed, hari, rw); kini klik opsi langsung mengunci jawaban + autosave, dan
+// kartu yang sudah dijawab menolak ditimpa. (b) surveilans menghitung
+// ENCOUNTER, bukan ORANG — satu pasien yang kembali (termasuk lewat observasi
+// menunggu lab, yang justru permainan paling benar) bisa memvonis kluster palsu
+// pada penyakit ber-ambang 2; entri kini membawa nama pasien & kluster
+// menghitung orang berbeda (entri lama tanpa nama tetap dihitung apa adanya,
+// jadi save berjalan tak berubah vonisnya di tengah stase).
+// Lainnya: flag kluster kini pulih saat kluster padam alami (wabah ulangan tak
+// lagi bisu); skor TAMAT menyegarkan iks RW lewat rumus yang sama (kerja UKM
+// hari terakhir tak lagi hilang); kunjungan yang DIUSIR berhenti memakai
+// penutup hangat milik kunjungan tuntas-tapi-gagal; dua pilihan bergaya
+// terlarang berbiaya trust nol disamakan dgn 77 tetangganya (-1); cap episode
+// berhenti menggusur RECORD (kini memangkas MUATAN) sehingga hitungan
+// terverifikasi/closureRate tak menyusut diam-diam; surat kader berhenti
+// mengklaim 12 indikator terisi padahal kuota harian 2.
+// Dossier build lama jatuh ke "tidak_dapat_diverifikasi", bukan tidak sah.
+export const REVISI_ENGINE = 70
 
 /**
  * Sidik jari konten + revisi engine: semua yang mempengaruhi replay/skor. Beda

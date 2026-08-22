@@ -943,7 +943,13 @@ export const KELUARGA_DESA_C: KeluargaBinaan[] = [
                   respons:
                     'Bu Asih mengangguk ragu. Skor empat belas, riwayat perdarahan, dan kamu barusan ' +
                     'menurunkan sendiri standar yang susah payah kalian bangun bertiga.',
-                  efekTrust: 0,
+                  // Audit UKM 2026-08-22: gaya terlarang berbiaya trust NOL bikin
+                  // menggurui terasa "gratis" — pemain rugi skor MI tapi hubungan
+                  // dengan keluarga tak bergeser sedikit pun. Disamakan dengan
+                  // tetangga terdekatnya, ak2_d3_c (menggurui, -1): keluarganya
+                  // sungkan, bukan tersinggung — belum setara -2 yang dipakai saat
+                  // tuan rumah menutup diri (bdk. ak3_d2_c yang juga -1).
+                  efekTrust: -1,
                   tepat: false,
                   catatanPedagogis:
                     'Kompromi klinis karena hambatan logistik = kekalahan sistem yang ditanggung pasien. Bumil ' +
