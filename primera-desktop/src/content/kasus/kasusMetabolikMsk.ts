@@ -782,8 +782,13 @@ Bila modifikasi gaya hidup selama 3 bulan tidak memberi respons, barulah rujuk k
     diagnosisBanding: ['M79.1', 'M54.5', 'M06.9'],
     tatalaksana: {
       obatBenar: [],
-      // Analgetik simtomatik setara — beri SALAH SATU (parasetamol ATAU NSAID).
-      obatAlternatif: [['paracetamol_500', 'ibuprofen_400']],
+      // Analgetik simtomatik setara — beri SALAH SATU (parasetamol atau NSAID
+      // apa pun). Meloksikam ditambahkan 2026-08-23 (dr. Wirayuda): clue kasus
+      // ini sendiri mengajarkan kelas "parasetamol/NSAID", bukan menyebut satu
+      // molekul — sebelumnya hanya ibuprofen yang diterima, jadi mahasiswa
+      // yang meresepkan meloksikam (NSAID sah, Fornas, sudah berkelas 'NSAID'
+      // di katalog) dinilai SALAH plus kena penalti "obat di luar rencana".
+      obatAlternatif: [['paracetamol_500', 'ibuprofen_400', 'meloksikam_15']],
       obatSalahUmum: [
         { id: 'amoxicillin_500', alasan: 'Mialgia mekanik pasca-aktivitas bukan infeksi; antibiotik tidak ada indikasinya sama sekali.', bahaya: 'nonPrimer' },
         { id: 'dexamethasone_05', alasan: 'Kortikosteroid untuk pegal otot biasa adalah overtreatment berbahaya — efek samping jauh melebihi manfaat pada keluhan swasirna.', bahaya: 'nonPrimer' },
