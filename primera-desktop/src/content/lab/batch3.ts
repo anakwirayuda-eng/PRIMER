@@ -226,7 +226,12 @@ const DEFINITIONS: LabDefinition[] = [
       ],
       fisik: [['kulit', 'Dua plak hipopigmentasi kering dengan hipoestesia jelas, distribusi asimetris.'], ['neurologis', 'Pemeriksaan saraf tepi, kekuatan, sensibilitas tangan-kaki, dan penutupan mata normal; tidak ada disabilitas derajat 2.', true]],
       lab: [],
-      diagnosisBanding: ['A30', 'B36.0', 'L30.0'],
+      // Audit UKM 2026-08-23: L30.0 (dermatitis numularis) dibedakan justru
+      // oleh PRURITUS INTENS di literatur — vignette ini eksplisit "tidak
+      // gatal" + hipoestesia jelas + plak kering, jadi L30.0 morfologis tak
+      // masuk akal sbg distraktor. L80 (vitiligo, sudah bernama di kamus,
+      // preseden identik lab_pitiriasis_versikolor) yang tepat.
+      diagnosisBanding: ['A30', 'B36.0', 'L80'],
       tatalaksana: { obatBenar: ['mdt_kusta_pb'], edukasi: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta', 'skrining_kontak_kusta'], edukasiKritis: ['kepatuhan_program_kusta', 'perawatan_saraf_kusta'] },
       clue: 'Hilangnya sensasi yang pasti pada lesi adalah tanda kardinal kusta, sehingga gambaran klasik ini dapat didiagnosis klinis tanpa mewajibkan slit-skin smear. Satu sampai lima lesi tanpa bacilli yang terbukti diklasifikasikan PB untuk terapi: MDT tiga obat selama enam bulan. Catat fungsi saraf dan derajat disabilitas sebagai baseline lalu pantau serial; reaksi dapat timbul sebelum, selama, atau setelah MDT dan tidak boleh membuat pasien menghentikan MDT sendiri. Skrining kontak dan SDR-PEP hanya berjalan melalui program setelah konseling, persetujuan, serta penilaian kelayakan.',
       panduanResmi: `${PPK} PNPK kusta menjadi acuan dasar nasional. WHO 2018 merekomendasikan rifampisin-dapson-klofazimin selama enam bulan untuk PB; WHO 2020 menempatkan skrining kontak, consent, dan penilaian kelayakan sebelum rifampisin dosis tunggal sebagai intervensi program.`,
@@ -299,7 +304,11 @@ const DEFINITIONS: LabDefinition[] = [
     },
   },
   ...([
-    ['tinea_facialis', 'lab_tinea_fasialis', 'Tinea Fasialis', 'B35.8', 'pipi', 'Plak annular berskuama dengan tepi aktif di pipi, bagian tengah lebih tenang.', ['B35.8', 'L24', 'L93.0']],
+    // Audit UKM 2026-08-23: PPK 1186 sendiri tak punya kategori "wajah"
+    // terpisah utk tinea (poin f: "tinea korporis, bagian lain..."); B35.8
+    // WHO = "Other dermatophytoses" (bukan slot lokasi). B35.4 (tinea
+    // korporis) yang tepat — wajah adalah subtipe topografis korporis.
+    ['tinea_facialis', 'lab_tinea_fasialis', 'Tinea Fasialis', 'B35.4', 'pipi', 'Plak annular berskuama dengan tepi aktif di pipi, bagian tengah lebih tenang.', ['B35.4', 'L24', 'L93.0']],
     ['tinea_manus', 'lab_tinea_manus', 'Tinea Manus', 'B35.2', 'telapak tangan', 'Skuama difus satu telapak dengan tepi aktif; kuku belum terlibat.', ['B35.2', 'L24', 'L30.0']],
     ['tinea_cruris', 'lab_tinea_kruris', 'Tinea Kruris', 'B35.6', 'lipat paha', 'Plak annular berskuama dari lipat paha dengan central clearing; skrotum relatif bebas.', ['B35.6', 'B37.2', 'L08.1']],
     ['tinea_pedis', 'lab_tinea_pedis', 'Tinea Pedis Interdigital', 'B35.3', 'sela jari kaki', 'Maserasi dan skuama interdigital dengan tepi aktif, tanpa selulitis.', ['B35.3', 'L30.4', 'L08.1']],
@@ -318,7 +327,13 @@ const DEFINITIONS: LabDefinition[] = [
       lab: [['mikroskopis_gram_koh', 'KOH kerokan kulit menunjukkan hifa bersepta.', 'abnormal' as const] as const],
       diagnosisBanding: [...diagnosisBanding],
       tatalaksana: { obatBenar: ['mikonazol_krim'], obatSalahUmum: [{ id: 'betametason_krim', alasan: 'Steroid tunggal menyamarkan dan dapat memperluas dermatofitosis.', bahaya: 'kontraindikasi' as const }], edukasi: ['higiene_jamur_kulit', 'jaga_area_kering'] },
-      konfirmasiWajib: 'mikroskopis_gram_koh',
+      // Audit UKM 2026-08-23: DIHAPUS. catatanRealita kasus ini sendiri
+      // (baris di bawah) berjanji "ketiadaan KOH TIDAK memaksa rujuk atau
+      // terapi sistemik" (beda dari kapitis/barbae yang memang butuh
+      // sistemik) — tapi konfirmasiWajib biner mengunci skorPemeriksaan<=50
+      // + cap grade C + blokir bintang Dex tanpa syarat "lesi tipikal",
+      // menghukum janji yang tak pernah ditepati mekanismenya. Berlaku utk
+      // keempat varian (fasialis/manus/kruris/pedis) via template ini.
       clue: `Tepi aktif berskuama, central clearing, dan KOH berhifa mendukung ${nama.toLowerCase()}. Gunakan antijamur topikal cukup lama dan lanjutkan setelah lesi membaik; hindari steroid tunggal.`,
       panduanResmi: PPK,
       catatanRealita: 'Mikroskop, KOH, consumable, dan analis dinyatakan ready pada jadwal laboratorium encounter ini. Pada lesi tipikal terbatas, ketiadaan KOH tidak memaksa rujuk atau terapi sistemik; gunakan terapi topikal dengan safety-net dan evaluasi ulang bila atipikal atau gagal.',
@@ -378,7 +393,14 @@ const DEFINITIONS: LabDefinition[] = [
       ],
       fisik: [['kulit', 'Traktus serpiginosa eritematosa sedikit meninggi di plantar kaki, tanpa selulitis.'], ['umum', 'Afebris dan tampak baik.', false]],
       diagnosisBanding: ['B76.9', 'B86', 'L23.7'],
-      tatalaksana: { obatBenar: ['ivermektin_3'], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
+      // Audit UKM 2026-08-23: PPK 1186 hanya mencantumkan albendazol 400mg
+      // 1x/hari 3 hari sbg regimen farmakologis CLM; ivermektin dosis
+      // tunggal EBM internasional cure rate lebih tinggi. Keduanya
+      // monoterapi SETARA (bukan kombinasi) — obatBenar dikosongkan,
+      // digabung satu grup obatAlternatif spt pola mialgia/GERD, supaya
+      // jawaban PPK-literal maupun ivermektin sama-sama dinilai penuh
+      // tanpa mewajibkan keduanya sekaligus.
+      tatalaksana: { obatBenar: [], obatAlternatif: [['ivermektin_3', 'albendazol_400']], edukasi: ['kebersihan_kulit', 'tanda_bahaya'] },
       clue: 'Erupsi serpiginosa yang bermigrasi setelah kontak tanah/pasir khas CLM. Beri antihelmintik sesuai berat badan dan status pasien, rawat ekskoriasi, serta anjurkan alas kaki; lesi luas atau keterlibatan sistemik perlu evaluasi lanjut.',
       panduanResmi: PPK,
     },
@@ -399,7 +421,10 @@ const DEFINITIONS: LabDefinition[] = [
       ],
       fisik: [['ekstremitas', 'Edema unilateral ringan dengan penebalan kulit awal, tanpa selulitis akut.'], ['kulit', 'Tidak ada ulkus atau infeksi interdigital aktif.', true]],
       lab: [['apusan_darah_mikrofilaria', 'Mikrofilaria terdeteksi pada apusan darah malam.', 'abnormal']],
-      diagnosisBanding: ['B74', 'I89.0', 'I82.4'],
+      // Audit UKM 2026-08-23: I82.4 gaya ICD-10-CM Amerika (DVT tungkai
+      // bawah) — WHO I82 tak punya subkode .4. Padanan WHO yang benar
+      // sudah ada di kamus & aktif dipakai kasus erisipelas: I80.2.
+      diagnosisBanding: ['B74', 'I89.0', 'I80.2'],
       tatalaksana: { obatBenar: ['dietilkarbamazin_100', 'albendazol_400'], edukasi: ['alur_program_filariasis', 'perawatan_limfedema_filariasis', 'cegah_gigitan_filariasis'], edukasiKritis: ['alur_program_filariasis', 'perawatan_limfedema_filariasis'] },
       konfirmasiWajib: 'apusan_darah_mikrofilaria',
       clue: 'Paparan endemis, episode adenolimfangitis, limfedema, dan mikrofilaria malam mendukung filariasis limfatik. Kasus individual terkonfirmasi masuk program untuk regimen berbasis berat badan dan ko-endemisitas; satu resep tidak sama dengan POPM/MDA wilayah. Perawatan seumur hidup mencakup cuci-keringkan tungkai dan sela jari, rawat pintu masuk infeksi, latihan, elevasi, tata serangan akut, serta rujuk hidrokel. Temuan kasus memicu pencatatan dan penilaian fokus; keputusan POPM memerlukan pemetaan endemisitas, kelayakan populasi, cakupan, dan program kabupaten.',

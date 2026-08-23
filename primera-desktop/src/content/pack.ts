@@ -120,7 +120,25 @@ export const DELEGATED_ADJUDICATION_CONTENT_RELEASE = 'adjudikasi-delegasi-2026-
  * terhadap satu angkatan mahasiswa.
  */
 export const CODING_UKM_SWEEP_CONTENT_RELEASE = 'sapuan-koding-ukm-2026-08-22'
-export const CONTENT_RELEASE = CODING_UKM_SWEEP_CONTENT_RELEASE
+
+/**
+ * Sapuan ulasan bulk 2026-08-23 — dua batch kunci jawaban menumpuk di atas
+ * rilis di atas tanpa rilis ikut naik (pelajaran yang sama persis dengan
+ * komentar CODING_UKM_SWEEP di atas, kini terulang dlm skala lebih kecil):
+ *   - 7f84fb0 — meloksikam masuk obatAlternatif mm_mialgia (perintah dokter).
+ *   - Delegasi bulk 74 kasus lab "rutin" (dokter mengotorisasi via
+ *     AskUserQuestion; 47 kasus taruhan-tinggi TIDAK disentuh, lihat
+ *     CLAUDE_REVIEWED_LAB_CASE_IDS di lab/index.ts): ~17 koreksi kode ICD-10 &
+ *     diagnosisBanding lintas batch1/2/3 (termasuk REVISI atas kunci
+ *     wave-14 2026-07-19: servisitis N89→N72), satu tag `bahaya` dinaikkan
+ *     (oat_kdt: nonPrimer→kontraindikasi, teksnya sendiri menyebut toksik),
+ *     satu `konfirmasiWajib` dicabut dari templat bersama 4 kasus tinea
+ *     (kontradiksi dgn catatanRealita-nya sendiri), satu obatAlternatif
+ *     ditambah (cutaneous larva migrans: albendazol sejajar ivermektin).
+ * Semuanya kunci jawaban/replay — save mid-stase lama wajib jadi ARSIP.
+ */
+export const BULK_REVIEW_CONTENT_RELEASE = 'sapuan-ulasan-bulk-2026-08-23'
+export const CONTENT_RELEASE = BULK_REVIEW_CONTENT_RELEASE
 
 /** Urutan eksplisit diperlukan karena id rilis tidak boleh dibandingkan leksikal. */
 export const CONTENT_RELEASE_ORDER = [
@@ -141,6 +159,7 @@ export const CONTENT_RELEASE_ORDER = [
   ANSWER_KEY_SWEEP_CONTENT_RELEASE,
   DELEGATED_ADJUDICATION_CONTENT_RELEASE,
   CODING_UKM_SWEEP_CONTENT_RELEASE,
+  BULK_REVIEW_CONTENT_RELEASE,
 ] as const
 
 export interface RuntimeCurriculumManifest {

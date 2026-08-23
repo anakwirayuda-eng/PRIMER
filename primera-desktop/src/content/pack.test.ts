@@ -91,6 +91,13 @@ describe('PACK — validasi silang id konten', () => {
   it('skdi144.kasusId ↔ icd10 cocok dgn kasus (kecuali pengecualian ber-kelas & ber-alasan)', () => {
     const PENGECUALIAN_KODE: Record<string, YurisprudensiKode> = {
       conjunctivitis_bacterial: 'INDUK_KE_ANAK', // H10.9 (tak spesifik) vs kasus konjungtivitis_bakterial H10.0 (mukopurulen)
+      // Ditambah 2026-08-23 (audit UKM, delegasi bulk):
+      stomatitis_aftosa: 'INDUK_KE_ANAK', // K12 (kategori kurikulum gabungan "Aftosa, Herpes") vs kasus K12.0 (vignette murni aftosa minor, herpes disingkirkan via anamnesis)
+      genital_discharge: 'SINDROM_KE_FENOTIPE', // N89 (katalog, kompetensi sindromik lintas-etiologi) vs kasus lab_sindrom_duh_genital_servisitis N72 (fenotipe servisitis tegak dari pemeriksaan) — REVISI atas wave-14 2026-07-19: N89 = kelainan noninflamasi VAGINA, organ&sifat beda dari radang SERVIKS; bukan generik-spesifik yang sah, cabang kode berbeda
+      night_blindness: 'SINDROM_KE_FENOTIPE', // H53.6 (buta senja, kompetensi umum lintas-etiologi) vs kasus lab_buta_senja_defisiensi_vitamin_a E50.5 (WHO: night-blindness akibat defisiensi vit-A dikecualikan dari H53.6, masuk bab gizi E50) — etiologi tegak memindahkan kode ke bab berbeda
+      food_poisoning: 'SINDROM_KE_FENOTIPE', // T62 (toksin kimia/tumbuhan/jamur, bab cedera-eksternal) vs kasus lab_keracunan_makanan_ringan A05.9 (toksin bakterial, bab infeksi) — pola klinis (mual-muntah-diare akut pasca makan bersama) menunjuk etiologi bakterial, bukan racun kimiawi
+      schistosomiasis: 'INDUK_KE_ANAK', // B65.9 (tak spesifik) vs kasus lab_skistosomiasis_sulteng B65.2 (S. japonicum — satu-satunya fokus endemik Indonesia, spesies dpt dibedakan morfologis mikroskopis)
+      anemia_deficiency: 'INDUK_KE_ANAK', // D50 (tanpa subkode) vs kasus lab_anemia_defisiensi_besi_nonhamil D50.0 (anemia def-besi akibat kehilangan darah kronik — WHO tak sediakan D50 telanjang, kamus proyek hanya punya D50.0/D50.9)
       tb_pulmonary: 'INDUK_KE_ANAK', // A15 (TB paru, kategori) vs kasus tb_paru A15.0
       dm_type2: 'INDUK_KE_ANAK', // E11 (DM tipe 2, kategori) vs kasus dm_tipe2 E11.9 (tanpa komplikasi)
       // CODEX ronde-14 §5 (2026-07-04) — tertaut manual setelah verifikasi
@@ -296,6 +303,11 @@ describe('PACK — validasi silang id konten', () => {
     const ICD_DUPLIKAT_SENGAJA: Record<string, string> = {
       'N76.0': 'vaginitis vs bacterial_vaginosis — BV adalah bentuk vaginitis bakterial, kode sama defensible',
       'B35.0': 'tinea_capitis vs tinea_barbae — subtipe lokasi beda, spesies dermatofita sama',
+      // Ditambah 2026-08-23 (audit UKM, delegasi bulk): tinea_facialis
+      // direcode B35.8->B35.4 — PPK 1186 tak beri kategori "wajah" terpisah
+      // (poin f klasifikasinya: "tinea korporis, bagian lain"), jadi wajah
+      // memang subtipe topografis korporis, bukan entitas kode terpisah.
+      'B35.4': 'tinea_facialis vs tinea_corporis — wajah adalah subtipe topografis korporis, PPK 1186 sendiri tak beri kode lokasi terpisah',
       // 'S00-S09' DIHAPUS 2026-08-22: sharp_trauma direcode ke S01.0 (deep
       // research — laserasi kulit kepala = luka terbuka, bukan superfisial
       // spt blunt_trauma S00.0). Bukan duplikat lagi.

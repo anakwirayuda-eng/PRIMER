@@ -28,15 +28,20 @@ describe('M13-137 adjudication wave 14: episode IMS klinik-pasangan-wilayah', ()
     expect(DATA.summary.ebmDirect).toBe(71)
   })
 
-  it('menjaga kode katalog sambil memperjelas fenotipe klinis', () => {
+  // Audit UKM 2026-08-23 (delegasi bulk, REVISI atas keputusan wave-14
+  // 2026-07-19): servisitis dipindah dari N89 (katalog, "konkordan") ke N72
+  // (fenotipe tegak dari pemeriksaan) — lihat PENGECUALIAN_KODE
+  // 'genital_discharge' (pack.test.ts) utk dasar lengkapnya. Gonore & PID
+  // TIDAK disentuh — kode mereka memang genuinely konkordan katalog.
+  it('menjaga kode katalog utk gonore & PID; servisitis kini pakai fenotipe klinis', () => {
     const gonore = PACK.kasus.lab_gonore_uretritis_pria!
     const servisitis = PACK.kasus.lab_sindrom_duh_genital_servisitis!
     const pid = PACK.kasus.lab_salpingitis_pid_ringan!
     expect(gonore).toMatchObject({ icd10: 'A54.9', nama: expect.stringMatching(/uretra tanpa komplikasi/i) })
-    expect(servisitis).toMatchObject({ icd10: 'N89', nama: expect.stringMatching(/servisitis mukopurulen/i) })
+    expect(servisitis).toMatchObject({ icd10: 'N72', nama: expect.stringMatching(/servisitis mukopurulen/i) })
     expect(pid).toMatchObject({ icd10: 'N70', nama: expect.stringMatching(/radang panggul ringan/i) })
     expect(gonore.catatanRealita).toMatch(/konkordan.*katalog SKDI-144/i)
-    expect(servisitis.catatanRealita).toMatch(/konkordan.*katalog SKDI-144/i)
+    expect(servisitis.catatanRealita).toMatch(/N72 dipilih karena fenotipe/i)
     expect(pid.catatanRealita).toMatch(/konkordan.*katalog SKDI-144/i)
   })
 

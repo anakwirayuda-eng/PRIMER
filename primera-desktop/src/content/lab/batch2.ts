@@ -365,7 +365,10 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_trikiasis', nama: 'Trikiasis Tanpa Komplikasi Kornea', icd10: 'H02', kategori: 'mata',
+    // Audit UKM 2026-08-23: WHO ICD-10 punya subkode presisi H02.0
+    // "Entropion and trichiasis of eyelid" — H02 (kategori 3-digit header)
+    // tanpa digit terakhir tidak presisi.
+    id: 'lab_trikiasis', nama: 'Trikiasis Tanpa Komplikasi Kornea', icd10: 'H02.0', kategori: 'mata',
     keluhanUtama: 'Bulu mata bawah seperti menusuk mata dan membuat berair.', usia: [35, 80], vital: { td: '126/78', nadi: 76, rr: 18, suhu: 36.5, spo2: 99 },
     pembuka: ['Sejak kapan terasa tertusuk dan apakah penglihatan berubah?', 'Seminggu ini terasa menggesek saat berkedip; penglihatan tetap jelas.'],
     pertanyaan: [
@@ -374,7 +377,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_satu', 'rps', 'Satu atau banyak bulu mata yang mengarah ke dalam?', 'Tampaknya dua helai di kelopak bawah.', false],
     ],
     fisik: [['mata', 'Dua silia palpebra inferior mengarah ke kornea; visus normal, fluorescein tanpa defek epitel.']],
-    diagnosisBanding: ['H02', 'H01.0', 'H16.0'],
+    diagnosisBanding: ['H02.0', 'H01.0', 'H16.0'],
     tatalaksana: { obatBenar: ['air_mata_buatan'], prosedur: ['epilasi_trikiasis'], edukasi: ['perlindungan_mata', 'tanda_bahaya'] },
     clue: 'Silia yang menggesek permukaan mata dengan posisi kelopak normal adalah trikiasis. Epilasi memberi kelegaan sementara; evaluasi kornea dan rujuk untuk terapi definitif bila berulang atau luas.',
     panduanResmi: `${PPK} Kerusakan kornea atau kelainan palpebra kompleks memerlukan layanan mata.`,
@@ -438,7 +441,12 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   })),
 
   buatKasusFktpLab({
-    id: 'lab_buta_senja_defisiensi_vitamin_a', nama: 'Buta Senja karena Defisiensi Vitamin A', icd10: 'H53.6', kategori: 'mata',
+    // Audit UKM 2026-08-23: WHO ICD-10 memberi Excludes eksplisit pada H53.6
+    // ("night blindness") thd defisiensi vitamin A (E50.5) — konvensi
+    // etiologi-manifestasi standar. Vignette ini menegakkan etiologi vit-A
+    // eksplisit (diet miskin, konjungtiva kering, bercak Bitot); nama kasus
+    // sendiri sudah cocok persis label resmi E50.5.
+    id: 'lab_buta_senja_defisiensi_vitamin_a', nama: 'Buta Senja karena Defisiensi Vitamin A', icd10: 'E50.5', kategori: 'mata',
     keluhanUtama: 'Anak saya sering menabrak benda saat hari mulai gelap.', keluhanUtamaOlehPendamping: true, usia: [6, 12], vital: { nadi: 88, rr: 20, suhu: 36.7, spo2: 99 },
     pembuka: ['Sejak kapan penglihatan malam terganggu?', 'Dua bulan ini ia sulit melihat saat senja, tetapi siang hari masih bisa sekolah.'],
     pertanyaan: [
@@ -447,7 +455,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
       ['q_diare', 'rpd', 'Ada diare lama, penyakit hati, atau sulit menyerap makanan?', 'Tidak ada diare lama.', false],
     ],
     fisik: [['mata', 'Konjungtiva kering ringan, bercak Bitot kecil temporal, kornea masih jernih.'], ['umum', 'Berat badan menurut umur sedikit rendah.', true]],
-    diagnosisBanding: ['H53.6', 'E50.5', 'H35.5'],
+    diagnosisBanding: ['E50.5', 'H53.6', 'H35.5'],
     tatalaksana: { obatBenar: ['vitamin_a_kapsul'], edukasi: ['gizi_seimbang', 'tanda_bahaya'] },
     clue: 'Sulit melihat saat senja disertai xerosis/Bitot dan diet miskin vitamin A mendukung xeroftalmia dini. Beri vitamin A sesuai usia/protokol dan perbaiki gizi; keterlibatan kornea memerlukan evaluasi mata pada hari yang sama.',
     panduanResmi: `${PPK} Buta senja memerlukan evaluasi defisiensi vitamin A dan penyebab mata/retina lain.`,
@@ -550,7 +558,18 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_sindrom_duh_genital_servisitis', ambangKluster: 3, nama: 'Servisitis Mukopurulen - Tata Laksana Sindromik', icd10: 'N89', kategori: 'infeksi',
+    // Audit UKM 2026-08-23 (delegasi bulk, REVISI atas wave-14 2026-07-19):
+    // N89 WHO = kelainan NONINFLAMASI VAGINA — organ beda, sifat patologis
+    // beda dari fenotipe kasus ini (servisitis = radang SERVIKS). Wave-14
+    // sengaja mengunci N89 "agar konkordan katalog", tapi itu hubungan
+    // SIBLING (dua kategori berbeda), bukan generik-ke-spesifik yang sah
+    // utk allowlist GENERIK_SENGAJA/PENGECUALIAN_KODE — persis kelas
+    // kesalahan yang mekanisme "semantic fencing" (pack.test.ts, 2026-08-22)
+    // dibangun utk menangkap. N72 (radang serviks) tegak dari temuan
+    // pemeriksaan sendiri ("sekret mukopurulen dari serviks, mudah
+    // berdarah"). Preseden identik: 'vaginitis' (katalog N76.0 generik) vs
+    // kasus B37.3 — sudah sah sbg SINDROM_KE_FENOTIPE.
+    id: 'lab_sindrom_duh_genital_servisitis', ambangKluster: 3, nama: 'Servisitis Mukopurulen - Tata Laksana Sindromik', icd10: 'N72', kategori: 'infeksi',
     keluhanUtama: 'Keputihan kekuningan dan keluar darah sedikit setelah berhubungan.', usia: [18, 45], jenisKelamin: 'P', vital: { td: '118/74', nadi: 82, rr: 18, suhu: 37.1, spo2: 99 },
     pembuka: ['Bagaimana cairan, bau, dan keluhan penyertanya?', 'Cairan mukus-kuning dari vagina, tidak terlalu bau, disertai perih kencing ringan.'],
     pertanyaan: [
@@ -561,11 +580,11 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['abdomen', 'Tidak ada nyeri tekan suprapubik atau defans.', true], ['kulit', 'Sekret mukopurulen dari serviks dan serviks mudah berdarah; tidak ada nyeri goyang serviks.', true]],
     lab: [['tes_kehamilan', 'Negatif.', 'normal'], ['tes_hiv_serial', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal'], ['tes_sifilis', 'Nonreaktif; ulang sesuai window period dan risiko.', 'normal']],
-    diagnosisBanding: ['N89', 'A54.9', 'N76.0'],
+    diagnosisBanding: ['N72', 'A54.9', 'N76.0'],
     tatalaksana: { obatBenar: ['ceftriaxone_1g_inj', 'doksisiklin_100'], edukasi: ['tindak_lanjut_servisitis', 'layanan_pasangan_ims', 'pencegahan_ims_terintegrasi'], edukasiKritis: ['tindak_lanjut_servisitis', 'layanan_pasangan_ims'] },
     clue: 'Sekret mukopurulen endoserviks dan contact bleeding tanpa nyeri pelvis mendukung servisitis, bukan vaginitis atau PID. Pada pasien berisiko dengan pasangan baru, NAAT tidak tersedia, dan tindak lanjut belum pasti, terapi presumtif klamidia serta gonore masuk akal: doxycycline 100 mg dua kali sehari tujuh hari dan ceftriaxone IM sesuai pedoman gonore terkini. Tawarkan tes HIV/sifilis, nilai resolusi gejala, retest sekitar tiga bulan bila gonore/klamidia terdiagnosis, dan eskalasi segera bila muncul nyeri pelvis atau demam.',
     panduanResmi: 'PPK KMK 1186/2022 tidak mempunyai bab servisitis langsung; bab fluor albus hanya sumber terkait. Lampiran Permenkes 23/2022 yang dipertahankan oleh Permenkes 3/2026, WHO STI 2024, dan CDC cervicitis guidance melengkapi keputusan risiko, terapi presumtif, follow-up, dan layanan pasangan.',
-    catatanRealita: 'Kode N89 dipertahankan agar konkordan dengan baris katalog SKDI-144, sedangkan fenotipe kasusnya adalah servisitis mukopurulen. NAAT gonore/klamidia tidak diasumsikan tersedia langsung di Sukamaju; spesimen dapat dirujuk tanpa menunda terapi sindromik pada pasien berisiko. Sinyal klaster memakai hitungan agregat terde-identifikasi dan harus ditelaah program sebelum intervensi wilayah.',
+    catatanRealita: 'Kode N72 dipilih karena fenotipe tegak dari pemeriksaan (servisitis mukopurulen, contact bleeding); katalog SKDI-144 tetap sindrom (lihat SINDROM_KE_FENOTIPE) — divergensi disengaja. NAAT gonore/klamidia tak diasumsikan tersedia langsung; spesimen bisa dirujuk tanpa menunda terapi sindromik. Sinyal klaster pakai agregat terde-identifikasi, ditelaah program sebelum intervensi wilayah.',
   }),
 
   buatKasusFktpLab({
@@ -837,7 +856,13 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
   }),
 
   buatKasusFktpLab({
-    id: 'lab_anemia_defisiensi_besi_nonhamil', nama: 'Anemia Defisiensi Besi akibat Haid Banyak', icd10: 'D50', kategori: 'metabolik', prevalensi: 'sedang', jenisKelamin: 'P',
+    // Audit UKM 2026-08-23: kamus proyek ini hanya punya D50.0/D50.9, tak
+    // ada D50 telanjang. Vignette eksplisit "haid banyak, enam bulan" =
+    // kehilangan darah kronik, cocok definisi WHO D50.0 ("secondary to
+    // blood loss (chronic)") — preseden identik: lab_anemia_berat_perlu_
+    // transfusi (adjudicationWave11.test.ts) sudah mengunci D50.0 utk
+    // konsep klinis yang sama.
+    id: 'lab_anemia_defisiensi_besi_nonhamil', nama: 'Anemia Defisiensi Besi akibat Haid Banyak', icd10: 'D50.0', kategori: 'metabolik', prevalensi: 'sedang', jenisKelamin: 'P',
     keluhanUtama: 'Saya cepat lelah, berdebar saat naik tangga, dan tampak pucat.', usia: [18, 45], vital: { td: '108/68', nadi: 92, rr: 18, suhu: 36.6, spo2: 99 },
     pembuka: ['Sejak kapan lelah dan adakah sumber kehilangan darah?', 'Tiga bulan; haid sangat banyak selama tujuh hari setiap bulan.'],
     pertanyaan: [
@@ -849,7 +874,7 @@ export const LAB_BATCH_2_CASES: KasusKlinis[] = [
     ],
     fisik: [['umum', 'Konjungtiva pucat, tidak ikterik.'], ['jantung', 'Takikardia ringan, tanpa murmur patologis.'], ['abdomen', 'Tidak ada hepatosplenomegali atau massa teraba.', false]],
     lab: [['darah_rutin', 'Hb 9,6 g/dL; MCV 69 fL; MCH rendah; RDW meningkat; trombosit 470.000/uL.', 'rendah']],
-    diagnosisBanding: ['D50', 'D56.3', 'D63.8'],
+    diagnosisBanding: ['D50.0', 'D56.3', 'D63.8'],
     tatalaksana: { obatBenar: ['tablet_fe'], edukasi: ['terapi_besi_terukur', 'telusuri_sumber_anemia', 'kontrol_hb_anemia'], edukasiKritis: ['telusuri_sumber_anemia', 'kontrol_hb_anemia'] },
     clue: 'Anemia mikrositik-hipokrom dengan RDW meningkat dan haid banyak sangat mendukung defisiensi besi, tetapi terapi tidak boleh berhenti pada tablet Fe. Beri sekitar 60 mg besi elemental sekali sehari; bila tidak toleran, regimen selang sehari dapat dipertimbangkan. Nilai kenaikan Hb dalam 2-4 minggu dan lanjutkan sekitar tiga bulan setelah Hb normal untuk mengisi cadangan, sambil menilai serta menangani penyebab haid banyak. Rujuk bila tidak respons, anemia berat/gejala tidak stabil, perdarahan mencurigakan, atau perlu evaluasi ginekologi lanjut.',
     panduanResmi: 'PPK FKTP 1186/2022 membahas langsung anemia defisiensi besi dan menjadi acuan dasar, tetapi masih mencantumkan fero sulfat 3 x 200 mg. AGA Clinical Practice Update 2024 dan BSG 2021 mendukung besi oral sekali sehari paling banyak, dengan selang sehari bila toleransi buruk; respons Hb dinilai dini dan terapi dilanjutkan setelah normal. Fornas 1199/2025 menyediakan sediaan sekitar 60 mg besi elemental pada FPKTP. ACOG menegaskan bahwa perdarahan uterus abnormal perlu dinilai dan ditangani paralel, bukan ditutupi oleh suplementasi saja.',

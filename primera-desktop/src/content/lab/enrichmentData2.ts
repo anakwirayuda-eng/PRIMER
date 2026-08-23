@@ -664,7 +664,7 @@ export const LAB_ENRICHMENT_2: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_gondongan', kategori: 'sosial', tanya: 'Apakah ada teman sekolah atau saudara yang sedang gondongan?', jawab: 'Tidak ada, Dok. Tetangga bilang ini gondongan karena ada bengkak di leher, tapi tidak ada yang sedang sakit begitu.' },
     ],
     obatSalahUmum: [
-      { id: 'oat_kdt', alasan: 'Benjolan baru tiga hari, nyeri, dengan fokus gigi adalah limfadenitis bakterial akut, bukan TB kelenjar; memulai OAT empiris tanpa bukti keliru dan membebani anak dengan obat program bertoksisitas.', bahaya: 'nonPrimer' },
+      { id: 'oat_kdt', alasan: 'Benjolan baru tiga hari, nyeri, dengan fokus gigi adalah limfadenitis bakterial akut, bukan TB kelenjar; memulai OAT empiris tanpa bukti keliru dan membebani anak dengan obat program bertoksisitas (alasan ini sendiri menyebut toksik -- audit UKM 2026-08-23 menaikkan tag bahaya agar konsisten).', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
       narasi: 'Bila sumber infeksi (mis. gigi) tak diobati, kelenjar bisa membesar bernanah; kelenjar yang menetap perlu evaluasi lanjut.',

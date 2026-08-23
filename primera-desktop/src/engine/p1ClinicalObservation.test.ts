@@ -159,7 +159,10 @@ describe('P1 - governance prototipe 137', () => {
     const hasil = advance(awal, { type: 'DISPOSISI', jenis: 'pulang' }, PACK)
     const selesai = hasil.events.find((event) => event.type === 'ENCOUNTER_SELESAI')
 
-    expect(PACK.kasus[kasusId]?.reviewStatus).toBeUndefined()
+    // Audit UKM 2026-08-23: kasus ini kini 'claude_reviewed' (delegasi bulk),
+    // BUKAN 'physician_approved' — invarian yg diuji ttp sama: hanya sign-off
+    // dokter yang menghentikan status formative-prototype, lihat types.ts.
+    expect(PACK.kasus[kasusId]?.reviewStatus).not.toBe('physician_approved')
     expect(selesai?.type === 'ENCOUNTER_SELESAI' && selesai.penilaian.formativePrototype).toBe(true)
     expect(hasil.state.tally).toEqual(awal.tally)
     expect(hasil.state.dex).toEqual(awal.dex)

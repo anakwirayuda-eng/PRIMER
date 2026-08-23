@@ -202,7 +202,9 @@ describe('EBM currency 2026 - sumber display yang mengubah keputusan', () => {
     expect(PACK.kasus.jiwa_depresi_ringan?.panduanResmi).toMatch(/mhGAP.*2023/is)
     expect(PACK.kasus.lab_bronkiolitis_berat?.panduanResmi).toMatch(/WHO 2026/is)
     expect(PACK.kasus.lab_efusi_pleura?.panduanResmi).toMatch(/BTS.*2023.*2026/is)
-    expect(PACK.kasus.lab_taeniasis_intestinal?.panduanResmi).toMatch(/WHO 2021\/2023/)
+    // Audit UKM 2026-08-23: tahun crosswalk sebenarnya 2021/2022, bukan
+    // 2021/2023 — teks lama salah kutip, kini dikoreksi ke sumber sebenarnya.
+    expect(PACK.kasus.lab_taeniasis_intestinal?.panduanResmi).toMatch(/WHO 2021\/2022/)
   })
 
   it('dispepsia fungsional memenuhi kronisitas, bukan vignette satu bulan', () => {

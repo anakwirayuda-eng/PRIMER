@@ -98,7 +98,6 @@ export const NAMA_ICD: Record<string, string> = {
   L80: 'Vitiligo',
   'L23.7': 'Dermatitis Kontak Alergik akibat Tumbuhan',
   'I89.0': 'Limfedema',
-  'I82.4': 'Trombosis Vena Dalam Akut Tungkai Bawah',
   L23: 'Dermatitis Kontak Alergik',
   'A53.9': 'Sifilis, Tidak Spesifik',
   B09: 'Infeksi Virus dengan Lesi Kulit, Tidak Spesifik',
@@ -157,6 +156,11 @@ export const NAMA_ICD: Record<string, string> = {
   'B77.9': 'Askariasis',
   'B78.9': 'Strongiloidiasis',
   'B65.9': 'Skistosomiasis',
+  // Audit UKM 2026-08-23: telur Schistosoma bisa dibedakan spesiesnya scr
+  // morfologi (beda dari telur cacing tambang) — lab_skistosomiasis_sulteng
+  // (fokus endemis Lembah Napu/Sigi-Poso, satu-satunya di Indonesia) pindah
+  // dari B65.9 (tak spesifik) ke B65.2 (spesifik S. japonicum).
+  'B65.2': 'Skistosomiasis akibat Schistosoma japonicum',
   'B68.9': 'Taeniasis',
   B15: 'Hepatitis A Akut',
   'B16.9': 'Hepatitis B Akut',
@@ -216,6 +220,10 @@ export const NAMA_ICD: Record<string, string> = {
   A09: 'Diare & Gastroenteritis Infeksius',
   'A08.0': 'Enteritis Rotavirus',
   'A06.0': 'Disentri Ameba Akut',
+  // Audit UKM 2026-08-23: lab_keracunan_makanan_ringan pindah dari T62 (efek
+  // toksik zat non-infeksius) ke A05.9 — vignette-nya pola toksin bakteri
+  // (nasi kotak, onset 6 jam, klaster makan bersama), organisme tak dikultur.
+  'A05.9': 'Intoksikasi Makanan Bakterial, Tidak Spesifik',
   'K52.9': 'Kolitis Non-infektif',
   // Audit label 2026-08-22: nama lama 'TB Paru, konfirmasi BTA (+)' menggendong
   // HASIL PEMERIKSAAN di dalam sebuah PILIHAN diagnosis. Mahasiswa yang sadar

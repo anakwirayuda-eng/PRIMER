@@ -110,6 +110,14 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     ambangKluster: 2,
     nama: 'Pertusis pada Remaja',
     icd10: 'A37',
+    // Audit UKM 2026-08-23 (delegasi bulk): clue & catatanRealita kasus ini
+    // sendiri menyatakan "suspek klinis kuat, belum konfirmasi laboratorium"
+    // — persis pola yang mewajibkan kepastianDiagnosis:'suspek' di 3 kasus
+    // lain (ADJUDIKASI_DELEGASI_2026-08-21.md #2). Field ini lolos karena
+    // nama kasus tak memuat kata "Dugaan/Suspek" — kelalaian field, bukan
+    // keputusan sadar. Tanpa ini, klaim TEGAK palsu lolos skorDiagnosis 100
+    // dan mahasiswa jujur yang menandai suspek malah dihukum.
+    kepastianDiagnosis: 'suspek',
     skdi: '4A',
     kategori: 'respirasi',
     fktp144: true,
@@ -321,7 +329,12 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
   buatKasusLab({
     id: 'lab_stomatitis_aftosa',
     nama: 'Stomatitis Aftosa Rekuren',
-    icd10: 'K12',
+    // Audit UKM 2026-08-23: K12 adalah kode KATEGORI 3-digit ("Stomatitis
+    // and related lesions"), bukan kode diagnosis terminal — K12.0
+    // "Recurrent oral aphthae" persis menyasar kasus ini. Lihat entri
+    // PENGECUALIAN_KODE 'stomatitis_aftosa' (pack.test.ts) utk kenapa baris
+    // katalog skdi144 SENGAJA tetap K12 (kompetensi gabungan aftosa+herpes).
+    icd10: 'K12.0',
     skdi: '4A',
     kategori: 'pencernaan',
     fktp144: true,
@@ -347,7 +360,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'kulit', temuan: 'Tidak ada lesi kulit atau genital yang menyertai.', relevan: false },
     ],
     lab: [],
-    diagnosisBanding: ['K12', 'B00.2', 'C06.9'],
+    diagnosisBanding: ['K12.0', 'B00.2', 'C06.9'],
     tatalaksana: {
       obatBenar: ['triamcinolone_orabase'],
       obatOpsional: ['paracetamol_500'],
@@ -450,7 +463,11 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
   buatKasusLab({
     id: 'lab_intoleransi_makanan_laktosa',
     nama: 'Intoleransi Makanan - Dugaan Laktosa',
-    icd10: 'K90.4',
+    // Audit UKM 2026-08-23: WHO ICD-10 K90.4 punya Excludes eksplisit
+    // "lactose intolerance (E73.-)" — intoleransi laktosa TIDAK termasuk
+    // cakupan K90.4 (malabsorpsi umum). E73.9 (tak spesifik, sesuai
+    // diagnosis klinis tanpa breath test/genetik) yang benar.
+    icd10: 'E73.9',
     // Adjudikasi-delegasi 2026-08-21 (keputusan #2): nama kasus memang "Dugaan"
     // dan cluenya menolak kepastian — field lalai disetel, kini dijujurkan.
     kepastianDiagnosis: 'suspek',
@@ -479,7 +496,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'kulit', temuan: 'Tidak ada urtikaria atau angioedema.', relevan: true },
     ],
     lab: [],
-    diagnosisBanding: ['K90.4', 'L27.2', 'K58.0'],
+    diagnosisBanding: ['E73.9', 'L27.2', 'K58.0'],
     tatalaksana: {
       obatBenar: [],
       edukasi: ['eliminasi_makanan_terarah', 'gizi_seimbang', 'tanda_bahaya'],
@@ -531,7 +548,12 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     id: 'lab_keracunan_makanan_ringan',
     ambangKluster: 2,
     nama: 'Keracunan Makanan Ringan',
-    icd10: 'T62',
+    // Audit UKM 2026-08-23: T62 (efek toksik zat non-infeksius yg dimakan —
+    // jamur/racun kimia) salah kelas untuk vignette ini (nasi kotak, onset
+    // 6 jam, muntah-lalu-diare, klaster makan bersama = pola toksin bakteri
+    // klasik S. aureus/B. cereus). A05.9 (intoksikasi bakteri foodborne
+    // lain, organisme tak dikonfirmasi kultur) yang benar.
+    icd10: 'A05.9',
     skdi: '4A',
     kategori: 'pencernaan',
     fktp144: true,
@@ -558,7 +580,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
       { region: 'jantung', temuan: 'Nadi sedikit cepat, perfusi perifer baik.', relevan: true },
     ],
     lab: [],
-    diagnosisBanding: ['T62', 'A09', 'A03'],
+    diagnosisBanding: ['A05.9', 'A09', 'A03'],
     tatalaksana: {
       obatBenar: ['oralit'],
       obatOpsional: ['ondansetron_4'],
@@ -668,7 +690,12 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     id: 'lab_skistosomiasis_sulteng',
     ambangKluster: 2,
     nama: 'Skistosomiasis dari Fokus Endemis Sulawesi Tengah',
-    icd10: 'B65.9',
+    // Audit UKM 2026-08-23: berbeda dari cacing tambang, telur Schistosoma
+    // SECARA MORFOLOGI bisa dibedakan antarspesies (S. japonicum: bulat/
+    // oval, spina lateral kecil). Lembah Napu/Sigi-Poso adalah satu-satunya
+    // fokus endemis Indonesia, spesifik S. japonicum — B65.2 tepat sasaran,
+    // bukan B65.9 (tak spesifik).
+    icd10: 'B65.2',
     skdi: '4A',
     kategori: 'pencernaan',
     fktp144: true,
@@ -698,7 +725,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     lab: [
       { id: 'feses_rutin', hasil: 'Telur Schistosoma japonicum ditemukan pada pemeriksaan program.', flag: 'abnormal', relevan: true },
     ],
-    diagnosisBanding: ['B65.9', 'A06.0', 'A03'],
+    diagnosisBanding: ['B65.2', 'A06.0', 'A03'],
     tatalaksana: {
       obatBenar: ['prazikuantel_600'],
       edukasi: ['alur_program_skistosomiasis', 'hindari_air_tawar_endemis', 'one_health_skistosomiasis'],
@@ -750,7 +777,7 @@ export const LAB_BATCH_1_CASES: KasusKlinis[] = [
     },
     konfirmasiWajib: 'feses_rutin',
     clue: 'Proglotid, telur Taenia, dan daging babi kurang matang mendukung taeniasis, tetapi pemeriksaan rutin belum memastikan spesies. WHO mencantumkan prazikuantel 10 mg/kg dosis tunggal. Skrining kejang, sakit kepala berat baru, gangguan mata, atau defisit saraf wajib sebelum terapi sederhana karena kecurigaan sistiserkosis memerlukan evaluasi rujukan. Pastikan proglotid berhenti dan upayakan identifikasi spesies melalui jejaring.',
-    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab taeniasis tersendiri. WHO 2021/2023 memisahkan taeniasis usus dari sistiserkosis dan menempatkan kontrol T. solium sebagai One Health: obati carrier manusia, gunakan jamban, jaga babi dari tinja, perbaiki pemeliharaan serta inspeksi/pemasakan daging. POPM atau targeted chemotherapy adalah keputusan program menurut pemetaan risiko, bukan resep spontan bagi seluruh desa.',
+    panduanResmi: 'PPK KMK 1186/2022 tidak memiliki bab taeniasis tersendiri. WHO 2021/2022 memisahkan taeniasis usus dari sistiserkosis dan menempatkan kontrol T. solium sebagai One Health: obati carrier manusia, gunakan jamban, jaga babi dari tinja, perbaiki pemeliharaan serta inspeksi/pemasakan daging. POPM atau targeted chemotherapy adalah keputusan program menurut pemetaan risiko, bukan resep spontan bagi seluruh desa.',
     catatanRealita: 'Fornas mencantumkan prazikuantel pada bagian antisistosoma; itu bukan bukti otomatis pembiayaan atau stok untuk taeniasis. Item 600 mg hanya mewakili sediaan dan jumlah tablet dihitung menurut berat badan; spesiasi serta tindak lanjut carrier berjalan melalui jejaring.',
   }),
 

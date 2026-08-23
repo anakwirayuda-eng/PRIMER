@@ -2,14 +2,14 @@ import { describe, expect, it } from 'vitest'
 import { CURRICULUM_BLUEPRINT, PACK } from '../index'
 import {
   CONTENT_RELEASE,
-  CODING_UKM_SWEEP_CONTENT_RELEASE,
+  BULK_REVIEW_CONTENT_RELEASE,
   encounterArchetypeAktif,
   validasiPack,
 } from '../pack'
 import { validasiCurriculumBlueprint } from '../curriculum'
 import { LAB_BATCH_1_ARCHETYPE_SPECS, LAB_BATCH_1_CASES } from './batch1'
 import { LAB_ENRICHMENT, applyLabEnrichment } from './enrichment'
-import { PHYSICIAN_APPROVED_LAB_CASE_IDS } from './index'
+import { PHYSICIAN_APPROVED_LAB_CASE_IDS, CLAUDE_REVIEWED_LAB_CASE_IDS } from './index'
 import { VARIAN_TINGKAT_A } from '../varianTingkatAData'
 
 describe('M13 lab full-fledge - batch 1', () => {
@@ -30,7 +30,9 @@ describe('M13 lab full-fledge - batch 1', () => {
         ...applyLabEnrichment(kasus, LAB_ENRICHMENT[kasus.id]),
         ...(PHYSICIAN_APPROVED_LAB_CASE_IDS.has(kasus.id)
           ? { reviewStatus: 'physician_approved' }
-          : {}),
+          : CLAUDE_REVIEWED_LAB_CASE_IDS.has(kasus.id)
+            ? { reviewStatus: 'claude_reviewed' }
+            : {}),
         ...(VARIAN_TINGKAT_A[kasus.id] ? { varianPresentasi: VARIAN_TINGKAT_A[kasus.id] } : {}),
       })
       expect(kasus.activationStatus, kasus.id).toBe('lab_prototype_unadjudicated')
@@ -47,8 +49,8 @@ describe('M13 lab full-fledge - batch 1', () => {
   })
 
   it('Career-only dan benar-benar tidak masuk pool Ujian', () => {
-    // Adjudikasi-delegasi 2026-08-21: rilis konten naik (kunci jawaban berubah).
-    expect(CONTENT_RELEASE).toBe(CODING_UKM_SWEEP_CONTENT_RELEASE)
+    // Audit UKM 2026-08-23: rilis konten naik lagi (lihat komentar BULK_REVIEW di pack.ts).
+    expect(CONTENT_RELEASE).toBe(BULK_REVIEW_CONTENT_RELEASE)
     for (const kasus of LAB_BATCH_1_CASES) {
       expect(
         encounterArchetypeAktif(PACK, 'clinic', kasus.id, 'karier', CONTENT_RELEASE),

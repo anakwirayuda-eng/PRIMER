@@ -149,7 +149,11 @@ export const LAB_ENRICHMENT_3: Record<string, LabEnrichmentSpec> = {
       { id: 'q_dist_tular_serumah', kategori: 'sosial', tanya: 'Apakah ada anggota serumah yang ikut tertular bercak serupa di lipat pahanya?', jawab: 'Tidak ada, cuma saya sendiri yang kena.' },
     ],
     obatSalahUmum: [
-      { id: 'ketokonazol_krim', alasan: 'Pasien sudah mencoba antijamur tanpa perbaikan dan KOH negatif; penyebabnya korineform, bukan jamur.', bahaya: 'nonPrimer' },
+      // Audit UKM 2026-08-23: alasan lama overclaim — azol topikal justru
+      // punya aktivitas antibakteri nyata thd C. minutissimum (bukan tanpa
+      // efek sama sekali). Yang salah bukan mekanismenya, tapi mengulang
+      // golongan yang sudah gagal empiris.
+      { id: 'ketokonazol_krim', alasan: 'Pasien sudah mencoba antijamur seminggu tanpa perbaikan dan KOH negatif — mengulang golongan yang sudah gagal empiris bukan langkah rasional, terlepas dari aktivitas antibakteri lemah azol terhadap Corynebacterium.', bahaya: 'nonPrimer' },
       { id: 'betametason_krim', alasan: 'Steroid poten di kulit lipatan yang tipis dan lembap mempercepat atrofi serta striae, sementara bakterinya tidak tersentuh.', bahaya: 'kontraindikasi' },
     ],
     konsekuensi: {
