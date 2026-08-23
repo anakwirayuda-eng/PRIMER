@@ -1057,11 +1057,18 @@ export function MejaKerja() {
 
             {/* M5.25 — arsip manual: 3 slot di samping autosave.
                 S2-mejakerja-sore: dipindah ke urutan paling akhir & dilipat
-                <details> tertutup — urusan sistem tidak lagi menyela alur
-                diegetis debrief → refleksi → tidur. Konten <details> tertutup
-                tetap ter-mount di React, jadi status transient
-                "menyimpan…/tersimpan" (statusSlot) bekerja tanpa perubahan. */}
-            <details className="mk__arsip">
+                tertutup — urusan sistem tidak lagi menyela alur diegetis
+                debrief → refleksi → tidur. Posisi di akhir DIPERTAHANKAN.
+                Audit UX 2026-08-23 (dr. Wirayuda, dari screenshot): tertutup
+                membuat fitur nyaris tak-terlihat — hanya muncul di blok sore,
+                terkubur di bawah dua elemen lain, dan onboarding tak pernah
+                menyebutnya. Autosave tetap jalan (jaring pengaman utama),
+                tapi backup manual sengaja dibuat default TERBUKA supaya
+                mahasiswa tahu fiturnya ada tanpa harus menemukannya sendiri.
+                Konten <details> tetap ter-mount di React baik terbuka maupun
+                tertutup, jadi status transient "menyimpan…/tersimpan"
+                (statusSlot) bekerja tanpa perubahan. */}
+            <details className="mk__arsip" open>
               <summary className="mk__sub-judul mono">Arsip Manual — simpan ke slot</summary>
               <div className="baris mk__program-opsi">
                 {(['slot1', 'slot2', 'slot3'] as const).map((slot) => {

@@ -1,6 +1,6 @@
 /**
  * TEST — S2-mejakerja-sore: hotkey "L" menjalankan CTA besar Meja Kerja +
- * panel sore tersusun diegetis (Refleksi sebelum Arsip Manual yang terlipat).
+ * panel sore tersusun diegetis (Refleksi sebelum Arsip Manual, kini terlipat TERBUKA).
  * Pagar hotkey identik dgn angka 1-5 (useHotkeyNavigasi): mati saat mengetik
  * dan saat ada [role="dialog"] terbuka.
  */
@@ -116,11 +116,11 @@ describe('<MejaKerja /> — hotkey L & susunan panel sore', () => {
     expect(useGame.getState().state?.hari).toBe(s.hari + 1)
   })
 
-  it('panel sore: Refleksi mendahului Arsip Manual, dan Arsip terlipat tertutup', () => {
+  it('panel sore: Refleksi mendahului Arsip Manual, dan Arsip terlipat TERBUKA (audit UX 2026-08-23: dulu tertutup, nyaris tak-terlihat)', () => {
     renderSore()
     const arsip = document.querySelector('details.mk__arsip') as HTMLDetailsElement | null
     expect(arsip).not.toBeNull()
-    expect(arsip!.open).toBe(false)
+    expect(arsip!.open).toBe(true)
     const refleksi = screen.getByPlaceholderText(/Apa yang kamu pelajari hari ini/)
     expect(
       arsip!.compareDocumentPosition(refleksi) & Node.DOCUMENT_POSITION_PRECEDING,

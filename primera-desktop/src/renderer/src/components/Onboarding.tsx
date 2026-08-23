@@ -55,7 +55,7 @@ const KARTU: Kartu[] = [
   {
     ikon: '🌅',
     judul: 'Satu hari, tiga blok',
-    isi: 'PAGI di klinik memeriksa pasien. SIANG turun ke lapangan — kunjungan keluarga atau kegiatan. SORE di meja kerja: surat, laporan, refleksi. Tombol besar di kanan bawah selalu membawamu ke langkah berikutnya.',
+    isi: 'PAGI di klinik memeriksa pasien. SIANG turun ke lapangan — kunjungan keluarga atau kegiatan. SORE di meja kerja: surat, laporan, refleksi, dan Arsip Manual kalau kamu mau menyimpan cadangan ke slot sendiri. Tombol besar di kanan bawah selalu membawamu ke langkah berikutnya.',
   },
   {
     ikon: '📋',
