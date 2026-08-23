@@ -237,8 +237,15 @@ export interface KasusKlinis {
    * yang sudah melewati adjudikasi klinis produksi.
    */
   activationStatus?: 'lab_prototype_unadjudicated'
-  /** Adjudikasi dokter selesai; status prototipe tetap dipakai untuk isolasi mode. */
-  reviewStatus?: 'physician_approved'
+  /**
+   * Adjudikasi dokter selesai; status prototipe tetap dipakai untuk isolasi mode.
+   * 'claude_reviewed' (2026-08-23) = delegasi bulk atas perintah eksplisit
+   * dokter — TIDAK setara physician_approved, TIDAK mengubah isolasi mode,
+   * sekadar penanda "sudah ditinjau lewat sanggahan adversarial, menunggu
+   * spot-check dokter" pada alat tinjau. Vetoable; jangan pernah dibaca
+   * seolah tanda tangan dokter.
+   */
+  reviewStatus?: 'physician_approved' | 'claude_reviewed'
   /** Termasuk daftar 144 penyakit wajib tuntas FKTP. */
   fktp144: boolean
   /** Kasus yang seharusnya DIRUJUK (di luar kompetensi 4A / butuh stabilisasi-rujuk). */
@@ -498,7 +505,7 @@ export interface KasusIgd {
    * disetujui dokter tetap dapat dibatasi ke Karier agar blueprint Ujian tidak
    * berubah di tengah pengembangan.
    */
-  reviewStatus?: 'physician_approved'
+  reviewStatus?: 'physician_approved' | 'claude_reviewed'
   /** Narasi kedatangan dramatis. */
   pembuka: string
   demografi: {

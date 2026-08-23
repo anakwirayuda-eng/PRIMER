@@ -74,7 +74,7 @@ export interface AdjudicationCase {
    * hidup di types.ts, BUKAN nilai radio `physicianDecision` — yang itu tetap
    * dilarang masuk dataset kompilasi (dijaga m13AdjudicationArtifact.test.ts).
    */
-  reviewStatus?: 'physician_approved'
+  reviewStatus?: 'physician_approved' | 'claude_reviewed'
   name: string
   icd10: string
   skdi: string
@@ -222,6 +222,8 @@ export interface AdjudicationDataset {
     ebmDirect: number
     /** Sudah ditandatangani dokter (M13_137_DECISION_LOG.md). */
     physicianApproved: number
+    /** Delegasi bulk 2026-08-23 (perintah dokter) — BUKAN setara physicianApproved. */
+    claudeReviewed: number
     /** Sisa yang masih menunggu adjudikasi dokter. */
     pendingReview: number
     nonFornasDrugIds: string[]
@@ -917,6 +919,10 @@ export function buildAdjudicationDataset(generatedAt = new Date().toISOString())
       pnpkDirect: cases.filter((item) => item.evidence.pnpk.sources.some((source) => source.relation === 'direct')).length,
       ebmDirect: cases.filter((item) => item.evidence.ebm.sources.some((source) => source.relation === 'direct')).length,
       physicianApproved: cases.filter((item) => item.reviewStatus === 'physician_approved').length,
+      // 'claude_reviewed' (2026-08-23): delegasi bulk atas perintah dokter —
+      // dihitung terpisah dari physicianApproved (BUKAN setara) dan tetap
+      // masuk pendingReview (belum ada tanda tangan dokter).
+      claudeReviewed: cases.filter((item) => item.reviewStatus === 'claude_reviewed').length,
       pendingReview: cases.filter((item) => item.reviewStatus !== 'physician_approved').length,
       nonFornasDrugIds: uniqueDrugs.filter((id) => PACK.obat[id]?.fornas === false).sort(),
       resourceTierCOrD: cases.filter((item) => item.evidence.aspak.highestTier === 'C' || item.evidence.aspak.highestTier === 'D').length,

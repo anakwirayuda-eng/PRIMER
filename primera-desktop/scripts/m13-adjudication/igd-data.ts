@@ -129,7 +129,10 @@ export function buildIgdAdjudicationDataset(generatedAt = new Date().toISOString
       return {
         id: item.id,
         name: item.nama,
-        reviewStatus: item.reviewStatus!,
+        // filter() di atas menjamin 'physician_approved' pada runtime; TS tak
+        // menyempitkan union lewat filter non-predikat, jadi assert eksplisit di
+        // sini. IGD sengaja TIDAK ikut delegasi bulk 2026-08-23 (kanal 'gawat').
+        reviewStatus: item.reviewStatus! as 'physician_approved',
         icd10: item.icd10,
         skdi: item.skdi,
         opening: item.pembuka,
