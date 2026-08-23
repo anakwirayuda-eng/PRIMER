@@ -1,10 +1,10 @@
 {
   "schema": "primera.m13-137-adjudication.v1",
-  "generatedAt": "2026-08-23T09:39:49.805Z",
-  "sourceCommit": "7f84fb05617292670ebb454f4cb2d52381aac27d",
-  "artifactFingerprint": "2f1a21db57870ce5b2b04eff72443c6dae13bca9f4a1581bddb70620f46147a6",
-  "packFingerprint": "6da77b5a",
-  "contentRelease": "sapuan-koding-ukm-2026-08-22",
+  "generatedAt": "2026-08-23T11:47:16.940Z",
+  "sourceCommit": "cbcfe4cd657fe968abbc03e3190f3d6ba798dd44",
+  "artifactFingerprint": "7abe18ef0299cfb5f9126e39225569a01b02886134fa2c160b5522c778848616",
+  "packFingerprint": "33704262",
+  "contentRelease": "sapuan-ulasan-bulk-2026-08-23",
   "engineRevision": 72,
   "title": "PRIMERA M13-137 - Paket Adjudikasi Prototipe Klinis Lab",
   "scope": {
@@ -51,6 +51,7 @@
     "pnpkDirect": 27,
     "ebmDirect": 71,
     "physicianApproved": 16,
+    "claudeReviewed": 70,
     "pendingReview": 121,
     "nonFornasDrugIds": [
       "benzoyl_peroksida_25",
@@ -1519,6 +1520,7 @@
     {
       "ordinal": 8,
       "id": "lab_gonore_uretritis_pria",
+      "reviewStatus": "claude_reviewed",
       "name": "Gonore Uretra Tanpa Komplikasi",
       "icd10": "A54.9",
       "skdi": "4A",
@@ -1749,6 +1751,7 @@
     {
       "ordinal": 9,
       "id": "lab_hepatitis_a_akut",
+      "reviewStatus": "claude_reviewed",
       "name": "Hepatitis A Akut Tanpa Gagal Hati",
       "icd10": "B15",
       "skdi": "4A",
@@ -2539,6 +2542,7 @@
     {
       "ordinal": 13,
       "id": "lab_limfadenitis_servikal_akut",
+      "reviewStatus": "claude_reviewed",
       "name": "Limfadenitis Servikal Akut Bakterial",
       "icd10": "L04.0",
       "skdi": "4A",
@@ -2718,6 +2722,7 @@
     {
       "ordinal": 14,
       "id": "lab_parotitis_mumps",
+      "reviewStatus": "claude_reviewed",
       "name": "Parotitis Epidemika (Mumps)",
       "icd10": "B26",
       "skdi": "4A",
@@ -2858,6 +2863,7 @@
     {
       "ordinal": 15,
       "id": "lab_salpingitis_pid_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Penyakit Radang Panggul Ringan - Rawat Jalan",
       "icd10": "N70",
       "skdi": "4A",
@@ -3146,6 +3152,7 @@
     {
       "ordinal": 16,
       "id": "lab_pielonefritis_tanpa_komplikasi",
+      "reviewStatus": "claude_reviewed",
       "name": "Pielonefritis Akut Tanpa Komplikasi",
       "icd10": "N10",
       "skdi": "4A",
@@ -3375,8 +3382,9 @@
     {
       "ordinal": 17,
       "id": "lab_sindrom_duh_genital_servisitis",
+      "reviewStatus": "claude_reviewed",
       "name": "Servisitis Mukopurulen - Tata Laksana Sindromik",
-      "icd10": "N89",
+      "icd10": "N72",
       "skdi": "4A",
       "category": "infeksi",
       "mustRefer": false,
@@ -3500,7 +3508,7 @@
           }
         ],
         "differentialIcd10": [
-          "N89",
+          "N72",
           "A54.9",
           "N76.0"
         ],
@@ -3509,7 +3517,7 @@
       "currentEditorial": {
         "clue": "Sekret mukopurulen endoserviks dan contact bleeding tanpa nyeri pelvis mendukung servisitis, bukan vaginitis atau PID. Pada pasien berisiko dengan pasangan baru, NAAT tidak tersedia, dan tindak lanjut belum pasti, terapi presumtif klamidia serta gonore masuk akal: doxycycline 100 mg dua kali sehari tujuh hari dan ceftriaxone IM sesuai pedoman gonore terkini. Tawarkan tes HIV/sifilis, nilai resolusi gejala, retest sekitar tiga bulan bila gonore/klamidia terdiagnosis, dan eskalasi segera bila muncul nyeri pelvis atau demam.",
         "officialGuidance": "PPK KMK 1186/2022 tidak mempunyai bab servisitis langsung; bab fluor albus hanya sumber terkait. Lampiran Permenkes 23/2022 yang dipertahankan oleh Permenkes 3/2026, WHO STI 2024, dan CDC cervicitis guidance melengkapi keputusan risiko, terapi presumtif, follow-up, dan layanan pasangan.",
-        "realityNote": "Kode N89 dipertahankan agar konkordan dengan baris katalog SKDI-144, sedangkan fenotipe kasusnya adalah servisitis mukopurulen. NAAT gonore/klamidia tidak diasumsikan tersedia langsung di Sukamaju; spesimen dapat dirujuk tanpa menunda terapi sindromik pada pasien berisiko. Sinyal klaster memakai hitungan agregat terde-identifikasi dan harus ditelaah program sebelum intervensi wilayah."
+        "realityNote": "Kode N72 dipilih karena fenotipe tegak dari pemeriksaan (servisitis mukopurulen, contact bleeding); katalog SKDI-144 tetap sindrom (lihat SINDROM_KE_FENOTIPE) — divergensi disengaja. NAAT gonore/klamidia tak diasumsikan tersedia langsung; spesimen bisa dirujuk tanpa menunda terapi sindromik. Sinyal klaster pakai agregat terde-identifikasi, ditelaah program sebelum intervensi wilayah."
       },
       "evidence": {
         "ppk": {
@@ -3630,6 +3638,7 @@
     {
       "ordinal": 18,
       "id": "lab_leptospirosis_tanpa_komplikasi",
+      "reviewStatus": "claude_reviewed",
       "name": "Suspek Leptospirosis Ringan Pascabanjir",
       "icd10": "A27.9",
       "skdi": "4A",
@@ -4114,6 +4123,7 @@
     {
       "ordinal": 20,
       "id": "lab_vaginosis_bakterialis",
+      "reviewStatus": "claude_reviewed",
       "name": "Vaginosis Bakterialis",
       "icd10": "N76.0",
       "skdi": "4A",
@@ -4278,6 +4288,7 @@
     {
       "ordinal": 21,
       "id": "lab_vulvitis_iritan",
+      "reviewStatus": "claude_reviewed",
       "name": "Vulvitis Iritan",
       "icd10": "N76.2",
       "skdi": "4A",
@@ -8203,6 +8214,7 @@
     {
       "ordinal": 38,
       "id": "lab_abses_folikel_rambut",
+      "reviewStatus": "claude_reviewed",
       "name": "Abses Folikel Rambut Superfisial",
       "icd10": "L02.9",
       "skdi": "4A",
@@ -8365,6 +8377,7 @@
     {
       "ordinal": 39,
       "id": "lab_akne_vulgaris_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Akne Vulgaris Ringan",
       "icd10": "L70.0",
       "skdi": "4A",
@@ -8496,6 +8509,7 @@
     {
       "ordinal": 40,
       "id": "lab_cutaneous_larva_migrans",
+      "reviewStatus": "claude_reviewed",
       "name": "Cutaneous Larva Migrans",
       "icd10": "B76.9",
       "skdi": "4A",
@@ -8505,47 +8519,87 @@
       "demographics": "8-60 tahun, semua gender",
       "openingComplaint": "Ada garis merah berkelok di kaki yang maju setiap hari dan sangat gatal.",
       "currentManagement": {
-        "requiredDrugs": [
-          {
-            "id": "ivermektin_3",
-            "name": "Ivermektin 3 mg",
-            "dosageForm": "tablet",
-            "role": "required",
-            "catalogFornas": true,
-            "fornas": {
-              "status": "cocok",
-              "queries": [
-                "ivermektin"
-              ],
-              "excerpts": [
-                {
-                  "label": "ivermektin",
-                  "text": "Catatan: Disediakan oleh Program Kemenkes. 2 ivermektin[P]",
-                  "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 2051"
-                }
-              ],
-              "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
-              "caseAvailabilityGrounded": false
+        "requiredDrugs": [],
+        "alternativeDrugs": [
+          [
+            {
+              "id": "ivermektin_3",
+              "name": "Ivermektin 3 mg",
+              "dosageForm": "tablet",
+              "role": "alternative",
+              "catalogFornas": true,
+              "fornas": {
+                "status": "cocok",
+                "queries": [
+                  "ivermektin"
+                ],
+                "excerpts": [
+                  {
+                    "label": "ivermektin",
+                    "text": "Catatan: Disediakan oleh Program Kemenkes. 2 ivermektin[P]",
+                    "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 2051"
+                  }
+                ],
+                "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+                "caseAvailabilityGrounded": false
+              },
+              "kfa": {
+                "status": "cocok",
+                "components": [
+                  {
+                    "query": "Ivermectin",
+                    "matches": [
+                      {
+                        "code": "91001315",
+                        "name": "Ivermectin",
+                        "unit": "mg"
+                      }
+                    ]
+                  }
+                ],
+                "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+              }
             },
-            "kfa": {
-              "status": "cocok",
-              "components": [
-                {
-                  "query": "Ivermectin",
-                  "matches": [
-                    {
-                      "code": "91001315",
-                      "name": "Ivermectin",
-                      "unit": "mg"
-                    }
-                  ]
-                }
-              ],
-              "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+            {
+              "id": "albendazol_400",
+              "name": "Albendazol 400 mg",
+              "dosageForm": "tablet kunyah",
+              "role": "alternative",
+              "catalogFornas": true,
+              "fornas": {
+                "status": "cocok",
+                "queries": [
+                  "albendazol"
+                ],
+                "excerpts": [
+                  {
+                    "label": "albendazol",
+                    "text": "AN 1 albendazol Pada wanita hamil hanya digunakan",
+                    "locator": "docs/references/fornas1199/fornas1199_fulltext.txt:baris 1979"
+                  }
+                ],
+                "note": "Nama generik/komponen ditemukan pada ekstrak Fornas 1199; reviewer tetap wajib membaca kolom fasilitas dan restriksi pada konteks baris.",
+                "caseAvailabilityGrounded": false
+              },
+              "kfa": {
+                "status": "cocok",
+                "components": [
+                  {
+                    "query": "Albendazole",
+                    "matches": [
+                      {
+                        "code": "91000146",
+                        "name": "ALBENDAZOLE",
+                        "unit": "mg"
+                      }
+                    ]
+                  }
+                ],
+                "note": "Kode KFA adalah active substance, bukan product template/variant dan bukan bukti stok."
+              }
             }
-          }
+          ]
         ],
-        "alternativeDrugs": [],
         "optionalDrugs": [],
         "procedures": [],
         "education": [
@@ -8631,6 +8685,7 @@
     {
       "ordinal": 41,
       "id": "lab_dermatitis_atopik_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Dermatitis Atopik Ringan",
       "icd10": "L20",
       "skdi": "4A",
@@ -8800,6 +8855,7 @@
     {
       "ordinal": 42,
       "id": "lab_dermatitis_kontak_iritan_tangan",
+      "reviewStatus": "claude_reviewed",
       "name": "Dermatitis Kontak Iritan Tangan",
       "icd10": "L24",
       "skdi": "4A",
@@ -9153,6 +9209,7 @@
     {
       "ordinal": 44,
       "id": "lab_dermatitis_perioral",
+      "reviewStatus": "claude_reviewed",
       "name": "Dermatitis Perioral",
       "icd10": "L71.0",
       "skdi": "4A",
@@ -9415,6 +9472,7 @@
     {
       "ordinal": 46,
       "id": "lab_dermatitis_seboroik_dewasa",
+      "reviewStatus": "claude_reviewed",
       "name": "Dermatitis Seboroik Dewasa",
       "icd10": "L21",
       "skdi": "4A",
@@ -9610,6 +9668,7 @@
     {
       "ordinal": 47,
       "id": "lab_erisipelas_tungkai_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Erisipelas Tungkai Tanpa Sepsis",
       "icd10": "A46",
       "skdi": "4A",
@@ -9784,6 +9843,7 @@
     {
       "ordinal": 48,
       "id": "lab_eritrasma_lipat_paha",
+      "reviewStatus": "claude_reviewed",
       "name": "Eritrasma Lipat Paha",
       "icd10": "L08.1",
       "skdi": "4A",
@@ -9935,6 +9995,7 @@
     {
       "ordinal": 49,
       "id": "lab_erupsi_obat_morbiliformis",
+      "reviewStatus": "claude_reviewed",
       "name": "Erupsi Obat Morbiliformis Tanpa SCAR",
       "icd10": "L27.0",
       "skdi": "4A",
@@ -10070,6 +10131,7 @@
     {
       "ordinal": 50,
       "id": "lab_filariasis_terkonfirmasi",
+      "reviewStatus": "claude_reviewed",
       "name": "Filariasis Limfatik Terkonfirmasi Program",
       "icd10": "B74",
       "skdi": "4A",
@@ -10187,7 +10249,7 @@
         "differentialIcd10": [
           "B74",
           "I89.0",
-          "I82.4"
+          "I80.2"
         ],
         "confirmationRequired": "apusan_darah_mikrofilaria",
         "stabilizationRequired": []
@@ -10299,6 +10361,7 @@
     {
       "ordinal": 51,
       "id": "lab_folikulitis_superfisialis",
+      "reviewStatus": "claude_reviewed",
       "name": "Folikulitis Superfisialis",
       "icd10": "L73.9",
       "skdi": "4A",
@@ -10447,6 +10510,7 @@
     {
       "ordinal": 52,
       "id": "lab_furunkel_fluktuatif",
+      "reviewStatus": "claude_reviewed",
       "name": "Furunkel Fluktuatif Lokal",
       "icd10": "L02",
       "skdi": "4A",
@@ -10570,6 +10634,7 @@
     {
       "ordinal": 53,
       "id": "lab_herpes_simpleks_labialis",
+      "reviewStatus": "claude_reviewed",
       "name": "Herpes Simpleks Labialis Rekuren",
       "icd10": "B00.9",
       "skdi": "4A",
@@ -10705,6 +10770,7 @@
     {
       "ordinal": 54,
       "id": "lab_hidradenitis_supuratif_hurley1",
+      "reviewStatus": "claude_reviewed",
       "name": "Hidradenitis Supuratif Hurley I",
       "icd10": "L73.2",
       "skdi": "4A",
@@ -10836,6 +10902,7 @@
     {
       "ordinal": 55,
       "id": "lab_ektima_tungkai",
+      "reviewStatus": "claude_reviewed",
       "name": "Impetigo Ulseratif (Ektima)",
       "icd10": "L08.0",
       "skdi": "4A",
@@ -11037,6 +11104,7 @@
     {
       "ordinal": 56,
       "id": "lab_kusta_pausibasiler",
+      "reviewStatus": "claude_reviewed",
       "name": "Kusta Pausibasiler Tanpa Reaksi",
       "icd10": "A30",
       "skdi": "4A",
@@ -11125,7 +11193,7 @@
         "differentialIcd10": [
           "A30",
           "B36.0",
-          "L30.0"
+          "L80"
         ],
         "stabilizationRequired": []
       },
@@ -11237,6 +11305,7 @@
     {
       "ordinal": 57,
       "id": "lab_miliaria_rubra",
+      "reviewStatus": "claude_reviewed",
       "name": "Miliaria Rubra",
       "icd10": "L74.0",
       "skdi": "4A",
@@ -11372,6 +11441,7 @@
     {
       "ordinal": 58,
       "id": "lab_moluskum_kontagiosum_anak",
+      "reviewStatus": "claude_reviewed",
       "name": "Moluskum Kontagiosum Anak",
       "icd10": "B08.1",
       "skdi": "4A",
@@ -11468,6 +11538,7 @@
     {
       "ordinal": 59,
       "id": "lab_pedikulosis_pubis",
+      "reviewStatus": "claude_reviewed",
       "name": "Pedikulosis Pubis",
       "icd10": "B85.3",
       "skdi": "4A",
@@ -11604,6 +11675,7 @@
     {
       "ordinal": 60,
       "id": "lab_pitiriasis_rosea",
+      "reviewStatus": "claude_reviewed",
       "name": "Pitiriasis Rosea",
       "icd10": "L42",
       "skdi": "4A",
@@ -11739,6 +11811,7 @@
     {
       "ordinal": 61,
       "id": "lab_pitiriasis_versikolor",
+      "reviewStatus": "claude_reviewed",
       "name": "Pitiriasis Versikolor",
       "icd10": "B36.0",
       "skdi": "4A",
@@ -11890,6 +11963,7 @@
     {
       "ordinal": 62,
       "id": "lab_reaksi_gigitan_serangga",
+      "reviewStatus": "claude_reviewed",
       "name": "Reaksi Lokal Gigitan Serangga",
       "icd10": "T63.4",
       "skdi": "4A",
@@ -12063,6 +12137,7 @@
     {
       "ordinal": 63,
       "id": "lab_sifilis_primer",
+      "reviewStatus": "claude_reviewed",
       "name": "Sifilis Primer",
       "icd10": "A51",
       "skdi": "4A",
@@ -12425,6 +12500,7 @@
     {
       "ordinal": 65,
       "id": "lab_tinea_barbae",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Barbae Noninflamasi",
       "icd10": "B35.0",
       "skdi": "4A",
@@ -12577,8 +12653,9 @@
     {
       "ordinal": 66,
       "id": "lab_tinea_fasialis",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Fasialis",
-      "icd10": "B35.8",
+      "icd10": "B35.4",
       "skdi": "4A",
       "category": "kulit",
       "mustRefer": false,
@@ -12649,11 +12726,10 @@
           }
         ],
         "differentialIcd10": [
-          "B35.8",
+          "B35.4",
           "L24",
           "L93.0"
         ],
-        "confirmationRequired": "mikroskopis_gram_koh",
         "stabilizationRequired": []
       },
       "currentEditorial": {
@@ -12729,6 +12805,7 @@
     {
       "ordinal": 67,
       "id": "lab_tinea_kapitis_anak",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Kapitis Noninflamasi",
       "icd10": "B35.0",
       "skdi": "4A",
@@ -12881,6 +12958,7 @@
     {
       "ordinal": 68,
       "id": "lab_tinea_kruris",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Kruris",
       "icd10": "B35.6",
       "skdi": "4A",
@@ -12957,7 +13035,6 @@
           "B37.2",
           "L08.1"
         ],
-        "confirmationRequired": "mikroskopis_gram_koh",
         "stabilizationRequired": []
       },
       "currentEditorial": {
@@ -13033,6 +13110,7 @@
     {
       "ordinal": 69,
       "id": "lab_tinea_manus",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Manus",
       "icd10": "B35.2",
       "skdi": "4A",
@@ -13109,7 +13187,6 @@
           "L24",
           "L30.0"
         ],
-        "confirmationRequired": "mikroskopis_gram_koh",
         "stabilizationRequired": []
       },
       "currentEditorial": {
@@ -13185,6 +13262,7 @@
     {
       "ordinal": 70,
       "id": "lab_tinea_pedis",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Pedis Interdigital",
       "icd10": "B35.3",
       "skdi": "4A",
@@ -13261,7 +13339,6 @@
           "L30.4",
           "L08.1"
         ],
-        "confirmationRequired": "mikroskopis_gram_koh",
         "stabilizationRequired": []
       },
       "currentEditorial": {
@@ -13337,6 +13414,7 @@
     {
       "ordinal": 71,
       "id": "lab_tinea_unguium_terkonfirmasi",
+      "reviewStatus": "claude_reviewed",
       "name": "Tinea Unguium Terbatas",
       "icd10": "B35.1",
       "skdi": "4A",
@@ -13615,6 +13693,7 @@
     {
       "ordinal": 73,
       "id": "lab_astigmatisme_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Astigmatisme Ringan",
       "icd10": "H52.2",
       "skdi": "4A",
@@ -13918,6 +13997,7 @@
     {
       "ordinal": 75,
       "id": "lab_blefaritis_anterior",
+      "reviewStatus": "claude_reviewed",
       "name": "Blefaritis Anterior",
       "icd10": "H01.0",
       "skdi": "4A",
@@ -14053,8 +14133,9 @@
     {
       "ordinal": 76,
       "id": "lab_buta_senja_defisiensi_vitamin_a",
+      "reviewStatus": "claude_reviewed",
       "name": "Buta Senja karena Defisiensi Vitamin A",
-      "icd10": "H53.6",
+      "icd10": "E50.5",
       "skdi": "4A",
       "category": "mata",
       "mustRefer": false,
@@ -14119,8 +14200,8 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "H53.6",
           "E50.5",
+          "H53.6",
           "H35.5"
         ],
         "stabilizationRequired": []
@@ -14183,6 +14264,7 @@
     {
       "ordinal": 77,
       "id": "lab_episkleritis_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Episkleritis Sederhana",
       "icd10": "H15.1",
       "skdi": "4A",
@@ -14351,6 +14433,7 @@
     {
       "ordinal": 78,
       "id": "lab_hipermetropia",
+      "reviewStatus": "claude_reviewed",
       "name": "Hipermetropia",
       "icd10": "H52.0",
       "skdi": "4A",
@@ -14607,6 +14690,7 @@
     {
       "ordinal": 80,
       "id": "lab_mata_kering",
+      "reviewStatus": "claude_reviewed",
       "name": "Mata Kering",
       "icd10": "H04.1",
       "skdi": "4A",
@@ -14742,6 +14826,7 @@
     {
       "ordinal": 81,
       "id": "lab_miopia_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Miopia Ringan",
       "icd10": "H52.1",
       "skdi": "4A",
@@ -14853,6 +14938,7 @@
     {
       "ordinal": 82,
       "id": "lab_perdarahan_subkonjungtiva",
+      "reviewStatus": "claude_reviewed",
       "name": "Perdarahan Subkonjungtiva Spontan",
       "icd10": "H11.3",
       "skdi": "4A",
@@ -14949,6 +15035,7 @@
     {
       "ordinal": 83,
       "id": "lab_presbiopia",
+      "reviewStatus": "claude_reviewed",
       "name": "Presbiopia",
       "icd10": "H52.4",
       "skdi": "4A",
@@ -15215,8 +15302,9 @@
     {
       "ordinal": 85,
       "id": "lab_trikiasis",
+      "reviewStatus": "claude_reviewed",
       "name": "Trikiasis Tanpa Komplikasi Kornea",
-      "icd10": "H02",
+      "icd10": "H02.0",
       "skdi": "4A",
       "category": "mata",
       "mustRefer": false,
@@ -15286,7 +15374,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "H02",
+          "H02.0",
           "H01.0",
           "H16.0"
         ],
@@ -15365,8 +15453,9 @@
     {
       "ordinal": 86,
       "id": "lab_anemia_defisiensi_besi_nonhamil",
+      "reviewStatus": "claude_reviewed",
       "name": "Anemia Defisiensi Besi akibat Haid Banyak",
-      "icd10": "D50",
+      "icd10": "D50.0",
       "skdi": "4A",
       "category": "metabolik",
       "mustRefer": false,
@@ -15458,7 +15547,7 @@
           }
         ],
         "differentialIcd10": [
-          "D50",
+          "D50.0",
           "D56.3",
           "D63.8"
         ],
@@ -16011,6 +16100,7 @@
     {
       "ordinal": 89,
       "id": "lab_defisiensi_vitamin_b_kompleks",
+      "reviewStatus": "claude_reviewed",
       "name": "Dugaan Defisiensi Riboflavin dalam Kekurangan Mikronutrien Campuran",
       "icd10": "E53.0",
       "skdi": "4A",
@@ -16183,6 +16273,7 @@
     {
       "ordinal": 90,
       "id": "lab_defisiensi_mineral_zinc",
+      "reviewStatus": "claude_reviewed",
       "name": "Dugaan Defisiensi Zinc",
       "icd10": "E60",
       "skdi": "4A",
@@ -17343,6 +17434,7 @@
     {
       "ordinal": 97,
       "id": "lab_lipoma_lengan",
+      "reviewStatus": "claude_reviewed",
       "name": "Lipoma Subkutan",
       "icd10": "D17",
       "skdi": "4A",
@@ -17439,6 +17531,7 @@
     {
       "ordinal": 98,
       "id": "lab_ulkus_tungkai_vena",
+      "reviewStatus": "claude_reviewed",
       "name": "Ulkus Tungkai Kronis - Dominan Vena",
       "icd10": "L97",
       "skdi": "4A",
@@ -18962,8 +19055,9 @@
     {
       "ordinal": 105,
       "id": "lab_intoleransi_makanan_laktosa",
+      "reviewStatus": "claude_reviewed",
       "name": "Intoleransi Makanan - Dugaan Laktosa",
-      "icd10": "K90.4",
+      "icd10": "E73.9",
       "skdi": "4A",
       "category": "pencernaan",
       "mustRefer": false,
@@ -18994,7 +19088,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "K90.4",
+          "E73.9",
           "L27.2",
           "K58.0"
         ],
@@ -19063,6 +19157,7 @@
     {
       "ordinal": 106,
       "id": "lab_kandidiasis_mulut",
+      "reviewStatus": "claude_reviewed",
       "name": "Kandidiasis Mulut",
       "icd10": "B37.0",
       "skdi": "4A",
@@ -19219,8 +19314,9 @@
     {
       "ordinal": 107,
       "id": "lab_keracunan_makanan_ringan",
+      "reviewStatus": "claude_reviewed",
       "name": "Keracunan Makanan Ringan",
-      "icd10": "T62",
+      "icd10": "A05.9",
       "skdi": "4A",
       "category": "pencernaan",
       "mustRefer": false,
@@ -19359,7 +19455,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "T62",
+          "A05.9",
           "A09",
           "A03"
         ],
@@ -21337,8 +21433,9 @@
     {
       "ordinal": 115,
       "id": "lab_skistosomiasis_sulteng",
+      "reviewStatus": "claude_reviewed",
       "name": "Skistosomiasis dari Fokus Endemis Sulawesi Tengah",
-      "icd10": "B65.9",
+      "icd10": "B65.2",
       "skdi": "4A",
       "category": "pencernaan",
       "mustRefer": false,
@@ -21414,7 +21511,7 @@
           }
         ],
         "differentialIcd10": [
-          "B65.9",
+          "B65.2",
           "A06.0",
           "A03"
         ],
@@ -21512,8 +21609,9 @@
     {
       "ordinal": 116,
       "id": "lab_stomatitis_aftosa",
+      "reviewStatus": "claude_reviewed",
       "name": "Stomatitis Aftosa Rekuren",
-      "icd10": "K12",
+      "icd10": "K12.0",
       "skdi": "4A",
       "category": "pencernaan",
       "mustRefer": false,
@@ -21623,7 +21721,7 @@
         ],
         "relevantLabs": [],
         "differentialIcd10": [
-          "K12",
+          "K12.0",
           "B00.2",
           "C06.9"
         ],
@@ -21693,6 +21791,7 @@
     {
       "ordinal": 117,
       "id": "lab_strongiloidiasis",
+      "reviewStatus": "claude_reviewed",
       "name": "Strongiloidiasis Kronik",
       "icd10": "B78.9",
       "skdi": "4A",
@@ -21857,6 +21956,7 @@
     {
       "ordinal": 118,
       "id": "lab_taeniasis_intestinal",
+      "reviewStatus": "claude_reviewed",
       "name": "Taeniasis Intestinal Tanpa Gejala Neurologis",
       "icd10": "B68.9",
       "skdi": "4A",
@@ -21943,7 +22043,7 @@
       },
       "currentEditorial": {
         "clue": "Proglotid, telur Taenia, dan daging babi kurang matang mendukung taeniasis, tetapi pemeriksaan rutin belum memastikan spesies. WHO mencantumkan prazikuantel 10 mg/kg dosis tunggal. Skrining kejang, sakit kepala berat baru, gangguan mata, atau defisit saraf wajib sebelum terapi sederhana karena kecurigaan sistiserkosis memerlukan evaluasi rujukan. Pastikan proglotid berhenti dan upayakan identifikasi spesies melalui jejaring.",
-        "officialGuidance": "PPK KMK 1186/2022 tidak memiliki bab taeniasis tersendiri. WHO 2021/2023 memisahkan taeniasis usus dari sistiserkosis dan menempatkan kontrol T. solium sebagai One Health: obati carrier manusia, gunakan jamban, jaga babi dari tinja, perbaiki pemeliharaan serta inspeksi/pemasakan daging. POPM atau targeted chemotherapy adalah keputusan program menurut pemetaan risiko, bukan resep spontan bagi seluruh desa.",
+        "officialGuidance": "PPK KMK 1186/2022 tidak memiliki bab taeniasis tersendiri. WHO 2021/2022 memisahkan taeniasis usus dari sistiserkosis dan menempatkan kontrol T. solium sebagai One Health: obati carrier manusia, gunakan jamban, jaga babi dari tinja, perbaiki pemeliharaan serta inspeksi/pemasakan daging. POPM atau targeted chemotherapy adalah keputusan program menurut pemetaan risiko, bukan resep spontan bagi seluruh desa.",
         "realityNote": "Fornas mencantumkan prazikuantel pada bagian antisistosoma; itu bukan bukti otomatis pembiayaan atau stok untuk taeniasis. Item 600 mg hanya mewakili sediaan dan jumlah tablet dihitung menurut berat badan; spesiasi serta tindak lanjut carrier berjalan melalui jejaring."
       },
       "evidence": {
@@ -22292,6 +22392,7 @@
     {
       "ordinal": 121,
       "id": "lab_influenza_tanpa_komplikasi",
+      "reviewStatus": "claude_reviewed",
       "name": "Influenza Tanpa Komplikasi",
       "icd10": "J11",
       "skdi": "4A",
@@ -22471,6 +22572,7 @@
     {
       "ordinal": 122,
       "id": "lab_laringitis_akut",
+      "reviewStatus": "claude_reviewed",
       "name": "Laringitis Akut",
       "icd10": "J04.0",
       "skdi": "4A",
@@ -22611,6 +22713,7 @@
     {
       "ordinal": 123,
       "id": "lab_pertusis_remaja",
+      "reviewStatus": "claude_reviewed",
       "name": "Pertusis pada Remaja",
       "icd10": "A37",
       "skdi": "4A",
@@ -22775,6 +22878,7 @@
     {
       "ordinal": 124,
       "id": "lab_pneumonia_komunitas_dewasa",
+      "reviewStatus": "claude_reviewed",
       "name": "Pneumonia Komunitas Dewasa - Rawat Jalan",
       "icd10": "J18.9",
       "skdi": "4A",
@@ -24793,6 +24897,7 @@
     {
       "ordinal": 133,
       "id": "lab_furunkel_hidung",
+      "reviewStatus": "claude_reviewed",
       "name": "Furunkel pada Hidung",
       "icd10": "J34.0",
       "skdi": "4A",
@@ -25000,6 +25105,7 @@
     {
       "ordinal": 134,
       "id": "lab_mabuk_perjalanan",
+      "reviewStatus": "claude_reviewed",
       "name": "Mabuk Perjalanan",
       "icd10": "T75.3",
       "skdi": "4A",
@@ -25523,6 +25629,7 @@
     {
       "ordinal": 137,
       "id": "lab_rinitis_vasomotor",
+      "reviewStatus": "claude_reviewed",
       "name": "Rinitis Vasomotor",
       "icd10": "J30.0",
       "skdi": "4A",
