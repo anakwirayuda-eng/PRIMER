@@ -124,7 +124,17 @@ export function KartuKeluarga({
           )}
           {ditautkan && <span className="chip chip--kunyit">DARI SURAT</span>}
           {binaan && <span className="chip chip--daun">BINAAN</span>}
-          <span className="chip">{LABEL_EKONOMI[content.ekonomi]}</span>
+          {/* Audit UX 2026-08-23: satu-satunya chip di kartu ini tanpa tooltip —
+              "Cukup" dkk berdampingan dgn "PERLU PERHATIAN" (chip karma, sumbu
+              KESEHATAN/keselamatan) terbaca seolah satu sumbu yang sama ("cukup
+              tapi perlu perhatian?" — kontradiksi semu). Chip ini sumbu EKONOMI,
+              sama sekali lepas dari kondisi kesehatan/keselamatan keluarga. */}
+          <span
+            className="chip"
+            data-tip={`Status ekonomi keluarga: ${LABEL_EKONOMI[content.ekonomi]} — bukan penilaian kondisi kesehatan atau keselamatan keluarga.`}
+          >
+            {LABEL_EKONOMI[content.ekonomi]}
+          </span>
         </div>
       </div>
 
