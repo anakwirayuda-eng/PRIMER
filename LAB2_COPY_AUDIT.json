@@ -16,7 +16,7 @@
     "megalog"
   ],
   "sourceFiles": 1575,
-  "identical": 1558,
+  "identical": 1557,
   "modifiedInLab2": [
     "primera-desktop/package-lock.json",
     "primera-desktop/package.json",
@@ -34,7 +34,8 @@
     "primera-desktop/src/renderer/src/screens/PetaDesa.citations.test.tsx",
     "primera-desktop/src/renderer/src/screens/PetaDesa.tsx",
     "primera-desktop/src/renderer/src/screens/TitleScreen.tsx",
-    "primera-desktop/vite.preview.config.ts"
+    "primera-desktop/vite.preview.config.ts",
+    "primera-desktop/src/renderer/index.html"
   ],
   "missing": [],
   "engineContentAssetFilesIdentical": 227,
