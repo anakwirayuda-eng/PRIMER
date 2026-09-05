@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import App from './App'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import './styles/base.css'
+import './screens/ukm/Lab2.css'
 
 // Jaring error asinkron yang tak tertangkap: rejected promise & error di luar
 // siklus render (mis. handler event async) tak ditangkap ErrorBoundary. Minimal:
@@ -16,8 +17,8 @@ window.addEventListener('unhandledrejection', (e) => {
 
 // Fallback di luar Electron (preview browser / dev vite murni): simpan ke localStorage.
 if (typeof window.primer === 'undefined') {
-  const key = (slot: string) => `primer.save.${slot}`
-  const KEY_TELEMETRI = 'primer.telemetri'
+  const key = (slot: string) => `primer.lab2.save.${slot}`
+  const KEY_TELEMETRI = 'primer.lab2.telemetri'
   window.primer = {
     save: {
       write: async (slot, json) => {
@@ -27,8 +28,8 @@ if (typeof window.primer === 'undefined') {
       read: async (slot) => localStorage.getItem(key(slot)),
       list: async () =>
         Object.keys(localStorage)
-          .filter((k) => k.startsWith('primer.save.'))
-          .map((k) => ({ slot: k.replace('primer.save.', ''), mtimeMs: 0, size: (localStorage.getItem(k) ?? '').length })),
+          .filter((k) => k.startsWith('primer.lab2.save.'))
+          .map((k) => ({ slot: k.replace('primer.lab2.save.', ''), mtimeMs: 0, size: (localStorage.getItem(k) ?? '').length })),
       delete: async (slot) => {
         localStorage.removeItem(key(slot))
         return true

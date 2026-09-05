@@ -14,5 +14,5 @@ export default defineConfig({
       '@ui': resolve(__dirname, 'src/renderer/src'),
     },
   },
-  server: { port: 5199, strictPort: true },
+  server: { host: '127.0.0.1', port: 5202, strictPort: true },
 })

@@ -107,6 +107,8 @@ export function KartuKeluarga({
 
   return (
     <article
+      id={`peta-keluarga-${content.id}`}
+      tabIndex={-1}
       className={`peta-keluarga kartu ${karmaTampak ? 'peta-keluarga--karma' : ''} ${ditautkan ? 'peta-keluarga--ditautkan' : ''}`}
     >
       <div className="baris baris--antara">
@@ -122,7 +124,7 @@ export function KartuKeluarga({
               PERLU PERHATIAN
             </span>
           )}
-          {ditautkan && <span className="chip chip--kunyit">DARI SURAT</span>}
+          {ditautkan && <span className="chip chip--kunyit">DIPILIH</span>}
           {binaan && <span className="chip chip--daun">BINAAN</span>}
           {/* Audit UX 2026-08-23: satu-satunya chip di kartu ini tanpa tooltip —
               "Cukup" dkk berdampingan dgn "PERLU PERHATIAN" (chip karma, sumbu

@@ -14,6 +14,7 @@ interface Props {
   /** Nomor RW yang punya keluarga ber-karma aktif (perlu perhatian). */
   karmaRw: ReadonlySet<number>
   onPilih: (nomor: number) => void
+  labelLapisan?: Record<number, string>
 }
 
 /** Kelompok pohon dekoratif (posisi tetap, di sela petak). */
@@ -27,7 +28,7 @@ const POHON: { x: number; y: number; r: number }[] = [
   { x: 60, y: 200, r: 8 },
 ]
 
-export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
+export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih, labelLapisan }: Props) {
   return (
     // CODEX M14 #16: role="group" (BUKAN "img"). role="img" bersifat ATOMIK —
     // aturan WAI-ARIA "presentational children" memaksa SEMUA descendant jadi
@@ -104,7 +105,7 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
             // lain, tombol roster, cuma mencakup keluarga yang SUDAH binaan).
             role="button"
             tabIndex={0}
-            aria-label={labelPetak}
+            aria-label={`${labelPetak}${labelLapisan?.[rw.nomor] ? ` ${labelLapisan[rw.nomor]}.` : ''}`}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault()
@@ -137,7 +138,7 @@ export function PetaSvg({ daftarRw, terpilih, karmaRw, onPilih }: Props) {
                 lebar jendela — satu-satunya tuas: pendekkan teksnya. Kalimat
                 lengkap tetap di <title>/aria-label & panel detail RW. */}
             <text x={bentuk.cx} y={bentuk.cy + 13} textAnchor="middle" className="peta-label peta-label--sub">
-              {`${rw.kkTersurvei}/${rw.totalKk} KK`}
+              {labelLapisan?.[rw.nomor] ?? `${rw.kkTersurvei}/${rw.totalKk} KK`}
             </text>
             {karmaRw.has(rw.nomor) && (
               <g className="peta-karma">

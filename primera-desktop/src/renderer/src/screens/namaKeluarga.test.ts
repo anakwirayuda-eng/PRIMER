@@ -36,7 +36,7 @@ describe('invarian namaKeluarga (2026-07-10)', () => {
       // Audit premium 2026-07-23: title= → data-tip= (tooltip instan global);
       // invarian anti-dobel-"Keluarga" tetap dijaga pada atribut barunya.
       file: '../screens/PetaDesa.tsx',
-      fiks: 'data-tip={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}',
+      fiks: 'data-tip={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk menemukan kartu keluarga ini.`}',
       dobel: 'data-tip={`Keluarga ${content.namaKeluarga}',
     },
     {

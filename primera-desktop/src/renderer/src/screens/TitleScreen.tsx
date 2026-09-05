@@ -416,7 +416,7 @@ export function TitleScreen() {
       {/* MAP STASE — folder manila di kiri meja; tab map + klip + chip build
           hidup di wrapper (overflow visible), panel di dalamnya yang scroll. */}
       <div className="title__map">
-        <span className="title__beta mono" aria-hidden="true">TEST-BETA</span>
+        <span className="title__beta mono" aria-hidden="true">LAB 2</span>
         <div className="title__panel kertas">
         {/* Koreksi kelembagaan (2026-07-26, dr. Wirayuda): kop lama
             "KEMENTERIAN KESEHATAN" keliru DAN berisiko terbaca sbg produk
@@ -434,6 +434,7 @@ export function TitleScreen() {
           </p>
         </div>
         <h1 className="title__judul">PRIMERA</h1>
+        <span className="lab-badge mono">CODEX LAB 2 · SUKAMAJU BERKISAH</span>
         {/* Build lab/eksperimen — label test-beta supaya tak tertukar dgn
             instalasi lain; hapus label ini saat porting ke rilis produksi. */}
         {/* Premiere (2026-07-26): label build pindah ke chip pojok — subtitle

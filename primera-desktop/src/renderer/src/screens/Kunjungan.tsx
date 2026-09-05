@@ -26,6 +26,7 @@ import {
   type ProfilPotret,
 } from './kunjungan/visualProfiles'
 import { useRadioGroup } from '../useRadioGroup'
+import { BukuLapangan } from './ukm/BukuLapangan'
 import './Kunjungan.css'
 
 /* ---------------------------------------------------------------------------
@@ -472,6 +473,7 @@ export function Kunjungan() {
       </div>
 
       {/* ---------------- Panel bawah per babak ---------------- */}
+      <BukuLapangan key={`${kj.keluargaId}:${kj.skenarioId}`} temuan={temuan} ucapan={ucapanWarga} />
       <div className="kunjungan-panel" key={kunciPanel}>
         {kj.fase === 'penerimaan' && skenario.penerimaanAwal && (
           <div className="kunjungan-pembuka kunjungan-penerimaan kertas">

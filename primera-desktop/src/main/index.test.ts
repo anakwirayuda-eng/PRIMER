@@ -16,6 +16,7 @@ type Pendengar = (...args: never[]) => unknown
 
 const bengkel = vi.hoisted(() => ({
   userData: '',
+  appData: '',
   isPackaged: false,
   ipc: new Map<string, (...args: unknown[]) => unknown>(),
   app: new Map<string, Pendengar[]>(),
@@ -76,7 +77,9 @@ vi.mock('electron', () => {
       get isPackaged(): boolean {
         return bengkel.isPackaged
       },
-      getPath: (): string => bengkel.userData,
+      getPath: (name: string): string => name === 'appData' ? bengkel.appData : bengkel.userData,
+      setName: (): void => {},
+      setPath: (name: string, value: string): void => { if (name === 'userData') bengkel.userData = value },
       getVersion: (): string => '1.1.0-test',
       requestSingleInstanceLock: (): boolean => true,
       whenReady: (): Promise<void> => Promise.resolve(),
@@ -128,8 +131,17 @@ async function muatMain(opsi: { platform?: NodeJS.Platform; terpaket?: boolean }
   await new Promise((r) => setTimeout(r, 0))
 }
 
-const saveDir = (): string => join(dirSementara, 'saves')
+const saveDir = (): string => join(bengkel.userData, 'saves')
 const ipc = (kanal: string) => bengkel.ipc.get(kanal) as (...args: unknown[]) => Promise<unknown>
+
+it('Lab 2 memakai userData sendiri dan tidak menawarkan rilis aplikasi utama', async () => {
+  await muatMain()
+  expect(bengkel.userData).toBe(join(dirSementara, 'PRIMERA CODEX Lab 2'))
+  expect(await ipc('pembaruan:cek')({})).toEqual([])
+  await ipc('save:write')({}, 'autosave', '{"lab":2}')
+  expect(readFileSync(join(saveDir(), 'autosave.json'), 'utf8')).toBe('{"lab":2}')
+  await expect(fs.access(join(dirSementara, 'saves', 'autosave.json'))).rejects.toThrow()
+})
 const pendengarPertama = (peta: Map<string, Pendengar[]>, ev: string): Pendengar => {
   const daftar = peta.get(ev)
   if (!daftar?.[0]) throw new Error(`Tidak ada pendengar '${ev}'`)
@@ -139,6 +151,7 @@ const pendengarPertama = (peta: Map<string, Pendengar[]>, ev: string): Pendengar
 beforeEach(() => {
   dirSementara = mkdtempSync(join(tmpdir(), 'primera-main-'))
   bengkel.userData = dirSementara
+  bengkel.appData = dirSementara
   bengkel.ipc.clear()
   bengkel.app.clear()
   bengkel.wc.clear()
@@ -290,7 +303,7 @@ describe('telemetri:read', () => {
   it('kegagalan baca tidak menyamar jadi log kosong', async () => {
     await muatMain()
     // Bukan-ENOENT: path log ternyata sebuah folder (EISDIR).
-    await fs.mkdir(join(dirSementara, 'telemetri.jsonl'), { recursive: true })
+    await fs.mkdir(join(bengkel.userData, 'telemetri.jsonl'), { recursive: true })
     await expect(ipc('telemetri:read')()).rejects.toThrow()
   })
 

@@ -43,6 +43,7 @@ export function Hud() {
           <span className="hud__hari-total">/{HARI_STASE[state.mode]}</span>
         </div>
         <div className="hud__blok">
+          <span className="lab-badge mono">LAB 2</span>
           <span className="chip chip--daun">{NAMA_BLOK[state.blok]}</span>
           <span className="chip">{NAMA_MUSIM[musim]}</span>
           {state.mode === 'ujian' && (

@@ -42,6 +42,9 @@ import { clusterAktif } from '@engine/surveilans'
 import { useFocusTrap } from '../useFocusTrap'
 import './PetaDesa.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
+import { FokusPeta } from './ukm/FokusPeta'
+import { AlbumKeluarga } from './ukm/AlbumKeluarga'
+import { hitungTindakLanjutRw, type LapisanPeta } from './ukm/lab2View'
 
 export function PetaDesa() {
   const state = useGame((s) => s.state)!
@@ -52,6 +55,8 @@ export function PetaDesa() {
   const setPetaTargetKeluargaId = useGame((s) => s.setPetaTargetKeluargaId)
 
   const [rwTerpilih, setRwTerpilih] = useState<number | null>(null)
+  const [lapisan, setLapisan] = useState<LapisanPeta>('cakupan')
+  const [fokusTick, setFokusTick] = useState(0)
   const [keluargaDitautkan, setKeluargaDitautkan] = useState<string | null>(null)
   const [hasilKunjungan, setHasilKunjungan] = useState<HasilKunjungan | null>(null)
   const tickTerproses = useRef(-1)
@@ -80,9 +85,26 @@ export function PetaDesa() {
     if (keluarga) {
       setRwTerpilih(keluarga.rw)
       setKeluargaDitautkan(keluarga.id)
+      setFokusTick((n) => n + 1)
     }
     setPetaTargetKeluargaId(null)
   }, [petaTargetKeluargaId, setPetaTargetKeluargaId])
+
+  useEffect(() => {
+    if (!keluargaDitautkan) return
+    const kartu = document.getElementById(`peta-keluarga-${keluargaDitautkan}`)
+    kartu?.scrollIntoView?.({ block: 'nearest', behavior: 'auto' })
+    kartu?.focus({ preventScroll: true })
+  }, [keluargaDitautkan, rwTerpilih, fokusTick])
+
+  function pilihKeluarga(id: string) {
+    const keluarga = PACK.keluarga[id]
+    if (!keluarga) return
+    setRwTerpilih(keluarga.rw)
+    setKeluargaDitautkan(id)
+    // Ulangi setelah modal album ditutup, termasuk bila keluarga tetap sama.
+    setFokusTick((n) => n + 1)
+  }
 
   /* -- Turunan tampilan (murni baca) ---------------------------------------- */
 
@@ -191,11 +213,15 @@ export function PetaDesa() {
       {/* ---------------- KIRI: peta kartu pos ---------------- */}
       <section className="peta-kiri kertas">
         <div className="judul-seksi">Peta Pembinaan — Desa Sukamaju</div>
+        <FokusPeta lapisan={lapisan} onLapisan={setLapisan} onKeluarga={pilihKeluarga} onRw={(rw) => { setRwTerpilih(rw); setKeluargaDitautkan(null) }} />
         <PetaSvg
           daftarRw={state.desa.rw}
           terpilih={rwTerpilih}
           karmaRw={karmaRw}
-          onPilih={(nomor) => setRwTerpilih(nomor)}
+          onPilih={(nomor) => { setRwTerpilih(nomor); setKeluargaDitautkan(null) }}
+          labelLapisan={lapisan === 'cakupan' ? undefined : Object.fromEntries(state.desa.rw.map((rw) => [rw.nomor,
+            lapisan === 'tindak_lanjut' ? `${hitungTindakLanjutRw(state, rw.nomor)} episode` : `${semuaCluster.filter((c) => c.rw === rw.nomor).length} sinyal`,
+          ]))}
         />
         <div className="peta-legenda">
           <span className="peta-legenda__item">
@@ -239,9 +265,9 @@ export function PetaDesa() {
                 return (
                   <button
                     key={id}
-                    className={`peta-roster-item ${rwTerpilih === content.rw ? 'peta-roster-item--aktif' : ''}`}
-                    onClick={() => setRwTerpilih(content.rw)}
-                    data-tip={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk membuka RW-nya.`}
+                    className={`peta-roster-item ${keluargaDitautkan === id ? 'peta-roster-item--aktif' : ''}`}
+                    onClick={() => pilihKeluarga(id)}
+                    data-tip={`${content.namaKeluarga} — RW ${content.rw}. Klik untuk menemukan kartu keluarga ini.`}
                   >
                     {karmaTerlihat(kel, state.hari) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
@@ -253,6 +279,7 @@ export function PetaDesa() {
           )}
         </div>
 
+        <AlbumKeluarga onKeluarga={pilihKeluarga} />
         {rwTerpilih === null || !rwAktif ? (
           <div className="peta-petunjuk kertas tengah">
             <div className="kolom">

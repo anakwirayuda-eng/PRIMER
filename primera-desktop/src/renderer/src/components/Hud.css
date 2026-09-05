@@ -253,3 +253,28 @@
   grid-area: kanan;
   min-width: max-content;
 }
+
+/* Lab 2: tiga kelompok tak boleh bertumpuk pada laptop dengan teks 125–140%,
+   yang belum memicu kelas teks-besar. Navigasi mendapat barisnya sendiri. */
+@media (max-width: 1600px) {
+  .hud {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: 'kiri kanan' 'nav nav';
+    row-gap: var(--sp-2);
+  }
+  .hud__kiri { grid-area: kiri; min-width: max-content; }
+  .hud__kanan { grid-area: kanan; min-width: max-content; }
+  .hud__nav { grid-area: nav; justify-content: center; overflow-x: auto; }
+}
+@media (max-width: 800px) {
+  .hud, .app-frame--teks-besar .hud {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'kiri' 'kanan' 'nav';
+  }
+  .hud__kiri, .hud__kanan, .app-frame--teks-besar .hud__kiri, .app-frame--teks-besar .hud__kanan {
+    min-width: 0; flex-wrap: wrap; justify-content: center;
+  }
+  .hud__blok { flex-wrap: wrap; }
+  .hud__nav, .app-frame--teks-besar .hud__nav { justify-content: start; }
+}

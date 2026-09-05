@@ -13,6 +13,7 @@ import { acakUrutan } from '../utils/acakUrutan'
 import { sumberKegiatanUkm, tautanKegiatanUkm } from '@content/ukmCitations'
 import { TautanSumber } from '../components/TautanSumber'
 import { profilVisualKegiatan } from './kegiatanVisualProfiles'
+import { PapanPenyelidikan } from './ukm/PapanPenyelidikan'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
@@ -43,7 +44,7 @@ export function Kegiatan() {
   // Disimpan sebagai objek, bukan id: pada kartu TERAKHIR sesi langsung selesai
   // dan `state.kegiatan` lenyap, sehingga pencarian by-id takkan menemukan
   // apa pun dan pembahasan kartu penutup akan terlewat begitu saja.
-  const [vonis, setVonis] = useState<{ kartu: KartuKegiatan; pilihan: PilihanKegiatan; jenis: JenisKegiatan } | null>(null)
+  const [vonis, setVonis] = useState<{ kartu: KartuKegiatan; pilihan: PilihanKegiatan; jenis: JenisKegiatan; index: number; total: number } | null>(null)
 
   const tickRef = useRef(-1)
 
@@ -51,7 +52,10 @@ export function Kegiatan() {
   // CODEX ronde-13: `kg.kartu` bisa korup (mis. null) meski `kg` sendiri ada —
   // indexing langsung di sini crash SEBELUM guard `!kg || !kartu` di bawah
   // sempat jalan. Array.isArray dulu, baru index.
-  const kartu = kg && Array.isArray(kg.kartu) ? kg.kartu[kg.index] : undefined
+  // Engine langsung maju untuk autosave. Seluruh tampilan pembahasan harus
+  // tetap membaca cuplikan yang sama, termasuk opsi dan nomor kartu.
+  const kartu = vonis?.kartu ?? (kg && Array.isArray(kg.kartu) ? kg.kartu[kg.index] : undefined)
+  const indexTampil = vonis?.index ?? kg?.index
 
   // Sesi selesai → reducer memindah layar ke peta; sambut dengan kartu hasil.
   useEffect(() => {
@@ -60,25 +64,12 @@ export function Kegiatan() {
     for (const e of lastEvents) if (e.type === 'KEGIATAN_SELESAI') setHasil(e.hasil)
   }, [eventTick, lastEvents])
 
-  // Reset umpan balik saat pindah kartu.
-  // Bug hunt 2026-08-06: dulu `useEffect`, yang jalan SESUDAH paint — sehingga
-  // satu frame penuh menampilkan pembahasan kartu SEBELUMNYA di atas kartu yang
-  // baru. Terukur bertahan melewati 200 mikrotask. Yang bocor bukan sekadar
-  // stempel tepat/keliru, melainkan teks pembahasannya. Sapuan
-  // useEffect→useLayoutEffect 2026-08-01 (Kunjungan/PetaDesa/Klinik) melewatkan
-  // berkas ini.
-  // Audit UKM 2026-08-22 (P1): tak ada lagi state pilihan lokal untuk direset —
-  // status terjawab kini diturunkan dari kg.jawaban (sumber tunggal di engine),
-  // sehingga kebocoran satu-frame yang diperbaiki di sini mustahil terulang:
-  // panel vonis hanya dirender bila kartu BERJALAN punya entri jawaban.
-  void 0
-
   // CODEX M14 #14c: pindah kartu meng-unmount tombol sebelumnya → fokus jatuh ke
   // <body>. Pindahkan ke panel (pola DeckAksi). Dipasang ref di bawah.
   const panelRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     panelRef.current?.focus({ preventScroll: true })
-  }, [kg?.index])
+  }, [indexTampil])
 
   // DeepThink ronde-2 bonus (keputusan user): urutan pilihan diacak per-
   // mahasiswa (rngFlavor = state.seed) — walkthrough "klik posisi ke-2" tak
@@ -134,6 +125,7 @@ export function Kegiatan() {
 
   return (
     <div className="kegiatan">
+      {kg.jenis === 'klb' && kg.kasusId && kg.rw !== undefined && <PapanPenyelidikan kasusId={kg.kasusId} rw={kg.rw} />}
       <div className={`kegiatan__panel kertas kegiatan__panel--${kg.jenis}`} ref={panelRef} tabIndex={-1}>
         <div className="kegiatan__kepala">
           <div>
@@ -141,7 +133,7 @@ export function Kegiatan() {
             <div className="teks-xs teks-lembut">{meta.sub}</div>
           </div>
           <div className="kegiatan__langkah mono">
-            Kartu {kg.index + 1}/{kg.kartu.length}
+            Kartu {(indexTampil ?? 0) + 1}/{vonis?.total ?? kg.kartu.length}
           </div>
         </div>
 
@@ -167,7 +159,7 @@ export function Kegiatan() {
                   disabled={pilihanTerpilih !== null}
                   title={pilihanTerpilih !== null ? 'Jawaban sudah dikunci — baca pembahasannya, lalu lanjut ke kartu berikutnya.' : undefined}
                   onClick={() => {
-                    setVonis({ kartu, pilihan: p, jenis: kg.jenis })
+                    setVonis({ kartu, pilihan: p, jenis: kg.jenis, index: kg.index, total: kg.kartu.length })
                     dispatch({ type: 'JAWAB_KEGIATAN', kartuId: kartu.id, pilihanId: p.id })
                   }}
                 >
@@ -196,7 +188,7 @@ export function Kegiatan() {
                   className="tombol tombol--utama"
                   onClick={() => setVonis(null)}
                 >
-                  {kg.index + 1 >= kg.kartu.length ? 'Tutup Sesi →' : 'Kartu Berikutnya →'}
+                  Kartu Berikutnya →
                 </button>
               </div>
             )}

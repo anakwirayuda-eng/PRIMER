@@ -1,0 +1,49 @@
+{
+  "date": "2026-09-05",
+  "source": "D:/Dev/PRIMER-CODEX-lab",
+  "target": "D:\\Dev\\PRIMER\\CODEX Lab 2 Version",
+  "sourceCommit": "6e9f17c15465d50e19b95a2dc7a0d1374275471d",
+  "excludedDirectories": [
+    ".git",
+    "node_modules",
+    "dist",
+    "out",
+    "test-results",
+    "playwright-report",
+    ".claude",
+    ".agent",
+    "backups",
+    "megalog"
+  ],
+  "sourceFiles": 1575,
+  "identical": 1558,
+  "modifiedInLab2": [
+    "primera-desktop/package-lock.json",
+    "primera-desktop/package.json",
+    "primera-desktop/src/main/index.test.ts",
+    "primera-desktop/src/main/index.ts",
+    "primera-desktop/src/renderer/src/components/Hud.css",
+    "primera-desktop/src/renderer/src/components/Hud.tsx",
+    "primera-desktop/src/renderer/src/main.tsx",
+    "primera-desktop/src/renderer/src/screens/Kegiatan.tsx",
+    "primera-desktop/src/renderer/src/screens/Kunjungan.tsx",
+    "primera-desktop/src/renderer/src/screens/MejaKerja.tsx",
+    "primera-desktop/src/renderer/src/screens/namaKeluarga.test.ts",
+    "primera-desktop/src/renderer/src/screens/peta/KartuKeluarga.tsx",
+    "primera-desktop/src/renderer/src/screens/peta/PetaSvg.tsx",
+    "primera-desktop/src/renderer/src/screens/PetaDesa.citations.test.tsx",
+    "primera-desktop/src/renderer/src/screens/PetaDesa.tsx",
+    "primera-desktop/src/renderer/src/screens/TitleScreen.tsx",
+    "primera-desktop/vite.preview.config.ts"
+  ],
+  "missing": [],
+  "engineContentAssetFilesIdentical": 227,
+  "dependencyCopy": {
+    "desktopOnly": true,
+    "independentCopy": true,
+    "excludedCaches": [
+      ".vite",
+      ".cache"
+    ]
+  }
+}

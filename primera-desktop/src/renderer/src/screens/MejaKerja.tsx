@@ -38,6 +38,7 @@ import { useRadioGroup } from '../useRadioGroup'
 import './MejaKerja.css'
 import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { JejakPerawatan } from './JejakPerawatan'
+import { KabarSukamaju } from './ukm/KabarSukamaju'
 import { BuktiKlinis } from '../components/BuktiKlinis'
 import { DialogGame } from '../components/DialogGame'
 import { personaAnamnesis } from './klinik/util'
@@ -608,6 +609,7 @@ export function MejaKerja() {
 
       {/* ================= TENGAH — KARTU KONTEKS BLOK ================= */}
       <section className="mk__kolom mk__konteks">
+        <KabarSukamaju />
         {state.blok === 'pagi' && (
           <div className="mk__panel kertas">
             <h2 className="judul-seksi">Briefing Pagi — Hari {state.hari}</h2>

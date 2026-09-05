@@ -94,7 +94,7 @@ describe('<PetaDesa /> - debrief sitasi kunjungan C2', () => {
     render(<PetaDesa />)
 
     expect(await screen.findByText(`RW ${rw.nomor} — ${rw.nama}`)).toBeInTheDocument()
-    expect(screen.getByText('DARI SURAT')).toBeInTheDocument()
+    expect(screen.getByText('DIPILIH')).toBeInTheDocument()
     expect(useGame.getState().petaTargetKeluargaId).toBeNull()
   })
 })
