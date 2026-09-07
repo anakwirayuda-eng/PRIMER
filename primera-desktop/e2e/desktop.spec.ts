@@ -289,3 +289,39 @@ test('kasus prototipe rujuk tetap formatif dan tidak membocorkan jejaring sebelu
   await expect(page.getByLabel('Informasi jejaring pra-rujuk')).toHaveCount(0)
   await expect(page.getByText('JEJARING PRA-RUJUK')).toHaveCount(0)
 })
+
+test('jawaban IGD tersimpan di disk dan bertahan setelah Electron ditutup lalu dibuka', async () => {
+  await mulaiStase()
+  await tungguAutosave()
+  await page.evaluate(async () => {
+    const amplop = JSON.parse((await window.primer.save.read('autosave'))!)
+    amplop.state.layar = 'igd'
+    amplop.state.igd = {
+      kasusId: 'igd_asma_berat', pasienNama: 'Pasien persistensi QA', usia: 30,
+      jenisKelamin: 'L', rw: 2, fase: 'langkah', langkahIndex: 0,
+      stabilitas: 100, jawaban: [],
+    }
+    await window.primer.save.write('autosave', JSON.stringify(amplop))
+  })
+  await page.reload()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E/ }).click()
+  await expect(page.locator('.igd__opsi').first()).toBeVisible()
+  await page.locator('.igd__opsi').first().click()
+  await expect(page.locator('.igd__respons')).toBeVisible()
+  await expect.poll(() => page.evaluate(async () => {
+    const amplop = JSON.parse((await window.primer.save.read('autosave'))!)
+    return amplop.state.igd.jawaban.length
+  })).toBe(1)
+  const igdTersimpan = await page.evaluate(async () => JSON.parse((await window.primer.save.read('autosave'))!).state.igd)
+
+  await app.close()
+  app = await electron.launch({
+    args: [resolve('out/main/index.js'), `--user-data-dir=${userDataDir}`],
+    env: { ...process.env, PRIMER_DEV: '1' },
+  })
+  page = await app.firstWindow()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E/ }).click()
+  await expect(page.locator('.igd__respons')).toBeVisible()
+  const pulih = await page.evaluate(async () => JSON.parse((await window.primer.save.read('autosave'))!).state.igd)
+  expect(pulih).toEqual(igdTersimpan)
+})

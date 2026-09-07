@@ -45,6 +45,34 @@ const axe = require('axe-core')
     await expect(page.getByRole('region', { name: 'Kabar Sukamaju' })).toBeVisible()
     await shot('02-kabar-sukamaju')
     await audit('Kabar', '.lab-kabar')
+    // Episode tanpa keluarga mengakhiri modal dengan summary native. Semua
+    // navigasi di bawah memakai keyboard Chromium, bukan simulasi Tab jsdom.
+    await page.evaluate(() => {
+      const { useGame } = window.labQA
+      const state = useGame.getState().state
+      window.labQA.episodes = state.careEpisodes
+      const episode = { ...state.careEpisodes[1], id: 'qa_keyboard', familyId: undefined, dueDay: 60, subjectName: 'Pasien jejaring' }
+      useGame.setState({ state: { ...state, careEpisodes: [...state.careEpisodes, episode] } })
+    })
+    const pemicuJejak = page.getByRole('button', { name: /^Buka Jejak Perawatan/ })
+    await pemicuJejak.click()
+    const jejak = page.getByRole('dialog', { name: 'Jejak Perawatan lintas UKM dan UKP' })
+    const tutupJejak = jejak.getByRole('button', { name: 'Tutup Jejak Perawatan' })
+    const ringkasanTerakhir = jejak.locator('summary').last()
+    await expect(tutupJejak).toBeFocused()
+    await page.keyboard.press('Shift+Tab')
+    await expect(ringkasanTerakhir).toBeFocused()
+    await page.keyboard.press('Enter')
+    await expect(jejak.locator('details').last()).toHaveAttribute('open', '')
+    await page.keyboard.press('Tab')
+    await expect(tutupJejak).toBeFocused()
+    await page.keyboard.press('Escape')
+    await expect(jejak).not.toBeVisible()
+    await expect(pemicuJejak).toBeFocused()
+    await page.evaluate(() => {
+      const { useGame, episodes } = window.labQA
+      useGame.setState({ state: { ...useGame.getState().state, careEpisodes: episodes } })
+    })
     await page.getByRole('button', { name: /^Temukan .*Wulan/ }).click()
     await expect(page.locator('#peta-keluarga-keluarga_wulan')).toBeFocused()
     await page.getByRole('button', { name: 'Tindak lanjut', exact: true }).click()
@@ -110,9 +138,34 @@ const axe = require('axe-core')
       return b.top < Math.max(a.bottom, c.bottom) - 1
     })
     if (tabrakan) throw new Error('HUD overlaps at 140%')
+
+    // Jalur UI nyata: baca surat → checklist → adopsi → reload browser → lanjut.
+    await page.evaluate(async () => {
+      const { useGame, base, episodes } = window.labQA
+      const state = base()
+      state.careEpisodes = [{ ...episodes[0], id: 'qa_feedback', source: 'klinik', owner: 'rs', status: 'kembali', referral: { stage: 'feedback', hospitalName: 'RSUD' } }]
+      state.inbox = [{ id: 'qa_surat_feedback', hari: state.hari, jenis: 'hasil_lab', dari: 'RSUD', judul: 'Feedback keluarga QA', isi: 'Lanjutkan kontrol di FKTP.', dibaca: false, episodeId: 'qa_feedback', kaitKeluargaId: 'keluarga_wulan' }]
+      useGame.setState({ state, lastEvents: [] })
+      await useGame.getState().simpan()
+    })
+    await page.getByRole('button', { name: /Feedback keluarga QA/ }).click()
+    await page.getByRole('checkbox', { name: /Rekonsiliasi terapi/ }).check()
+    await page.getByRole('checkbox', { name: /Tetapkan jadwal kontrol/ }).check()
+    await page.getByRole('checkbox', { name: /Hubungkan pemantauan/ }).check()
+    await page.getByRole('button', { name: /Terapkan ke rencana FKTP/ }).click()
+    await expect(page.getByText(/sudah masuk ke rencana perawatan FKTP/i)).toBeVisible()
+    await expect.poll(() => page.evaluate(async () => JSON.parse(await window.primer.save.read('autosave')).state.careEpisodes[0].referral.stage)).toBe('acted')
+    await page.reload()
+    await page.getByRole('button', { name: /^Lanjutkan — dr\./ }).click()
+    await page.getByRole('button', { name: /Feedback keluarga QA/ }).click()
+    await expect(page.getByText(/sudah masuk ke rencana perawatan FKTP/i)).toBeVisible()
+    const pulih = await page.evaluate(async () => JSON.parse(await window.primer.save.read('autosave')).state)
+    expect(pulih.inbox[0].dibaca).toBe(true)
+    expect(pulih.careEpisodes[0].referral.stage).toBe('acted')
+    await shot('08-feedback-restored')
     if (errors.length) throw new Error(errors.join('\n'))
     if (a11y.some((a) => a.violations.some((v) => v.impact === 'critical' || v.impact === 'serious'))) throw new Error('Serious accessibility violation; see report')
-    console.log('PASS: navigation, real KLB decisions, evidence comparison, dark theme and 140% text')
+    console.log('PASS: navigation, keyboard modal, real KLB decisions, evidence comparison, dark/140%, feedback restored after reload')
   } finally {
     writeFileSync(path.join(output, 'report.json'), JSON.stringify({ errors, a11y }, null, 2))
     await browser.close()

@@ -1,6 +1,6 @@
 # PRIMERA — CODEX Lab 2
 
-Versi pengembangan **1.3.0-lab2.1 · Sukamaju Berkisah**.
+Versi pengembangan **1.3.0-lab2.2 · Sukamaju Berkisah**.
 
 Klik dua kali **MULAI CODEX Lab 2.cmd** untuk memainkan build desktop yang sudah disiapkan. Jalankan dari folder ini; launcher memakai dependensi dan build milik Lab 2.
 
@@ -13,6 +13,7 @@ Klik dua kali **MULAI CODEX Lab 2.cmd** untuk memainkan build desktop yang sudah
 - **Papan penyelidikan KLB:** daftar pasien tercatat, perbandingan RW, kunjungan ulang, dan grafik hari pertama tercatat. Grafik ini bukan kurva onset gejala. Catatan tanpa identitas ditandai keterbatasannya.
 - **Pembahasan kegiatan:** kartu, opsi, warna jawaban, dan nomor langkah tetap merujuk pertanyaan yang baru dijawab. Autosave tetap terjadi segera. Kartu berikutnya baru terlihat setelah pemain melanjutkan.
 - **HUD laptop:** navigasi dan sumber daya mendapat baris terpisah untuk mencegah tabrakan ketika teks diperbesar.
+- **Perbaikan 7 September:** adopsi rencana FKTP, langkah IGD, surat yang sudah dibaca, dan penutupan rekap/Lokmin langsung di-autosave. Hasil simpan/baca yang terlambat tidak mengacaukan status sesi terbaru. Navigasi Tab pada modal mengikuti kontrol yang terlihat dan panel riwayat yang sedang terbuka.
 
 ## Asal salinan dan penyimpanan
 
@@ -20,7 +21,7 @@ Basis: `D:\Dev\PRIMER-CODEX-lab`, commit `6e9f17c15465d50e19b95a2dc7a0d137427547
 
 Source, konten, aset, dokumen, data pendukung, konfigurasi, dan lockfile disalin. Arsip Git lama, dependensi lama, hasil build lama, cache, laporan tes, konfigurasi agen, dan folder backup/log tertentu tidak ikut dalam salinan awal. Dependensi desktop kemudian disalin secara mandiri, dan build Lab 2 dibuat ulang. Daftar pengecualian rinci dan pemeriksaan hash tersedia di `LAB2_COPY_AUDIT.json`.
 
-Repositori Git Lab 2 berdiri sendiri pada branch `lab2/development`. Commit `cac7cff` menyimpan baseline salinan sebelum upgrade.
+Repositori Git Lab 2 berdiri sendiri. Pengembangan awal berada pada branch `lab2/development`; perbaikan 7 September berada pada `lab2/bugfix-20260907`. Commit `cac7cff` menyimpan baseline salinan sebelum upgrade.
 
 Save desktop: `%APPDATA%\PRIMERA CODEX Lab 2\saves`. Save versi lama tidak dimigrasikan otomatis. Browser preview memakai port 5202 dan namespace `primer.lab2.save.*`. Pembaruan dari feed rilis utama tidak ditawarkan oleh Lab 2.
 
@@ -47,7 +48,7 @@ npm run test:e2e
 node scripts/lab2-preview-check.cjs  # jalankan ketika dev:browser aktif
 ```
 
-Hasil verifikasi terakhir ada di `LAB2_VERIFICATION.md`. Screenshot dan fixture QA memakai sesi uji terpisah; tidak menjadi data bawaan permainan.
+Hasil verifikasi terbaru ada di `LAB2_BUGFIX_20260907.md`; verifikasi pengembangan awal ada di `LAB2_VERIFICATION.md`. Screenshot dan fixture QA memakai sesi uji terpisah; tidak menjadi data bawaan permainan.
 
 ## Batas versi ini
 
