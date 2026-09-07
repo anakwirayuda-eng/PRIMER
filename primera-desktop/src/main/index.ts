@@ -182,6 +182,9 @@ function registerIpc(): void {
   })
 
   ipcMain.handle('telemetri:read', async () => {
+    // Pembaca harus melihat semua append yang diminta sebelum pembacaan ini.
+    // Kegagalan append juga harus terlihat, bukan menyamar jadi log kosong.
+    await telemetriPending
     try {
       const isi = await fs.readFile(TELEMETRI_FILE(), 'utf-8')
       return isi.split('\n').filter((b) => b.trim().length > 0)

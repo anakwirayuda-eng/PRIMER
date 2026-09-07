@@ -295,6 +295,34 @@ describe('antrean disk per-slot', () => {
 })
 
 describe('telemetri:read', () => {
+  it('pembacaan menunggu baris yang sudah masuk antrean append', async () => {
+    await muatMain()
+    let lanjut!: () => void
+    const tertahan = new Promise<void>(resolve => { lanjut = resolve })
+    const appendAsli = fs.appendFile.bind(fs)
+    const spy = vi.spyOn(fs, 'appendFile').mockImplementation(async (...args) => {
+      await tertahan
+      return appendAsli(...args)
+    })
+    const tulis = ipc('telemetri:append')(null, 'baris-terakhir')
+    const baca = ipc('telemetri:read')()
+    try {
+      const status = await Promise.race([
+        baca.then(() => 'selesai'),
+        new Promise<string>(resolve => setTimeout(() => resolve('menunggu'), 100)),
+      ])
+      lanjut()
+      await tulis
+      const hasil = await baca
+      expect(status).toBe('menunggu')
+      expect(hasil).toEqual(['baris-terakhir'])
+    } finally {
+      lanjut()
+      await Promise.allSettled([tulis, baca])
+      spy.mockRestore()
+    }
+  })
+
   it('log yang belum pernah ditulis = daftar kosong', async () => {
     await muatMain()
     expect(await ipc('telemetri:read')()).toEqual([])
