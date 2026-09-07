@@ -18,7 +18,28 @@
 import { useEffect, useRef } from 'react'
 
 const SELECTOR_FOCUSABLE =
-  'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])'
+  'a[href], button, textarea, input:not([type="hidden"]), select, summary, [tabindex]'
+
+/** Urutan Tab harus mengikuti kontrol yang benar-benar tersedia bagi pemain. */
+function dapatDitab(el: HTMLElement): boolean {
+  if (el.matches(':disabled') || el.closest('[hidden], [inert]')) return false
+  if (el.hasAttribute('tabindex') && el.tabIndex < 0) return false
+  // Hanya summary pertama di dalam details yang menjadi kontrol native.
+  if (el.tagName === 'SUMMARY' && !el.hasAttribute('tabindex')) {
+    if (el.parentElement?.tagName !== 'DETAILS' ||
+        Array.from(el.parentElement.children).find(child => child.tagName === 'SUMMARY') !== el) return false
+  }
+  const visibility = getComputedStyle(el).visibility
+  if (visibility === 'hidden' || visibility === 'collapse') return false
+  for (let leluhur: HTMLElement | null = el; leluhur; leluhur = leluhur.parentElement) {
+    if (getComputedStyle(leluhur).display === 'none') return false
+    if (leluhur !== el && leluhur.tagName === 'DETAILS' && !leluhur.hasAttribute('open')) {
+      const ringkasan = Array.from(leluhur.children).find(child => child.tagName === 'SUMMARY')
+      if (!ringkasan?.contains(el)) return false
+    }
+  }
+  return true
+}
 
 export function useFocusTrap<T extends HTMLElement>(
   aktif: boolean,
@@ -34,6 +55,8 @@ export function useFocusTrap<T extends HTMLElement>(
     fokusSebelumnya.current = document.activeElement as HTMLElement | null
 
     const fokusable = () => Array.from(kontainer?.querySelectorAll<HTMLElement>(SELECTOR_FOCUSABLE) ?? [])
+      .filter(dapatDitab)
+      .sort((a, b) => (a.tabIndex > 0 ? a.tabIndex : Infinity) - (b.tabIndex > 0 ? b.tabIndex : Infinity))
     // Fokus awal: elemen focusable pertama di dalam modal (bukan kontainer
     // itu sendiri — kontainer biasanya bukan interaktif).
     // CODEX audit UI/UX 2026-07-10 (#19): tanpa preventScroll, .focus() bisa
@@ -58,6 +81,7 @@ export function useFocusTrap<T extends HTMLElement>(
       const daftar = fokusable()
       if (daftar.length === 0) {
         e.preventDefault()
+        kontainer.focus({ preventScroll: true })
         return
       }
       const pertama = daftar[0]!
@@ -66,7 +90,7 @@ export function useFocusTrap<T extends HTMLElement>(
       // Fokus keluar dari kontainer (mis. via .focus() paksa dari luar, atau
       // wrap alami) — tarik kembali ke ujung yang sesuai, bukan biarkan lolos
       // ke konten latar di belakang overlay.
-      if (!kontainer.contains(aktifSaatIni)) {
+      if (!aktifSaatIni || !daftar.includes(aktifSaatIni)) {
         e.preventDefault()
         ;(e.shiftKey ? terakhir : pertama).focus({ preventScroll: true })
         return
