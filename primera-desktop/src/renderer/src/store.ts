@@ -142,9 +142,18 @@ export const AKSI_AUTOSAVE = new Set([
   'PESAN_OBAT', 'TETAPKAN_PROGRAM', 'PILIH_BINAAN', 'LEPAS_BINAAN', 'TULIS_REFLEKSI', 'DISPOSISI_IGD',
   'MULAI_KUNJUNGAN', 'KLIK_HOTSPOT', 'PILIH_DIALOG', 'KOMIT_HAMBATAN', 'PILIH_INTERVENSI', 'LANJUT_BABAK',
   'MULAI_POSYANDU', 'MULAI_PROLANIS', 'MULAI_KLB', 'JAWAB_KEGIATAN', 'DELEGASI_KEGIATAN',
+  // Lab 2: keputusan dan penutupan panel ini tidak menghasilkan event autosave.
+  'BACA_SURAT', 'ADOPSI_UMPAN_BALIK', 'TUTUP_REKAP', 'TUTUP_LOKMIN',
+  'AKSI_IGD', 'RJP_IGD', 'STABILISASI_LANJUTAN_IGD',
 ])
 
-export const useGame = create<GameStore>((set, get) => ({
+export const useGame = create<GameStore>((set, get) => {
+  // Identitas operasi UI, tidak masuk GameState/save/replay. Sesi hanya berganti
+  // setelah benar-benar dipasang; permintaan slot yang gagal bukan sesi baru.
+  let bacaAutosaveId = 0
+  let tulisAutosaveId = 0
+  let sesiId = 0
+  return ({
   state: null,
   arsip: null,
   lastEvents: [],
@@ -166,18 +175,23 @@ export const useGame = create<GameStore>((set, get) => ({
     const nimBersih = nim?.trim() || undefined
     const seed = mode === 'ujian' ? hashSeed('ujian', nimBersih ?? namaDokter) : hashSeed(namaDokter, Date.now())
     const state = buildInitialState(namaDokter, seed, PACK, { mode, ...(nimBersih ? { nim: nimBersih } : {}) })
-    set((p) => ({ state, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken + 1 }))
+    sesiId++
+    set((p) => ({ state, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
     void get().simpan()
   },
 
   lanjutkanArsip: () => {
     const arsip = get().arsip
     if (!arsip || !rilisArsipKompatibel(arsip)) return
-    set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, muatToken: p.muatToken + 1 }))
+    sesiId++
+    set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
   },
 
   muatAutosave: async () => {
-    set({ sedangMemuat: true, arsipKorup: false })
+    const permintaan = ++bacaAutosaveId
+    const token = get().muatToken
+    const masihBerlaku = () => permintaan === bacaAutosaveId && token === get().muatToken
+    set({ sedangMemuat: true, arsipKorup: false, arsip: null })
     try {
       // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa REJECT utk
       // error selain "file tak ada" (mis. izin ditolak) — dulu semua error
@@ -188,10 +202,12 @@ export const useGame = create<GameStore>((set, get) => ({
       try {
         json = await window.primer.save.read(SLOT_AUTOSAVE)
       } catch (e) {
+        if (!masihBerlaku()) return false
         console.error('Gagal membaca autosave:', e)
         set({ statusSimpan: 'gagal' })
         return false
       }
+      if (!masihBerlaku()) return false
       if (!json) return false
       const arsip = deserialize(json, PACK)
       if (!arsip) {
@@ -205,7 +221,7 @@ export const useGame = create<GameStore>((set, get) => ({
       set({ arsip })
       return true
     } finally {
-      set({ sedangMemuat: false })
+      if (masihBerlaku()) set({ sedangMemuat: false })
     }
   },
 
@@ -234,15 +250,18 @@ export const useGame = create<GameStore>((set, get) => ({
   simpan: async () => {
     const cur = get().state
     if (!cur) return
+    const permintaan = ++tulisAutosaveId
+    const sesi = sesiId
+    const masihBerlaku = () => permintaan === tulisAutosaveId && sesi === sesiId
     set({ statusSimpan: 'menyimpan' })
     let sukses = false
     try {
       await window.primer.save.write(SLOT_AUTOSAVE, serialize(cur))
-      set({ statusSimpan: 'idle' })
+      if (masihBerlaku()) set({ statusSimpan: 'idle' })
       sukses = true
     } catch (e) {
       console.error('Gagal menyimpan:', e)
-      set({ statusSimpan: 'gagal' })
+      if (masihBerlaku()) set({ statusSimpan: 'gagal' })
     }
     // DeepThink ronde-2 — telemetri wall-clock (docs/TELEMETRI_WALLCLOCK.md):
     // log forensik terpisah dari save slot, utk deteksi save-scumming oleh
@@ -328,7 +347,7 @@ export const useGame = create<GameStore>((set, get) => ({
     // menyusul sebelum read ini selesai, hasil kita jadi usang & TIDAK diterapkan
     // (mencegah slot lama menimpa sesi yang lebih baru).
     const tok = get().muatToken + 1
-    set({ muatToken: tok })
+    set({ muatToken: tok, sedangMemuat: false })
     // CODEX audit UI/UX 2026-07-10 (#2): save:read kini bisa reject utk error
     // selain "file tak ada" — pola sama muatAutosave di atas.
     let json: string | null
@@ -342,7 +361,8 @@ export const useGame = create<GameStore>((set, get) => ({
     const st = deserialize(json, PACK)
     if (!st || !rilisArsipKompatibel(st)) return false
     if (get().muatToken !== tok) return false // disusul operasi lebih baru — batal
-    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken }))
+    sesiId++
+    set({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null })
     // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
     // hanya hidup in-memory — autosave di disk tetap berisi save LAMA sampai
     // aksi lain kebetulan memicunya. Menutup app sebelum itu membuat boot
@@ -357,11 +377,13 @@ export const useGame = create<GameStore>((set, get) => ({
     if (!st || !rilisArsipKompatibel(st)) return false
     // CODEX M14 #5: impor sinkron — naikkan token agar muatDariSlot asinkron
     // yang mungkin masih berjalan (klik slot lalu impor) tak menimpa hasil impor.
-    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, muatToken: p.muatToken + 1 }))
+    sesiId++
+    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
     void get().simpan()
     return true
   },
-}))
+  })
+})
 
 /** M5.24 — gabungkan hasil playthrough tamat ke meta lintas-playthrough. */
 async function rekamMeta(
