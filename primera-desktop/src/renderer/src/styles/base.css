@@ -435,3 +435,7 @@ button {
     outline: 2px solid Highlight;
   }
 }
+.meter__isi.meter__isi--netral { background: var(--tinta-lembut); }
+.peta-sumber-data { line-height: 1.6; color: var(--tinta-lembut); border-left: 2px solid var(--border-tegas); padding-left: var(--sp-2); margin-block: var(--sp-2); }
+.peta-sumber-data span { display: block; }
+.peta-kemajuan { margin-top: var(--sp-2); }

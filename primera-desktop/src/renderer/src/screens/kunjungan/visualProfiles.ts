@@ -112,7 +112,7 @@ const POSISI_HOTSPOT_VISUAL: Record<string, Record<string, readonly [number, num
     sk2_h1: [10, 22], sk2_h2: [65, 85], sk2_h3: [12, 66], sk2_h4: [88, 26], sk2_h5: [38, 53],
   },
   ketut_k1: {
-    kk1_h1: [55, 87], kk1_h2: [36, 87], kk1_h3: [46, 77], kk1_h4: [15, 62], kk1_h5: [38, 78], kk1_h6: [74, 59],
+    kk1_h1: [55, 87], kk1_h2: [35, 80], kk1_h3: [46, 77], kk1_h4: [15, 62], kk1_h5: [26, 58], kk1_h6: [74, 59],
   },
   ketut_k2: {
     kk2_h1: [55, 84], kk2_h2: [53, 20], kk2_h3: [74, 56], kk2_h4: [8, 52], kk2_h5: [86, 87],
@@ -145,7 +145,7 @@ const POSISI_HOTSPOT_VISUAL: Record<string, Record<string, readonly [number, num
     ak3_h1: [68, 15], ak3_h2: [25, 80], ak3_h3: [12, 20], ak3_h4: [85, 55],
   },
   slamet_k1: {
-    slk1_h1: [59, 30], slk1_h2: [87, 25], slk1_h3: [90, 73], slk1_h4: [60, 34],
+    slk1_h1: [59, 30], slk1_h2: [87, 25], slk1_h3: [90, 73], slk1_h4: [40, 34],
   },
   slamet_k2: {
     slk2_h1: [49, 74], slk2_h2: [29, 86], slk2_h3: [8, 79], slk2_h4: [76, 15],

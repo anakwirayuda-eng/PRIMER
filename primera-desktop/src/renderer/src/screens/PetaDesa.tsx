@@ -33,6 +33,11 @@ import { KartuKeluarga } from './peta/KartuKeluarga'
 import {
   AMBANG_DATA_TIPIS,
   dataTipis,
+  deltaIksRw,
+  formatDeltaIks,
+  MAKNA_DELTA_IKS,
+  sumberDataKeluarga,
+  kaderRw,
   formatIks,
   karmaTerlihat,
   LABEL_JARAK,
@@ -45,6 +50,10 @@ import { tampilanHasilKunjungan } from './hasilKunjunganView'
 import { FokusPeta } from './ukm/FokusPeta'
 import { AlbumKeluarga } from './ukm/AlbumKeluarga'
 import { hitungTindakLanjutRw, type LapisanPeta } from './ukm/lab2View'
+import { SasaranPosyandu } from './ukm/SasaranPosyandu'
+import { prioritasKeluarga } from './ukm/rencanaUkm'
+import { KoreksiKader } from './ukm/KoreksiKader'
+import { LandasanUkm } from './ukm/LandasanUkm'
 
 export function PetaDesa() {
   const state = useGame((s) => s.state)!
@@ -55,7 +64,7 @@ export function PetaDesa() {
   const setPetaTargetKeluargaId = useGame((s) => s.setPetaTargetKeluargaId)
 
   const [rwTerpilih, setRwTerpilih] = useState<number | null>(null)
-  const [lapisan, setLapisan] = useState<LapisanPeta>('cakupan')
+  const [lapisan, setLapisan] = useState<LapisanPeta>('kemajuan')
   const [fokusTick, setFokusTick] = useState(0)
   const [keluargaDitautkan, setKeluargaDitautkan] = useState<string | null>(null)
   const [hasilKunjungan, setHasilKunjungan] = useState<HasilKunjungan | null>(null)
@@ -134,7 +143,7 @@ export function PetaDesa() {
       ? []
       : Object.values(PACK.keluarga)
           .filter((k) => k.rw === rwTerpilih)
-          .sort((a, b) => a.namaKeluarga.localeCompare(b.namaKeluarga))
+          .sort((a, b) => prioritasKeluarga(state.desa.keluarga[a.id]!, state.hari) - prioritasKeluarga(state.desa.keluarga[b.id]!, state.hari) || a.namaKeluarga.localeCompare(b.namaKeluarga))
 
   /** Cermin guard reducer MULAI_KUNJUNGAN — supaya tombol jujur soal alasannya. */
   function infoKunjungan(content: KeluargaBinaan, kel: KeluargaState): { alasan: string | null; biaya: number } {
@@ -220,7 +229,7 @@ export function PetaDesa() {
           karmaRw={karmaRw}
           onPilih={(nomor) => { setRwTerpilih(nomor); setKeluargaDitautkan(null) }}
           labelLapisan={lapisan === 'cakupan' ? undefined : Object.fromEntries(state.desa.rw.map((rw) => [rw.nomor,
-            lapisan === 'tindak_lanjut' ? `${hitungTindakLanjutRw(state, rw.nomor)} episode` : `${semuaCluster.filter((c) => c.rw === rw.nomor).length} sinyal`,
+            lapisan === 'kemajuan' ? `Δ ${formatDeltaIks(deltaIksRw(rw))}` : lapisan === 'tindak_lanjut' ? `${hitungTindakLanjutRw(state, rw.nomor)} episode` : `${semuaCluster.filter((c) => c.rw === rw.nomor).length} sinyal`,
           ]))}
         />
         <div className="peta-legenda">
@@ -271,7 +280,7 @@ export function PetaDesa() {
                   >
                     {karmaTerlihat(kel, state.hari) && <span className="peta-roster-item__karma" aria-label="perlu perhatian" />}
                     <span className="peta-roster-item__nama">{content.namaKeluarga}</span>
-                    <span className="chip">{iks === null ? 'IKS ?' : `IKS ${formatIks(iks)}`}</span>
+                    <span className="chip">{iks === null ? 'IKS ?' : `IKS ${sumberDataKeluarga(kel).lengkap ? '' : '≈'}${formatIks(iks)}`}</span>
                   </button>
                 )
               })}
@@ -304,6 +313,8 @@ export function PetaDesa() {
                 </div>
                 <span className="chip">jarak {LABEL_JARAK[rwAktif.jarak]}</span>
               </div>
+              <p className="teks-kecil">{kaderRw(state, rwAktif.nomor)?.nama ?? 'Nama belum tercatat'} — kader RW {rwAktif.nomor}</p>
+              {state.program.rwFokus === rwAktif.nomor && state.program.fokus && <p className="chip chip--biru">Fokus program wilayah bulan ini</p>}
               <div className="baris teks-xs teks-lembut mono">
                 <span>
                   KK tersurvei {rwAktif.kkTersurvei}/{rwAktif.totalKk}
@@ -332,6 +343,8 @@ export function PetaDesa() {
                   <span className="chip">belum ada data — kader belum sampai ke sini</span>
                 )}
               </div>
+              <p className="peta-kemajuan teks-kecil"><b>Δ {formatDeltaIks(deltaIksRw(rwAktif))}</b> terhadap acuan awal</p>
+              <details className="teks-xs teks-lembut"><summary>Cara membaca kemajuan</summary><p>{MAKNA_DELTA_IKS}</p></details>
               {clusterRwAktif.length > 0 && (
                 <div className="baris teks-xs peta-detail__cluster">
                   {clusterRwAktif.map((c) => (
@@ -344,6 +357,7 @@ export function PetaDesa() {
             </div>
 
             {/* Kegiatan lapangan M2: Posyandu per RW + Respons KLB per kluster */}
+            {state.hari >= HARI_BUKA_POSYANDU[state.mode] && <SasaranPosyandu state={state} rw={rwAktif.nomor} />}
             <div className="peta-kegiatan">
               {state.hari >= HARI_BUKA_POSYANDU[state.mode] && (
                 <button
@@ -426,9 +440,9 @@ export function PetaDesa() {
               {keluargaHasil ? keluargaHasil.namaKeluarga : hasilKunjungan.keluargaId}
             </div>
             <p className="peta-hasil__narasi">{hasilKunjungan.narasiPenutup}</p>
+            <KoreksiKader jenis="kunjungan" keluargaId={hasilKunjungan.keluargaId} rw={keluargaHasil?.rw} />
             {panduanHasil && (
-              <aside className="peta-hasil__panduan">
-                <b className="mono">LANDASAN RESMI</b>
+              <LandasanUkm jenis="kunjungan" className="peta-hasil__panduan">
                 <p>{panduanHasil}</p>
                 <TautanSumber sumber={tautanPanduanHasil} />
                 {buktiIntervensiHasil ? (
@@ -446,7 +460,7 @@ export function PetaDesa() {
                     mulut mereka; hambatan sebenarnya biasanya menyembul di selisih keduanya.
                   </p>
                 ) : null}
-              </aside>
+              </LandasanUkm>
             )}
             <div className="baris baris--tengah">
               {tampilanHasil?.substantif ? (

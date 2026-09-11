@@ -190,6 +190,9 @@ export function Rapor() {
       nilai: `${t.kunjunganTotal} (${t.kunjunganBerhasil})`,
     },
     { label: 'Diusir warga', nilai: `${t.kunjunganDiusir}` },
+    { label: 'Sesi Posyandu', nilai: `${t.posyanduSesi}` },
+    { label: 'Sesi Prolanis', nilai: `${t.prolanisSesi}` },
+    { label: 'Respons KLB tuntas', nilai: `${t.klbTuntas}`, tip: 'Jumlah respons yang memenuhi syarat ketuntasan. Kontribusi kegiatannya mengikuti formula UKM; angka ini bukan tambahan poin tersendiri.' },
     {
       label: 'Peluang UKM diabaikan (apatis)',
       tip: 'Kunjungan rumah yang selesai tanpa satu pun teknik komunikasi tepat ATAU temuan terverifikasi — kesempatan pembinaan yang terbuang. Setiap kejadian memotong 2 poin UKM.',
@@ -294,7 +297,7 @@ export function Rapor() {
                   state.prolanis.roster.length > 0 &&
                   r.rasioProlanisTerkontrol < 0.5,
               },
-              { label: 'Kualitas komunikasi (MI + SAJI)', nilai: `${koma(r.kualitasMi, 0)}%` },
+              { label: 'Cara bicara ke keluarga', tip: 'Mutu wawancara motivasional (MI) dan komunikasi Salam–Ajak bicara–Jelaskan dan bantu–Ingatkan (SAJI).', nilai: `${koma(r.kualitasMi, 0)}%` },
             ]}
           />
           <KartuDimensi

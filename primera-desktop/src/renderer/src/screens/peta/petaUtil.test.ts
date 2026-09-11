@@ -10,7 +10,7 @@ import { klasifikasiIks } from '@engine/pispk'
 import type { RwState } from '@engine/state'
 
 function rw(overrides: Partial<RwState>): RwState {
-  return { nomor: 1, nama: 'RW 1', jarak: 'dekat', totalKk: 25, kkTersurvei: 10, iks: 0.8, bonusIks: 0, ...overrides }
+  return { nomor: 1, nama: 'RW 1', jarak: 'dekat', totalKk: 25, kkTersurvei: 10, iks: 0.8, bonusIks: 0, proporsiBaselineRoll: 0.5, ...overrides }
 }
 
 describe('warnaPetak — konsisten dgn klasifikasiIks 3-kelas (CODEX audit UI/UX 2026-07-10, #12)', () => {
@@ -44,11 +44,11 @@ describe('warnaPetak — konsisten dgn klasifikasiIks 3-kelas (CODEX audit UI/UX
 })
 
 describe('mendungPetak', () => {
-  it('IKS di bawah 0.5 (Tidak Sehat) dan sudah tersurvei → mendung', () => {
+  it('IKS di bawah acuan 0.5 dan cukup data → mendung', () => {
     expect(mendungPetak(rw({ iks: 0.4, kkTersurvei: 10 }))).toBe(true)
   })
 
-  it('IKS 0.5 ke atas (Pra-Sehat/Sehat) → tidak mendung', () => {
+  it('IKS mencapai acuan atau lebih tinggi → tidak mendung', () => {
     expect(mendungPetak(rw({ iks: 0.5, kkTersurvei: 10 }))).toBe(false)
     expect(mendungPetak(rw({ iks: 0.9, kkTersurvei: 10 }))).toBe(false)
   })

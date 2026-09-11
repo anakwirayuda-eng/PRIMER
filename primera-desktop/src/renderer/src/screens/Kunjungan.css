@@ -153,22 +153,18 @@
   transform: translate(-50%, -50%);
 }
 
-/* Audit CODEX UKM 2026-07-16 #7: de-beacon — hotspot nyaris tak terlihat saat
-   idle (0.18, TANPA denyut infinite yang dulu memanggil-manggil kursor);
-   menguat saat kursor/fokus keyboard mendekat. Observasi jadi benar-benar
-   mengamati ruangan, bukan memungut titik menyala. Ukuran 36px TETAP
-   (target-size a11y — jangan dikecilkan). */
+/* Penanda statis dua tepi tetap terbaca di bagian terang/gelap ilustrasi.
+   Tidak berdenyut; angka/identitas temuan baru muncul setelah diamati. */
 .kunjungan-hotspot {
   position: absolute;
   transform: translate(-50%, -50%);
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 2px solid var(--kertas-050);
-  background: var(--kunyit-600);
-  /* 0.18 kemarin terlalu samar utk pemain low-vision (audit CODEX UX) —
-     0.26 tetap bukan beacon berdenyut, tapi cukup tertangkap mata yang mencari. */
-  opacity: 0.26;
+  border: 2px solid #fff;
+  background: rgba(20, 32, 28, .18);
+  box-shadow: 0 0 0 2px #14201c;
+  opacity: 1;
   cursor: pointer;
   transition: opacity var(--durasi-cepat) var(--ease-keluar), transform var(--durasi-cepat) var(--ease-keluar);
 }
@@ -176,14 +172,15 @@
 .kunjungan-hotspot::after {
   content: '';
   position: absolute;
-  inset: -7px;
+  inset: 3px;
+  pointer-events: none;
   border-radius: 50%;
-  border: 2px solid var(--kunyit-600);
+  border: 1px solid rgba(255, 255, 255, .6);
 }
 
 .kunjungan-hotspot:hover,
 .kunjungan-hotspot:focus-visible {
-  opacity: 0.85;
+  opacity: 1;
 }
 
 .kunjungan-hotspot--sorot {
@@ -222,6 +219,9 @@
 .kunjungan-hotspot:disabled {
   cursor: default;
 }
+
+.kunjungan-titik { display: flex; flex-wrap: wrap; gap: var(--sp-2); }
+.kunjungan-titik .tombol { min-width: 36px; min-height: 36px; padding: var(--sp-1); }
 
 /* @keyframes kunjungan-denyut dihapus (#7) — tak ada pemakai lain. */
 

@@ -4,7 +4,7 @@
  */
 
 import { create } from 'zustand'
-import type { GameState, ModeStase } from '@engine/state'
+import type { GameState, ModeStase, EncounterState } from '@engine/state'
 import type { Action } from '@engine/actions'
 import type { GameEvent } from '@engine/events'
 import { advance } from '@engine/reducer'
@@ -13,6 +13,7 @@ import { serialize, deserialize } from '@engine/save'
 import { hitungBadge } from '@engine/badge'
 import { PACK } from '@content/index'
 import { hashSeed } from '@engine/core/rng'
+import { catatRekapUkm, type RekapUkm } from './screens/ukm/rekapUkm'
 
 export const SLOT_AUTOSAVE = 'autosave'
 /** M5.25 — tiga slot arsip manual di samping autosave. */
@@ -61,6 +62,8 @@ interface GameStore {
   arsip: GameState | null
   /** Event dari dispatch terakhir — untuk juice (toast, suara, animasi). */
   lastEvents: GameEvent[]
+  rekapUkm: RekapUkm | null
+  encounterTerakhir: EncounterState | null
   /** Counter naik tiap dispatch — dependency murah untuk useEffect juice. */
   eventTick: number
   sedangMemuat: boolean
@@ -157,6 +160,8 @@ export const useGame = create<GameStore>((set, get) => {
   state: null,
   arsip: null,
   lastEvents: [],
+  rekapUkm: null,
+  encounterTerakhir: null,
   eventTick: 0,
   sedangMemuat: false,
   statusSimpan: 'idle',
@@ -176,7 +181,7 @@ export const useGame = create<GameStore>((set, get) => {
     const seed = mode === 'ujian' ? hashSeed('ujian', nimBersih ?? namaDokter) : hashSeed(namaDokter, Date.now())
     const state = buildInitialState(namaDokter, seed, PACK, { mode, ...(nimBersih ? { nim: nimBersih } : {}) })
     sesiId++
-    set((p) => ({ state, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
+    set((p) => ({ state, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null, muatToken: p.muatToken + 1 }))
     void get().simpan()
   },
 
@@ -184,7 +189,7 @@ export const useGame = create<GameStore>((set, get) => {
     const arsip = get().arsip
     if (!arsip || !rilisArsipKompatibel(arsip)) return
     sesiId++
-    set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
+    set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null, muatToken: p.muatToken + 1 }))
   },
 
   muatAutosave: async () => {
@@ -230,7 +235,13 @@ export const useGame = create<GameStore>((set, get) => {
     if (!cur) return
     try {
       const { state, events } = advance(cur, action, PACK)
-      set((prev) => ({ state, lastEvents: events, eventTick: prev.eventTick + 1 }))
+      const rekap = catatRekapUkm(cur, state, events, action)
+      set((prev) => ({ state, lastEvents: events, eventTick: prev.eventTick + 1,
+        rekapUkm: state.hari !== cur.hari ? null : rekap ?? prev.rekapUkm,
+        encounterTerakhir: state.hari !== cur.hari ? null : events.some((e) => e.type === 'ENCOUNTER_SELESAI') && cur.klinik.aktif
+          ? { ...cur.klinik.aktif, ...(action.type === 'DISPOSISI' ? { disposisi: action.jenis, sbar: action.sbar, justifikasiRujuk: action.justifikasiRujuk } : {}) }
+          : prev.encounterTerakhir,
+      }))
       const berhasil = !events.some((e) => e.type === 'ERROR_AKSI')
       if (events.some((e) => EVENT_AUTOSAVE.has(e.type)) || (berhasil && AKSI_AUTOSAVE.has(action.type))) {
         void get().simpan()
@@ -362,7 +373,7 @@ export const useGame = create<GameStore>((set, get) => {
     if (!st || !rilisArsipKompatibel(st)) return false
     if (get().muatToken !== tok) return false // disusul operasi lebih baru — batal
     sesiId++
-    set({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null })
+    set({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null })
     // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
     // hanya hidup in-memory — autosave di disk tetap berisi save LAMA sampai
     // aksi lain kebetulan memicunya. Menutup app sebelum itu membuat boot
@@ -378,7 +389,7 @@ export const useGame = create<GameStore>((set, get) => {
     // CODEX M14 #5: impor sinkron — naikkan token agar muatDariSlot asinkron
     // yang mungkin masih berjalan (klik slot lalu impor) tak menimpa hasil impor.
     sesiId++
-    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, muatToken: p.muatToken + 1 }))
+    set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null, muatToken: p.muatToken + 1 }))
     void get().simpan()
     return true
   },

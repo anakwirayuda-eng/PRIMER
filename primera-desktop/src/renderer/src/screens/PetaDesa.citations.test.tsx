@@ -145,7 +145,7 @@ describe('<PetaDesa /> — bukti kartu benar tak bocor ke kunjungan yang akan di
     render(<PetaDesa />)
 
     // LANDASAN RESMI (konteks masalah, bukan kunci) tetap berdiri…
-    expect(await screen.findByText('LANDASAN RESMI')).toBeInTheDocument()
+    expect(await screen.findByText('Landasan Resmi · sumber dan penjelasan')).toBeInTheDocument()
     // …ditemani penjelasan mengapa buktinya ditahan.
     expect(screen.getByText(/belum dibuka/)).toBeInTheDocument()
   })

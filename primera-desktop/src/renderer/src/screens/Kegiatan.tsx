@@ -14,6 +14,8 @@ import { sumberKegiatanUkm, tautanKegiatanUkm } from '@content/ukmCitations'
 import { TautanSumber } from '../components/TautanSumber'
 import { profilVisualKegiatan } from './kegiatanVisualProfiles'
 import { PapanPenyelidikan } from './ukm/PapanPenyelidikan'
+import { RekapKegiatan } from './ukm/RekapKegiatan'
+import { LandasanUkm } from './ukm/LandasanUkm'
 import './Kegiatan.css'
 
 const JUDUL: Record<string, { label: string; sub: string }> = {
@@ -131,6 +133,7 @@ export function Kegiatan() {
           <div>
             <div className="kegiatan__label mono">{meta.label}</div>
             <div className="teks-xs teks-lembut">{meta.sub}</div>
+            <div className="teks-xs kegiatan__tempat">{kg.rw === undefined ? 'Puskesmas Sukamaju' : `RW ${kg.rw} · ${state.desa.rw.find((r) => r.nomor === kg.rw)?.nama ?? 'Wilayah kegiatan'}`} · Hari {state.hari}</div>
           </div>
           <div className="kegiatan__langkah mono">
             Kartu {(indexTampil ?? 0) + 1}/{vonis?.total ?? kg.kartu.length}
@@ -178,11 +181,10 @@ export function Kegiatan() {
                 <span className="stempel stempel--kecil">{pilihanObj.benar ? 'TEPAT' : 'KELIRU'}</span>
                 <p>{pilihanObj.respons}</p>
                 {sumberKartu && (
-                  <div className="kegiatan__sumber">
-                    <b className="mono">LANDASAN RESMI</b>
+                  <LandasanUkm jenis={kg.jenis} className="kegiatan__sumber">
                     <p>{sumberKartu}</p>
                     <TautanSumber sumber={tautanSumberKartu} />
-                  </div>
+                  </LandasanUkm>
                 )}
                 <button
                   className="tombol tombol--utama"
@@ -194,6 +196,7 @@ export function Kegiatan() {
             )}
 
             {kg.jenis === 'posyandu' && pilihanTerpilih === null && (
+              <div>
               <button
                 className="tombol tombol--senyap kegiatan__delegasi"
                 onClick={() => dispatch({ type: 'DELEGASI_KEGIATAN' })}
@@ -201,6 +204,8 @@ export function Kegiatan() {
               >
                 Delegasikan sisa meja ke kader (risiko ~{RISIKO_KADER_PERSEN}% keliru)
               </button>
+              <p className="teks-xs teks-lembut">Delegasi menyelesaikan sisa sesi. Slot siang dan stamina tetap terpakai; tindak lanjut keputusan klinis tetap menjadi tanggung jawab dokter.</p>
+              </div>
             )}
           </div>
         </div>
@@ -281,6 +286,7 @@ function KartuHasil({ hasil, onTutup }: { hasil: HasilKegiatan; onTutup: () => v
                   ? 'Respons belum tuntas: verifikasi dan penyelidikan cukup, tetapi aksi pengendalian spesifik keliru — kluster masih menyala.'
                   : 'Respons belum tuntas — kluster masih menyala. Penyelidikan Orang–Tempat–Waktu belum lengkap, jadi sumber dan rute penularan hanya tertebak.')}
         </p>
+        <RekapKegiatan hasil={hasil} />
         <button className="tombol tombol--utama tombol--besar" onClick={onTutup}>
           Kembali ke Peta Desa
         </button>
@@ -319,11 +325,10 @@ function PanelVonisPenutup({
               <span className="stempel stempel--kecil">{vonis.pilihan.benar ? 'TEPAT' : 'KELIRU'}</span>
               <p>{vonis.pilihan.respons}</p>
               {sumberKartu && (
-                <div className="kegiatan__sumber">
-                  <b className="mono">LANDASAN RESMI</b>
+                <LandasanUkm jenis={vonis.jenis} className="kegiatan__sumber">
                   <p>{sumberKartu}</p>
                   <TautanSumber sumber={tautanSumberKartu} />
-                </div>
+                </LandasanUkm>
               )}
               <button className="tombol tombol--utama" onClick={onTutup}>
                 Lihat Hasil Sesi →

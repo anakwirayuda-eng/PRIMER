@@ -98,7 +98,7 @@
 }
 
 .peta-karma circle {
-  animation: peta-denyut 1.5s var(--ease-keluar) infinite;
+  opacity: 1;
 }
 
 .peta-karma__seru {
@@ -267,7 +267,7 @@
   height: 9px;
   border-radius: 50%;
   background: var(--tinta-merah);
-  animation: peta-denyut 1.5s infinite;
+  opacity: 1;
 }
 
 .peta-petunjuk {
@@ -359,7 +359,7 @@
 }
 
 .peta-chip-karma {
-  animation: peta-denyut 1.5s infinite;
+  opacity: 1;
 }
 
 .peta-keluarga__sinopsis {
@@ -495,3 +495,12 @@
 .peta-kegiatan:empty {
   display: none;
 }
+
+/* Teks besar: gulir satu halaman agar peta dan kartu tidak terjepit panel. */
+.app-frame--teks-besar .peta-root { display: block; overflow-y: auto; }
+.app-frame--teks-besar .peta-kiri { margin-bottom: var(--sp-4); }
+.app-frame--teks-besar .peta-svg { flex: none; height: auto; aspect-ratio: 760 / 560; }
+.app-frame--teks-besar .peta-detail,
+.app-frame--teks-besar .peta-daftar { flex: none; overflow: visible; }
+.app-frame--teks-besar .peta-roster { max-height: 8rem; }
+.app-frame--teks-besar .peta-roster-item { flex-wrap: wrap; text-align: left; }

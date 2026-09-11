@@ -22,6 +22,8 @@ import {
   HARI_BUKA_PETA,
   HARI_BUKA_KUNJUNGAN,
   HARI_BUKA_PROLANIS,
+  HARI_BUKA_KLB,
+  HARI_BUKA_POSYANDU,
   BIAYA_STAMINA_KEGIATAN,
   TARGET_KASUS_PROGRAM,
   SIKLUS_LAPORAN_BULANAN,
@@ -43,6 +45,11 @@ import { BuktiKlinis } from '../components/BuktiKlinis'
 import { DialogGame } from '../components/DialogGame'
 import { personaAnamnesis } from './klinik/util'
 import { sedangMengetik } from '../utils/navigasiHud'
+import { pengirimSurat, sasaranKia, teksIndikator } from './ukm/rencanaUkm'
+import { kaderRw } from './peta/petaUtil'
+import { JadwalProlanis } from './ukm/JadwalProlanis'
+import { KoreksiKader } from './ukm/KoreksiKader'
+import { RefleksiPercakapan } from './ukm/RefleksiPercakapan'
 
 const OPSI_PROGRAM = ['psn', 'phbs', 'skrining'] as const
 
@@ -71,8 +78,9 @@ const SURAT_META: Record<JenisSurat, { label: string; chip: string }> = {
 // CODEX ronde-13: `m.jenis` asing (save korup — inbox tak pernah divalidasi
 // per-entri di save.ts) bikin `SURAT_META[jenis]` undefined → crash `.chip`.
 // Fallback aman, bukan throw.
-function metaSurat(jenis: JenisSurat): { label: string; chip: string } {
-  return SURAT_META[jenis] ?? { label: 'Surat', chip: '' }
+function metaSurat(surat: Surat): { label: string; chip: string } {
+  if (surat.dari === 'Petugas Surveilans') return { label: 'Surveilans', chip: 'chip--biru' }
+  return SURAT_META[surat.jenis] ?? { label: 'Surat', chip: '' }
 }
 
 const LABEL_PERSONA: Record<Persona, string> = {
@@ -229,7 +237,7 @@ export function MejaKerja() {
       // data keluarga ini — dan tanpa hitung mundur presisi (dokter tidak
       // tahu kapan; ia hanya mendengar kabar dari kader).
       if (karmaTerlihat(kel, state.hari) && kel.karmaAktif) {
-        alasan = 'Kader mendengar kondisinya memburuk — prioritaskan'
+        alasan = `Kabar RW ${konten.rw} (kader wilayah: ${kaderRw(state, konten.rw)?.nama ?? 'belum tercatat'}): kondisinya memburuk. Prioritaskan.`
         prioritas = Math.max(0, kel.karmaAktif.jatuhTempoHari - state.hari)
         darurat = true
       } else if (kel.followUpHari !== undefined && kel.followUpHari <= state.hari) {
@@ -493,15 +501,15 @@ export function MejaKerja() {
             </button>
             <div className="mk__surat-kertas kertas">
               <div className="baris baris--antara mk__surat-meta">
-                <span className={`chip ${metaSurat(suratTerbuka.jenis).chip}`}>
-                  {metaSurat(suratTerbuka.jenis).label}
+                <span className={`chip ${metaSurat(suratTerbuka).chip}`}>
+                  {metaSurat(suratTerbuka).label}
                 </span>
                 <span className="mono teks-xs teks-lembut">Hari {suratTerbuka.hari}</span>
               </div>
               <h3 className="mk__surat-judul">{suratTerbuka.judul}</h3>
-              <p className="mk__surat-dari teks-kecil teks-lembut">Dari: {suratTerbuka.dari}</p>
+              <p className="mk__surat-dari teks-kecil teks-lembut">Dari: {pengirimSurat(state, suratTerbuka.dari)}</p>
               <div className="mk__surat-garis" />
-              <p className="mk__surat-isi">{suratTerbuka.isi}</p>
+              <p className="mk__surat-isi">{teksIndikator(suratTerbuka.isi)}</p>
               {kasusIgdSurat && (
                 <BuktiKlinis
                   className="mk__surat-grounding"
@@ -593,14 +601,14 @@ export function MejaKerja() {
                 onClick={() => bukaSurat(m)}
               >
                 <div className="baris baris--antara">
-                  <span className={`chip ${metaSurat(m.jenis).chip}`}>{metaSurat(m.jenis).label}</span>
+                  <span className={`chip ${metaSurat(m).chip}`}>{metaSurat(m).label}</span>
                   <span className="mono teks-xs teks-lembut">Hari {m.hari}</span>
                 </div>
                 <span className="mk__surat-item-judul">
                   {!m.dibaca && <span className="mk__titik-baru" aria-label="belum dibaca" />}
                   {m.judul}
                 </span>
-                <span className="teks-xs teks-lembut">{m.dari}</span>
+                <span className="teks-xs teks-lembut">{pengirimSurat(state, m.dari)}</span>
               </button>
             ))}
           </div>
@@ -687,6 +695,7 @@ export function MejaKerja() {
                       </span>
                     </div>
                     <p className="teks-kecil teks-lembut mk__saran-alasan">{s.alasan}</p>
+                        <button className="tombol tombol--senyap" aria-label={`Buka ${s.nama} di peta`} onClick={() => { setPetaTargetKeluargaId(s.keluargaId); dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' }) }}>Buka keluarga →</button>
                   </div>
                 ))}
               </div>
@@ -736,6 +745,7 @@ export function MejaKerja() {
                           </span>
                         </div>
                         <p className="teks-kecil teks-lembut mk__saran-alasan">{s.alasan}</p>
+                        <button className="tombol tombol--senyap" aria-label={`Buka ${s.nama} di peta`} onClick={() => { setPetaTargetKeluargaId(s.keluargaId); dispatch({ type: 'PINDAH_LAYAR', layar: 'peta' }) }}>Buka keluarga →</button>
                       </div>
                     ))}
                   </div>
@@ -796,6 +806,7 @@ export function MejaKerja() {
             )}
 
             {/* Program wilayah agregat — Triase Anggaran bulanan, tak makan slot. */}
+            {state.hari >= HARI_BUKA_PROLANIS[state.mode] && <JadwalProlanis state={state} />}
             {petaTerbuka && (
               <div className="kartu mk__program">
                 <h3 className="judul-seksi">Program Wilayah (bulanan — Triase Anggaran)</h3>
@@ -820,7 +831,7 @@ export function MejaKerja() {
                       disabled={programTerkunci}
                       title={
                         programTerkunci
-                          ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.'
+                          ? 'Fokus dikunci sampai awal bulan berikutnya.'
                           : undefined
                       }
                       data-tip={`Arahkan dana program bulan ini ke RW ${r.nomor} — ${r.nama}.`}
@@ -847,7 +858,7 @@ export function MejaKerja() {
                         disabled={terkunci || rwPilihan === undefined}
                         title={
                           terkunci
-                            ? 'Fokus bulan ini sudah dikunci di Lokakarya Mini — ganti bulan depan.'
+                            ? 'Fokus dikunci sampai awal bulan berikutnya.'
                             : rwPilihan === undefined
                               ? 'Pilih RW fokus dulu.'
                               : undefined
@@ -944,11 +955,15 @@ export function MejaKerja() {
 
             <ul className="mk__catatan">
               {debrief.catatan.map((c, i) => (
-                <li key={i}>{c}</li>
+                <li key={i}>{teksIndikator(c)}</li>
               ))}
             </ul>
 
             {/* M11 #2 A2 — storylet atmosfer satu-tayang, murni display (non-REVISI). */}
+            {state.hasilKunjunganHariIni && <>
+              <KoreksiKader jenis="kunjungan" keluargaId={state.hasilKunjunganHariIni.keluargaId} rw={PACK.keluarga[state.hasilKunjunganHariIni.keluargaId]?.rw} />
+              <RefleksiPercakapan />
+            </>}
             <aside className="mk__storylet">
               <span
                 className="mk__storylet-visual"
@@ -1247,7 +1262,7 @@ export function MejaKerja() {
                 <dd>{fmt(skorRekap.rincian.iksDesa, 2)}</dd>
               </div>
               <div className="baris baris--antara">
-                <dt>Kualitas komunikasi (MI + SAJI)</dt>
+                <dt>Cara bicara ke keluarga</dt>
                 <dd>{fmt(skorRekap.rincian.kualitasMi)}</dd>
               </div>
             </dl>
@@ -1328,14 +1343,15 @@ export function MejaKerja() {
                   <div className="teks-kecil">⚖️ Ongkos oportunitas bulan ini</div>
                   <p className="teks-xs teks-lembut">
                     Fokusmu ({state.program.fokus ? LABEL_PROGRAM[state.program.fokus] : 'belum ditetapkan'}
-                    {rwFokus !== undefined ? `, RW ${rwFokus}` : ''}) tak menyentuh kluster berikut — kamu
-                    memilih membiarkannya demi program lain. Dana bulan ini hanya bekerja di RW yang kamu
-                    pilih, jadi penyakit yang sama di RW lain tetap berjalan:
+                    {rwFokus !== undefined ? `, RW ${rwFokus}` : ''}) tak menyentuh kluster berikut. Dana bulan ini hanya bekerja di RW yang kamu pilih dan pada penyakit sasaran program:
                   </p>
                   {diabaikan.map((c) => (
                     <p key={`${c.rw}_${c.kasusId}`} className="teks-xs">
                       <span className="chip chip--merah">RW {c.rw}</span>{' '}
                       {PACK.kasus[c.kasusId]?.nama ?? c.kasusId} — {c.jumlah} kasus dalam 14 hari terakhir.
+                      {' '}{tercakup.includes(c.kasusId)
+                        ? 'Penyakit sasaran program, tetapi berada di luar RW fokus.'
+                        : `Di luar cakupan program yang dipilih; pertimbangkan verifikasi dan respons lapangan (tersedia mulai hari ${HARI_BUKA_KLB[state.mode]}).`}
                     </p>
                   ))}
                 </div>
@@ -1343,6 +1359,7 @@ export function MejaKerja() {
             })()}
 
             <div className="mk__rekap-dimensi">
+              {state.hari >= HARI_BUKA_POSYANDU[state.mode] && <p className="teks-kecil">Sasaran verifikasi Posyandu yang masih berlaporan kader: {state.desa.rw.map((r) => ({ rw: r.nomor, n: sasaranKia(state, r.nomor).reduce((n, k) => n + k.kolom.length, 0) })).filter((r) => r.n > 0).map((r) => `RW ${r.rw}: ${r.n} kolom`).join(' · ') || 'tidak ada kolom tersisa saat ini'}.</p>}
               {(
                 [
                   { label: 'UKP — Klinik', nilai: skorLokmin.ukp, maks: 35 },

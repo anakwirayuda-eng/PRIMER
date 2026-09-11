@@ -238,7 +238,8 @@
 
 .app-frame--teks-besar .hud__kiri {
   grid-area: kiri;
-  min-width: max-content;
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .app-frame--teks-besar .hud__nav {
@@ -277,4 +278,15 @@
   }
   .hud__blok { flex-wrap: wrap; }
   .hud__nav, .app-frame--teks-besar .hud__nav { justify-content: start; }
+}
+
+@media (max-width: 1350px) {
+  .app-frame--teks-besar .hud {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: 'kiri' 'kanan' 'nav';
+  }
+  .app-frame--teks-besar .hud__kiri,
+  .app-frame--teks-besar .hud__kanan { min-width: 0; flex-wrap: wrap; justify-content: center; }
+  .app-frame--teks-besar .hud__blok { flex-wrap: wrap; }
+  .app-frame--teks-besar .hud__nav { justify-content: start; }
 }

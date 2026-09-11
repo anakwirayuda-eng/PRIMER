@@ -86,3 +86,10 @@
 @media (max-width: 1200px) { .lab-kabar__list { grid-template-columns: 1fr; } }
 @media (max-width: 950px) { .kegiatan:has(.lab-investigation) { display: flex; flex-direction: column; } .lab-investigation { width: 100%; } }
 @media (max-width: 650px) { .lab-album__grid, .lab-compare { grid-template-columns: 1fr; } }
+.ukm-sasaran, .ukm-jadwal { padding: var(--sp-3); background: var(--bg-card); border: 1px solid var(--border-tegas); border-left: 3px solid var(--daun-700); border-radius: var(--radius-sm); line-height: 1.6; }
+.ukm-sasaran p, .ukm-jadwal p { margin-block: var(--sp-2); }
+.ukm-jadwal { margin-block: var(--sp-3); font-size: var(--text-sm); }
+.ukm-jadwal small { display: block; font-size: var(--text-xs); color: var(--tinta-lembut); }
+.ukm-jadwal--waspada { border-left-color: var(--kunyit-700); background: var(--wash-kunyit); }
+.ukm-sasaran ul { padding-left: var(--sp-4); }
+.ukm-sasaran li + li { margin-top: var(--sp-2); }

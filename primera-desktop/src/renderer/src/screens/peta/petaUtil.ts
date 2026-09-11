@@ -3,7 +3,7 @@
  * Murni presentasional: tidak ada aturan game di sini, hanya bentuk & nama.
  */
 
-import type { KeluargaState, RwState } from '@engine/state'
+import type { GameState, KeluargaState, RwState } from '@engine/state'
 import type { IndikatorPisPk } from '@content/types'
 import { klasifikasiIks } from '@engine/pispk'
 import { HARI_BUKA_KUNJUNGAN } from '@engine/reducer'
@@ -106,15 +106,47 @@ export function warnaPetak(rw: RwState): string {
 }
 
 /**
- * Mendung di atas petak (DeepThink "game juice", 2026-07-04): IKS "Tidak
- * Sehat" (<0.5, klasifikasiIks) sudah beda warna, tapi warna saja mudah
- * terlewat sekilas mata — tambah metafora visual "cuaca desa memburuk" yang
- * lebih terasa. Hanya utk RW yg SUDAH tersurvei (abu-abu = belum ada data,
- * bukan buruk). S9-peta-visual: juga digerbang !dataTipis — cakupan survei
- * < 30% belum layak dapat alarm cuaca (lihat dataTipis di bawah).
+ * Mendung berarti IKS tercatat di bawah acuan awal tersimpan. Bukan
+ * perubahan sejak kemarin, dan bukan otomatis muncul untuk kelas rendah.
+ * Cakupan di bawah 30% belum layak diberi metafora kondisi memburuk.
  */
 export function mendungPetak(rw: RwState): boolean {
-  return rw.kkTersurvei > 0 && rw.iks < 0.5 && !dataTipis(rw)
+  return (deltaIksRw(rw) ?? 0) < -0.000001 && !dataTipis(rw)
+}
+
+/** Acuan model tersimpan, bukan target dan bukan perubahan sejak kemarin. */
+export function deltaIksRw(rw: RwState): number | null {
+  return rw.kkTersurvei > 0 && rw.proporsiBaselineRoll !== undefined
+    ? rw.iks - rw.proporsiBaselineRoll : null
+}
+
+export function formatDeltaIks(delta: number | null): string {
+  if (delta === null) return '—'
+  if (Math.abs(delta) < 0.005) return '0,00'
+  return `${delta > 0 ? '+' : '−'}${formatIks(Math.abs(delta))}`
+}
+
+export const MAKNA_DELTA_IKS = 'Selisih IKS tercatat terhadap acuan awal model, bukan perubahan sejak kemarin. Rapor memakai kenaikan positif per RW yang dirata-ratakan dan dibatasi. Selisih negatif bukan potongan langsung pada suku IKS.'
+
+/** Hanya status tercatat; tidak membaca kunci statusSebenarnya. */
+export function sumberDataKeluarga(kel: KeluargaState) {
+  const relevan = Object.values(kel.indikator).filter((n) => n.status !== 'na')
+  const dokter = relevan.filter((n) => n.sumber === 'dokter').length
+  const kader = relevan.filter((n) => n.sumber === 'kader').length
+  const janji = relevan.filter((n) => n.sumber === 'janji').length
+  const belum = relevan.filter((n) => n.sumber === 'belum').length
+  const total = relevan.length
+  const terverifikasi = total > 0 && dokter === total
+  const komposisi = total === 0 || belum === total ? 'Belum ada sumber data'
+    : terverifikasi ? 'Seluruh indikator relevan terverifikasi'
+    : kader === total - belum ? 'Seluruh data tercatat dari kader'
+    : janji === total - belum ? 'Masih berupa janji keluarga' : 'Sumber campuran'
+  return { total, dokter, kader, janji, belum, terdata: total - belum, lengkap: total > 0 && belum === 0, terverifikasi, komposisi }
+}
+
+export function kaderRw(state: GameState, rw: number) {
+  const kader = Object.values(state.desa.kader).find((k) => k.rw === rw)
+  return kader ? { nama: kader.nama, rw: kader.rw } : null
 }
 
 /** Ambang cakupan survei: di bawah ini petak digambar "data tipis" (pudar). */

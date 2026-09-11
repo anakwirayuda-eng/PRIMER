@@ -14,7 +14,7 @@
  * dossier §59) menemukan field itu CAMPURAN narasi+dialog (141/270 TIDAK
  * berawalan kutip), beda kelas masalah dari `teks` yang 100% konsisten.
  */
-import { describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { useGame } from '../store'
@@ -26,6 +26,9 @@ import { sitasiIntervensiUkm } from '@content/ukmCitations'
 
 const KELUARGA_ID = 'keluarga_wulan'
 const SKENARIO_ID = 'wulan_k1'
+beforeEach(() => {
+  window.primer = { save: { write: async () => true, read: async () => null, list: async () => [], delete: async () => true }, telemetri: { append: async () => true, read: async () => [] }, appVersion: async () => '1.3.1-test' }
+})
 
 function skenarioUji() {
   const kelContent = PACK.keluarga[KELUARGA_ID]!
@@ -55,6 +58,16 @@ function pasangKunjungan(overrides: Partial<KunjunganState> = {}): void {
 }
 
 describe('<Kunjungan /> — disambiguasi aria-label hotspot (#13)', () => {
+  it('titik alternatif membuka temuan yang sama tanpa membocorkannya sebelum diamati', async () => {
+    pasangKunjungan()
+    render(<Kunjungan />)
+    const label = skenarioUji().skenario.hotspot[0]!.label
+    expect(screen.queryByText(label)).not.toBeInTheDocument()
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Amati titik 1' }))
+    expect(useGame.getState().state?.kunjungan?.hotspotDitemukan).toContain('wk1_h1')
+    expect(screen.getByRole('button', { name: label })).toBeDisabled()
+    expect(screen.getByText('1 dari 5 titik sudah diamati.')).toBeInTheDocument()
+  })
   it('kelima hotspot yang belum ditemukan punya aria-label UNIK (dulu: identik "Amati lebih dekat")', () => {
     pasangKunjungan()
     render(<Kunjungan />)
@@ -105,10 +118,11 @@ describe('<Kunjungan /> - sitasi resep sosial C2', () => {
     expect(screen.getByText(sitasi.sumber)).toBeInTheDocument()
     const panel = screen.getByLabelText(/bukan penanda benar atau salah/i)
     const kepala = panel.querySelector('.kunjungan-resep__sitasi-kepala')
-    const sumber = panel.querySelector('.kunjungan-resep__sitasi-sumber')
+    const sumber = panel.querySelector<HTMLElement>('.kunjungan-resep__sitasi-sumber')
     expect(kepala).toBeInTheDocument()
     expect(sumber).toBeInTheDocument()
-    expect(kepala?.nextElementSibling).toBe(sumber)
+    expect(kepala?.nextElementSibling).toContainElement(sumber)
+    await user.click(screen.getByText('Sumber', { selector: 'summary' }))
     expect(screen.getAllByRole('link', { name: /buka di browser bawaan/i })).toHaveLength(sitasi.tautan.length)
   })
 })
@@ -166,7 +180,7 @@ describe('<Kunjungan /> — kontinuitas observasi dan respons', () => {
     expect(screen.queryByText(skenario.dialog[2]!.narasi)).not.toBeInTheDocument()
   })
 
-  it('pilihan tanpa cabang khusus tetap mewarnai nada node berikutnya', () => {
+  it('pilihan tanpa cabang khusus tidak membocorkan perubahan trust lewat narasi stok', () => {
     const { skenario } = skenarioUji()
     const pilihan = skenario.dialog[0]!.pilihan.find(
       (item) => item.narasiLanjutan === undefined && item.efekTrust > 0,
@@ -182,7 +196,7 @@ describe('<Kunjungan /> — kontinuitas observasi dan respons', () => {
     render(<Kunjungan />)
     expect(screen.getByText(narasiBerlanjut)).toBeInTheDocument()
     expect(narasiBerlanjut).toContain(narasiDasar)
-    expect(narasiBerlanjut).not.toBe(narasiDasar)
+    expect(narasiBerlanjut).toBe(narasiDasar)
   })
 })
 

@@ -18,7 +18,7 @@ export function PapanPenyelidikan({ kasusId, rw }: { kasusId: string; rw: number
     <header className="lab-heading"><div><span className="lab-kicker mono">PAPAN PENYELIDIKAN</span><h2>Orang. Tempat. Waktu.</h2></div>
       <button className="tombol tombol--senyap" aria-expanded={buka} onClick={() => setBuka(!buka)}>{buka ? 'Ringkas papan' : 'Buka papan'}</button>
     </header>
-    <p className="lab-sub">{PACK.kasus[kasusId]?.nama ?? kasusId} · RW {rw} · catatan hari {hariAwal}–{state.hari}</p>
+    <p className="lab-sub">{PACK.kasus[kasusId]?.nama ?? kasusId} · RW {rw} · catatan yang masih tersedia: hari {hariAwal}–{state.hari}</p>
     {buka && <>
       <div className="lab-filters" role="group" aria-label="Wilayah penyelidikan">
         <button aria-pressed={!semuaRw} onClick={() => setSemuaRw(false)}>RW {rw}</button>
@@ -34,7 +34,7 @@ export function PapanPenyelidikan({ kasusId, rw }: { kasusId: string; rw: number
         </tbody></table></div>
       </>}
       {semuaRw && <p className="lab-sub">Wilayah dengan catatan: {rwTercatat.map((r) => `RW ${r}`).join(', ') || 'belum ada'}.</p>}
-      <p className="lab-investigation__note">Sinyal belum menetapkan KLB. Bandingkan pola catatan sebelum memilih langkah. Entri tanpa nama belum bisa dipastikan berasal dari orang yang berbeda.</p>
+      <p className="lab-investigation__note">Sinyal belum menetapkan KLB. Ini catatan yang masih tersedia dalam jendela {JENDELA_SURVEILANS} hari, bukan register lengkap atau kurva epidemi. Catatan dapat berkurang setelah intervensi. Entri tanpa nama belum bisa dipastikan berasal dari orang yang berbeda.</p>
     </>}
   </section>
 }

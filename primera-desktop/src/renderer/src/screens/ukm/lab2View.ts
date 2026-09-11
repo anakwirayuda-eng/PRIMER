@@ -27,7 +27,7 @@ export function catatanPenyelidikan(entries: SurveilansEntry[], hari: number, ka
   return [...orang.values()].map((o) => ({ ...o, hari: o.hari.sort((a, b) => a - b) }))
     .sort((a, b) => a.hari[0]! - b.hari[0]! || a.nama.localeCompare(b.nama))
 }
-export type LapisanPeta = 'cakupan' | 'tindak_lanjut' | 'sinyal'
+export type LapisanPeta = 'cakupan' | 'kemajuan' | 'tindak_lanjut' | 'sinyal'
 export function hitungTindakLanjutRw(state: GameState, rw: number): number {
   return state.careEpisodes.filter((e) => e.rw === rw && !episodeTuntas(e)).length
 }

@@ -10,7 +10,7 @@ import type { KeluargaState, NilaiIndikator } from '@engine/state'
 import type { KeluargaBinaan } from '@content/types'
 import { PACK } from '@content/index'
 import { useGame } from '../../store'
-import { formatIks, karmaTerlihat, LABEL_EKONOMI, LABEL_INDIKATOR, LABEL_KLASIFIKASI, SIMBOL_SUMBER } from './petaUtil'
+import { formatIks, karmaTerlihat, sumberDataKeluarga, LABEL_EKONOMI, LABEL_INDIKATOR, LABEL_KLASIFIKASI, SIMBOL_SUMBER } from './petaUtil'
 
 interface Props {
   content: KeluargaBinaan
@@ -97,11 +97,13 @@ export function KartuKeluarga({
   // indikator relevan (non-na) tanpa data, angka IKS ditandai sementara
   // beserta cakupan datanya, bukan tampil seolah sudah final.
   const indikatorRelevan = SEMUA_INDIKATOR_PISPK.filter(
-    (ind) => kel.indikator[ind].statusSebenarnya !== 'na',
+    (ind) => kel.indikator[ind].status !== 'na',
   )
   const indikatorTerdata = indikatorRelevan.filter((ind) => kel.indikator[ind].sumber !== 'belum').length
   /** Seluruh indikator relevan sudah ber-data → klasifikasi boleh tampil pasti. */
   const dataIksLengkap = indikatorTerdata >= indikatorRelevan.length
+  const sumber = sumberDataKeluarga(kel)
+  const namaKader = useGame((s) => s.state ? Object.values(s.state.desa.kader).find((k) => k.rw === content.rw)?.nama : undefined)
   // Gerbang provenance: peringatan karma hanya bila dokter sudah punya data keluarga ini.
   const karmaTampak = karmaTerlihat(kel, hari)
 
@@ -119,7 +121,7 @@ export function KartuKeluarga({
           {karmaTampak && (
             <span
               className="chip chip--merah peta-chip-karma"
-              data-tip="Kader mendengar kondisinya memburuk — prioritaskan kunjungan ke keluarga ini."
+              data-tip={`Kabar RW ${content.rw} (kader wilayah: ${namaKader ?? 'belum tercatat'}): kondisi keluarga memburuk. Prioritaskan kunjungan.`}
             >
               PERLU PERHATIAN
             </span>
@@ -151,7 +153,7 @@ export function KartuKeluarga({
         <span className="teks-xs mono teks-lembut">IKS</span>
         <div className="meter tumbuh" data-tip="Indeks Keluarga Sehat — dihitung HANYA dari indikator yang sudah punya data.">
           <div
-            className={`meter__isi ${klasifikasi?.meter ?? ''}`}
+            className={`meter__isi ${sumber.terverifikasi ? klasifikasi?.meter ?? '' : 'meter__isi--netral'}`}
             style={{ width: iks === null ? '0%' : `${Math.round(iks * 100)}%` }}
           />
         </div>
@@ -170,7 +172,7 @@ export function KartuKeluarga({
              Audit CODEX UX 2026-07-16 (lama): format IKS SATU gaya di semua
              layar — desimal koma 0,00 (skala kanonik Permenkes 0-1). */
           <span
-            className={`chip ${dataIksLengkap ? (klasifikasi?.chip ?? '') : ''}`}
+            className={`chip ${sumber.terverifikasi ? (klasifikasi?.chip ?? '') : ''}`}
             data-tip={
               dataIksLengkap
                 ? `IKS dari seluruh ${indikatorRelevan.length} indikator relevan yang sudah ber-data.`
@@ -193,6 +195,10 @@ export function KartuKeluarga({
         <HatiTrust trust={kel.trust} />
       </div>
 
+      <p className="peta-sumber-data teks-xs" aria-label="Sumber data keluarga">
+        <b>{sumber.komposisi}</b> · {sumber.terdata}/{sumber.total} kolom terdata{!sumber.lengkap ? ' · belum lengkap' : ''}
+        <span>✓ {sumber.dokter} verifikasi dokter · ~ {sumber.kader} laporan kader · ⧗ {sumber.janji} janji</span>
+      </p>
       <div className="peta-keluarga__indikator">
         {/* Anti-sumpek 2026-08-01: dulu SEMUA 12 chip indikator dirender
             (termasuk yang belum ber-data) — baris terpadat di seluruh game
@@ -265,7 +271,7 @@ export function KartuKeluarga({
                 if (!rosterPenuh) onBinaan()
               }}
               aria-disabled={rosterPenuh}
-              data-tip={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan.'}
+              data-tip={rosterPenuh ? 'Roster binaan penuh — lepas satu keluarga dulu.' : 'Masukkan ke roster keluarga binaan. Setelah menjadi binaan, keluarga yang lebih dari 7 hari tidak dikunjungi bisa memburuk dan menurunkan IKS wilayah.'}
               aria-label={`Jadikan ${content.namaKeluarga} binaan`}
             >
               Jadikan Binaan

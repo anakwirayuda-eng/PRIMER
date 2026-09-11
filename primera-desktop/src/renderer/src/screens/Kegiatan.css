@@ -3,14 +3,14 @@
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: var(--sp-6);
+  padding: var(--sp-4);
   overflow: auto;
 }
 
 .kegiatan__panel {
   width: min(720px, 100%);
   padding: var(--sp-5);
-  margin-block: min(8vh, var(--sp-8)) var(--sp-6);
+  margin-block: var(--sp-2) var(--sp-5);
 }
 
 /* Identitas per jenis kegiatan — garis atas panel (pola .igd__panel). */
@@ -42,7 +42,7 @@
 }
 
 .kegiatan__visual {
-  width: min(520px, 100%);
+  width: min(320px, 100%);
   aspect-ratio: 16 / 9;
   margin: 0 auto var(--sp-4);
   border: 1px solid var(--border-halus);
@@ -174,3 +174,8 @@
   font-size: var(--text-lg);
   font-weight: 700;
 }
+.kegiatan__tempat { margin-top: var(--sp-2); color: var(--tinta); }
+.ukm-rekap { text-align: left; margin-block: var(--sp-4); }
+.ukm-rekap ol { display: grid; gap: var(--sp-3); padding-left: var(--sp-4); }
+.ukm-rekap li { padding: var(--sp-2); border-bottom: 1px solid var(--border-halus); font-size: var(--text-sm); }
+@media (max-height: 800px) { .kegiatan__visual { width: min(230px, 100%); } }

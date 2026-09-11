@@ -49,15 +49,6 @@ const BABAK: { fase: BabakKunjunganFase; label: string; sajiLabel: string }[] = 
   { fase: 'ingatkan', label: 'Ingatkan', sajiLabel: 'I — Ingatkan' },
 ]
 
-const GAYA_INFO: Record<PilihanDialog['gaya'], { label: string; simbol: string }> = {
-  empati: { label: 'Empati', simbol: '♡' },
-  refleksi: { label: 'Refleksi', simbol: '↺' },
-  edukasi: { label: 'Edukasi', simbol: '✎' },
-  menghakimi: { label: 'Menghakimi', simbol: '!' },
-  menggurui: { label: 'Menggurui', simbol: '!' },
-  menakut_nakuti: { label: 'Menakut-nakuti', simbol: '!' },
-  memaksa: { label: 'Memaksa', simbol: '!' },
-}
 
 /** Sulih '{jadwal}' pada teks pilihan dengan waktu yang dokter sebutkan. */
 function isiPlaceholderJadwal(teks: string, waktu: string): string {
@@ -101,16 +92,7 @@ export function narasiDenganKontinuitas(
 ): string {
   if (!pilihan) return narasiDasar
   if (pilihan.narasiLanjutan) return pilihan.narasiLanjutan
-  const nada = pilihan.efekTrust >= 2
-    ? 'Percakapan terasa lebih terbuka.'
-    : pilihan.efekTrust === 1
-      ? 'Warga mulai sedikit lebih nyaman.'
-      : pilihan.efekTrust <= -2
-        ? 'Suasana menegang; warga menjaga jawabannya.'
-        : pilihan.efekTrust === -1
-          ? 'Warga tampak lebih waspada.'
-          : ''
-  return nada ? `${nada} ${narasiDasar}` : narasiDasar
+  return narasiDasar
 }
 
 const KARTU_HAMBATAN: { id: Hambatan; judul: string; sub: string; deskripsi: string }[] = [
@@ -181,9 +163,6 @@ export function Kunjungan() {
   })
   const [responsAktif, setResponsAktif] = useState<string | null>(null)
   const [dokterTerakhir, setDokterTerakhir] = useState<string | null>(null)
-  // Audit CODEX UKM 2026-07-16 #6: gaya pilihan diungkap SETELAH memilih (di
-  // layar respons), bukan sebagai chip di tombol — simpan gaya terakhir dipilih.
-  const [gayaTerakhir, setGayaTerakhir] = useState<PilihanDialog['gaya'] | null>(null)
   const [intervensiPilihan, setIntervensiPilihan] = useState<string | null>(null)
   const [hotspotSorot, setHotspotSorot] = useState<string | null>(null)
   const tickTerproses = useRef(-1)
@@ -338,7 +317,6 @@ export function Kunjungan() {
 
   function pilihDialog(p: PilihanDialog) {
     setDokterTerakhir(p.teks)
-    setGayaTerakhir(p.gaya)
     setRiwayat((r) => [...r, { peran: 'dokter', teks: p.teks }])
     dispatch({ type: 'PILIH_DIALOG', pilihanId: p.id })
   }
@@ -411,6 +389,7 @@ export function Kunjungan() {
               return (
                 <button
                   key={h.id}
+                  data-hotspot-id={h.id}
                   className={`kunjungan-hotspot ${ketemu ? 'kunjungan-hotspot--ketemu' : ''} ${hotspotSorot === h.id ? 'kunjungan-hotspot--sorot' : ''}`}
                   style={{ left: `${posisi.x}%`, top: `${posisi.y}%` }}
                   onClick={() => {
@@ -423,7 +402,7 @@ export function Kunjungan() {
                   onBlur={() => setHotspotSorot(null)}
                   disabled={ketemu || kj.fase !== 'observasi'}
                   title={ketemu ? h.label : undefined}
-                  data-tip="Ada yang menarik perhatianmu di sini"
+                  data-tip={ketemu ? undefined : 'Ada yang menarik perhatianmu di sini'}
                   // CODEX audit UI/UX 2026-07-10 (#13): dulu SEMUA hotspot yang
                   // belum ditemukan berbagi aria-label literal identik — keyboard/
                   // screen-reader tak bisa membedakan 5 titik sama sekali (padahal
@@ -444,6 +423,18 @@ export function Kunjungan() {
         {(kj.fase === 'observasi' || kj.fase === 'wawancara' || kj.fase === 'diagnosis_perilaku') && (
           <aside className="kunjungan-temuan">
             <div className="kunjungan-temuan__judul mono">CATATAN OBSERVASI</div>
+            <p className="teks-xs teks-lembut" role="status">{temuan.length} dari {skenario.hotspot.length} titik sudah diamati.</p>
+            {kj.fase === 'observasi' && <>
+              <p className="teks-xs">Klik lingkaran pada benda di ruangan, atau pilih titik amatan di bawah. Temuan tersimpan di Buku Lapangan.</p>
+              <div className="kunjungan-titik" role="group" aria-label="Titik amatan alternatif">
+                {skenario.hotspot.map((h, i) => <button key={h.id} className="tombol tombol--senyap"
+                  disabled={kj.hotspotDitemukan.includes(h.id)}
+                  aria-label={`Amati titik ${i + 1}${kj.hotspotDitemukan.includes(h.id) ? ' — sudah diamati' : ''}`}
+                  onMouseEnter={() => setHotspotSorot(h.id)} onMouseLeave={() => setHotspotSorot(null)}
+                  onFocus={() => setHotspotSorot(h.id)} onBlur={() => setHotspotSorot(null)}
+                  onClick={() => dispatch({ type: 'KLIK_HOTSPOT', hotspotId: h.id })}>{i + 1}</button>)}
+              </div>
+            </>}
             {temuan.length === 0 ? (
               <span className="teks-xs teks-lembut">Belum ada temuan — amati ruangan pelan-pelan…</span>
             ) : (
@@ -512,7 +503,7 @@ export function Kunjungan() {
               <span className="teks-kecil teks-lembut">
                 {temuan.length === 0
                   ? 'Amati ruangan pelan-pelan — rumah sering bercerita lebih jujur daripada tuan rumahnya.'
-                  : `${temuan.length} temuan tercatat di buku sakumu.`}
+                  : `${temuan.length} temuan tercatat di Buku Lapangan.`}
               </span>
               <button className="tombol tombol--utama" onClick={() => dispatch({ type: 'LANJUT_BABAK' })}>
                 Mulai Berbincang →
@@ -537,13 +528,6 @@ export function Kunjungan() {
                 )}
                 <div className="kunjungan-dialog__nama mono">{namaWarga}</div>
                 <p className="kunjungan-dialog__teks">“{responsAktif}”</p>
-                {/* #6: gaya diungkap DI SINI (pasca-pilih) — bahan refleksi MI,
-                    bukan kunci tebakan sebelum memilih. */}
-                {gayaTerakhir && (
-                  <p className="teks-xs teks-lembut">
-                    Gaya: {GAYA_INFO[gayaTerakhir].simbol} {GAYA_INFO[gayaTerakhir].label}
-                  </p>
-                )}
               </div>
               <button ref={lanjutRef} className="tombol tombol--utama" onClick={() => setResponsAktif(null)}>
                 Lanjut →
@@ -674,8 +658,10 @@ export function Kunjungan() {
                   <span className="chip chip--biru">{sitasiIntervensiAktif.pinkesga}</span>
                   <span className="chip">{sitasiIntervensiAktif.labelDukungan}</span>
                 </div>
-                <p className="kunjungan-resep__sitasi-sumber">{sitasiIntervensiAktif.sumber}</p>
-                <TautanSumber sumber={sitasiIntervensiAktif.tautan} />
+                <details className="lab-details"><summary>Sumber</summary>
+                  <p className="kunjungan-resep__sitasi-sumber">{sitasiIntervensiAktif.sumber}</p>
+                  <TautanSumber sumber={sitasiIntervensiAktif.tautan} />
+                </details>
               </aside>
             )}
             <div className="baris baris--antara">
