@@ -1,4 +1,4 @@
-import { mkdtemp, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 import axe from 'axe-core'
@@ -224,6 +224,7 @@ test('provenance UKM dapat dibuka tanpa overflow pada mode gelap dan teks 200%',
   await kartu.click()
   const panel = page.getByLabel(/Konteks ilmiah kartu terpilih/i)
   await expect(panel).toBeVisible()
+  await panel.getByText('Sumber', { exact: true }).click()
   const links = panel.getByRole('link', { name: /buka di browser bawaan/i })
   await expect(links).toHaveCount(2)
 
@@ -324,4 +325,43 @@ test('jawaban IGD tersimpan di disk dan bertahan setelah Electron ditutup lalu d
   await expect(page.locator('.igd__respons')).toBeVisible()
   const pulih = await page.evaluate(async () => JSON.parse((await window.primer.save.read('autosave'))!).state.igd)
   expect(pulih).toEqual(igdTersimpan)
+})
+
+test('rekam medis konsultasi selesai dapat diunduh sebagai PDF melalui Electron', async () => {
+  await mulaiStase()
+  await tungguAutosave()
+  await page.evaluate(async () => {
+    const amplop = JSON.parse((await window.primer.save.read('autosave'))!)
+    const s = amplop.state
+    const pasien = { ...s.klinik.antrian[0], kasusId: 'ispa_common_cold', nama: 'Pasien Cetak QA', varianId: '_dasar' }
+    s.tutorialAktif = false
+    s.layar = 'klinik'
+    s.klinik.aktif = { pasien, fase: 'disposisi', ditanya: [], ditanyaKetus: [], sabar: 100, vitalDiukur: false, diperiksa: [], labDipesan: [], labTersedia: [], diagnosis: { icd10: 'J00', jenis: 'tegak' }, resep: [], edukasi: [], tindakan: [], firewallTerpicu: 0 }
+    s.klinik.antrian = s.klinik.antrian.slice(1)
+    await window.primer.save.write('autosave', JSON.stringify(amplop))
+  })
+  await page.reload()
+  await page.getByRole('button', { name: /Lanjutkan.*Dokter E2E/ }).click()
+  await page.getByRole('button', { name: 'PULANGKAN', exact: true }).click()
+  const pdfButton = page.getByRole('button', { name: 'Unduh rekam medis' })
+  await expect(pdfButton).toBeVisible()
+  // Unduhan tes diarahkan ke direktori hasil tes, tanpa dialog simpan OS.
+  const output = test.info().outputPath('rekam-medis-qa.pdf')
+  await app.evaluate(({ session }, savePath) => {
+    const root = globalThis as typeof globalThis & { __pdfDownload?: { nama: string; state: string } }
+    session.defaultSession.once('will-download', (_event, item) => {
+      item.setSavePath(savePath)
+      item.once('done', (_event, state) => { root.__pdfDownload = { nama: item.getFilename(), state } })
+    })
+  }, output)
+  await pdfButton.click()
+  await expect.poll(() => app.evaluate(() => (globalThis as typeof globalThis & { __pdfDownload?: { state: string } }).__pdfDownload?.state)).toBe('completed')
+  await expect(page.getByText('Unduhan PDF disiapkan.')).toBeVisible()
+  const bytes = await readFile(output)
+  expect(bytes.subarray(0, 5).toString()).toBe('%PDF-')
+  expect(bytes.length).toBeGreaterThan(1000)
+  const nama = await app.evaluate(() => (globalThis as typeof globalThis & { __pdfDownload?: { nama: string } }).__pdfDownload?.nama)
+  expect(nama).toMatch(/^PRIMERA RM-\d{10}\.pdf$/)
+  expect(app.windows()).toHaveLength(1)
+  await page.screenshot({ path: test.info().outputPath('06-debrief-ukp-pdf.png'), fullPage: true })
 })

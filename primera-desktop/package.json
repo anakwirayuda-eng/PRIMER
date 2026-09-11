@@ -1,6 +1,6 @@
 {
   "name": "primera-codex-lab2",
-  "version": "1.3.0-lab2.2",
+  "version": "1.3.1",
   "description": "PRIMERA: Puskesmas Pagi — Primary Care Simulator & Arena, game desktop simulasi dokter Puskesmas untuk pendidikan kedokteran Indonesia",
   "main": "out/main/index.js",
   "author": "Anak Agung Bagus Wirayuda, MD, PhD",
@@ -36,11 +36,12 @@
     "dist:mac": "npm run check:provenance && npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --mac && npm run checksum",
     "dist:linux": "npm run check:provenance && npm run check:bgm-license && npm run audit:audio && npm run build && electron-builder --linux && npm run checksum",
     "dev:browser": "vite --config vite.preview.config.ts",
-    "test:lab2": "vitest run lab2 src/main/index.test.ts"
+    "test:lab2": "vitest run lab2 src/main/index.test.ts",
+    "test:ui:131": "node scripts/verify-131.cjs"
   },
   "build": {
     "appId": "id.ac.its.medics.primer.codexlab2",
-    "productName": "PRIMERA CODEX Lab 2",
+    "productName": "PRIMERA 1.3.1",
     "copyright": "© 2026 Anak Agung Bagus Wirayuda MD PhD. Hak Cipta Terdaftar — No. EC002026019623.",
     "directories": {
       "output": "dist",
@@ -59,10 +60,10 @@
     },
     "nsis": {
       "oneClick": true,
-      "shortcutName": "PRIMERA CODEX Lab 2"
+      "shortcutName": "PRIMERA 1.3.1"
     },
     "portable": {
-      "artifactName": "PRIMERA-CODEX-Lab2-Portable-${version}.${ext}"
+      "artifactName": "PRIMERA-Portable-${version}.${ext}"
     },
     "mac": {
       "icon": "build/icon-mac.png",
@@ -85,10 +86,10 @@
       ],
       "darkModeSupport": true,
       "identity": null,
-      "artifactName": "PRIMERA-CODEX-Lab2-${version}-${arch}.${ext}"
+      "artifactName": "PRIMERA-${version}-${arch}.${ext}"
     },
     "dmg": {
-      "artifactName": "PRIMERA-CODEX-Lab2-${version}-${arch}.${ext}"
+      "artifactName": "PRIMERA-${version}-${arch}.${ext}"
     },
     "linux": {
       "icon": "build/icon-mac.png",
@@ -96,7 +97,7 @@
       "target": [
         "AppImage"
       ],
-      "artifactName": "PRIMERA-CODEX-Lab2-${version}-${arch}.${ext}"
+      "artifactName": "PRIMERA-${version}-${arch}.${ext}"
     }
   },
   "dependencies": {
