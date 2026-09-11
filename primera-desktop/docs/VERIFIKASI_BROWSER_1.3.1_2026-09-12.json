@@ -1,0 +1,120 @@
+{
+  "errors": [],
+  "a11y": [
+    {
+      "name": "01-title",
+      "violations": []
+    },
+    {
+      "name": "02-map-progress",
+      "violations": []
+    },
+    {
+      "name": "03-prolanis",
+      "violations": []
+    },
+    {
+      "name": "04-slamet-1440",
+      "violations": []
+    },
+    {
+      "name": "04-slamet-1280",
+      "violations": []
+    },
+    {
+      "name": "04-slamet-1000",
+      "violations": []
+    },
+    {
+      "name": "05-posyandu",
+      "violations": []
+    },
+    {
+      "name": "06-delegation",
+      "violations": []
+    },
+    {
+      "name": "06b-cadre-correction",
+      "violations": []
+    },
+    {
+      "name": "07-klb",
+      "violations": []
+    },
+    {
+      "name": "08-map-dark-200",
+      "violations": []
+    },
+    {
+      "name": "09-map-detail-dark-200",
+      "violations": []
+    }
+  ],
+  "hitTargets": [
+    {
+      "width": 1440,
+      "hits": [
+        {
+          "wanted": "slk1_h1",
+          "actual": "slk1_h1"
+        },
+        {
+          "wanted": "slk1_h2",
+          "actual": "slk1_h2"
+        },
+        {
+          "wanted": "slk1_h3",
+          "actual": "slk1_h3"
+        },
+        {
+          "wanted": "slk1_h4",
+          "actual": "slk1_h4"
+        }
+      ]
+    },
+    {
+      "width": 1280,
+      "hits": [
+        {
+          "wanted": "slk1_h1",
+          "actual": "slk1_h1"
+        },
+        {
+          "wanted": "slk1_h2",
+          "actual": "slk1_h2"
+        },
+        {
+          "wanted": "slk1_h3",
+          "actual": "slk1_h3"
+        },
+        {
+          "wanted": "slk1_h4",
+          "actual": "slk1_h4"
+        }
+      ]
+    },
+    {
+      "width": 1000,
+      "hits": [
+        {
+          "wanted": "slk1_h1",
+          "actual": "slk1_h1"
+        },
+        {
+          "wanted": "slk1_h2",
+          "actual": "slk1_h2"
+        },
+        {
+          "wanted": "slk1_h3",
+          "actual": "slk1_h3"
+        },
+        {
+          "wanted": "slk1_h4",
+          "actual": "slk1_h4"
+        }
+      ]
+    }
+  ],
+  "hudOverlap": [],
+  "overflow": 0
+}

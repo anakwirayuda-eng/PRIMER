@@ -1,5 +1,7 @@
 # PRIMERA 1.3.1 — pengembangan UKM
 
+Build lokal siap dimainkan melalui **`MULAI PRIMERA 1.3.1.cmd`** di folder ini. Laporan rinci: [hasil implementasi dan verifikasi](primera-desktop/docs/HASIL_PRIMERA_1.3.1_2026-09-12.md).
+
 Permintaan pengguna, 12 September 2026: versi berikutnya dinamai PRIMERA 1.3.1; eksekusi perbaikan dan upgrade, dengan sasaran kualitas gameplay, visual, keasikan, presisi, dan beban kognitif masing-masing >8/10. Pengguna mengonfirmasi bahwa sasaran itu adalah kualitas pengalaman, bukan angka nilai mahasiswa.
 
 ## Integrasi
@@ -30,4 +32,18 @@ Formula penilaian, kunci klinis, dan 18 berkas engine beku dipertahankan. Sasara
 
 ## Verifikasi
 
-Catatan hasil dan batas pengujian diisi setelah implementasi. Tidak ada publikasi rilis atau pemasangan otomatis yang dinyatakan selesai oleh dokumen ini.
+- Typecheck: 0 error. Vitest penuh: **1.750/1.750**, 187 berkas; setelah penyempurnaan terakhir, 160 tes terkait di 29 berkas kembali lulus.
+- Electron: **6/6** lulus, termasuk unduh PDF dan pemulihan simpanan setelah tutup/buka aplikasi.
+- Browser: 12 tampilan diperiksa; tidak ada pelanggaran axe pada cakupan yang diuji, tidak ada page error. Hotspot Slamet tepat pada lebar 1.000/1.280/1.440 piksel. Mode gelap 200% memakai pengaturan aplikasi dan diuji tanpa tumpang tindih kelompok HUD.
+- Build runtime: lulus; renderer JS 3,83 MiB dan CSS sekitar 216 KiB, di bawah batas 4 MiB / 320 KiB.
+- Seluruh `src/engine` dan `src/content` identik dengan `6e9f17c`; REVISI_ENGINE 72 dan CONTENT_RELEASE tetap.
+- Kode di-commit lokal. **Installer belum dibuat/dipasang; cabang belum di-push.** Build lokal sudah tersedia di `primera-desktop/out/`.
+
+Penilaian kualitas >8/10 tetap sasaran audit/playtest, belum dinyatakan sebagai hasil ukur baru. Terutama variasi akhir stase dan keputusan pedagogis konten masih perlu penilaian dokter.
+
+## Simpanan dan cara menjalankan
+
+- Launcher menjalankan app desktop di `primera-desktop`, bukan proyek web lama di root repo.
+- Identitas tampilan dan versi paket adalah 1.3.1. Direktori data desktop tetap `%APPDATA%\PRIMERA CODEX Lab 2` agar slot lama dapat dilanjutkan; mekanisme satu instans tetap berlaku. Pengujian memakai direktori data sementara, tidak memakai simpanan pemain.
+- Preview browser memakai port 5131 dan penyimpanan browsernya sendiri. Jalankan `npm.cmd run dev:browser` dari `primera-desktop`; untuk QA terpisah jalankan `npm.cmd run test:ui:131` saat server itu aktif. Gunakan server yang baru dimulai agar modul fixture QA tidak tertinggal setelah HMR.
+- PDF rekam medis lengkap tersedia pada debrief konsultasi yang baru selesai. Sesudah memuat ulang, data encounter lengkap tidak disimpan oleh skema lama; Jejak Perawatan menyediakan unduhan ringkasan episode yang tersedia.
