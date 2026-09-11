@@ -1331,3 +1331,4 @@ details[open].klinik-hasil__panduan > summary::before {
 }
 
 .klinik-deck__footer-ingat:hover { text-decoration: underline; }
+.klinik-cetak { display: flex; flex-wrap: wrap; align-items: center; gap: var(--sp-2); margin-bottom: var(--sp-3); }

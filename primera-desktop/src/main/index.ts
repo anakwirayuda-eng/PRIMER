@@ -3,6 +3,7 @@ import type { MenuItemConstructorOptions } from 'electron'
 import { join, resolve } from 'path'
 import { pathToFileURL } from 'url'
 import { promises as fs, mkdirSync } from 'fs'
+import { renderDokumenPdf } from './dokumen'
 
 // Lab 2 berjalan berdampingan dengan PRIMERA lama, termasuk saat electron-vite dev.
 app.setName('PRIMERA CODEX Lab 2')
@@ -102,6 +103,7 @@ function antrikanSlot(kunci: string, kerja: () => Promise<void>): Promise<void> 
 }
 
 function registerIpc(): void {
+  ipcMain.handle('dokumen:pdf', (_e, isi: unknown) => renderDokumenPdf(isi))
   ipcMain.handle('save:write', async (_e, slot: string, json: string) => {
     const kunci = sanitizeSlot(slot)
     const kerja = async (): Promise<void> => {
@@ -299,7 +301,7 @@ function createWindow(): void {
     minWidth: 1200,
     minHeight: 760,
     show: false,
-    title: 'PRIMERA — CODEX Lab 2',
+    title: 'PRIMERA 1.3.1',
     // Audit CODEX UX 2026-07-16 (P2 bright-start): pengguna sensitif cahaya
     // dgn OS gelap dulu kena kilatan krem sebelum renderer termuat — warna
     // pra-render kini ikut preferensi OS (malam-800 vs kertas-100).

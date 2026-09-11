@@ -258,6 +258,7 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                       </ol>
                     </details>
 
+                    <UnduhRingkasanEpisode episode={episode} />
                     {episode.familyId && (
                       <button
                         className="tombol mk__episode-keluarga"
@@ -282,3 +283,4 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
     </>
   )
 }
+import { UnduhRingkasanEpisode } from './ukm/UnduhRingkasanEpisode'

@@ -2,6 +2,7 @@
 
 interface Window {
   primer: {
+    dokumen?: { pdf: (isi: string) => Promise<Uint8Array> }
     save: {
       write: (slot: string, json: string) => Promise<boolean>
       read: (slot: string) => Promise<string | null>

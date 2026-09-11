@@ -17,6 +17,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { useGame } from '../store'
 import type { GameEvent } from '@engine/events'
+import { PACK } from '@content/index'
 import './Toaster.css'
 
 interface Toast {
@@ -53,7 +54,7 @@ function eventKeToast(e: GameEvent): Toast | null {
     case 'KARMA_DICEGAH':
       return { id, teks: e.narasi, nada: 'sukses' }
     case 'DEX_BERTAMBAH':
-      return { id, teks: `Buku Saku diperbarui (★${e.bintang})`, nada: 'info' }
+      return { id, teks: PACK.skdi144.some((k) => k.kasusId === e.kasusId) ? `Buku Saku diperbarui (★${e.bintang})` : `Penguasaan kasus tercatat (★${e.bintang}) — di luar katalog Buku Saku`, nada: 'info' }
     case 'KEGIATAN_SELESAI':
       return {
         id,

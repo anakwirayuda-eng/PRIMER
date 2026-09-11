@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron'
 
 // Bridge tipis & bertipe: satu-satunya pintu renderer ke dunia luar.
 const api = {
+  dokumen: { pdf: (isi: string): Promise<Uint8Array> => ipcRenderer.invoke('dokumen:pdf', isi) },
   save: {
     write: (slot: string, json: string): Promise<boolean> => ipcRenderer.invoke('save:write', slot, json),
     read: (slot: string): Promise<string | null> => ipcRenderer.invoke('save:read', slot),

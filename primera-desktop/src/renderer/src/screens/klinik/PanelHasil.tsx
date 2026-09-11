@@ -12,6 +12,9 @@ import { BuktiKlinis } from '../../components/BuktiKlinis'
 import { TeksTerbaca } from '../../components/TeksTerbaca'
 import { DuelDiagnosis, TeachBack, duelTersedia, teachBackTersedia } from './RefleksiKlinis'
 import { LABEL_REGION, namaDiagnosis } from './util'
+import { useGame } from '../../store'
+import { kasusEfektif, temuanUntukRegion } from '@engine/clinic'
+import { CetakRekamMedis } from './CetakRekamMedis'
 
 interface Props {
   hasil: PenilaianEncounter
@@ -41,12 +44,17 @@ const LABEL_GRADE: Record<PenilaianEncounter['grade'], string> = {
 export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSelesai }: Props) {
   const tutorial = hasil.tutorialLatihan === true
   // M11: kasus utk lapisan pengayaan (mutiaraEbm/catatanRealita) — murni display.
-  const kasus = PACK.kasus[hasil.kasusId]
+  const snapshot = useGame((s) => s.encounterTerakhir)
+  const enc = snapshot?.pasien.kasusId === hasil.kasusId && snapshot.pasien.nama === hasil.pasienNama ? snapshot : null
+  const dasar = PACK.kasus[hasil.kasusId]
+  const kasus = dasar && enc ? kasusEfektif(dasar, enc.pasien.varianId) : dasar
+  const biayaLab = enc && kasus ? enc.labDipesan.filter((id) => !kasus.lab.some((l) => l.id === id && l.relevan))
+    .reduce((jumlah, id) => jumlah + (PACK.lab[id]?.biaya ?? 0), 0) : null
   const gapFormatif = kasus
     ? {
         anamnesis: (hasil.anamnesisEsensialTerlewat ?? [])
           .map((id) => kasus.anamnesis.find((q) => q.id === id)?.tanya ?? id),
-        pemeriksaan: (hasil.pemeriksaanRelevanTerlewat ?? []).map((region) => LABEL_REGION[region]),
+        pemeriksaan: (hasil.pemeriksaanRelevanTerlewat ?? []).map((region) => enc ? `${LABEL_REGION[region]} — ${temuanUntukRegion(kasus, region)}` : LABEL_REGION[region]),
         obat: (hasil.obatWajibTerlewat ?? []).map((id) => PACK.obat[id]?.nama ?? id),
         alternatif: (hasil.grupObatAlternatifTerlewat ?? []).map((grup) =>
           grup.map((id) => PACK.obat[id]?.nama ?? id).join(' / '),
@@ -104,7 +112,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
   if (hasil.antibiotikTanpaIndikasi)
     bendera.push({ teks: 'Antibiotik tanpa indikasi', kelas: 'chip--merah' })
   if (hasil.labTakRelevan > 0)
-    bendera.push({ teks: `Lab tak relevan ×${hasil.labTakRelevan}`, kelas: 'chip--kunyit' })
+    bendera.push({ teks: `Lab tak relevan ×${hasil.labTakRelevan}${biayaLab === null ? '' : ` · biaya katalog Rp ${biayaLab.toLocaleString('id-ID')}${tutorial || hasil.formativePrototype ? ' (latihan, tanpa potongan kapitasi)' : ''}`}`, kelas: 'chip--kunyit' })
   if (hasil.sbarSkor !== undefined)
     bendera.push({
       teks: `SBAR ${hasil.sbarSkor}/100`,
@@ -163,6 +171,7 @@ export function PanelHasil({ hasil, bolehPanggil, alasanTutup, dex = {}, onSeles
         aria-label="Hasil konsultasi"
         onClick={(e) => e.stopPropagation()}
       >
+        {enc && kasus && <CetakRekamMedis enc={enc} kasus={kasus} />}
         <div className="klinik-hasil__atas">
           {/* CODEX: pasien tutorial dituntun lewat jalur MINIMAL (1 pertanyaan,
               1 regio, tanpa edukasi) — skor SOAP mentah dari jalur itu bisa
