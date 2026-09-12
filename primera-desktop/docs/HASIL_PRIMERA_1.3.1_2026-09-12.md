@@ -1,5 +1,7 @@
 # PRIMERA 1.3.1 — hasil implementasi dan audit lokal
 
+**Pembaruan distribusi 12 September 2026:** cabang dan tag sudah di-push, installer dan portable sudah diterbitkan sebagai rilis uji. Installer dipasang dengan exit code 0 dan aplikasi 1.3.1 dibuka. Rincian sumber binary dan checksum: [laporan rilis](RILIS_PRIMERA_1.3.1_2026-09-12.md). Batas penilaian kualitas dan keputusan pedagogis di bawah tetap berlaku.
+
 Permintaan dokter: eksekusi perbaikan/upgrading, versi 1.3.1, dan sasaran **kualitas tiap aspek UKM >8/10**. Jawaban klarifikasi menegaskan bahwa ini bukan perintah menaikkan nilai mahasiswa. Laporan ini mencatat kode yang benar-benar berubah dan batas buktinya; tidak memberi nilai kualitas baru atas pekerjaan sendiri.
 
 ## Basis yang dapat dibandingkan
@@ -43,15 +45,15 @@ Tidak seluruh butir opsional PK-11/13 dijalankan. Taksonomi ulang edukasi, mode 
 
 | Kelompok | I | W | V / bukti | Built (installer) | Installed | Committed | Pushed |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| PK-0 terintegrasi | Ya | Ya | Regresi anti-bocor pada suite | Belum | Belum | Ya | Belum |
-| PK-1/2/3/4/5/6/8 dan reflow | Ya | Ya | Unit/paritas engine + interaksi browser, sumber UKM juga diuji di Electron | Belum | Belum | Ya | Belum |
-| PK-7 | Ya | Ya | Tes Lokmin dan helper; panel peta dicek browser. Rapor baru belum diaudit visual terpisah | Belum | Belum | Ya | Belum |
-| PK-9/11 | Sebagian lingkup brief | Ya | Tes kunjungan/navigasi + observasi browser + sumber Electron; refleksi sore belum playtest percakapan penuh | Belum | Belum | Ya | Belum |
-| PK-12 | Ya | Ya | Unit snapshot/varian/anti-rekonstruksi, klik ekspor Electron, PDF dirender dan dibaca | Belum | Belum | Ya | Belum |
-| Arsip kabar selesai | Ya | Ya | Tes komponen pergantian aktif/selesai; belum playtest akhir stase penuh | Belum | Belum | Ya | Belum |
+| PK-0 terintegrasi | Ya | Ya | Regresi anti-bocor pada suite | Ya | Ya | Ya | Ya |
+| PK-1/2/3/4/5/6/8 dan reflow | Ya | Ya | Unit/paritas engine + interaksi browser, sumber UKM juga diuji di Electron | Ya | Ya | Ya | Ya |
+| PK-7 | Ya | Ya | Tes Lokmin dan helper; panel peta dicek browser. Rapor baru belum diaudit visual terpisah | Ya | Ya | Ya | Ya |
+| PK-9/11 | Sebagian lingkup brief | Ya | Tes kunjungan/navigasi + observasi browser + sumber Electron; refleksi sore belum playtest percakapan penuh | Ya | Ya | Ya | Ya |
+| PK-12 | Ya | Ya | Unit snapshot/varian/anti-rekonstruksi, klik ekspor Electron, PDF dirender dan dibaca | Ya | Ya | Ya | Ya |
+| Arsip kabar selesai | Ya | Ya | Tes komponen pergantian aktif/selesai; belum playtest akhir stase penuh | Ya | Ya | Ya | Ya |
 | PK-10, perubahan konten/mesin PK-13 | Tidak | Tidak | Tidak diterapkan | Tidak | Tidak | Tidak | Tidak |
 
-Build runtime desktop `out/` lulus dan launcher tersedia. Tidak ada pemasangan installer atau publikasi rilis yang dilakukan.
+Build runtime desktop `out/` dan installer lulus. Installer telah dipasang; publikasi memakai status prerelease, mengikuti jalur rilis uji sebelumnya. Ini tidak berarti seluruh keputusan konten/klinis untuk full trial sudah diselesaikan.
 
 ## Verifikasi yang benar-benar dijalankan
 
