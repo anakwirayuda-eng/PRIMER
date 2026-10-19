@@ -13,7 +13,8 @@ import { serialize, deserialize } from '@engine/save'
 import { hitungBadge } from '@engine/badge'
 import { PACK } from '@content/index'
 import { hashSeed } from '@engine/core/rng'
-import { catatRekapUkm, type RekapUkm } from './screens/ukm/rekapUkm'
+import type { RekapUkm } from './screens/ukm/rekapUkm'
+import { rekonstruksiJejak, turunkanCuplikan } from './utils/rekonstruksiJejak'
 
 export const SLOT_AUTOSAVE = 'autosave'
 /** M5.25 — tiga slot arsip manual di samping autosave. */
@@ -156,6 +157,20 @@ export const useGame = create<GameStore>((set, get) => {
   let bacaAutosaveId = 0
   let tulisAutosaveId = 0
   let sesiId = 0
+  // Cuplikan UI (rekam medis pasien terakhir, rekap UKM) tidak ikut save. Setelah
+  // sesi dipasang dari disk/impor, turunkan ulang dari jejak. Ditunda satu tick
+  // agar layar sempat tergambar (replay 90 hari ±150 ms); hasilnya dibuang bila
+  // sesi sudah berganti. Replay selalu atas state TERKINI, jadi aksi yang sempat
+  // masuk sebelum tick ini ikut terhitung.
+  const pulihkanCuplikan = () => {
+    const sesi = sesiId
+    setTimeout(() => {
+      const st = get().state
+      if (sesi !== sesiId || !st) return
+      const hasil = rekonstruksiJejak(st)
+      if (hasil) set(hasil.cuplikan)
+    }, 0)
+  }
   return ({
   state: null,
   arsip: null,
@@ -190,6 +205,7 @@ export const useGame = create<GameStore>((set, get) => {
     if (!arsip || !rilisArsipKompatibel(arsip)) return
     sesiId++
     set((p) => ({ state: arsip, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null, muatToken: p.muatToken + 1 }))
+    pulihkanCuplikan()
   },
 
   muatAutosave: async () => {
@@ -235,12 +251,8 @@ export const useGame = create<GameStore>((set, get) => {
     if (!cur) return
     try {
       const { state, events } = advance(cur, action, PACK)
-      const rekap = catatRekapUkm(cur, state, events, action)
       set((prev) => ({ state, lastEvents: events, eventTick: prev.eventTick + 1,
-        rekapUkm: state.hari !== cur.hari ? null : rekap ?? prev.rekapUkm,
-        encounterTerakhir: state.hari !== cur.hari ? null : events.some((e) => e.type === 'ENCOUNTER_SELESAI') && cur.klinik.aktif
-          ? { ...cur.klinik.aktif, ...(action.type === 'DISPOSISI' ? { disposisi: action.jenis, sbar: action.sbar, justifikasiRujuk: action.justifikasiRujuk } : {}) }
-          : prev.encounterTerakhir,
+        ...turunkanCuplikan(prev, cur, state, events, action),
       }))
       const berhasil = !events.some((e) => e.type === 'ERROR_AKSI')
       if (events.some((e) => EVENT_AUTOSAVE.has(e.type)) || (berhasil && AKSI_AUTOSAVE.has(action.type))) {
@@ -374,6 +386,7 @@ export const useGame = create<GameStore>((set, get) => {
     if (get().muatToken !== tok) return false // disusul operasi lebih baru — batal
     sesiId++
     set({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null })
+    pulihkanCuplikan()
     // CODEX audit UI/UX 2026-07-10 (#4): tanpa ini, sesi yang baru dimuat
     // hanya hidup in-memory — autosave di disk tetap berisi save LAMA sampai
     // aksi lain kebetulan memicunya. Menutup app sebelum itu membuat boot
@@ -390,6 +403,7 @@ export const useGame = create<GameStore>((set, get) => {
     // yang mungkin masih berjalan (klik slot lalu impor) tak menimpa hasil impor.
     sesiId++
     set((p) => ({ state: st, arsip: null, lastEvents: [], eventTick: 0, arsipKorup: false, sedangMemuat: false, statusSimpan: 'idle', petaTargetKeluargaId: null, rekapUkm: null, encounterTerakhir: null, muatToken: p.muatToken + 1 }))
+    pulihkanCuplikan()
     void get().simpan()
     return true
   },

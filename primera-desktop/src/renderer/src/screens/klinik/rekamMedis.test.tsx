@@ -11,6 +11,8 @@ import { CetakRekamMedis } from './CetakRekamMedis'
 import { PanelHasil } from './PanelHasil'
 import { unduhDokumen } from '../../utils/unduhDokumen'
 import { htmlRingkasanEpisode } from '../ukm/UnduhRingkasanEpisode'
+import { episodeIdPasien } from '@engine/bridge'
+import { JejakPerawatan } from '../JejakPerawatan'
 
 vi.mock('../../utils/unduhDokumen', () => ({ unduhDokumen: vi.fn(async () => 'Unduhan PDF disiapkan.') }))
 beforeEach(() => {
@@ -19,7 +21,48 @@ beforeEach(() => {
   useGame.setState({ state: buildInitialState('Dokter Cetak', 131, PACK), encounterTerakhir: null, lastEvents: [] })
 })
 
-it('menangkap konsultasi yang selesai beserta disposisi; snapshot tidak ikut save dan dikosongkan saat impor', () => {
+/** Satu konsultasi lewat dispatch store sungguhan, supaya jejaknya bisa direplay. */
+function mainkanSatuKonsultasi(): void {
+  const { dispatch } = useGame.getState()
+  dispatch({ type: 'PINDAH_LAYAR', layar: 'klinik' })
+  dispatch({ type: 'PANGGIL_PASIEN' })
+  const kasus = PACK.kasus[useGame.getState().state!.klinik.aktif!.pasien.kasusId]!
+  dispatch({ type: 'TANYA', pertanyaanId: kasus.anamnesis[0]!.id })
+  dispatch({ type: 'LANJUT_FASE' })
+  dispatch({ type: 'UKUR_VITAL' })
+  dispatch({ type: 'LANJUT_FASE' })
+  dispatch({ type: 'KOMIT_DIAGNOSIS', icd10: kasus.icd10, jenis: 'tegak' })
+  dispatch({ type: 'LANJUT_FASE' })
+  dispatch({ type: 'DISPOSISI', jenis: 'pulang' })
+}
+
+it('rekam medis pasien terakhir dipulihkan dari jejak setelah arsip diimpor ulang', async () => {
+  mainkanSatuKonsultasi()
+  const live = useGame.getState().encounterTerakhir
+  expect(live).not.toBeNull()
+  const arsip = serialize(useGame.getState().state!)
+  expect(arsip).not.toContain('encounterTerakhir')
+  useGame.setState({ encounterTerakhir: null })
+  expect(useGame.getState().imporArsip(arsip)).toBe(true)
+  expect(useGame.getState().encounterTerakhir).toBeNull()
+  await waitFor(() => expect(useGame.getState().encounterTerakhir).toEqual(live))
+})
+
+it('episode di Jejak Perawatan menawarkan rekam medis poli lengkap hasil replay', async () => {
+  mainkanSatuKonsultasi()
+  const enc = useGame.getState().encounterTerakhir!
+  const episode = { id: episodeIdPasien(enc.pasien), subjectId: enc.pasien.id, subjectName: enc.pasien.nama, source: 'klinik' as const, problemId: enc.pasien.kasusId, problemLabel: 'Uji', status: 'dinilai' as const, owner: 'dokter' as const, openedDay: 1, updatedDay: 1, nextAction: 'Kontrol', receipt: { signal: 'Poli', next: 'Kontrol' }, history: [] }
+  render(<JejakPerawatan episodes={[episode]} hari={1} petaTerbuka={false} onBukaKeluarga={() => {}} />)
+  fireEvent.click(screen.getByRole('button', { name: /Buka Jejak Perawatan/i }))
+  fireEvent.click(screen.getByRole('button', { name: 'Unduh rekam medis poli (1 konsultasi)' }))
+  await waitFor(() => expect(unduhDokumen).toHaveBeenCalledTimes(1))
+  const [html, nama] = vi.mocked(unduhDokumen).mock.calls[0]!
+  expect(html).toContain('Konsultasi hari 1')
+  expect(html).toContain(PACK.kasus[enc.pasien.kasusId]!.anamnesis[0]!.tanya)
+  expect(nama).toBe(`PRIMERA Rekam Medis ${enc.pasien.nama}`)
+})
+
+it('menangkap konsultasi yang selesai beserta disposisi; snapshot tidak ikut save dan tak dipulihkan bila jejak tak mereproduksinya', async () => {
   const enc = buatEncounter(buatPasienDariKasus('ispa_common_cold', PACK, new Rng(131, 'cetak')))
   enc.fase = 'disposisi'
   enc.diagnosis = { icd10: PACK.kasus.ispa_common_cold!.icd10, jenis: 'tegak' }
@@ -31,6 +74,9 @@ it('menangkap konsultasi yang selesai beserta disposisi; snapshot tidak ikut sav
   const arsip = serialize(useGame.getState().state!)
   expect(arsip).not.toContain('encounterTerakhir')
   useGame.getState().imporArsip(arsip)
+  expect(useGame.getState().encounterTerakhir).toBeNull()
+  // Encounter disuntik langsung ke state (bukan lewat jejak) → replay menolak.
+  await new Promise((selesai) => setTimeout(selesai, 0))
   expect(useGame.getState().encounterTerakhir).toBeNull()
 })
 

@@ -14,7 +14,7 @@ export function RekapKegiatan({ hasil }: { hasil: HasilKegiatan }) {
     ? kartuPosyandu(new Rng(state.seedKurikulum, 'posyandu', hariPosyandu, hasil.rw)) : [])
   return <section className="ukm-rekap" aria-label="Rekap keputusan kegiatan">
     <h2 className="judul-seksi">Keputusan dalam sesi ini</h2>
-    {!cuplikan && <p className="teks-xs teks-lembut">Jawaban tersimpan. Rincian siapa yang menjawab tidak tersedia setelah sesi dimuat ulang.</p>}
+    {!cuplikan && <p className="teks-xs teks-lembut">Jawaban tersimpan. Rincian siapa yang menjawab tidak dapat dipulihkan dari arsip ini.</p>}
     <ol>{hasil.jawaban.map((j, i) => {
       const kartu = dek.find((k) => k.id === j.kartuId)
       const pilihan = kartu?.pilihan.find((p) => p.id === j.pilihanId)

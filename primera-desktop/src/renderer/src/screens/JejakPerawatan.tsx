@@ -8,6 +8,10 @@ import type {
 } from '@engine/state'
 import { progresEpisode, ringkasanEpisode } from '@engine/bridge'
 import { useFocusTrap } from '../useFocusTrap'
+import { useGame } from '../store'
+import { konsultasiPerEpisode, rekonstruksiJejak } from '../utils/rekonstruksiJejak'
+import { UnduhRingkasanEpisode } from './ukm/UnduhRingkasanEpisode'
+import { UnduhRekamMedisEpisode } from './klinik/UnduhRekamMedisEpisode'
 
 type FilterEpisode = 'aktif' | 'selesai' | 'semua'
 
@@ -90,6 +94,13 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
     [episodes, filter, hari],
   )
   const refModal = useFocusTrap<HTMLDivElement>(buka, () => setBuka(false))
+  // Rekam medis poli per episode disusun ulang dari jejak, hanya saat modal
+  // dibuka (replay di-cache per panjang jejak). Null = tak dapat direkonstruksi.
+  const state = useGame((s) => s.state)
+  const konsultasi = useMemo(() => {
+    const hasil = buka && state ? rekonstruksiJejak(state) : null
+    return hasil ? konsultasiPerEpisode(hasil) : null
+  }, [buka, state])
 
   return (
     <>
@@ -259,6 +270,9 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
                     </details>
 
                     <UnduhRingkasanEpisode episode={episode} />
+                    {konsultasi?.has(episode.id) && (
+                      <UnduhRekamMedisEpisode episode={episode} konsultasi={konsultasi.get(episode.id)!} dokter={state?.namaDokter ?? ''} />
+                    )}
                     {episode.familyId && (
                       <button
                         className="tombol mk__episode-keluarga"
@@ -283,4 +297,3 @@ export function JejakPerawatan({ episodes, hari, petaTerbuka, onBukaKeluarga }: 
     </>
   )
 }
-import { UnduhRingkasanEpisode } from './ukm/UnduhRingkasanEpisode'

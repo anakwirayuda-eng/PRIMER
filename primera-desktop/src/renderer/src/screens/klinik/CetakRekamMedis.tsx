@@ -5,6 +5,18 @@ import { LembarPeriksa, nomorRmTampilan } from './LembarPeriksa'
 import { unduhDokumen } from '../../utils/unduhDokumen'
 import { useGame } from '../../store'
 
+export const CATATAN_REKAM_MEDIS = 'Dokumen simulasi pendidikan. Memuat pemeriksaan, keputusan, dan rencana yang tercatat pada konsultasi ini. Dosis yang tidak dicatat dalam simulasi tidak ditambahkan.'
+
+/** Isi satu konsultasi pada dokumen rekam medis, tanpa kop dan catatan kaki. */
+export function IsiRekamMedis({ enc, kasus }: { enc: EncounterState; kasus: KasusKlinis }) {
+  return <>
+    <LembarPeriksa enc={enc} kasus={kasus} dispatch={() => {}} />
+    <section><h2>Disposisi</h2><p>{enc.disposisi ?? 'Tidak tercatat'}</p>
+      {enc.sbar && <><h2>SBAR yang ditulis dokter</h2><p>Situasi: {enc.sbar.situation}</p><p>Latar belakang: {enc.sbar.background}</p><p>Asesmen: {enc.sbar.assessment}</p><p>Rekomendasi: {enc.sbar.recommendation}</p></>}
+    </section>
+  </>
+}
+
 export function CetakRekamMedis({ enc, kasus }: { enc: EncounterState; kasus: KasusKlinis }) {
   const dokter = useGame((s) => s.state?.namaDokter ?? '')
   const hari = useGame((s) => s.state?.hari)
@@ -23,11 +35,8 @@ export function CetakRekamMedis({ enc, kasus }: { enc: EncounterState; kasus: Ka
     <span className="teks-xs" role="status">{status}</span>
     <div ref={isi} hidden aria-hidden="true">
       <header><h1>Puskesmas Sukamaju</h1><p>Rekam medis simulasi PRIMERA · Hari {hari} · dr. {dokter}</p></header>
-      <LembarPeriksa enc={enc} kasus={kasus} dispatch={() => {}} />
-      <section><h2>Disposisi</h2><p>{enc.disposisi ?? 'Tidak tercatat'}</p>
-        {enc.sbar && <><h2>SBAR yang ditulis dokter</h2><p>Situasi: {enc.sbar.situation}</p><p>Latar belakang: {enc.sbar.background}</p><p>Asesmen: {enc.sbar.assessment}</p><p>Rekomendasi: {enc.sbar.recommendation}</p></>}
-      </section>
-      <footer>Dokumen simulasi pendidikan. Memuat pemeriksaan, keputusan, dan rencana yang tercatat pada konsultasi ini. Dosis yang tidak dicatat dalam simulasi tidak ditambahkan.</footer>
+      <IsiRekamMedis enc={enc} kasus={kasus} />
+      <footer>{CATATAN_REKAM_MEDIS}</footer>
     </div>
   </section>
 }
