@@ -34,7 +34,8 @@ megalog/outputs/
 _backups/
 *.json.gz
 *.log
-eslint_report.json
+# Laporan ESLint sekali pakai (eslint-report.json, eslint_v2.json, dst.)
+eslint[-_]*.json
 vitest.json
 playwright.json
 pldb_export.json

@@ -1,9 +1,10 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, shell, Menu } from 'electron'
+import { app, BrowserWindow, ipcMain, nativeTheme, net, shell, Menu } from 'electron'
 import type { MenuItemConstructorOptions } from 'electron'
 import { join, resolve } from 'path'
 import { pathToFileURL } from 'url'
 import { promises as fs, mkdirSync } from 'fs'
 import { renderDokumenPdf } from './dokumen'
+import { bacaFeedRilis, MAKS_BYTE_FEED, URL_FEED_RILIS, type RilisFeed } from './pembaruanFeed'
 
 // Lab 2 berjalan berdampingan dengan PRIMERA lama, termasuk saat electron-vite dev.
 app.setName('PRIMERA CODEX Lab 2')
@@ -225,8 +226,58 @@ function registerIpc(): void {
     }
   })
 
-  // Lab memakai jalur rilis sendiri; feed rilis utama tidak ditawarkan di sini.
-  ipcMain.handle('pembaruan:cek', async () => [])
+  /**
+   * A7 distribusi (2026-08-02): cek versi terbaru HARUS dari main process.
+   *
+   *  1. CSP renderer `default-src 'self'` memblokir fetch keluar — di renderer
+   *     ia gagal senyap di build terpasang. `net.request` tidak tunduk CSP.
+   *  2. Feed Atom, BUKAN REST api.github.com: REST dibatasi 60 permintaan/jam
+   *     per IP, dan satu lab kampus berbagi satu IP NAT.
+   *
+   * Lab 2 sempat mematikan ini (daae6c8) selama berjalan berdampingan dengan
+   * PRIMERA lama. Sejak 1.3.1 build terintegrasi terbit di repo yang sama,
+   * jadi feed ini kembali sumber yang benar. Tetap opt-in di Pengaturan;
+   * kegagalan apa pun = daftar kosong (renderer diam).
+   */
+  ipcMain.handle('pembaruan:cek', () => new Promise<RilisFeed[]>((resolve) => {
+    try {
+      const req = net.request({ method: 'GET', url: URL_FEED_RILIS })
+      // GitHub menolak permintaan tanpa User-Agent; net.request tidak
+      // mengirimkannya otomatis. Jujur menyebut diri, bukan menyamar browser.
+      req.setHeader('User-Agent', `PRIMERA/${app.getVersion()} (+https://github.com/anakwirayuda-eng/PRIMER)`)
+      const batas = setTimeout(() => {
+        try { req.abort() } catch { /* sudah selesai */ }
+        resolve([])
+      }, 8000)
+      req.on('response', (res) => {
+        if (res.statusCode < 200 || res.statusCode >= 300) {
+          clearTimeout(batas)
+          resolve([])
+          return
+        }
+        let xml = ''
+        res.on('data', (potongan) => {
+          xml += potongan.toString()
+          if (xml.length > MAKS_BYTE_FEED) {
+            clearTimeout(batas)
+            try { req.abort() } catch { /* sudah selesai */ }
+            resolve([])
+          }
+        })
+        res.on('end', () => {
+          clearTimeout(batas)
+          resolve(bacaFeedRilis(xml))
+        })
+      })
+      req.on('error', () => {
+        clearTimeout(batas)
+        resolve([])
+      })
+      req.end()
+    } catch {
+      resolve([])
+    }
+  }))
 
   ipcMain.handle('app:version', () => app.getVersion())
   ipcMain.handle('runtime:consume-recovery', () => {

@@ -28,6 +28,9 @@ const bengkel = vi.hoisted(() => ({
   quit: 0,
   devtoolsDitutup: 0,
   padaQuit: null as null | (() => void),
+  /** Isi feed rilis yang dijawab `net` palsu; null = jaringan gagal. */
+  feedRilis: null as string | null,
+  permintaanNet: [] as { url: string; userAgent: string }[],
 }))
 
 vi.mock('electron', () => {
@@ -96,6 +99,28 @@ vi.mock('electron', () => {
       },
     },
     nativeTheme: { shouldUseDarkColors: false },
+    net: {
+      request: ({ url }: { url: string }) => {
+        const permintaan = { url, userAgent: '' }
+        bengkel.permintaanNet.push(permintaan)
+        const pendengar = new Map<string, (...args: unknown[]) => void>()
+        return {
+          setHeader: (nama: string, nilai: string): void => { if (nama === 'User-Agent') permintaan.userAgent = nilai },
+          on: (ev: string, cb: (...args: unknown[]) => void): void => { pendengar.set(ev, cb) },
+          abort: (): void => {},
+          end: (): void => {
+            if (bengkel.feedRilis === null) {
+              pendengar.get('error')?.(new Error('luring'))
+              return
+            }
+            const res = new Map<string, (...args: unknown[]) => void>()
+            pendengar.get('response')?.({ statusCode: 200, on: (ev: string, cb: (...args: unknown[]) => void) => { res.set(ev, cb) } })
+            res.get('data')?.(Buffer.from(bengkel.feedRilis))
+            res.get('end')?.()
+          },
+        }
+      },
+    },
     shell: { openExternal: (): void => {} },
     Menu: {
       setApplicationMenu: (m: unknown): void => {
@@ -134,10 +159,24 @@ async function muatMain(opsi: { platform?: NodeJS.Platform; terpaket?: boolean }
 const saveDir = (): string => join(bengkel.userData, 'saves')
 const ipc = (kanal: string) => bengkel.ipc.get(kanal) as (...args: unknown[]) => Promise<unknown>
 
-it('Lab 2 memakai userData sendiri dan tidak menawarkan rilis aplikasi utama', async () => {
+it('cek pembaruan membaca feed rilis repo lewat main process; jaringan gagal = daftar kosong', async () => {
+  await muatMain()
+  bengkel.permintaanNet = []
+  bengkel.feedRilis = '<feed><title>Release notes from PRIMER</title><entry><link rel="alternate" type="text/html" href="https://github.com/anakwirayuda-eng/PRIMER/releases/tag/test-beta-2ab6ae4"/><title>PRIMERA 1.3.1 — peningkatan UKM dan UI</title></entry></feed>'
+  expect(await ipc('pembaruan:cek')({})).toEqual([
+    { judul: 'PRIMERA 1.3.1 — peningkatan UKM dan UI', url: 'https://github.com/anakwirayuda-eng/PRIMER/releases/tag/test-beta-2ab6ae4' },
+  ])
+  expect(bengkel.permintaanNet[0]).toEqual({
+    url: 'https://github.com/anakwirayuda-eng/PRIMER/releases.atom',
+    userAgent: 'PRIMERA/1.1.0-test (+https://github.com/anakwirayuda-eng/PRIMER)',
+  })
+  bengkel.feedRilis = null
+  expect(await ipc('pembaruan:cek')({})).toEqual([])
+})
+
+it('Lab 2 memakai userData sendiri', async () => {
   await muatMain()
   expect(bengkel.userData).toBe(join(dirSementara, 'PRIMERA CODEX Lab 2'))
-  expect(await ipc('pembaruan:cek')({})).toEqual([])
   await ipc('save:write')({}, 'autosave', '{"lab":2}')
   expect(readFileSync(join(saveDir(), 'autosave.json'), 'utf8')).toBe('{"lab":2}')
   await expect(fs.access(join(dirSementara, 'saves', 'autosave.json'))).rejects.toThrow()
