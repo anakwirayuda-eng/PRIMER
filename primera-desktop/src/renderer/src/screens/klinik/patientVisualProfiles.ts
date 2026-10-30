@@ -1,4 +1,6 @@
 import type { JenisKelamin } from '@content/types'
+import type { IdPotret } from '../kunjungan/visualProfiles'
+import { ID_KELUARGA_BERVISUAL, potretAnggotaKeluarga } from '../kunjungan/visualProfiles'
 import infantAtlas from '../../assets/m12/clinic-infant.webp'
 import youthAtlas from '../../assets/m12/clinic-youth.webp'
 import womenAtlas from '../../assets/m12/clinic-women.webp'
@@ -10,6 +12,10 @@ export interface IdentitasVisualPasien {
   usia: number
   usiaBulan?: number
   jenisKelamin: JenisKelamin
+  /** Nama dan kaitan keluarga hanya dipakai untuk mengenali warga binaan bernama. */
+  nama?: string
+  keluargaId?: string
+  prolanisPesertaId?: string
 }
 
 export interface ProfilVisualPasien {
@@ -18,6 +24,8 @@ export interface ProfilVisualPasien {
   ukuranAtlas: string
   indeks: number
   kelompok: 'bayi_balita' | 'anak_remaja' | 'dewasa_perempuan' | 'dewasa_laki' | 'lansia'
+  /** Terisi bila pasien adalah warga binaan yang wajahnya sudah dikenal dari kunjungan rumah. */
+  potretWarga?: IdPotret
 }
 
 interface KelompokAtlas {
@@ -70,6 +78,9 @@ const LANSIA: KelompokAtlas = {
 
 export const JUMLAH_VARIAN_VISUAL_PASIEN = 40
 
+/** Atlas potret warga kunjungan berisi 2x2 sel. */
+const GRID_POTRET_WARGA = 2
+
 function hashIdentitas(id: string): number {
   let hash = 2166136261
   for (let i = 0; i < id.length; i += 1) {
@@ -93,12 +104,35 @@ function kelompokUntuk(pasien: IdentitasVisualPasien): KelompokAtlas {
   return pasien.jenisKelamin === 'P' ? DEWASA_PEREMPUAN : DEWASA_LAKI
 }
 
+function keluargaAsal(pasien: IdentitasVisualPasien): string | undefined {
+  if (pasien.keluargaId) return pasien.keluargaId
+  // Roster Prolanis save lama tidak menyimpan keluargaId, tetapi id pesertanya
+  // tetap berawalan `prol_<keluargaId>_`.
+  const pesertaId = pasien.prolanisPesertaId
+  if (!pesertaId) return undefined
+  return ID_KELUARGA_BERVISUAL.find((id) => pesertaId.startsWith(`prol_${id}_`))
+}
+
 /**
- * Potret dipilih hanya dari identitas demografis, bukan kasus atau diagnosis.
- * Pasien yang sama selalu mendapat sel atlas yang sama di seluruh layar.
+ * Potret dipilih hanya dari identitas, bukan kasus atau diagnosis. Warga
+ * binaan bernama memakai wajah yang sama seperti di kunjungan rumah; pasien
+ * lain memakai varian demografis. Pasien yang sama selalu mendapat sel atlas
+ * yang sama di seluruh layar.
  */
 export function profilVisualPasien(pasien: IdentitasVisualPasien): ProfilVisualPasien {
   const atlas = kelompokUntuk(pasien)
+  const keluargaId = keluargaAsal(pasien)
+  const warga = keluargaId && pasien.nama ? potretAnggotaKeluarga(keluargaId, pasien.nama) : undefined
+  if (warga) {
+    return {
+      src: warga.src,
+      posisi: warga.posisi,
+      ukuranAtlas: `${GRID_POTRET_WARGA * 100}% ${GRID_POTRET_WARGA * 100}%`,
+      indeks: [0, 1, 2, 3].find((i) => posisiSel(i, GRID_POTRET_WARGA) === warga.posisi) ?? 0,
+      kelompok: atlas.kelompok,
+      potretWarga: warga.id,
+    }
+  }
   const pilihan = pasien.jenisKelamin === 'P' ? atlas.selP : atlas.selL
   const indeks = pilihan[hashIdentitas(`${pasien.id}|${pasien.usia}|${pasien.jenisKelamin}`) % pilihan.length]!
   return {
