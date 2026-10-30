@@ -279,9 +279,40 @@ const POTRET_PER_DIALOG: Record<string, Partial<Record<number, IdPotret>>> = {
   karsa_k1: { 1: 'bu_painah' },
 }
 
+/*
+ * Warga bernama yang punya potret kunjungan, dikunci per keluarga dengan
+ * `anggota[].nama` di konten — identitas yang sama yang dibawa engine ke
+ * pasien karma dan peserta Prolanis. Anggota tanpa potret (mis. anak) tidak
+ * tercantum dan tetap memakai potret demografis poli.
+ */
+const POTRET_ANGGOTA_KELUARGA: Record<string, Readonly<Record<string, IdPotret>>> = {
+  keluarga_wulan: { 'Pak Darto': 'pak_darto', 'Bu Wulan': 'bu_wulan' },
+  keluarga_santoso: { 'Pak Santoso': 'pak_santoso', 'Bu Rahmi': 'bu_rahmi' },
+  keluarga_ketut: { 'Luh Sari': 'luh_sari' },
+  keluarga_dewi: { Hendra: 'pak_hendra', Dewi: 'bu_dewi' },
+  keluarga_musa: { Musa: 'pak_musa' },
+  keluarga_raharjo: { Raharjo: 'pak_raharjo', Sumiati: 'bu_sumiati' },
+  keluarga_asih: { 'Bu Asih': 'bu_asih' },
+  keluarga_slamet: { 'Pak Slamet': 'pak_slamet', 'Bu Tumini': 'bu_tumini' },
+  keluarga_yani: { 'Bu Yani': 'bu_yani', 'Mbah Painem': 'mbah_painem' },
+  keluarga_prapto: { 'Pak Prapto': 'pak_prapto' },
+  keluarga_marni: { 'Bu Marni': 'bu_marni' },
+  keluarga_gunawan: { 'Pak Gunawan': 'pak_gunawan' },
+  keluarga_lastri: { 'Mbah Lastri': 'mbah_lastri' },
+  keluarga_bagyo: { 'Pak Bagyo': 'pak_bagyo' },
+  keluarga_endah: { 'Mas Andri': 'mas_andri', 'Mbak Endah': 'mbak_endah' },
+  keluarga_karsa: { 'Pak Karsa': 'pak_karsa', 'Bu Painah': 'bu_painah' },
+}
+
 export const ID_SKENARIO_BERPOTRET = Object.freeze(Object.keys(POTRET_DEFAULT_SKENARIO))
 
 export function profilPembicara(skenarioId: string, dialogIndex: number): ProfilPotret {
   const id = POTRET_PER_DIALOG[skenarioId]?.[dialogIndex] ?? POTRET_DEFAULT_SKENARIO[skenarioId] ?? 'bu_wulan'
   return { id, ...POTRET[id] }
+}
+
+/** Potret kunjungan untuk anggota keluarga binaan bernama, bila ada. */
+export function potretAnggotaKeluarga(keluargaId: string, nama: string): ProfilPotret | undefined {
+  const id = POTRET_ANGGOTA_KELUARGA[keluargaId]?.[nama]
+  return id ? { id, ...POTRET[id] } : undefined
 }
