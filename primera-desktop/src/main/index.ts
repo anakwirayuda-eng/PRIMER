@@ -352,7 +352,7 @@ function createWindow(): void {
     minWidth: 1200,
     minHeight: 760,
     show: false,
-    title: 'PRIMERA 1.3.1',
+    title: 'PRIMERA 1.3.2',
     // Audit CODEX UX 2026-07-16 (P2 bright-start): pengguna sensitif cahaya
     // dgn OS gelap dulu kena kilatan krem sebelum renderer termuat — warna
     // pra-render kini ikut preferensi OS (malam-800 vs kertas-100).

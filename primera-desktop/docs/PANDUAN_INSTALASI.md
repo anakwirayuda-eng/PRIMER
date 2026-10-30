@@ -11,11 +11,11 @@ soal memasang dan menyebarkan aplikasinya.
 Setiap rilis menyediakan **dua** berkas `.exe`. Keduanya berisi aplikasi yang
 sama persis; yang berbeda hanya cara menjalankannya.
 
-| | **Installer** (`PRIMERA test-beta Setup <versi>.exe`) | **Portable** (`PRIMERA-test-beta-Portable-<versi>.exe`) |
+| | **Installer** (`PRIMERA-Setup-<versi>.exe`) | **Portable** (`PRIMERA-Portable-<versi>.exe`) |
 |---|---|---|
 | Perlu hak admin? | Tidak (pasang per-pengguna) | Tidak |
 | Memasang ke sistem? | Ya (`%LOCALAPPDATA%\Programs`) | **Tidak** — jalan langsung dari berkas |
-| Pintasan Start Menu | Ya | Tidak |
+| Pintasan Desktop & Start Menu | Ya | Tidak |
 | Cocok untuk | Laptop pribadi mahasiswa | **Lab komputer terkunci**, flashdisk, cobabaca cepat |
 | Waktu buka | Cepat | Sedikit lebih lambat (mengekstrak dulu tiap kali) |
 
@@ -60,7 +60,7 @@ Anda unduh benar-benar berkas asli dan tidak berubah. Tiap rilis menyertakan
 Di PowerShell:
 
 ```bash
-Get-FileHash "PRIMERA test-beta Setup 1.1.0-beta.10.exe" -Algorithm SHA256
+Get-FileHash "PRIMERA-Setup-1.3.2.exe" -Algorithm SHA256
 ```
 
 Bandingkan hasilnya dengan baris di `SHA256SUMS-<versi>.txt` (huruf besar/kecil
@@ -88,10 +88,10 @@ admin, tidak ada yang perlu dibersihkan setelahnya.
 **Bila ingin terpasang permanen**, installer mendukung mode senyap:
 
 ```bash
-"PRIMERA test-beta Setup 1.1.0-beta.10.exe" /S
+"PRIMERA-Setup-1.3.2.exe" /S
 ```
 
-Pemasangan berlangsung tanpa dialog, ke `%LOCALAPPDATA%\Programs\primera-desktop`
+Pemasangan berlangsung tanpa dialog, ke `%LOCALAPPDATA%\Programs\primera-codex-lab2`
 milik pengguna yang menjalankannya (bukan seluruh mesin).
 
 ---
@@ -154,7 +154,9 @@ mengirimkannya kepada Anda.
 - **Pembaruan otomatis** — aplikasi hanya memberi tahu, tidak memasang sendiri.
   Alasannya bukan soal peringatan tambahan, melainkan keamanan — lihat penjelasan
   di bawah.
-- **macOS & Linux** — saat ini hanya Windows x64.
+- **Linux** — belum ada build. Windows x64 tersedia di setiap rilis; macOS
+  (Intel & Apple Silicon) dibangun lewat CI, lihat
+  [PANDUAN_INSTALASI_MACOS.md](./PANDUAN_INSTALASI_MACOS.md).
 
 ### Mengapa pembaruan otomatis TIDAK diaktifkan (keputusan sadar)
 

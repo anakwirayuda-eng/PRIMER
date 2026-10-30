@@ -8,8 +8,8 @@ melewatkannya membuat aplikasi tampak "rusak" padahal tidak.
 
 | Mac Anda | Unduh |
 |---|---|
-| Apple Silicon (M1, M2, M3, M4) | `PRIMERA-test-beta-<versi>-arm64.dmg` |
-| Intel | `PRIMERA-test-beta-<versi>-x64.dmg` |
+| Apple Silicon (M1, M2, M3, M4) | `PRIMERA-<versi>-arm64.dmg` |
+| Intel | `PRIMERA-<versi>-x64.dmg` |
 
 Tidak yakin? Menu Apple di pojok kiri atas → **About This Mac**. Bila baris
 "Chip" berbunyi Apple M-sesuatu, ambil `arm64`. Bila berbunyi Intel, ambil
@@ -21,7 +21,7 @@ Sebelum memasang, pastikan berkas yang sampai ke Anda memang berkas yang kami
 terbitkan. Buka **Terminal**, lalu:
 
 ```bash
-shasum -a 256 ~/Downloads/PRIMERA-test-beta-*.dmg
+shasum -a 256 ~/Downloads/PRIMERA-*.dmg
 ```
 
 Bandingkan hasilnya dengan baris yang sesuai di `SHA256SUMS-<versi>.txt` pada
@@ -32,19 +32,19 @@ halaman rilis. Harus sama persis. Kalau berbeda, jangan dipasang — unduh ulang
 Aplikasi ini **belum ditandatangani secara digital dan belum dinotarisasi
 Apple**. Itu keputusan sadar untuk tahap uji coba, bukan kelalaian: sertifikat
 Apple Developer berbayar per tahun dan belum diambil selama PRIMERA masih
-berstatus test-beta.
+berstatus rilis uji.
 
 Akibatnya, saat pertama dibuka macOS akan menolak dengan pesan seperti
-*"PRIMERA test-beta is damaged and can't be opened"* atau *"cannot be opened
+*"PRIMERA 1.3.2 is damaged and can't be opened"* atau *"cannot be opened
 because the developer cannot be verified"*. **Aplikasinya tidak rusak.** Yang
 terjadi: macOS menandai setiap berkas yang diunduh dari internet, lalu menolak
 menjalankan aplikasi bertanda itu bila tidak dinotarisasi.
 
 Cara membukanya — jalankan di Terminal setelah menyeret aplikasi ke folder
-Applications:
+Applications. Nama aplikasi memuat nomor versinya; contoh di bawah untuk 1.3.2:
 
 ```bash
-xattr -cr "/Applications/PRIMERA test-beta.app"
+xattr -cr "/Applications/PRIMERA 1.3.2.app"
 ```
 
 Perintah itu menghapus tanda "diunduh dari internet" pada aplikasi tersebut
@@ -61,11 +61,13 @@ jalur aplikasinya secara spesifik, persis seperti contoh di atas.
 ## Di mana simpanan permainan disimpan
 
 ```
-~/Library/Application Support/primera-desktop/
+~/Library/Application Support/PRIMERA CODEX Lab 2/
 ```
 
 Folder itu tidak ikut terhapus saat aplikasi dibuang, jadi memasang versi baru
-tidak menghilangkan stase yang sedang berjalan.
+tidak menghilangkan stase yang sedang berjalan. Karena nama aplikasi memuat
+versinya, versi baru tidak menimpa yang lama di Applications: buang aplikasi
+versi lama ke Trash agar tidak tertukar membukanya.
 
 Satu hal yang perlu diketahui: bila rilis baru menaikkan **rilis konten**,
 stase yang sedang berjalan dari versi lama menjadi arsip — masih terbaca,
@@ -79,7 +81,7 @@ kerugian yang jauh lebih besar daripada mengulang stase.
 2. Pastikan macOS Anda 11 Big Sur ke atas.
 3. Jalankan dari Terminal untuk melihat pesan aslinya:
    ```bash
-   "/Applications/PRIMERA test-beta.app/Contents/MacOS/PRIMERA test-beta"
+   "/Applications/PRIMERA 1.3.2.app/Contents/MacOS/PRIMERA 1.3.2"
    ```
    Salin pesan yang muncul saat melapor ke dosen.
 

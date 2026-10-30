@@ -72,6 +72,22 @@ mahasiswa berdasarkan versi.
    gh release view test-beta-<hash7> --json tagName,targetCommitish
    ```
 
+8. **Lampirkan build macOS ke rilis.** Push tag di langkah 5 memicu
+   `.github/workflows/primera-macos.yml`, tetapi hasilnya hanya menjadi
+   artefak Actions yang **terhapus setelah 30 hari** — tidak otomatis masuk
+   halaman rilis. Rilis 1.3.1 kehilangan build macOS-nya karena langkah ini
+   terlewat. Setelah run selesai:
+
+   ```bash
+   gh run download <run-id> -n primera-macos-test-beta-<hash7> -D dist/macos
+   mv dist/macos/*.dmg dist/macos/*.zip dist/
+   npm run checksum          # satu SHA256SUMS untuk Windows + macOS
+   gh release upload test-beta-<hash7> dist/*.dmg dist/*.zip dist/SHA256SUMS-<versi>.txt --clobber
+   ```
+
+   Sebelum mengunggah, cocokkan baris macOS di `dist/SHA256SUMS-<versi>.txt`
+   dengan `dist/macos/SHA256SUMS-<versi>.txt` yang dibuat runner.
+
 ---
 
 ## Memperbaiki tag yang sudah terlanjur salah
