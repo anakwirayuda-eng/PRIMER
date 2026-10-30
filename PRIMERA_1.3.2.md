@@ -1,5 +1,7 @@
 # PRIMERA 1.3.2 — perbaikan sebelum uji coba mahasiswa
 
+**Rilis uji terbit untuk Windows dan macOS:** [test-beta-f98d197](https://github.com/anakwirayuda-eng/PRIMER/releases/tag/test-beta-f98d197). Installer Windows sudah dipasang di laptop pengembang dan layar judulnya diperiksa. Build macOS belum dibuka di Mac. Laporan rinci: [pemasangan/publikasi](primera-desktop/docs/RILIS_PRIMERA_1.3.2_2026-10-30.md).
+
 Permintaan pengguna, 30 Oktober 2026: periksa kesiapan PRIMERA terbaru untuk dibagikan ke mahasiswa, lalu siapkan rilis 1.3.2 dengan installer Windows dan macOS.
 
 ## Integrasi
